@@ -1,0 +1,10 @@
+# Dependencias de VendIQ. Instalar con:  pip install -r requirements.txt
+#
+# El paso 01 (ingesta y troceado) NO necesita nada de esto: usa solo la librería
+# estándar de Python. Estas dos hacen falta a partir del paso 02.
+#
+# sentence-transformers arrastra torch, que son ~150 MB. Es normal que la primera
+# instalación tarde unos minutos. Después, todo corre en local y sin coste.
+
+sentence-transformers>=2.2
+numpy>=1.20
