@@ -197,7 +197,10 @@ def evaluar(inventario: Inventario, id_pieza, importe: float) -> dict:
 def leer_registro() -> list:
     if not REGISTRO.exists():
         return []
-    return json.loads(REGISTRO.read_text(encoding="utf-8"))
+    # utf-8-sig: tolera el BOM invisible que dejan PowerShell o Excel si alguien
+    # abre o reinicia el fichero a mano. Con utf-8 a secas, json.loads reventaría.
+    texto = REGISTRO.read_text(encoding="utf-8-sig").strip()
+    return json.loads(texto) if texto else []
 
 
 def escribir_registro(ofertas):

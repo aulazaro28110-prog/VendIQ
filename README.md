@@ -38,6 +38,34 @@ Se combinan tres cosas:
   ofrecer una *bomba de agua* de Audi por muy parecidas que sean las dos fichas. El vocabulario
   de marcas y tipos de pieza se aprende del propio catálogo, no hay listas escritas a mano.
 
+## La regla de precios
+
+VendIQ **sí da precios**, pero solo de piezas que la empresa tiene de verdad. Nunca da el
+precio de algo que no está disponible, y nunca da el precio de una pieza *parecida* a la
+que han pedido.
+
+Hacen falta **cuatro condiciones**, todas:
+
+1. **Que sea la mejor coincidencia.** Las demás son, por definición, otra pieza.
+2. **Que esté disponible** (`En stock` o `Bajo pedido 24-48h`).
+3. **Que tenga precio** — publicado en el catálogo o puesto por Álvaro desde el panel.
+4. **Que la confianza llegue a 0,65**, más alto que el 0,50 que basta para enseñar una ficha.
+
+Por qué la puerta del precio es más estrecha que la de mostrar una candidata: enseñar una
+pieza parecida es una molestia ("no, yo quería la de otro modelo"). **Decir un precio
+equivocado es un compromiso comercial** — el cliente se lo cree, viene a por ella, y
+alguien tiene que darle la mala noticia. Cuesta dinero y confianza.
+
+La condición 1 salió de un fallo real que detectaron las pruebas: un cliente pedía la
+puerta **trasera** izquierda de un Skoda (sin precio publicado) y el sistema le daba el
+precio de la puerta **delantera** izquierda del mismo coche. Ambas son "puerta" y ambas
+superaban la confianza mínima. Si la mejor coincidencia no tiene precio, la respuesta
+correcta es "te lo confirmo", nunca el precio de la de al lado.
+
+Cada resultado lleva **pegada** su decisión de precio y el motivo, así que quien consuma
+la búsqueda —el panel hoy, el LLM mañana— no puede olvidarse de mirarla.
+Verificado en `tests/test_precios.py`.
+
 ## El guardarraíl
 
 Cada resultado tiene una puntuación **absoluta** de 0 a 1. Si nada llega al mínimo,
@@ -98,17 +126,21 @@ Al escribir una consulta se ejecuta la búsqueda real contra el índice; al acep
 oferta se escribe en `salida/ofertas.json`. Un fichero estático no puede hacer ninguna
 de las dos cosas, porque el buscador necesita el modelo de embeddings en memoria.
 
-Lo que hay dentro:
+Está organizado alrededor de una idea: **el bot resuelve lo obvio, tú decides lo que vale
+dinero.** Cada pestaña es una de las cosas que el bot no puede hacer solo.
 
-- **Consulta en vivo** — escribes lo que escribiría un cliente y ves las fichas
-  recuperadas con su puntuación real, más las descartadas por no llegar al umbral.
-  Cuatro decisiones posibles: `RESPONDE`, `NO LA TENGO`, `ESCALA`.
-- **Verificación** — aciertos contrastados contra la respuesta correcta conocida, no
-  contra lo que el sistema cree haber resuelto.
-- **Demanda no cubierta** — piezas que piden y no hay. Sale gratis del registro y es
-  información de compra.
-- **Ofertas** — lanzar una oferta y aceptar o rechazar las pendientes, con persistencia.
-- **Cómo decide** — los umbrales y pesos con los que está funcionando ahora mismo.
+| Pestaña | Qué resuelve |
+|---|---|
+| **Cómo va el día** | Diagrama de dónde acaba cada mensaje y las cifras del día |
+| **Habla como un cliente** | Escribes como un cliente y ves la búsqueda real: fichas, puntuación, si se puede dar precio y las descartadas |
+| **Precios sin poner** | Las piezas sin precio, ordenadas por cuántas veces te las han pedido. Pones el precio y **el bot ya puede venderla** |
+| **Mesa de negociación** | Ofertas: lo que la regla cierra sola y lo que espera tu decisión |
+| **Lo que te piden y no tienes** | Demanda no cubierta — información de compra |
+| **La letra pequeña** | Acierto verificado, parámetros del motor y registro completo con su porqué |
+
+La pestaña de precios cierra un círculo que merece la pena entender: tu trabajo manual no
+se queda en resolver un caso, **entra en el sistema**. En cuanto guardas un precio, la
+siguiente consulta ya lo usa. El humano no es el plan B del bot: es quien lo alimenta.
 
 Los datos de actividad salen de `05_panel_datos.py`, que simula los **mensajes** (es un
 prototipo, no hay clientes reales) pero mide de verdad las decisiones, las puntuaciones

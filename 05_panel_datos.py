@@ -205,6 +205,9 @@ def main():
             "ms": round(ms, 1),
             "resultados": [
                 {"puntuacion": round(s, 3), "tipo": it["tipo"], "texto": it["texto"][:150],
+                 # el id hace falta para saber qué piezas se preguntan más:
+                 # es lo que ordena la cola de "precios sin poner"
+                 "id_pieza": (it.get("meta") or {}).get("id", ""),
                  "url": (it.get("meta") or {}).get("url", ""),
                  "precio": (it.get("meta") or {}).get("precio", "")}
                 for s, it in hits

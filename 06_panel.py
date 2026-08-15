@@ -29,6 +29,7 @@ from urllib.parse import urlparse
 BASE = Path(__file__).parent
 WEB = BASE / "panel"
 PANEL_JSON = BASE / "salida" / "panel.json"
+PRECIOS_FIJADOS = BASE / "salida" / "precios_fijados.json"
 PUERTO = 8420
 
 
@@ -54,10 +55,67 @@ class Sistema:
                   encoding="utf-8-sig", newline="") as f:
             self.filas = list(csv.DictReader(f, delimiter=";"))
         self.inventario = self.ofertas_mod.Inventario(self.filas)
+        if PRECIOS_FIJADOS.exists():
+            # utf-8-sig y no utf-8: si el fichero se ha tocado desde PowerShell o
+            # Excel puede llevar un BOM invisible delante, y json.loads revienta.
+            texto = PRECIOS_FIJADOS.read_text(encoding="utf-8-sig").strip()
+            self.buscador.precios_fijados = json.loads(texto) if texto else {}
         self.buscador.buscar("calentamiento")      # deja el modelo caliente
         print(f"Listo en {time.time() - t0:.1f}s · {len(self.buscador.items)} fichas indexadas")
 
         self.consultas_sesion = []                 # lo que se pregunta desde el panel
+
+    # ------------------------------------------------------------- precios
+    def precios_pendientes(self):
+        """Piezas sin precio, ordenadas por cuántas veces las han preguntado.
+
+        La demanda sale del registro real de consultas: primero lo que más te preguntan,
+        porque es donde poner un precio da más dinero por minuto de tu tiempo.
+        """
+        from collections import Counter
+        demanda = Counter()
+        if PANEL_JSON.exists():
+            registro = json.loads(PANEL_JSON.read_text(encoding="utf-8"))
+            for c in registro.get("consultas", []):
+                for r in c.get("resultados", []):
+                    if r.get("tipo") == "inventario":
+                        demanda[str(r.get("id_pieza") or "")] += 1
+                        break              # solo la ficha principal de cada consulta
+
+        fijados = self.buscador.precios_fijados
+        pendientes = []
+        for f in self.filas:
+            ya = fijados.get(f["id"])
+            sin_precio = "onsultar" in f["precio"]
+            if not sin_precio and not ya:
+                continue
+            pendientes.append({
+                "id": f["id"],
+                "descripcion": f"{f['pieza']} · {f['marca']} {f['modelo']} {f['motor']} {f['anio']}",
+                "disponibilidad": f["disponibilidad"],
+                "veces_preguntada": demanda.get(f["id"], 0),
+                "precio_fijado": ya,
+                "url": f["url"],
+            })
+        pendientes.sort(key=lambda p: (p["precio_fijado"] is not None,
+                                       -p["veces_preguntada"]))
+        return pendientes
+
+    def fijar_precio(self, id_pieza, importe):
+        """Guarda un precio puesto a mano. El buscador lo usa desde el instante siguiente."""
+        id_pieza = str(id_pieza)
+        if not any(f["id"] == id_pieza for f in self.filas):
+            raise SystemExit(f"la pieza {id_pieza} no está en el inventario")
+        importe = float(importe)
+        if importe <= 0:
+            raise SystemExit("el precio tiene que ser mayor que cero")
+        texto = f"{importe:,.2f} € + IVA".replace(",", "X").replace(".", ",").replace("X", ".")
+        self.buscador.precios_fijados[id_pieza] = texto
+        PRECIOS_FIJADOS.parent.mkdir(parents=True, exist_ok=True)
+        PRECIOS_FIJADOS.write_text(
+            json.dumps(self.buscador.precios_fijados, ensure_ascii=False, indent=2),
+            encoding="utf-8")
+        return {"id": id_pieza, "precio": texto}
 
     # ---------------------------------------------------------------- API
     def estado(self):
@@ -69,6 +127,7 @@ class Sistema:
             "dimensiones": int(b.embeddings.shape[1]),
             "umbral_pieza": self.buscar_mod.UMBRAL_PIEZA,
             "umbral_politica": self.buscar_mod.UMBRAL_POLITICA,
+            "umbral_precio": self.buscar_mod.UMBRAL_PRECIO,
             "peso_lexico": self.buscar_mod.PESO_LEXICO,
             "peso_semantico": self.buscar_mod.PESO_SEMANTICO,
             "marcas": len(set(self.buscador.marcas_conocidas.values())),
@@ -128,6 +187,9 @@ class Sistema:
                 "url": (it.get("meta") or {}).get("url", ""),
                 "precio": (it.get("meta") or {}).get("precio", ""),
                 "id_pieza": (it.get("meta") or {}).get("id", ""),
+                # La decisión de precio va con cada ficha: es lo más delicado que
+                # enseña el panel y nunca debe aparecer un importe sin su motivo.
+                "precio_cliente": it.get("precio_cliente"),
             } for s, it in lista]
 
         aceptados_ids = {id(it) for _, it in hits}
@@ -197,6 +259,8 @@ class Handler(BaseHTTPRequestHandler):
         if ruta == "/api/ofertas":
             return self._json({"ofertas": SISTEMA.ofertas(),
                                "piezas": SISTEMA.piezas_ejemplo()})
+        if ruta == "/api/precios":
+            return self._json({"pendientes": SISTEMA.precios_pendientes()})
 
         fichero = "index.html" if ruta == "/" else ruta.lstrip("/")
         destino = (WEB / fichero).resolve()
@@ -234,6 +298,10 @@ class Handler(BaseHTTPRequestHandler):
             if ruta == "/api/resolver":
                 return self._json(SISTEMA.resolver(cuerpo["n"], cuerpo["decision"],
                                                    cuerpo.get("motivo")))
+
+            if ruta == "/api/precio":
+                return self._json(SISTEMA.fijar_precio(cuerpo["id_pieza"],
+                                                       cuerpo["importe"]))
         except SystemExit as e:
             return self._json({"error": str(e)}, 400)
         except Exception as e:                       # nunca tumbar el panel
