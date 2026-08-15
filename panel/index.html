@@ -23,129 +23,176 @@
     </div>
   </header>
 
-  <p class="aviso" id="aviso">Cargando…</p>
+  <h2 class="tesis">El bot resuelve lo obvio. <em>Tú decides lo que vale dinero.</em></h2>
+  <p class="tesis-pie" id="tesis-pie">Cargando…</p>
 
-  <!-- ------------------------------------------------------------ KPIs -->
-  <section class="seccion" aria-labelledby="t-kpi">
-    <h2 id="t-kpi">Actividad</h2>
-    <p class="pie">Medido ejecutando el sistema real sobre una semana de mensajes.</p>
+  <nav class="pestanas" role="tablist" aria-label="Secciones del centro de control">
+    <button role="tab" data-tab="dia"      aria-selected="true">Cómo va el día</button>
+    <button role="tab" data-tab="cliente"  aria-selected="false">Habla como un cliente</button>
+    <button role="tab" data-tab="precios"  aria-selected="false">Precios sin poner</button>
+    <button role="tab" data-tab="mesa"     aria-selected="false">Mesa de negociación</button>
+    <button role="tab" data-tab="faltan"   aria-selected="false">Lo que te piden y no tienes</button>
+    <button role="tab" data-tab="letra"    aria-selected="false">La letra pequeña</button>
+  </nav>
+
+  <!-- ============================================================ día -->
+  <section class="panel-tab" id="tab-dia" role="tabpanel">
+    <h2>Cómo va el día</h2>
+    <p class="intro">
+      Todo lo que entra por WhatsApp pasa por el mismo filtro. Lo que el bot puede
+      resolver con datos de la empresa, lo resuelve. Lo que toca una decisión de
+      negocio, llega a tu mesa.
+    </p>
+
+    <div class="carta">
+      <div id="diagrama"></div>
+    </div>
+
     <div class="indicadores" id="kpis"></div>
   </section>
 
-  <!-- --------------------------------------------------------- consola -->
-  <section class="seccion" aria-labelledby="t-consola">
-    <h2 id="t-consola">Consulta en vivo</h2>
-    <p class="pie">
-      Escribe lo que escribiría un cliente. La búsqueda se ejecuta de verdad contra el
-      índice: lo que ves abajo son las fichas recuperadas con su puntuación real y el
-      motivo de la decisión.
+  <!-- ======================================================== cliente -->
+  <section class="panel-tab" id="tab-cliente" role="tabpanel" hidden>
+    <h2>Habla como un cliente</h2>
+    <p class="intro">
+      Escribe lo que escribiría un cliente por WhatsApp. La búsqueda se ejecuta de
+      verdad contra el catálogo: verás las fichas recuperadas con su puntuación real,
+      si se puede dar el precio o no, y las que se descartaron por no llegar al umbral.
     </p>
 
-    <div class="consola">
+    <div class="carta">
       <form class="consola-entrada" id="form-consulta">
         <span class="prompt" aria-hidden="true">&gt;</span>
         <input id="entrada" autocomplete="off" spellcheck="false"
-               placeholder="¿tenéis un alternador para un BMW 320d?"
+               placeholder="¿cuánto vale un alternador para un BMW 320d?"
                aria-label="Consulta de cliente">
         <button type="submit" id="btn-consulta">Consultar</button>
       </form>
-
       <div class="sugerencias">
-        <span>Prueba</span>
-        <button class="chip" type="button">¿tenéis un alternador para un BMW 320d?</button>
+        <button class="chip" type="button">¿cuánto vale un alternador para un BMW 320d?</button>
         <button class="chip" type="button">tenes bomba de agua pa un peugeot 208</button>
-        <button class="chip" type="button">¿tenéis un turbo para un Volkswagen Golf?</button>
+        <button class="chip" type="button">precio del turbo de un Volkswagen Golf</button>
+        <button class="chip" type="button">busco algo para mi Audi A4</button>
         <button class="chip" type="button">cuanto tarda en llegar el pedido</button>
-        <button class="chip" type="button">necesito la referencia 7180VD80C</button>
       </div>
-
-      <div class="consola-salida" id="salida">
+      <div id="salida">
         <p class="vacio">Sin consultas todavía. Escribe una arriba o pulsa un ejemplo.</p>
       </div>
     </div>
   </section>
 
-  <!-- ---------------------------------------------------- verificación -->
-  <section class="seccion" aria-labelledby="t-verif">
-    <h2 id="t-verif">Verificación</h2>
-    <p class="pie">
-      Contrastado contra la respuesta correcta conocida de cada mensaje, no contra lo que
-      el sistema cree haber resuelto. Un panel que solo enseña su propia opinión no vale nada.
+  <!-- ======================================================== precios -->
+  <section class="panel-tab" id="tab-precios" role="tabpanel" hidden>
+    <h2>Precios sin poner</h2>
+    <p class="intro">
+      El bot da precios, pero <strong>solo de piezas que tenéis y que tienen precio</strong>.
+      Estas no lo tienen, así que ahora mismo las escala. Están ordenadas por cuántas
+      veces te las han preguntado: pon primero las de arriba.
+      En cuanto guardas un precio, el bot puede venderla ya.
     </p>
-    <div class="segmentada" id="seg-verif" role="img" aria-label="Reparto de aciertos"></div>
-    <div class="leyenda" id="leyenda-verif"></div>
-  </section>
-
-  <!-- ------------------------------------------------------- demanda -->
-  <section class="seccion" aria-labelledby="t-demanda">
-    <h2 id="t-demanda">Demanda no cubierta</h2>
-    <p class="pie">
-      Piezas que los clientes piden y no están en catálogo. Sale gratis del registro de
-      consultas y es información de compra: qué desguazar y qué reponer.
-    </p>
-    <div class="barras" id="demanda"></div>
-  </section>
-
-  <!-- -------------------------------------------------------- ofertas -->
-  <section class="seccion" aria-labelledby="t-ofertas">
-    <h2 id="t-ofertas">Ofertas</h2>
-    <p class="pie">
-      El margen que se acepta solo depende de la antigüedad de la pieza en stock. Lo que
-      no encaja en la regla espera aquí tu decisión — y al pulsar se escribe de verdad en
-      <code>salida/ofertas.json</code>.
-    </p>
-
-    <div class="formulario">
-      <div class="campo">
-        <label for="sel-pieza">Pieza</label>
-        <select id="sel-pieza"></select>
-      </div>
-      <div class="campo">
-        <label for="inp-importe">Oferta del cliente (€)</label>
-        <input id="inp-importe" type="number" step="0.01" min="0" style="width:150px">
-      </div>
-      <div class="campo">
-        <label for="inp-cliente">Cliente</label>
-        <input id="inp-cliente" value="Taller Ruiz" style="width:150px">
-      </div>
-      <button class="boton" id="btn-oferta" type="button">Lanzar oferta</button>
-    </div>
-
-    <div class="marco tabla-scroll">
+    <div class="carta plana tabla-scroll">
       <table>
         <thead>
-          <tr>
-            <th class="num">#</th><th>Pieza</th><th>Cliente</th>
-            <th class="num">Publicado</th><th class="num">Ofrece</th><th class="num">Dto.</th>
-            <th>Antigüedad</th><th>Decisión</th><th>Acción</th>
-          </tr>
+          <tr><th>Pieza</th><th>Disponibilidad</th><th class="num">Te la han pedido</th>
+              <th>Precio</th></tr>
+        </thead>
+        <tbody id="tabla-precios"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- =========================================================== mesa -->
+  <section class="panel-tab" id="tab-mesa" role="tabpanel" hidden>
+    <h2>Mesa de negociación</h2>
+    <p class="intro">
+      Lo que se acepta solo depende de cuánto lleva la pieza en la estantería: cuanto
+      más antigua, más margen. Lo que no encaja en la regla espera aquí. Al pulsar se
+      escribe de verdad en <code>salida/ofertas.json</code>.
+    </p>
+
+    <div class="carta">
+      <h3>Simular una oferta entrante</h3>
+      <p class="nota">Como si un cliente te lanzara un precio por WhatsApp.</p>
+      <div class="formulario">
+        <div class="campo">
+          <label for="sel-pieza">Pieza</label>
+          <select id="sel-pieza"></select>
+        </div>
+        <div class="campo">
+          <label for="inp-importe">Ofrece (€)</label>
+          <input id="inp-importe" type="number" step="0.01" min="0" style="width:140px">
+        </div>
+        <div class="campo">
+          <label for="inp-cliente">Cliente</label>
+          <input id="inp-cliente" value="Taller Ruiz" style="width:150px">
+        </div>
+        <button class="boton" id="btn-oferta" type="button">Lanzar oferta</button>
+      </div>
+    </div>
+
+    <div class="carta plana tabla-scroll">
+      <table>
+        <thead>
+          <tr><th class="num">#</th><th>Pieza</th><th>Cliente</th><th class="num">Publicado</th>
+              <th class="num">Ofrece</th><th class="num">Dto.</th><th>Antigüedad</th>
+              <th>Decisión</th><th>Acción</th></tr>
         </thead>
         <tbody id="tabla-ofertas"></tbody>
       </table>
     </div>
   </section>
 
-  <!-- ------------------------------------------------------- registro -->
-  <section class="seccion" aria-labelledby="t-registro">
-    <h2 id="t-registro">Registro de consultas</h2>
-    <p class="pie">Cada mensaje con su decisión y el porqué. Nada de esto está escrito a mano.</p>
-    <div class="filtros" id="filtros"></div>
-    <div class="marco tabla-scroll">
-      <table>
-        <thead>
-          <tr><th class="num">Hora</th><th>Mensaje del cliente</th><th>Decisión</th>
-              <th>Veredicto</th><th class="num">ms</th></tr>
-        </thead>
-        <tbody id="tabla-registro"></tbody>
-      </table>
+  <!-- ========================================================= faltan -->
+  <section class="panel-tab" id="tab-faltan" role="tabpanel" hidden>
+    <h2>Lo que te piden y no tienes</h2>
+    <p class="intro">
+      Piezas que los clientes buscan y no están en catálogo. Sale gratis del registro de
+      consultas, y es información de compra: qué desguazar y qué reponer primero.
+    </p>
+    <div class="carta">
+      <div class="barras" id="demanda"></div>
     </div>
   </section>
 
-  <!-- ---------------------------------------------------------- motor -->
-  <section class="seccion" aria-labelledby="t-motor">
-    <h2 id="t-motor">Cómo decide</h2>
-    <p class="pie">Los parámetros con los que está funcionando el buscador ahora mismo.</p>
-    <div class="indicadores" id="motor"></div>
+  <!-- ========================================================== letra -->
+  <section class="panel-tab" id="tab-letra" role="tabpanel" hidden>
+    <h2>La letra pequeña</h2>
+    <p class="intro">
+      Aquí está todo lo que hace falta para no creerse nada por la cara: cómo se verifica
+      el acierto, con qué parámetros funciona el buscador, y el registro completo de
+      decisiones con su porqué.
+    </p>
+
+    <div class="carta">
+      <h3>Acierto verificado</h3>
+      <p class="nota">
+        Contrastado contra la respuesta correcta conocida de cada mensaje, no contra lo
+        que el sistema cree haber resuelto.
+      </p>
+      <div class="segmentada" id="seg-verif" role="img" aria-label="Reparto de aciertos"></div>
+      <div class="leyenda" id="leyenda-verif"></div>
+    </div>
+
+    <div class="carta">
+      <h3>Cómo decide</h3>
+      <p class="nota">Los parámetros con los que está funcionando ahora mismo.</p>
+      <div class="indicadores" id="motor" style="margin-bottom:0"></div>
+    </div>
+
+    <div class="carta">
+      <h3>Registro de consultas</h3>
+      <p class="nota">Cada mensaje con su decisión y su motivo. Nada escrito a mano.</p>
+      <div class="filtros" id="filtros"></div>
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr><th class="num">Hora</th><th>Mensaje del cliente</th><th>Decisión</th>
+                <th>Veredicto</th><th class="num">ms</th></tr>
+          </thead>
+          <tbody id="tabla-registro"></tbody>
+        </table>
+      </div>
+    </div>
   </section>
 
   <p class="pie-nota" id="pie-nota"></p>

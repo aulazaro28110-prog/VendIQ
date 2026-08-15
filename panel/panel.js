@@ -1,8 +1,9 @@
 /* VendIQ · Centro de control
-   Todo lo que se pinta aquí viene del servidor, que a su vez lo saca de ejecutar el
-   buscador y el motor de ofertas reales. No hay ni un dato escrito a mano. */
+   Todo lo que se pinta viene del servidor, que lo saca de ejecutar el buscador y el
+   motor de ofertas reales. No hay ni un dato escrito a mano. */
 
-const $ = (sel) => document.querySelector(sel);
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
 const crear = (tag, clase, texto) => {
   const el = document.createElement(tag);
   if (clase) el.className = clase;
@@ -14,11 +15,9 @@ const eur = (x) => `${x.toLocaleString('es-ES', {minimumFractionDigits: 2,
                                                  maximumFractionDigits: 2})} €`;
 
 async function api(ruta, cuerpo) {
-  const opciones = cuerpo
+  const r = await fetch(ruta, cuerpo
     ? {method: 'POST', headers: {'Content-Type': 'application/json'},
-       body: JSON.stringify(cuerpo)}
-    : {};
-  const r = await fetch(ruta, opciones);
+       body: JSON.stringify(cuerpo)} : {});
   const datos = await r.json();
   if (!r.ok) throw new Error(datos.error || `error ${r.status}`);
   return datos;
@@ -26,22 +25,67 @@ async function api(ruta, cuerpo) {
 
 let ESTADO = null;
 
+/* --------------------------------------------------------------- pestañas */
+function activarPestana(clave) {
+  $$('.pestanas button').forEach((b) =>
+    b.setAttribute('aria-selected', String(b.dataset.tab === clave)));
+  $$('.panel-tab').forEach((p) => { p.hidden = p.id !== `tab-${clave}`; });
+}
+$$('.pestanas button').forEach((b) => { b.onclick = () => activarPestana(b.dataset.tab); });
+
+/* -------------------------------------------------------------- diagrama */
+function pintarDiagrama(d) {
+  const r = d.resumen;
+  const total = r.consultas, solo = r.resueltas_sin_persona, mesa = r.escaladas;
+  // Muchos mensajes entran, el filtro los reparte en dos salidas. Una imagen
+  // explica el producto entero mejor que tres párrafos.
+  const svg = `
+<svg class="diagrama" viewBox="0 0 720 260" role="img"
+     aria-label="${total} mensajes entran; ${solo} los resuelve el bot y ${mesa} llegan a tu mesa">
+  <defs>
+    <marker id="p" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L7,3.5 L0,7 z" fill="#63707f"/>
+    </marker>
+  </defs>
+  ${[0, 1, 2, 3, 4].map((i) => `
+    <circle cx="58" cy="${42 + i * 44}" r="13" fill="#10141c" stroke="#262e3a"/>
+    <path d="M75 ${42 + i * 44} C 150 ${42 + i * 44}, 190 130, 268 130"
+          fill="none" stroke="#262e3a" stroke-width="1.5" marker-end="url(#p)"/>`).join('')}
+  <text x="58" y="248" text-anchor="middle" font-size="12">${total} mensajes</text>
+
+  <rect x="276" y="98" width="150" height="64" rx="14" fill="#0b0e14" stroke="#29e0d2"/>
+  <text x="351" y="124" text-anchor="middle" font-size="13" class="grande">VendIQ</text>
+  <text x="351" y="143" text-anchor="middle" font-size="11">busca · decide · filtra</text>
+
+  <path d="M430 118 C 500 118, 520 62, 588 62" fill="none" stroke="#29e0d2"
+        stroke-width="1.8" marker-end="url(#p)"/>
+  <path d="M430 142 C 500 142, 520 198, 588 198" fill="none" stroke="#ffb020"
+        stroke-width="1.8" marker-end="url(#p)"/>
+
+  <rect x="596" y="36" width="104" height="52" rx="12" fill="#0b0e14" stroke="#262e3a"/>
+  <text x="648" y="58" text-anchor="middle" font-size="17" class="cifra" fill="#29e0d2">${solo}</text>
+  <text x="648" y="76" text-anchor="middle" font-size="11">resueltos solos</text>
+
+  <rect x="596" y="172" width="104" height="52" rx="12" fill="#0b0e14" stroke="#262e3a"/>
+  <text x="648" y="194" text-anchor="middle" font-size="17" class="cifra" fill="#ffb020">${mesa}</text>
+  <text x="648" y="212" text-anchor="middle" font-size="11">a tu mesa</text>
+</svg>`;
+  $('#diagrama').innerHTML = svg;
+}
+
 /* ------------------------------------------------------------------ KPIs */
 function pintarKPIs(d) {
   const r = d.resumen, v = d.verificacion;
   const tiles = [
-    ['Consultas atendidas', r.consultas, '', `en la ventana medida`, false],
-    ['Resueltas sin persona', pct(r.tasa_resolucion), '',
-     `${r.escaladas} pasaron a una persona`, true],
-    ['Respuesta', r.ms_mediana, 'ms', `p95 ${r.ms_p95} ms`, true],
-    ['Ofertas por regla', pct(r.tasa_ofertas_automaticas), '',
-     `${r.ofertas_por_regla} de ${r.ofertas} sin molestar a nadie`, true],
+    ['Resueltas sin persona', pct(r.tasa_resolucion), '', `${r.escaladas} llegaron a tu mesa`, true],
+    ['Tiempo de respuesta', r.ms_mediana, 'ms', `p95 ${r.ms_p95} ms`, true],
+    ['Ofertas cerradas solas', pct(r.tasa_ofertas_automaticas), '',
+     `${r.ofertas_por_regla} de ${r.ofertas} sin molestarte`, true],
     ['Acierto verificado', pct(v.tasa_acierto_verificado), '',
      `${v.correctas} de ${r.consultas} contrastadas`, true],
   ];
-  const cont = $('#kpis');
-  cont.replaceChildren(...tiles.map(([et, cifra, unidad, nota, destaca]) => {
-    const caja = crear('div', 'ind' + (destaca ? ' destaca' : ''));
+  $('#kpis').replaceChildren(...tiles.map(([et, cifra, unidad, nota, acento]) => {
+    const caja = crear('div', 'ind' + (acento ? ' acento' : ''));
     caja.append(crear('p', 'etiqueta', et));
     const c = crear('p', 'cifra', String(cifra));
     if (unidad) c.append(crear('span', 'unidad', unidad));
@@ -65,8 +109,6 @@ function pintarVerificacion(d) {
     seg.title = `${nombre}: ${n}`;
     return seg;
   }));
-
-  // Identidad nunca por color solo: icono + etiqueta + número.
   $('#leyenda-verif').replaceChildren(...partes.map(([nombre, n, , color, icono]) => {
     const li = crear('span');
     const punto = crear('i');
@@ -95,46 +137,54 @@ function pintarDemanda(d) {
 }
 
 /* -------------------------------------------------------------- consola */
-function pintarConsulta(res) {
-  const salida = $('#salida');
-  const bloque = crear('div');
+function fichaHTML(r, rechazada) {
+  const f = crear('div', 'ficha' + (rechazada ? ' rechazada' : ''));
+  f.append(crear('div', 'score', r.puntuacion.toFixed(2)));
+  const cuerpo = crear('div');
+  cuerpo.append(crear('p', 'titulo', r.texto));
+  const meta = crear('div', 'meta');
+  if (r.id_pieza) meta.append(crear('span', '', `ID ${r.id_pieza}`));
+  meta.append(crear('span', '', r.tipo));
+  cuerpo.append(meta);
 
+  // El precio se muestra aparte y siempre con su porqué: es la decisión que más
+  // cuesta si se equivoca, así que nunca aparece un importe sin explicación.
+  const pc = r.precio_cliente;
+  if (pc && pc.estado !== 'no_aplica') {
+    const caja = crear('div', 'precio-caja');
+    if (pc.publicable) {
+      caja.append(crear('span', 'importe', pc.importe));
+    } else {
+      caja.append(crear('span', 'bloqueado', 'sin precio para el cliente'));
+    }
+    caja.append(crear('span', 'razon', pc.motivo));
+    cuerpo.append(caja);
+  }
+  f.append(cuerpo);
+  return f;
+}
+
+function pintarConsulta(res) {
+  const bloque = crear('div');
   const cab = crear('div', 'veredicto');
   const SELLOS = {
     'RESPONDE':      ['ok', '✓ RESPONDE'],
     'NO DISPONIBLE': ['escala', '⊘ NO LA TENGO'],
-    'ESCALA':        ['escala', '! ESCALA'],
+    'ESCALA':        ['escala', '! A TU MESA'],
   };
-  const [claseSello, textoSello] = SELLOS[res.decision] || ['escala', res.decision];
-  cab.append(crear('span', 'sello ' + claseSello, textoSello));
-  cab.append(crear('span', '', `«${res.pregunta}»`));
-  cab.append(crear('span', 'ms', `${res.ms} ms`));
+  const [clase, texto] = SELLOS[res.decision] || ['escala', res.decision];
+  cab.append(crear('span', 'sello ' + clase, texto),
+             crear('span', '', `«${res.pregunta}»`),
+             crear('span', 'ms', `${res.ms} ms`));
   bloque.append(cab, crear('p', 'porque', res.porque));
 
-  const ficha = (r, rechazada) => {
-    const f = crear('div', 'ficha' + (rechazada ? ' rechazada' : ''));
-    f.append(crear('div', 'score', r.puntuacion.toFixed(2)));
-    const cuerpo = crear('div', 'cuerpo');
-    cuerpo.append(crear('p', 'titulo', r.texto));
-    const meta = crear('div', 'meta');
-    meta.append(crear('span', 'tipo', r.tipo));
-    if (r.precio) meta.append(crear('span', '', r.precio));
-    if (r.id_pieza) meta.append(crear('span', '', `ID ${r.id_pieza}`));
-    cuerpo.append(meta);
-    f.append(cuerpo);
-    return f;
-  };
-
-  if (res.resultados.length) {
-    res.resultados.forEach((r) => bloque.append(ficha(r, false)));
-  }
+  res.resultados.forEach((r) => bloque.append(fichaHTML(r, false)));
   if (res.descartados.length) {
     bloque.append(crear('p', 'descartadas-titulo',
       `Descartadas por no llegar al umbral (${res.descartados.length})`));
-    res.descartados.forEach((r) => bloque.append(ficha(r, true)));
+    res.descartados.forEach((r) => bloque.append(fichaHTML(r, true)));
   }
-
-  salida.replaceChildren(bloque);
+  $('#salida').replaceChildren(bloque);
 }
 
 async function consultar(texto) {
@@ -150,21 +200,52 @@ async function consultar(texto) {
   }
 }
 
+/* -------------------------------------------------------------- precios */
+async function cargarPrecios() {
+  const {pendientes} = await api('/api/precios');
+  $('#tabla-precios').replaceChildren(...pendientes.map((p) => {
+    const tr = crear('tr');
+    tr.append(crear('td', '', p.descripcion), crear('td', '', p.disponibilidad));
+    tr.append(crear('td', 'num', String(p.veces_preguntada)));
+
+    const td = crear('td');
+    if (p.precio_fijado) {
+      const ok = crear('span', 'pastilla p-ok', p.precio_fijado);
+      td.append(ok);
+    } else {
+      const caja = crear('div', 'precio-inline');
+      const inp = crear('input');
+      inp.type = 'number'; inp.step = '0.01'; inp.min = '0'; inp.placeholder = '€';
+      inp.setAttribute('aria-label', `Precio para ${p.descripcion}`);
+      const bt = crear('button', 'boton mini', 'Guardar');
+      bt.onclick = async () => {
+        const importe = parseFloat(inp.value);
+        if (!(importe > 0)) return;
+        try {
+          await api('/api/precio', {id_pieza: p.id, importe});
+          await cargarPrecios();
+        } catch (e) { alert(`No se pudo guardar: ${e.message}`); }
+      };
+      inp.onkeydown = (e) => { if (e.key === 'Enter') bt.click(); };
+      caja.append(inp, bt);
+      td.append(caja);
+    }
+    tr.append(td);
+    return tr;
+  }));
+}
+
 /* -------------------------------------------------------------- ofertas */
-const CLASE_DECISION = {
-  ACEPTAR: 'p-ok', CONTRAOFERTA: 'p-ambar', RECHAZAR: 'p-rojo', A_MANO: 'p-gris',
-};
+const CLASE_DECISION = {ACEPTAR: 'p-ok', CONTRAOFERTA: 'p-ambar',
+                        RECHAZAR: 'p-rojo', A_MANO: 'p-gris'};
 
 async function cargarOfertas() {
   const {ofertas, piezas} = await api('/api/ofertas');
-
   const sel = $('#sel-pieza');
   if (!sel.options.length) {
     sel.replaceChildren(...piezas.map((p) => {
-      const o = crear('option', null,
-        `${p.descripcion} — ${eur(p.precio)} · ${p.antiguedad}`);
-      o.value = p.id;
-      o.dataset.precio = p.precio;
+      const o = crear('option', null, `${p.descripcion} — ${eur(p.precio)} · ${p.antiguedad}`);
+      o.value = p.id; o.dataset.precio = p.precio;
       return o;
     }));
     sel.dispatchEvent(new Event('change'));
@@ -172,16 +253,15 @@ async function cargarOfertas() {
 
   $('#tabla-ofertas').replaceChildren(...[...ofertas].reverse().map((o) => {
     const tr = crear('tr');
-    const celda = (txt, clase) => crear('td', clase, txt);
-    tr.append(celda(String(o.n), 'num'), celda(o.descripcion), celda(o.cliente));
-    tr.append(celda(o.precio_lista ? eur(o.precio_lista) : '—', 'num'));
-    tr.append(celda(eur(o.importe), 'num'));
-    tr.append(celda(o.descuento != null ? pct(o.descuento) : '—', 'num'));
-    tr.append(celda(o.antiguedad || '—'));
+    tr.append(crear('td', 'num', String(o.n)), crear('td', '', o.descripcion),
+              crear('td', '', o.cliente),
+              crear('td', 'num', o.precio_lista ? eur(o.precio_lista) : '—'),
+              crear('td', 'num', eur(o.importe)),
+              crear('td', 'num', o.descuento != null ? pct(o.descuento) : '—'),
+              crear('td', '', o.antiguedad || '—'));
 
     const tdDec = crear('td');
-    const p = crear('span', 'pastilla ' + (CLASE_DECISION[o.decision] || 'p-gris'),
-                    o.decision);
+    const p = crear('span', 'pastilla ' + (CLASE_DECISION[o.decision] || 'p-gris'), o.decision);
     p.title = o.motivo || '';
     tdDec.append(p);
     tr.append(tdDec);
@@ -205,9 +285,7 @@ async function resolver(n, decision) {
   try {
     await api('/api/resolver', {n, decision, motivo: 'decidido desde el panel'});
     await cargarOfertas();
-  } catch (e) {
-    alert(`No se pudo resolver: ${e.message}`);
-  }
+  } catch (e) { alert(`No se pudo resolver: ${e.message}`); }
 }
 
 /* ------------------------------------------------------------- registro */
@@ -220,8 +298,7 @@ const VEREDICTOS = {
 };
 
 function pintarRegistro() {
-  const todas = ESTADO.consultas || [];
-  const filas = todas.filter((c) =>
+  const filas = (ESTADO.consultas || []).filter((c) =>
     FILTRO === 'todas' ||
     (FILTRO === 'resueltas' && c.decision === 'RESUELTA') ||
     (FILTRO === 'escaladas' && c.decision === 'ESCALADA') ||
@@ -229,30 +306,26 @@ function pintarRegistro() {
 
   $('#tabla-registro').replaceChildren(...filas.map((c) => {
     const tr = crear('tr');
-    tr.append(crear('td', 'num', c.hora.slice(11)));
-    tr.append(crear('td', '', c.mensaje));
-
+    tr.append(crear('td', 'num', c.hora.slice(11)), crear('td', '', c.mensaje));
     const td1 = crear('td');
-    td1.append(crear('span', 'pastilla ' +
-      (c.decision === 'RESUELTA' ? 'p-ok' : 'p-ambar'), c.decision));
-    tr.append(td1);
-
+    td1.append(crear('span', 'pastilla ' + (c.decision === 'RESUELTA' ? 'p-ok' : 'p-ambar'),
+                     c.decision));
     const [texto, clase] = VEREDICTOS[c.veredicto] || [c.veredicto, 'p-gris'];
     const td2 = crear('td');
     const p = crear('span', 'pastilla ' + clase, texto);
     p.title = c.porque;
     td2.append(p);
-    tr.append(td2, crear('td', 'num', String(c.ms)));
+    tr.append(td1, td2, crear('td', 'num', String(c.ms)));
     return tr;
   }));
 }
 
 function pintarFiltros() {
   const opciones = [['todas', 'Todas'], ['resueltas', 'Resueltas'],
-                    ['escaladas', 'Escaladas'], ['fallos', 'Solo fallos']];
+                    ['escaladas', 'A tu mesa'], ['fallos', 'Solo fallos']];
   $('#filtros').replaceChildren(...opciones.map(([clave, etiqueta]) => {
     const b = crear('button', 'chip', etiqueta);
-    if (clave === FILTRO) b.style.borderColor = 'var(--cian)';
+    b.setAttribute('aria-pressed', String(clave === FILTRO));
     b.onclick = () => { FILTRO = clave; pintarFiltros(); pintarRegistro(); };
     return b;
   }));
@@ -262,11 +335,12 @@ function pintarFiltros() {
 function pintarMotor(d) {
   const s = d.sistema, q = d.calidad_medida;
   const tiles = [
-    ['Fichas indexadas', s.fichas_indexadas, `${s.dimensiones} dimensiones por ficha`],
-    ['Peso léxico / semántico', `${s.peso_lexico} · ${s.peso_semantico}`,
+    ['Fichas indexadas', s.fichas_indexadas, `${s.dimensiones} dimensiones cada una`],
+    ['Peso léxico / significado', `${s.peso_lexico} · ${s.peso_semantico}`,
      'una sola fórmula para ordenar'],
-    ['Umbral pieza', s.umbral_pieza, 'por debajo, no se ofrece nada'],
-    ['Umbral política', s.umbral_politica, 'las condiciones se preguntan con otras palabras'],
+    ['Mínimo para ofrecer pieza', s.umbral_pieza, 'por debajo, no se ofrece nada'],
+    ['Mínimo para dar precio', s.umbral_precio ?? '—',
+     'más alto: un precio erróneo cuesta dinero'],
     ['Vocabulario aprendido', `${s.marcas} marcas · ${s.tipos_pieza} tipos`,
      'sale del catálogo, no de una lista escrita'],
     ['Acierto en banco de pruebas', pct(q.acierto_ahora),
@@ -284,28 +358,30 @@ function pintarMotor(d) {
 async function iniciar() {
   try {
     ESTADO = await api('/api/estado');
-  } catch (e) {
-    $('#estado-texto').textContent = 'sin conexión con el servidor';
-    $('#aviso').textContent = 'Arranca el panel con:  python 06_panel.py';
+  } catch {
+    $('#estado-texto').textContent = 'sin conexión';
+    $('#tesis-pie').textContent = 'Arranca el panel con:  python 06_panel.py';
     return;
   }
-
-  const s = ESTADO.sistema;
-  $('#estado-texto').textContent =
-    `${s.fichas_indexadas} fichas · ${s.piezas_catalogo} piezas · índice cargado`;
-  $('#aviso').innerHTML = `<b>Prototipo.</b> ${ESTADO.aviso}`;
+  const s = ESTADO.sistema, r = ESTADO.resumen;
+  $('#estado-texto').textContent = `${s.piezas_catalogo} piezas · índice cargado`;
+  $('#tesis-pie').textContent =
+    `De ${r.consultas} mensajes medidos, ${r.resueltas_sin_persona} se resolvieron sin ` +
+    `intervenir y ${r.escaladas} llegaron a tu mesa. Prototipo: los mensajes están ` +
+    `simulados, las decisiones y los tiempos son reales.`;
   $('#pie-nota').innerHTML =
     `Datos generados por <code>05_panel_datos.py</code> y servidos por <code>06_panel.py</code>. ` +
-    `El acierto del banco de pruebas sale de <code>${ESTADO.calidad_medida.fuente}</code>. ` +
+    `El acierto sale de <code>${ESTADO.calidad_medida.fuente}</code>. ` +
     `Última generación: ${ESTADO.generado.replace('T', ' ').replace('+00:00', ' UTC')}.`;
 
+  pintarDiagrama(ESTADO);
   pintarKPIs(ESTADO);
   pintarVerificacion(ESTADO);
   pintarDemanda(ESTADO);
   pintarFiltros();
   pintarRegistro();
   pintarMotor(ESTADO);
-  await cargarOfertas();
+  await Promise.all([cargarOfertas(), cargarPrecios()]);
 }
 
 $('#form-consulta').addEventListener('submit', (e) => {
@@ -313,26 +389,20 @@ $('#form-consulta').addEventListener('submit', (e) => {
   const texto = $('#entrada').value.trim();
   if (texto) consultar(texto);
 });
-
-document.querySelectorAll('.sugerencias .chip').forEach((chip) => {
+$$('.sugerencias .chip').forEach((chip) => {
   chip.onclick = () => { $('#entrada').value = chip.textContent; consultar(chip.textContent); };
 });
-
 $('#sel-pieza').addEventListener('change', (e) => {
   const precio = parseFloat(e.target.selectedOptions[0]?.dataset.precio || '0');
-  $('#inp-importe').value = (precio * 0.88).toFixed(2);   // una oferta plausible
+  $('#inp-importe').value = (precio * 0.88).toFixed(2);
 });
-
 $('#btn-oferta').addEventListener('click', async () => {
-  const id = $('#sel-pieza').value;
-  const importe = parseFloat($('#inp-importe').value);
+  const id = $('#sel-pieza').value, importe = parseFloat($('#inp-importe').value);
   if (!id || !(importe > 0)) return;
   try {
     await api('/api/oferta', {id_pieza: id, importe, cliente: $('#inp-cliente').value});
     await cargarOfertas();
-  } catch (e) {
-    alert(`No se pudo registrar: ${e.message}`);
-  }
+  } catch (e) { alert(`No se pudo registrar: ${e.message}`); }
 });
 
 iniciar();

@@ -82,6 +82,23 @@ PESO_SEMANTICO = 0.40
 UMBRAL_PIEZA = 0.50       # sobre la puntuación combinada
 UMBRAL_POLITICA = 0.30    # sobre la similitud de significado
 
+# ---------------------------------------------------------------------------
+# REGLA DE PRECIO (la más delicada del sistema)
+# ---------------------------------------------------------------------------
+# VendIQ SÍ da precios, pero solo de piezas que la empresa tiene de verdad.
+# Nunca da el precio de algo que no está disponible, y nunca da el precio de una
+# pieza PARECIDA a la que han pedido.
+#
+# Por qué se exige más para dar un precio que para enseñar una candidata:
+# enseñar una ficha parecida es una molestia ("no, yo quería el de otro modelo").
+# Decir un precio equivocado es un compromiso comercial: el cliente se lo cree,
+# viene a por ella, y alguien tiene que decirle que no. Cuesta dinero y confianza.
+# Por eso el precio pasa por una puerta más estrecha, con TRES condiciones.
+UMBRAL_PRECIO = 0.65      # más alto que UMBRAL_PIEZA a propósito
+
+# Qué se considera "disponible". Lo que no esté aquí, no lleva precio.
+DISPONIBILIDAD_VALIDA = {"en stock", "bajo pedido 24-48h"}
+
 # Palabras de relleno: aparecen en cualquier mensaje y no ayudan a distinguir nada.
 PALABRAS_VACIAS = {
     "que", "de", "del", "la", "el", "los", "las", "un", "una", "unos", "unas",
@@ -112,6 +129,8 @@ class Buscador:
         self.embeddings = embeddings
         self.items = items
         self.modelo = modelo
+        # Precios que Álvaro fija a mano desde el centro de control: {id_pieza: "120,00 € + IVA"}
+        self.precios_fijados = {}
 
         # Preparamos la parte léxica UNA vez, no en cada consulta.
         self.palabras_por_chunk = [set(normalizar(it["texto"])) for it in items]
@@ -241,11 +260,21 @@ class Buscador:
         puntuaciones = np.where(self._descartar_incompatibles(pregunta), puntuaciones, -1.0)
 
         resultados = []
+        ya_hubo_pieza = False
         for i in np.argsort(puntuaciones)[::-1][:k]:
             item = self.items[i]
             if aplicar_umbral and not self._es_fiable(item, puntuaciones[i], significado[i]):
                 continue
-            resultados.append((float(puntuaciones[i]), item))
+            es_mejor = item["tipo"] == "inventario" and not ya_hubo_pieza
+            if item["tipo"] == "inventario":
+                ya_hubo_pieza = True
+            # La decisión de precio viaja PEGADA a cada resultado. Así quien consuma
+            # la búsqueda (el panel hoy, el LLM mañana) no puede olvidarse de mirarla:
+            # le llega junto al dato, no en una llamada aparte que se pueda saltar.
+            enriquecido = dict(item)
+            enriquecido["precio_cliente"] = self.precio_para_cliente(
+                item, float(puntuaciones[i]), pregunta, es_mejor_candidata=es_mejor)
+            resultados.append((float(puntuaciones[i]), enriquecido))
         return resultados
 
     @staticmethod
@@ -254,6 +283,78 @@ class Buscador:
         if item["tipo"] == "politica":
             return significado >= UMBRAL_POLITICA
         return puntuacion >= UMBRAL_PIEZA
+
+    def precio_para_cliente(self, item, puntuacion, pregunta,
+                            es_mejor_candidata=True) -> dict:
+        """¿Se le puede decir el precio de esta pieza al cliente? Y si no, por qué no.
+
+        Devuelve siempre el motivo, no solo un sí/no: el asistente tiene que poder
+        explicárselo al cliente ("esa la tengo pero sin precio publicado, te confirmo")
+        y Álvaro tiene que poder ver en el panel por qué no salió el precio.
+
+        CUATRO condiciones, y hacen falta las cuatro:
+          1. Que sea la mejor candidata. Las demás son, por definición, otras piezas.
+          2. Que la pieza esté disponible. Si no la tenemos, no hay precio que dar.
+          3. Que tenga precio publicado. "Consultar por WhatsApp" no es un precio.
+          4. Que estemos SEGUROS de que es la pieza que pidió, no una parecida.
+
+        La condición 1 sale de un fallo real detectado en las pruebas: un cliente pedía
+        la puerta TRASERA izquierda de un Skoda (sin precio publicado) y el sistema le
+        daba el precio de la puerta DELANTERA izquierda del mismo coche, que salía
+        segunda. Ambas son "puerta" y ambas superaban la confianza mínima. Si la mejor
+        coincidencia no tiene precio, la respuesta correcta es "te lo confirmo",
+        nunca el precio de la de al lado.
+        """
+        no = lambda motivo, estado: {"publicable": False, "importe": None,
+                                     "estado": estado, "motivo": motivo}
+
+        if item["tipo"] != "inventario":
+            return no("no es una pieza", "no_aplica")
+
+        if not es_mejor_candidata:
+            return no("hay otra ficha que encaja mejor con lo que ha pedido: "
+                      "no se da el precio de una pieza parecida", "no_es_la_mejor")
+
+        meta = item.get("meta") or {}
+        disponibilidad = (meta.get("disponibilidad") or "").strip()
+        if disponibilidad.lower() not in DISPONIBILIDAD_VALIDA:
+            return no(f"no disponible ({disponibilidad or 'sin dato'}): "
+                      f"no se da precio de lo que no se tiene", "sin_stock")
+
+        # Un precio que Álvaro haya fijado desde el centro de control manda sobre el
+        # del catálogo. Es lo que convierte su trabajo manual en conocimiento del
+        # sistema: en cuanto pone el precio de una pieza, el bot ya puede venderla.
+        texto_precio = (self.precios_fijados.get(str(meta.get("id")))
+                        or meta.get("precio") or "").strip()
+        if "onsultar" in texto_precio or not texto_precio:
+            return no("sin precio publicado: lo confirma Álvaro", "precio_pendiente")
+
+        # Condición 3: seguridad de que es LA pieza pedida, no una hermana.
+        # Se exige puntuación alta Y que el cliente haya nombrado el tipo de pieza
+        # de forma reconocible. Sin lo segundo, un "busco algo para mi Audi" podría
+        # acabar dando el precio de una pieza cualquiera de Audi.
+        palabras = set(normalizar(pregunta))
+        tipo_pedido = palabras & self.tipos_conocidos
+        indice = self._indice_de(item)
+        tipo_ficha = self.tipo_pieza_de[indice] if indice is not None else None
+
+        if not tipo_pedido or tipo_ficha not in tipo_pedido:
+            return no("el cliente no ha nombrado la pieza con claridad: se confirma "
+                      "antes de dar precio", "sin_confirmar")
+
+        if puntuacion < UMBRAL_PRECIO:
+            return no(f"confianza {puntuacion:.2f}, por debajo de {UMBRAL_PRECIO:.2f}: "
+                      f"podría ser una pieza parecida", "confianza_baja")
+
+        return {"publicable": True, "importe": texto_precio, "estado": "publicable",
+                "motivo": f"pieza identificada con confianza {puntuacion:.2f} y "
+                          f"{disponibilidad.lower()}"}
+
+    def _indice_de(self, item):
+        """Posición del item en el índice (para consultar sus datos derivados)."""
+        if not hasattr(self, "_posiciones"):
+            self._posiciones = {it["id"]: i for i, it in enumerate(self.items)}
+        return self._posiciones.get(item["id"])
 
 
 def cargar_buscador() -> Buscador:
