@@ -329,18 +329,34 @@ class Buscador:
         if "onsultar" in texto_precio or not texto_precio:
             return no("sin precio publicado: lo confirma Álvaro", "precio_pendiente")
 
-        # Condición 3: seguridad de que es LA pieza pedida, no una hermana.
-        # Se exige puntuación alta Y que el cliente haya nombrado el tipo de pieza
-        # de forma reconocible. Sin lo segundo, un "busco algo para mi Audi" podría
-        # acabar dando el precio de una pieza cualquiera de Audi.
+        # Condición 4: que el cliente haya nombrado la pieza ENTERA, sin que falte
+        # ninguna palabra que la distinga de una hermana.
+        #
+        # No basta con la palabra principal. Dos fugas reales que lo demostraron:
+        #   - "piloto trasero IZQUIERDO" recibía el precio del piloto trasero DERECHO
+        #   - "CENTRALITA motor" recibía el precio del MOTOR de arranque, porque la
+        #     palabra "motor" aparece en los dos nombres
+        # Si falta cualquier palabra del nombre de la ficha, no se da precio: se
+        # confirma. Es el lado seguro del error, y el que pidió el negocio.
         palabras = set(normalizar(pregunta))
-        tipo_pedido = palabras & self.tipos_conocidos
-        indice = self._indice_de(item)
-        tipo_ficha = self.tipo_pieza_de[indice] if indice is not None else None
 
-        if not tipo_pedido or tipo_ficha not in tipo_pedido:
-            return no("el cliente no ha nombrado la pieza con claridad: se confirma "
-                      "antes de dar precio", "sin_confirmar")
+        # Excepción: si el cliente ha dado la referencia OEM o el número de stock,
+        # la pieza está identificada mejor que por su nombre. Ahí no hace falta que
+        # además la describa: un código exacto no se parece a nada, o coincide o no.
+        codigos = {c for c in (meta.get("referencia_oem"), meta.get("id")) if c}
+        if any(c and normalizar(c) and set(normalizar(c)).issubset(palabras)
+               for c in codigos):
+            return {"publicable": True, "importe": texto_precio, "estado": "publicable",
+                    "motivo": f"identificada por referencia exacta y "
+                              f"{disponibilidad.lower()}"}
+
+        nombre_ficha = [p for p in normalizar(meta.get("pieza", ""))
+                        if p not in PALABRAS_VACIAS and len(p) > 2]
+        if not nombre_ficha or not set(nombre_ficha).issubset(palabras):
+            faltan = [p for p in nombre_ficha if p not in palabras]
+            return no(f"el cliente no ha nombrado la pieza completa (falta: "
+                      f"{', '.join(faltan) or 'nada reconocible'}): se confirma antes "
+                      f"de dar precio", "sin_confirmar")
 
         if puntuacion < UMBRAL_PRECIO:
             return no(f"confianza {puntuacion:.2f}, por debajo de {UMBRAL_PRECIO:.2f}: "

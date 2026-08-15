@@ -1,58 +1,103 @@
 {
-  "generado": "2026-08-15T20:32:41+00:00",
+  "generado": "2026-08-15T20:54:14+00:00",
   "aviso": "Los mensajes de cliente están simulados (es un prototipo, no hay clientes reales). Las decisiones, puntuaciones y tiempos son resultado de ejecutar el sistema de verdad.",
   "resumen": {
-    "consultas": 42,
-    "resueltas_sin_persona": 30,
-    "tasa_resolucion": 0.7143,
-    "escaladas": 12,
-    "ms_mediana": 45.3,
-    "ms_p95": 60.2,
-    "piezas_catalogo": 100,
-    "ofertas": 19,
+    "consultas": 43,
+    "resueltas_sin_persona": 33,
+    "tasa_resolucion": 0.7674,
+    "escaladas": 10,
+    "ms_mediana": 52.1,
+    "ms_p95": 66.9,
+    "piezas_catalogo": 1000,
+    "ofertas": 15,
     "ofertas_por_regla": 14,
-    "tasa_ofertas_automaticas": 0.7368,
-    "euros_aceptados": 3755.72
+    "tasa_ofertas_automaticas": 0.9333,
+    "euros_aceptados": 1167.53
   },
   "verificacion": {
-    "correctas": 40,
-    "pieza_equivocada": 0,
-    "falsos_positivos": 1,
-    "sin_respuesta": 1,
-    "tasa_acierto_verificado": 0.9524,
+    "correctas": 35,
+    "pieza_equivocada": 1,
+    "falsos_positivos": 5,
+    "sin_respuesta": 2,
+    "tasa_acierto_verificado": 0.814,
     "nota": "Contrastado contra la respuesta correcta conocida de cada mensaje, no contra lo que el sistema cree haber resuelto."
   },
   "calidad_medida": {
     "acierto_antes": 0.2,
-    "acierto_ahora": 0.96,
+    "acierto_ahora": 0.89,
     "guardarrail": 0.98,
     "preguntas_banco": 80,
     "piezas_inexistentes_probadas": 40,
     "fuente": "tests/test_busqueda.py"
   },
+  "historico": {
+    "columnas": [
+      "Solo vectorial",
+      "Híbrida · 100",
+      "Híbrida · 1.000"
+    ],
+    "filas": [
+      [
+        "Pregunta natural",
+        0.24,
+        1.0,
+        1.0
+      ],
+      [
+        "Datos incompletos",
+        0.07,
+        1.0,
+        0.67
+      ],
+      [
+        "Mensaje sucio de WhatsApp",
+        0.13,
+        1.0,
+        1.0
+      ],
+      [
+        "Por referencia OEM",
+        0.0,
+        1.0,
+        1.0
+      ],
+      [
+        "Políticas",
+        0.7,
+        0.7,
+        0.6
+      ],
+      [
+        "TOTAL",
+        0.2,
+        0.96,
+        0.89
+      ]
+    ]
+  },
   "demanda_no_cubierta": [
     {
-      "consulta": "¿tenéis un turbo para un Volkswagen Golf?",
+      "consulta": "¿tenéis un centralita motor para un Skoda Octavia?",
       "veces": 4
     },
     {
-      "consulta": "¿tenéis un caja de cambios para un Audi A3?",
+      "consulta": "¿tenéis un retrovisor izquierdo para un Citroen C4?",
       "veces": 3
     },
     {
-      "consulta": "¿tenéis un airbag volante para un Ford Focus?",
+      "consulta": "¿tenéis un catalizador para un Hyundai Tucson?",
       "veces": 2
     },
     {
-      "consulta": "¿tenéis un amortiguador trasero para un Seat Ibiza?",
+      "consulta": "¿tenéis un cremallera de dirección para un Kia Sportage?",
+      "veces": 2
+    },
+    {
+      "consulta": "¿tenéis un cinturón de seguridad para un Nissan Juke?",
       "veces": 1
     },
     {
-      "consulta": "¿tenéis un compresor aire acondicionado para un Ford Fusion?",
-      "veces": 1
-    },
-    {
-      "consulta": "¿tenéis un catalizador para un Renault Clio?",
+      "consulta": "¿tenéis un parachoques delantero para un Kia Sportage?",
       "veces": 1
     }
   ],
@@ -60,15 +105,59 @@
     {
       "hora": "2026-08-10T08:00+00:00",
       "clase": "pieza",
-      "mensaje": "¿tenéis un caja de cambios para un Audi A3?",
-      "decision": "ESCALADA",
-      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
+      "mensaje": "¿tenéis un puerta delantera derecha para un Toyota Proace City 1.5 D-4D del 2009?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
-      "existe_en_catalogo": false,
-      "ms": 56.8,
+      "existe_en_catalogo": true,
+      "ms": 67.0,
       "resultados": [
         {
-          "puntuacion": 0.194,
+          "puntuacion": 0.85,
+          "tipo": "inventario",
+          "texto": "Puerta delantera derecha para TOYOTA Proace City 1.5 D-4D (2009). Referencia interna: 69246. Referencia OEM: 2890EA58A. Estado: Desmontada de vehículo",
+          "id_pieza": "69246",
+          "url": "https://desguacesmadridnorte.com/69246-pieza.html",
+          "precio": "239,62 € + IVA"
+        },
+        {
+          "puntuacion": 0.675,
+          "tipo": "inventario",
+          "texto": "Puerta delantera izquierda para TOYOTA Proace City 1.5 D-4D (2007). Referencia interna: 70425. Referencia OEM: 3204FH29B. Estado: Sin comprobar. Garan",
+          "id_pieza": "70425",
+          "url": "https://desguacesmadridnorte.com/70425-pieza.html",
+          "precio": "116,29 € + IVA"
+        },
+        {
+          "puntuacion": 0.619,
+          "tipo": "inventario",
+          "texto": "Puerta trasera izquierda para TOYOTA Proace City 1.5 D-4D (2010). Referencia interna: 71029. Referencia OEM: 6814PH98E. Estado: Comprobada, funcionand",
+          "id_pieza": "71029",
+          "url": "https://desguacesmadridnorte.com/71029-pieza.html",
+          "precio": "239,20 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T08:17+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un caja de cambios para un Kia Ceed 1.6 CRDi del 2015?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": true,
+      "ms": 62.1,
+      "resultados": [
+        {
+          "puntuacion": 0.915,
+          "tipo": "inventario",
+          "texto": "Caja de cambios para KIA Ceed 1.6 CRDi (2015). Referencia interna: 70888. Referencia OEM: 2061QR59C. Estado: Comprobada, funcionando. Garantía: 1 año.",
+          "id_pieza": "70888",
+          "url": "https://desguacesmadridnorte.com/70888-pieza.html",
+          "precio": "875,07 € + IVA"
+        },
+        {
+          "puntuacion": 0.176,
           "tipo": "politica",
           "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
           "id_pieza": "",
@@ -76,29 +165,9 @@
           "precio": ""
         },
         {
-          "puntuacion": 0.147,
+          "puntuacion": 0.128,
           "tipo": "politica",
           "texto": "GARANTIA. Todas las piezas tienen 1 año de garantía, sean nuevas o de segunda mano (desmontadas de vehículo). La garantía cubre defectos de funcionami",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T08:17+00:00",
-      "clase": "politica",
-      "mensaje": "me puedes hacer un descuento?",
-      "decision": "RESUELTA",
-      "porque": "respondida con la política de la empresa",
-      "veredicto": "correcta",
-      "existe_en_catalogo": null,
-      "ms": 41.1,
-      "resultados": [
-        {
-          "puntuacion": 0.402,
-          "tipo": "politica",
-          "texto": "PRECIOS Y DESCUENTOS. Muchas piezas muestran \"Consultar por WhatsApp\" en vez de precio publicado. En esos casos el precio se confirma antes de vender.",
           "id_pieza": "",
           "url": "",
           "precio": ""
@@ -107,34 +176,26 @@
     },
     {
       "hora": "2026-08-10T08:34+00:00",
-      "clase": "pieza",
-      "mensaje": "¿tenéis un alternador para un Mercedes-Benz CLA 200 CDI del 2016?",
+      "clase": "politica",
+      "mensaje": "puedo pasar a recogerla a la tienda?",
       "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
+      "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 58.8,
+      "existe_en_catalogo": null,
+      "ms": 51.6,
       "resultados": [
         {
-          "puntuacion": 0.772,
-          "tipo": "inventario",
-          "texto": "Alternador para MERCEDES-BENZ CLA 200 CDI (2016). Referencia interna: 69339. Referencia OEM: 9261RK19D. Estado: Desmontada de vehículo. Garantía: 1 añ",
-          "id_pieza": "69339",
-          "url": "https://desguacesmadridnorte.com/69339-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.2,
+          "puntuacion": 0.328,
           "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
+          "texto": "ENVIO Y PLAZOS. Envío a toda la península en 24-48 horas. Para piezas \"En stock\", normalmente sale al día siguiente. Para piezas \"Bajo pedido 24-48h\",",
           "id_pieza": "",
           "url": "",
           "precio": ""
         },
         {
-          "puntuacion": 0.124,
+          "puntuacion": 0.297,
           "tipo": "politica",
-          "texto": "GARANTIA. Todas las piezas tienen 1 año de garantía, sean nuevas o de segunda mano (desmontadas de vehículo). La garantía cubre defectos de funcionami",
+          "texto": "FORMAS DE PAGO Y DEVOLUCIONES. Se acepta transferencia y pago en tienda. La devolución se admite dentro del plazo legal siempre que la pieza esté sin ",
           "id_pieza": "",
           "url": "",
           "precio": ""
@@ -144,135 +205,127 @@
     {
       "hora": "2026-08-10T08:51+00:00",
       "clase": "pieza",
-      "mensaje": "busco piloto trasero derecho de Renault Clio 1.5 dCi",
+      "mensaje": "buenas tenes aleta delantera izquierda pa un opel astra 2005",
       "decision": "RESUELTA",
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 52.4,
+      "ms": 61.7,
       "resultados": [
         {
-          "puntuacion": 0.758,
+          "puntuacion": 0.539,
           "tipo": "inventario",
-          "texto": "Piloto trasero derecho para RENAULT Clio 1.5 dCi (2014). Referencia interna: 69334. Referencia OEM: 9521EH82F. Estado: Comprobada, funcionando. Garant",
-          "id_pieza": "69334",
-          "url": "https://desguacesmadridnorte.com/69334-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.647,
-          "tipo": "inventario",
-          "texto": "Piloto trasero derecho para RENAULT Megane 1.5 dCi (2010). Referencia interna: 69236. Referencia OEM: 5870LN63C. Estado: Comprobada, funcionando. Gara",
-          "id_pieza": "69236",
-          "url": "https://desguacesmadridnorte.com/69236-pieza.html",
-          "precio": "490,22 € + IVA"
-        },
-        {
-          "puntuacion": 0.173,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
+          "texto": "Aleta delantera izquierda para OPEL Astra 1.7 CDTI (2005). Referencia interna: 70567. Referencia OEM: 6184WC56F. Estado: Desmontada de vehículo. Garan",
+          "id_pieza": "70567",
+          "url": "https://desguacesmadridnorte.com/70567-pieza.html",
+          "precio": "71,47 € + IVA"
         }
       ]
     },
     {
       "hora": "2026-08-10T09:08+00:00",
       "clase": "pieza",
-      "mensaje": "¿tenéis un turbo para un Volkswagen Golf?",
-      "decision": "ESCALADA",
-      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
-      "veredicto": "correcta",
-      "existe_en_catalogo": false,
-      "ms": 50.5,
+      "mensaje": "busco módulo electrónico de Peugeot 208 1.6 HDi",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "pieza_equivocada",
+      "existe_en_catalogo": true,
+      "ms": 55.6,
       "resultados": [
         {
-          "puntuacion": 0.181,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
+          "puntuacion": 0.863,
+          "tipo": "inventario",
+          "texto": "Módulo electrónico para PEUGEOT 208 1.4 HDi (2020). Referencia interna: 70108. Referencia OEM: 1956CQ10C. Estado: Desmontada de vehículo. Garantía: 1 ",
+          "id_pieza": "70108",
+          "url": "https://desguacesmadridnorte.com/70108-pieza.html",
+          "precio": "124,95 € + IVA"
+        },
+        {
+          "puntuacion": 0.8,
+          "tipo": "inventario",
+          "texto": "Módulo electrónico para PEUGEOT 208 1.6 HDi (2009). Referencia interna: 69572. Referencia OEM: 4091CG83A. Estado: Comprobada, funcionando. Garantía: 1",
+          "id_pieza": "69572",
+          "url": "https://desguacesmadridnorte.com/69572-pieza.html",
+          "precio": "103,12 € + IVA"
+        },
+        {
+          "puntuacion": 0.789,
+          "tipo": "inventario",
+          "texto": "Módulo electrónico para PEUGEOT 208 1.6 HDi (2008). Referencia interna: 70513. Referencia OEM: 5558SR99E. Estado: Comprobada, funcionando. Garantía: 1",
+          "id_pieza": "70513",
+          "url": "https://desguacesmadridnorte.com/70513-pieza.html",
+          "precio": "149,97 € + IVA"
         }
       ]
     },
     {
       "hora": "2026-08-10T09:25+00:00",
       "clase": "pieza",
-      "mensaje": "¿tenéis un cárter para un Volkswagen Passat 1.9 TDI del 2007?",
+      "mensaje": "buenas tenes parachoques delantero pa un renault megane 2019",
       "decision": "RESUELTA",
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 53.7,
+      "ms": 68.0,
       "resultados": [
         {
-          "puntuacion": 0.71,
+          "puntuacion": 0.648,
           "tipo": "inventario",
-          "texto": "Cárter para VOLKSWAGEN Passat 1.9 TDI (2007). Referencia interna: 69198. Referencia OEM: 3730NZ82C. Estado: Sin comprobar. Garantía: 1 año. Disponibil",
-          "id_pieza": "69198",
-          "url": "https://desguacesmadridnorte.com/69198-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.224,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        },
-        {
-          "puntuacion": 0.135,
-          "tipo": "politica",
-          "texto": "GARANTIA. Todas las piezas tienen 1 año de garantía, sean nuevas o de segunda mano (desmontadas de vehículo). La garantía cubre defectos de funcionami",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
+          "texto": "Parachoques delantero para RENAULT Megane 1.6 dCi (2019). Referencia interna: 70841. Referencia OEM: 3007KM80F. Estado: Comprobada, funcionando. Garan",
+          "id_pieza": "70841",
+          "url": "https://desguacesmadridnorte.com/70841-pieza.html",
+          "precio": "203,59 € + IVA"
         }
       ]
     },
     {
       "hora": "2026-08-10T09:42+00:00",
       "clase": "pieza",
-      "mensaje": "¿tenéis un turbo para un Volkswagen Golf?",
-      "decision": "ESCALADA",
-      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
+      "mensaje": "buenas tenes piloto trasero derecho pa un mercedes-benz clase a 2018",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
-      "existe_en_catalogo": false,
-      "ms": 46.7,
+      "existe_en_catalogo": true,
+      "ms": 66.9,
       "resultados": [
         {
-          "puntuacion": 0.181,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
+          "puntuacion": 0.655,
+          "tipo": "inventario",
+          "texto": "Piloto trasero derecho para MERCEDES-BENZ Clase A 200 CDI (2018). Referencia interna: 70314. Referencia OEM: 5653VF43E. Estado: Comprobada, funcionand",
+          "id_pieza": "70314",
+          "url": "https://desguacesmadridnorte.com/70314-pieza.html",
+          "precio": "70,35 € + IVA"
+        },
+        {
+          "puntuacion": 0.534,
+          "tipo": "inventario",
+          "texto": "Piloto trasero izquierdo para MERCEDES-BENZ Clase A 180 CDI (2019). Referencia interna: 69509. Referencia OEM: 7424PW71A. Estado: Desmontada de vehícu",
+          "id_pieza": "69509",
+          "url": "https://desguacesmadridnorte.com/69509-pieza.html",
+          "precio": "63,00 € + IVA"
+        },
+        {
+          "puntuacion": 0.502,
+          "tipo": "inventario",
+          "texto": "Piloto trasero izquierdo para MERCEDES-BENZ Clase E Coupé 250 CDI (2016). Referencia interna: 71059. Referencia OEM: 5482AH85F. Estado: Comprobada, fu",
+          "id_pieza": "71059",
+          "url": "https://desguacesmadridnorte.com/71059-pieza.html",
+          "precio": "116,63 € + IVA"
         }
       ]
     },
     {
       "hora": "2026-08-10T09:59+00:00",
       "clase": "pieza",
-      "mensaje": "buenas tenes caja de cambios pa un skoda fabia 2008",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
+      "mensaje": "¿tenéis un cinturón de seguridad para un Nissan Juke?",
+      "decision": "ESCALADA",
+      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
       "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 52.4,
+      "existe_en_catalogo": false,
+      "ms": 62.5,
       "resultados": [
         {
-          "puntuacion": 0.591,
-          "tipo": "inventario",
-          "texto": "Caja de cambios para SKODA Fabia 1.4 TDI (2008). Referencia interna: 69259. Referencia OEM: 8558HS12A. Estado: Desmontada de vehículo. Garantía: 1 año",
-          "id_pieza": "69259",
-          "url": "https://desguacesmadridnorte.com/69259-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.134,
+          "puntuacion": 0.171,
           "tipo": "politica",
           "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
           "id_pieza": "",
@@ -284,15 +337,675 @@
     {
       "hora": "2026-08-10T10:16+00:00",
       "clase": "politica",
+      "mensaje": "la pieza tiene garantia?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": null,
+      "ms": 47.7,
+      "resultados": [
+        {
+          "puntuacion": 0.833,
+          "tipo": "politica",
+          "texto": "GARANTIA. Todas las piezas tienen 1 año de garantía, sean nuevas o de segunda mano (desmontadas de vehículo). La garantía cubre defectos de funcionami",
+          "id_pieza": "",
+          "url": "",
+          "precio": ""
+        },
+        {
+          "puntuacion": 0.782,
+          "tipo": "inventario",
+          "texto": "Bomba de dirección para SEAT León 1.6 TDI (2019). Referencia interna: 69506. Referencia OEM: 2471FR97B. Estado: Comprobada, funcionando. Garantía: 1 a",
+          "id_pieza": "69506",
+          "url": "https://desguacesmadridnorte.com/69506-pieza.html",
+          "precio": "80,24 € + IVA"
+        },
+        {
+          "puntuacion": 0.779,
+          "tipo": "inventario",
+          "texto": "Faro delantero derecho para SEAT León 1.6 TDI (2008). Referencia interna: 70196. Referencia OEM: 1377VP70F. Estado: Comprobada, funcionando. Garantía:",
+          "id_pieza": "70196",
+          "url": "https://desguacesmadridnorte.com/70196-pieza.html",
+          "precio": "38,25 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T10:33+00:00",
+      "clase": "pieza",
+      "mensaje": "busco faro delantero izquierdo de Renault Captur 1.5 dCi",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": true,
+      "ms": 56.6,
+      "resultados": [
+        {
+          "puntuacion": 0.789,
+          "tipo": "inventario",
+          "texto": "Faro delantero izquierdo para RENAULT Captur 1.5 dCi (2020). Referencia interna: 70054. Referencia OEM: 7217NT41A. Estado: Comprobada, funcionando. Ga",
+          "id_pieza": "70054",
+          "url": "https://desguacesmadridnorte.com/70054-pieza.html",
+          "precio": "133,30 € + IVA"
+        },
+        {
+          "puntuacion": 0.685,
+          "tipo": "inventario",
+          "texto": "Faro delantero derecho para RENAULT Captur 1.5 dCi (2009). Referencia interna: 69354. Referencia OEM: 1413YW91F. Estado: Comprobada, funcionando. Gara",
+          "id_pieza": "69354",
+          "url": "https://desguacesmadridnorte.com/69354-pieza.html",
+          "precio": "89,84 € + IVA"
+        },
+        {
+          "puntuacion": 0.608,
+          "tipo": "inventario",
+          "texto": "Faro delantero izquierdo para RENAULT Megane 1.5 dCi (2005). Referencia interna: 69250. Referencia OEM: 3875ZQ85A. Estado: Comprobada, funcionando. Ga",
+          "id_pieza": "69250",
+          "url": "https://desguacesmadridnorte.com/69250-pieza.html",
+          "precio": "151,17 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T10:50+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un parachoques delantero para un Kia Sportage?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "falso_positivo",
+      "existe_en_catalogo": false,
+      "ms": 55.3,
+      "resultados": [
+        {
+          "puntuacion": 0.774,
+          "tipo": "inventario",
+          "texto": "Parachoques trasero para KIA Sportage 2.0 CRDi (2020). Referencia interna: 70967. Referencia OEM: 1804LH22A. Estado: Comprobada, funcionando. Garantía",
+          "id_pieza": "70967",
+          "url": "https://desguacesmadridnorte.com/70967-pieza.html",
+          "precio": "212,39 € + IVA"
+        },
+        {
+          "puntuacion": 0.583,
+          "tipo": "inventario",
+          "texto": "Parachoques trasero para KIA Ceed 1.6 CRDi (2012). Referencia interna: 70426. Referencia OEM: 2375PS36B. Estado: Desmontada de vehículo. Garantía: 1 a",
+          "id_pieza": "70426",
+          "url": "https://desguacesmadridnorte.com/70426-pieza.html",
+          "precio": "135,66 € + IVA"
+        },
+        {
+          "puntuacion": 0.583,
+          "tipo": "inventario",
+          "texto": "Parachoques trasero para KIA Ceed 1.4 CRDi (2012). Referencia interna: 70741. Referencia OEM: 2334XG53C. Estado: Desmontada de vehículo. Garantía: 1 a",
+          "id_pieza": "70741",
+          "url": "https://desguacesmadridnorte.com/70741-pieza.html",
+          "precio": "118,88 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T11:07+00:00",
+      "clase": "politica",
+      "mensaje": "si no me vale la puedo devolver",
+      "decision": "RESUELTA",
+      "porque": "respondida con la política de la empresa",
+      "veredicto": "correcta",
+      "existe_en_catalogo": null,
+      "ms": 44.1,
+      "resultados": [
+        {
+          "puntuacion": 0.156,
+          "tipo": "politica",
+          "texto": "FORMAS DE PAGO Y DEVOLUCIONES. Se acepta transferencia y pago en tienda. La devolución se admite dentro del plazo legal siempre que la pieza esté sin ",
+          "id_pieza": "",
+          "url": "",
+          "precio": ""
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T11:24+00:00",
+      "clase": "pieza",
+      "mensaje": "necesito la referencia 7398DN28D",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": true,
+      "ms": 47.3,
+      "resultados": [
+        {
+          "puntuacion": 0.747,
+          "tipo": "inventario",
+          "texto": "Bomba de agua para CITROEN C4 1.6 HDi (2007). Referencia interna: 70092. Referencia OEM: 7398DN28D. Estado: Comprobada, funcionando. Garantía: 1 año. ",
+          "id_pieza": "70092",
+          "url": "https://desguacesmadridnorte.com/70092-pieza.html",
+          "precio": "58,75 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T11:41+00:00",
+      "clase": "pieza",
+      "mensaje": "necesito la referencia 3211SP44F",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": true,
+      "ms": 51.0,
+      "resultados": [
+        {
+          "puntuacion": 0.726,
+          "tipo": "inventario",
+          "texto": "Capó para FORD Fusion 1.4 TDCi (2015). Referencia interna: 69721. Referencia OEM: 3211SP44F. Estado: Desmontada de vehículo. Garantía: 1 año. Disponib",
+          "id_pieza": "69721",
+          "url": "https://desguacesmadridnorte.com/69721-pieza.html",
+          "precio": "102,49 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T11:58+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un puerta delantera izquierda para un Audi Q3 2.0 TDI del 2009?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": true,
+      "ms": 54.7,
+      "resultados": [
+        {
+          "puntuacion": 0.873,
+          "tipo": "inventario",
+          "texto": "Puerta delantera izquierda para AUDI Q3 2.0 TDI (2009). Referencia interna: 70428. Referencia OEM: 2953JH74D. Estado: Desmontada de vehículo. Garantía",
+          "id_pieza": "70428",
+          "url": "https://desguacesmadridnorte.com/70428-pieza.html",
+          "precio": "212,17 € + IVA"
+        },
+        {
+          "puntuacion": 0.568,
+          "tipo": "inventario",
+          "texto": "Puerta delantera derecha para AUDI A4 3.0 TDI (2019). Referencia interna: 70614. Referencia OEM: 4991HT77A. Estado: Desmontada de vehículo. Garantía: ",
+          "id_pieza": "70614",
+          "url": "https://desguacesmadridnorte.com/70614-pieza.html",
+          "precio": "522,00 € + IVA"
+        },
+        {
+          "puntuacion": 0.542,
+          "tipo": "inventario",
+          "texto": "Puerta delantera derecha para AUDI A3 2.0 TDI (2007). Referencia interna: 69944. Referencia OEM: 8572YA66C. Estado: Desmontada de vehículo. Garantía: ",
+          "id_pieza": "69944",
+          "url": "https://desguacesmadridnorte.com/69944-pieza.html",
+          "precio": "146,55 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T12:15+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un retrovisor izquierdo para un Volkswagen Passat 2.0 TDI del 2009?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": true,
+      "ms": 52.5,
+      "resultados": [
+        {
+          "puntuacion": 0.857,
+          "tipo": "inventario",
+          "texto": "Retrovisor izquierdo para VOLKSWAGEN Passat 2.0 TDI (2009). Referencia interna: 69218. Referencia OEM: 5704MN11D. Estado: Desmontada de vehículo. Gara",
+          "id_pieza": "69218",
+          "url": "https://desguacesmadridnorte.com/69218-pieza.html",
+          "precio": "128,31 € + IVA"
+        },
+        {
+          "puntuacion": 0.562,
+          "tipo": "inventario",
+          "texto": "Retrovisor izquierdo para VOLKSWAGEN Golf 2.0 TDI (2013). Referencia interna: 69674. Referencia OEM: 5643NB62C. Estado: Comprobada, funcionando. Garan",
+          "id_pieza": "69674",
+          "url": "https://desguacesmadridnorte.com/69674-pieza.html",
+          "precio": "41,62 € + IVA"
+        },
+        {
+          "puntuacion": 0.553,
+          "tipo": "inventario",
+          "texto": "Retrovisor izquierdo para VOLKSWAGEN Golf 2.0 TDI (2010). Referencia interna: 70898. Referencia OEM: 5945JZ32F. Estado: Comprobada, funcionando. Garan",
+          "id_pieza": "70898",
+          "url": "https://desguacesmadridnorte.com/70898-pieza.html",
+          "precio": "97,46 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T12:32+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un airbag volante para un Toyota Corolla 1.4 D-4D del 2009?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": true,
+      "ms": 53.6,
+      "resultados": [
+        {
+          "puntuacion": 0.926,
+          "tipo": "inventario",
+          "texto": "Airbag volante para TOYOTA Corolla 1.4 D-4D (2009). Referencia interna: 69735. Referencia OEM: 5480CG29C. Estado: Desmontada de vehículo. Garantía: 1 ",
+          "id_pieza": "69735",
+          "url": "https://desguacesmadridnorte.com/69735-pieza.html",
+          "precio": "171,69 € + IVA"
+        },
+        {
+          "puntuacion": 0.174,
+          "tipo": "politica",
+          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
+          "id_pieza": "",
+          "url": "",
+          "precio": ""
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T12:49+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un centralita motor para un Skoda Octavia?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "falso_positivo",
+      "existe_en_catalogo": false,
+      "ms": 50.3,
+      "resultados": [
+        {
+          "puntuacion": 0.685,
+          "tipo": "inventario",
+          "texto": "Motor completo para SKODA Octavia 1.6 TDI (2019). Referencia interna: 71094. Referencia OEM: 7043ZF36D. Estado: Comprobada, funcionando. Garantía: 1 a",
+          "id_pieza": "71094",
+          "url": "https://desguacesmadridnorte.com/71094-pieza.html",
+          "precio": "3.268,11 € + IVA"
+        },
+        {
+          "puntuacion": 0.667,
+          "tipo": "inventario",
+          "texto": "Motor completo para SKODA Octavia 2.0 TDI (2011). Referencia interna: 69839. Referencia OEM: 5634RJ48C. Estado: Desmontada de vehículo. Garantía: 1 añ",
+          "id_pieza": "69839",
+          "url": "https://desguacesmadridnorte.com/69839-pieza.html",
+          "precio": "1.197,62 € + IVA"
+        },
+        {
+          "puntuacion": 0.649,
+          "tipo": "inventario",
+          "texto": "Motor de arranque para SKODA Octavia 1.6 TDI (2013). Referencia interna: 69287. Referencia OEM: 8634BW12F. Estado: Comprobada, funcionando. Garantía: ",
+          "id_pieza": "69287",
+          "url": "https://desguacesmadridnorte.com/69287-pieza.html",
+          "precio": "106,18 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T13:06+00:00",
+      "clase": "pieza",
+      "mensaje": "busco colector de admisión de Audi Q3 1.4 TFSI",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": true,
+      "ms": 48.5,
+      "resultados": [
+        {
+          "puntuacion": 0.89,
+          "tipo": "inventario",
+          "texto": "Colector de admisión para AUDI Q3 1.4 TFSI (2005). Referencia interna: 69485. Referencia OEM: 7292FQ69B. Estado: Comprobada, funcionando. Garantía: 1 ",
+          "id_pieza": "69485",
+          "url": "https://desguacesmadridnorte.com/69485-pieza.html",
+          "precio": "119,07 € + IVA"
+        },
+        {
+          "puntuacion": 0.589,
+          "tipo": "inventario",
+          "texto": "Colector de admisión para AUDI A3 2.0 TDI (2005). Referencia interna: 69314. Referencia OEM: 9174SP97C. Estado: Desmontada de vehículo. Garantía: 1 añ",
+          "id_pieza": "69314",
+          "url": "https://desguacesmadridnorte.com/69314-pieza.html",
+          "precio": "114,59 € + IVA"
+        },
+        {
+          "puntuacion": 0.18,
+          "tipo": "politica",
+          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
+          "id_pieza": "",
+          "url": "",
+          "precio": ""
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T13:23+00:00",
+      "clase": "pieza",
+      "mensaje": "necesito la referencia 7868EB56C",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": true,
+      "ms": 39.1,
+      "resultados": [
+        {
+          "puntuacion": 0.74,
+          "tipo": "inventario",
+          "texto": "Turbo para FORD Focus 1.6 TDCi (2015). Referencia interna: 69605. Referencia OEM: 7868EB56C. Estado: Comprobada, funcionando. Garantía: 1 año. Disponi",
+          "id_pieza": "69605",
+          "url": "https://desguacesmadridnorte.com/69605-pieza.html",
+          "precio": "449,70 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T13:40+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un bomba de dirección para un Seat Ateca 1.5 TSI del 2018?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": true,
+      "ms": 52.0,
+      "resultados": [
+        {
+          "puntuacion": 0.888,
+          "tipo": "inventario",
+          "texto": "Bomba de dirección para SEAT Ateca 1.5 TSI (2018). Referencia interna: 70671. Referencia OEM: 2028KF55F. Estado: Comprobada, funcionando. Garantía: 1 ",
+          "id_pieza": "70671",
+          "url": "https://desguacesmadridnorte.com/70671-pieza.html",
+          "precio": "107,38 € + IVA"
+        },
+        {
+          "puntuacion": 0.654,
+          "tipo": "inventario",
+          "texto": "Bomba de agua para SEAT Ateca 1.5 TSI (2017). Referencia interna: 69296. Referencia OEM: 1392KP57E. Estado: Desmontada de vehículo. Garantía: 1 año. D",
+          "id_pieza": "69296",
+          "url": "https://desguacesmadridnorte.com/69296-pieza.html",
+          "precio": "27,09 € + IVA"
+        },
+        {
+          "puntuacion": 0.654,
+          "tipo": "inventario",
+          "texto": "Bomba de dirección para SEAT Ateca 2.0 TDI (2013). Referencia interna: 70468. Referencia OEM: 9874PM23C. Estado: Comprobada, funcionando. Garantía: 1 ",
+          "id_pieza": "70468",
+          "url": "https://desguacesmadridnorte.com/70468-pieza.html",
+          "precio": "65,37 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T13:57+00:00",
+      "clase": "pieza",
+      "mensaje": "buenas tenes motor completo pa un skoda octavia 2019",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": true,
+      "ms": 51.8,
+      "resultados": [
+        {
+          "puntuacion": 0.694,
+          "tipo": "inventario",
+          "texto": "Motor completo para SKODA Octavia 1.6 TDI (2019). Referencia interna: 71094. Referencia OEM: 7043ZF36D. Estado: Comprobada, funcionando. Garantía: 1 a",
+          "id_pieza": "71094",
+          "url": "https://desguacesmadridnorte.com/71094-pieza.html",
+          "precio": "3.268,11 € + IVA"
+        },
+        {
+          "puntuacion": 0.6,
+          "tipo": "inventario",
+          "texto": "Motor completo para SKODA Octavia 2.0 TDI (2011). Referencia interna: 69839. Referencia OEM: 5634RJ48C. Estado: Desmontada de vehículo. Garantía: 1 añ",
+          "id_pieza": "69839",
+          "url": "https://desguacesmadridnorte.com/69839-pieza.html",
+          "precio": "1.197,62 € + IVA"
+        },
+        {
+          "puntuacion": 0.595,
+          "tipo": "inventario",
+          "texto": "Motor completo para SKODA Octavia 2.0 TDI (2005). Referencia interna: 70565. Referencia OEM: 4470GW35B. Estado: Comprobada, funcionando. Garantía: 1 a",
+          "id_pieza": "70565",
+          "url": "https://desguacesmadridnorte.com/70565-pieza.html",
+          "precio": "2.026,51 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T14:14+00:00",
+      "clase": "politica",
+      "mensaje": "que datos necesitas del coche para buscarla",
+      "decision": "RESUELTA",
+      "porque": "respondida con la política de la empresa",
+      "veredicto": "correcta",
+      "existe_en_catalogo": null,
+      "ms": 47.3,
+      "resultados": [
+        {
+          "puntuacion": 0.25,
+          "tipo": "politica",
+          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
+          "id_pieza": "",
+          "url": "",
+          "precio": ""
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T14:31+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un catalizador para un Hyundai Tucson?",
+      "decision": "ESCALADA",
+      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
+      "veredicto": "correcta",
+      "existe_en_catalogo": false,
+      "ms": 52.1,
+      "resultados": [
+        {
+          "puntuacion": 0.153,
+          "tipo": "politica",
+          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
+          "id_pieza": "",
+          "url": "",
+          "precio": ""
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T14:48+00:00",
+      "clase": "politica",
+      "mensaje": "cuanto tarda en llegar el pedido",
+      "decision": "RESUELTA",
+      "porque": "respondida con la política de la empresa",
+      "veredicto": "correcta",
+      "existe_en_catalogo": null,
+      "ms": 42.6,
+      "resultados": [
+        {
+          "puntuacion": 0.241,
+          "tipo": "politica",
+          "texto": "ENVIO Y PLAZOS. Envío a toda la península en 24-48 horas. Para piezas \"En stock\", normalmente sale al día siguiente. Para piezas \"Bajo pedido 24-48h\",",
+          "id_pieza": "",
+          "url": "",
+          "precio": ""
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T15:05+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un centralita motor para un Skoda Octavia?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "falso_positivo",
+      "existe_en_catalogo": false,
+      "ms": 45.4,
+      "resultados": [
+        {
+          "puntuacion": 0.685,
+          "tipo": "inventario",
+          "texto": "Motor completo para SKODA Octavia 1.6 TDI (2019). Referencia interna: 71094. Referencia OEM: 7043ZF36D. Estado: Comprobada, funcionando. Garantía: 1 a",
+          "id_pieza": "71094",
+          "url": "https://desguacesmadridnorte.com/71094-pieza.html",
+          "precio": "3.268,11 € + IVA"
+        },
+        {
+          "puntuacion": 0.667,
+          "tipo": "inventario",
+          "texto": "Motor completo para SKODA Octavia 2.0 TDI (2011). Referencia interna: 69839. Referencia OEM: 5634RJ48C. Estado: Desmontada de vehículo. Garantía: 1 añ",
+          "id_pieza": "69839",
+          "url": "https://desguacesmadridnorte.com/69839-pieza.html",
+          "precio": "1.197,62 € + IVA"
+        },
+        {
+          "puntuacion": 0.649,
+          "tipo": "inventario",
+          "texto": "Motor de arranque para SKODA Octavia 1.6 TDI (2013). Referencia interna: 69287. Referencia OEM: 8634BW12F. Estado: Comprobada, funcionando. Garantía: ",
+          "id_pieza": "69287",
+          "url": "https://desguacesmadridnorte.com/69287-pieza.html",
+          "precio": "106,18 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T15:22+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un centralita motor para un Skoda Octavia?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "falso_positivo",
+      "existe_en_catalogo": false,
+      "ms": 51.5,
+      "resultados": [
+        {
+          "puntuacion": 0.685,
+          "tipo": "inventario",
+          "texto": "Motor completo para SKODA Octavia 1.6 TDI (2019). Referencia interna: 71094. Referencia OEM: 7043ZF36D. Estado: Comprobada, funcionando. Garantía: 1 a",
+          "id_pieza": "71094",
+          "url": "https://desguacesmadridnorte.com/71094-pieza.html",
+          "precio": "3.268,11 € + IVA"
+        },
+        {
+          "puntuacion": 0.667,
+          "tipo": "inventario",
+          "texto": "Motor completo para SKODA Octavia 2.0 TDI (2011). Referencia interna: 69839. Referencia OEM: 5634RJ48C. Estado: Desmontada de vehículo. Garantía: 1 añ",
+          "id_pieza": "69839",
+          "url": "https://desguacesmadridnorte.com/69839-pieza.html",
+          "precio": "1.197,62 € + IVA"
+        },
+        {
+          "puntuacion": 0.649,
+          "tipo": "inventario",
+          "texto": "Motor de arranque para SKODA Octavia 1.6 TDI (2013). Referencia interna: 69287. Referencia OEM: 8634BW12F. Estado: Comprobada, funcionando. Garantía: ",
+          "id_pieza": "69287",
+          "url": "https://desguacesmadridnorte.com/69287-pieza.html",
+          "precio": "106,18 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T15:39+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un colector de admisión para un Skoda Octavia 1.6 TDI del 2015?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": true,
+      "ms": 46.4,
+      "resultados": [
+        {
+          "puntuacion": 0.908,
+          "tipo": "inventario",
+          "texto": "Colector de admisión para SKODA Octavia 1.6 TDI (2015). Referencia interna: 70370. Referencia OEM: 6341FQ69E. Estado: Comprobada, funcionando. Garantí",
+          "id_pieza": "70370",
+          "url": "https://desguacesmadridnorte.com/70370-pieza.html",
+          "precio": "118,14 € + IVA"
+        },
+        {
+          "puntuacion": 0.136,
+          "tipo": "politica",
+          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
+          "id_pieza": "",
+          "url": "",
+          "precio": ""
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T15:56+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un catalizador para un Hyundai Tucson?",
+      "decision": "ESCALADA",
+      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
+      "veredicto": "correcta",
+      "existe_en_catalogo": false,
+      "ms": 52.9,
+      "resultados": [
+        {
+          "puntuacion": 0.153,
+          "tipo": "politica",
+          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
+          "id_pieza": "",
+          "url": "",
+          "precio": ""
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T16:13+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un retrovisor izquierdo para un Citroen C4?",
+      "decision": "ESCALADA",
+      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
+      "veredicto": "correcta",
+      "existe_en_catalogo": false,
+      "ms": 52.8,
+      "resultados": [
+        {
+          "puntuacion": 0.187,
+          "tipo": "politica",
+          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
+          "id_pieza": "",
+          "url": "",
+          "precio": ""
+        },
+        {
+          "puntuacion": 0.128,
+          "tipo": "politica",
+          "texto": "GARANTIA. Todas las piezas tienen 1 año de garantía, sean nuevas o de segunda mano (desmontadas de vehículo). La garantía cubre defectos de funcionami",
+          "id_pieza": "",
+          "url": "",
+          "precio": ""
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T16:30+00:00",
+      "clase": "pieza",
+      "mensaje": "buenas tenes faro delantero izquierdo pa un mercedes-benz clase a 2010",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "correcta",
+      "existe_en_catalogo": true,
+      "ms": 54.3,
+      "resultados": [
+        {
+          "puntuacion": 0.53,
+          "tipo": "inventario",
+          "texto": "Faro delantero izquierdo para MERCEDES-BENZ Clase A 180 CDI (2010). Referencia interna: 69962. Referencia OEM: 1588MS79B. Estado: Sin comprobar. Garan",
+          "id_pieza": "69962",
+          "url": "https://desguacesmadridnorte.com/69962-pieza.html",
+          "precio": "207,55 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T16:47+00:00",
+      "clase": "politica",
       "mensaje": "que pasa si la pieza sale defectuosa",
       "decision": "RESUELTA",
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 49.8,
+      "ms": 55.0,
       "resultados": [
         {
-          "puntuacion": 0.343,
+          "puntuacion": 0.348,
           "tipo": "politica",
           "texto": "FORMAS DE PAGO Y DEVOLUCIONES. Se acepta transferencia y pago en tienda. La devolución se admite dentro del plazo legal siempre que la pieza esté sin ",
           "id_pieza": "",
@@ -310,605 +1023,33 @@
       ]
     },
     {
-      "hora": "2026-08-10T10:33+00:00",
-      "clase": "pieza",
-      "mensaje": "¿tenéis un caja de cambios para un Audi A3?",
-      "decision": "ESCALADA",
-      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
-      "veredicto": "correcta",
-      "existe_en_catalogo": false,
-      "ms": 44.6,
-      "resultados": [
-        {
-          "puntuacion": 0.194,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        },
-        {
-          "puntuacion": 0.147,
-          "tipo": "politica",
-          "texto": "GARANTIA. Todas las piezas tienen 1 año de garantía, sean nuevas o de segunda mano (desmontadas de vehículo). La garantía cubre defectos de funcionami",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T10:50+00:00",
-      "clase": "pieza",
-      "mensaje": "¿tenéis un caja de cambios para un Audi A3?",
-      "decision": "ESCALADA",
-      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
-      "veredicto": "correcta",
-      "existe_en_catalogo": false,
-      "ms": 45.3,
-      "resultados": [
-        {
-          "puntuacion": 0.194,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        },
-        {
-          "puntuacion": 0.147,
-          "tipo": "politica",
-          "texto": "GARANTIA. Todas las piezas tienen 1 año de garantía, sean nuevas o de segunda mano (desmontadas de vehículo). La garantía cubre defectos de funcionami",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T11:07+00:00",
-      "clase": "pieza",
-      "mensaje": "necesito la referencia 9556TP30F",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 59.0,
-      "resultados": [
-        {
-          "puntuacion": 0.743,
-          "tipo": "inventario",
-          "texto": "Intercooler para CITROEN C2 1.4 HDi (2005). Referencia interna: 69212. Referencia OEM: 9556TP30F. Estado: Sin comprobar. Garantía: 1 año. Disponibilid",
-          "id_pieza": "69212",
-          "url": "https://desguacesmadridnorte.com/69212-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T11:24+00:00",
-      "clase": "pieza",
-      "mensaje": "buenas tenes puerta delantera derecha pa un audi a4 2013",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 48.8,
-      "resultados": [
-        {
-          "puntuacion": 0.585,
-          "tipo": "inventario",
-          "texto": "Puerta delantera derecha para AUDI A4 2.0 TDI (2013). Referencia interna: 69293. Referencia OEM: 1881ZJ32D. Estado: Comprobada, funcionando. Garantía:",
-          "id_pieza": "69293",
-          "url": "https://desguacesmadridnorte.com/69293-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T11:41+00:00",
-      "clase": "pieza",
-      "mensaje": "¿tenéis un faro delantero derecho para un Skoda Fabia 1.4 TDI del 2008?",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 69.4,
-      "resultados": [
-        {
-          "puntuacion": 0.812,
-          "tipo": "inventario",
-          "texto": "Faro delantero derecho para SKODA Fabia 1.4 TDI (2008). Referencia interna: 69237. Referencia OEM: 2899MH93A. Estado: Comprobada, funcionando. Garantí",
-          "id_pieza": "69237",
-          "url": "https://desguacesmadridnorte.com/69237-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.169,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T11:58+00:00",
-      "clase": "pieza",
-      "mensaje": "necesito la referencia 8456SC62C",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 61.5,
-      "resultados": [
-        {
-          "puntuacion": 0.716,
-          "tipo": "inventario",
-          "texto": "Motor de arranque para VOLKSWAGEN Polo 1.2 TSI (2015). Referencia interna: 69297. Referencia OEM: 8456SC62C. Estado: Desmontada de vehículo. Garantía:",
-          "id_pieza": "69297",
-          "url": "https://desguacesmadridnorte.com/69297-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T12:15+00:00",
-      "clase": "pieza",
-      "mensaje": "¿tenéis un cerradura puerta delantera para un Toyota Camry 2.5 Hybrid del 2019?",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 60.2,
-      "resultados": [
-        {
-          "puntuacion": 0.893,
-          "tipo": "inventario",
-          "texto": "Cerradura puerta delantera para TOYOTA Camry 2.5 Hybrid (2019). Referencia interna: 69308. Referencia OEM: 5662BG26C. Estado: Sin comprobar. Garantía:",
-          "id_pieza": "69308",
-          "url": "https://desguacesmadridnorte.com/69308-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.19,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        },
-        {
-          "puntuacion": 0.135,
-          "tipo": "politica",
-          "texto": "GARANTIA. Todas las piezas tienen 1 año de garantía, sean nuevas o de segunda mano (desmontadas de vehículo). La garantía cubre defectos de funcionami",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T12:32+00:00",
-      "clase": "pieza",
-      "mensaje": "¿tenéis un retrovisor derecho para un Audi A4 2.0 TDI del 2013?",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 49.3,
-      "resultados": [
-        {
-          "puntuacion": 0.867,
-          "tipo": "inventario",
-          "texto": "Retrovisor derecho para AUDI A4 2.0 TDI (2013). Referencia interna: 69120. Referencia OEM: 7470PW38B. Estado: Comprobada, funcionando. Garantía: 1 año",
-          "id_pieza": "69120",
-          "url": "https://desguacesmadridnorte.com/69120-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.215,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        },
-        {
-          "puntuacion": 0.145,
-          "tipo": "politica",
-          "texto": "GARANTIA. Todas las piezas tienen 1 año de garantía, sean nuevas o de segunda mano (desmontadas de vehículo). La garantía cubre defectos de funcionami",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T12:49+00:00",
-      "clase": "pieza",
-      "mensaje": "¿tenéis un parachoques trasero para un Ford Fusion 1.4 TDCi del 2007?",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 48.5,
-      "resultados": [
-        {
-          "puntuacion": 0.89,
-          "tipo": "inventario",
-          "texto": "Parachoques trasero para FORD Fusion 1.4 TDCi (2007). Referencia interna: 69116. Referencia OEM: 6963HZ17B. Estado: Comprobada, funcionando. Garantía:",
-          "id_pieza": "69116",
-          "url": "https://desguacesmadridnorte.com/69116-pieza.html",
-          "precio": "680,99 € + IVA"
-        },
-        {
-          "puntuacion": 0.579,
-          "tipo": "inventario",
-          "texto": "Parachoques delantero para FORD Focus 1.6 TDCi (2013). Referencia interna: 69322. Referencia OEM: 2638DR68A. Estado: Comprobada, funcionando. Garantía",
-          "id_pieza": "69322",
-          "url": "https://desguacesmadridnorte.com/69322-pieza.html",
-          "precio": "629,22 € + IVA"
-        },
-        {
-          "puntuacion": 0.177,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T13:06+00:00",
-      "clase": "politica",
-      "mensaje": "si no me vale la puedo devolver",
-      "decision": "RESUELTA",
-      "porque": "respondida con la política de la empresa",
-      "veredicto": "correcta",
-      "existe_en_catalogo": null,
-      "ms": 43.1,
-      "resultados": [
-        {
-          "puntuacion": 0.156,
-          "tipo": "politica",
-          "texto": "FORMAS DE PAGO Y DEVOLUCIONES. Se acepta transferencia y pago en tienda. La devolución se admite dentro del plazo legal siempre que la pieza esté sin ",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T13:23+00:00",
-      "clase": "pieza",
-      "mensaje": "¿tenéis un parachoques trasero para un Renault Megane 1.5 dCi del 2010?",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 43.1,
-      "resultados": [
-        {
-          "puntuacion": 0.776,
-          "tipo": "inventario",
-          "texto": "Parachoques trasero para RENAULT Megane 1.5 dCi (2010). Referencia interna: 69357. Referencia OEM: 2579KL19B. Estado: Comprobada, funcionando. Garantí",
-          "id_pieza": "69357",
-          "url": "https://desguacesmadridnorte.com/69357-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.162,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T13:40+00:00",
-      "clase": "politica",
-      "mensaje": "que datos necesitas del coche para buscarla",
-      "decision": "RESUELTA",
-      "porque": "respondida con la política de la empresa",
-      "veredicto": "correcta",
-      "existe_en_catalogo": null,
-      "ms": 40.4,
-      "resultados": [
-        {
-          "puntuacion": 0.25,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T13:57+00:00",
-      "clase": "pieza",
-      "mensaje": "¿tenéis un turbo para un Volkswagen Golf?",
-      "decision": "ESCALADA",
-      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
-      "veredicto": "correcta",
-      "existe_en_catalogo": false,
-      "ms": 39.1,
-      "resultados": [
-        {
-          "puntuacion": 0.181,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T14:14+00:00",
-      "clase": "pieza",
-      "mensaje": "¿tenéis un amortiguador trasero para un Seat Ibiza?",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "falso_positivo",
-      "existe_en_catalogo": false,
-      "ms": 44.3,
-      "resultados": [
-        {
-          "puntuacion": 0.757,
-          "tipo": "inventario",
-          "texto": "Amortiguador delantero para SEAT Ibiza 1.9 TDI (2008). Referencia interna: 69232. Referencia OEM: 2758ZA64B. Estado: Sin comprobar. Garantía: 1 año. D",
-          "id_pieza": "69232",
-          "url": "https://desguacesmadridnorte.com/69232-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.142,
-          "tipo": "politica",
-          "texto": "ENVIO Y PLAZOS. Envío a toda la península en 24-48 horas. Para piezas \"En stock\", normalmente sale al día siguiente. Para piezas \"Bajo pedido 24-48h\",",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T14:31+00:00",
-      "clase": "politica",
-      "mensaje": "puedo pasar a recogerla a la tienda?",
-      "decision": "RESUELTA",
-      "porque": "respondida con la política de la empresa",
-      "veredicto": "correcta",
-      "existe_en_catalogo": null,
-      "ms": 45.3,
-      "resultados": [
-        {
-          "puntuacion": 0.313,
-          "tipo": "politica",
-          "texto": "ENVIO Y PLAZOS. Envío a toda la península en 24-48 horas. Para piezas \"En stock\", normalmente sale al día siguiente. Para piezas \"Bajo pedido 24-48h\",",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        },
-        {
-          "puntuacion": 0.282,
-          "tipo": "politica",
-          "texto": "FORMAS DE PAGO Y DEVOLUCIONES. Se acepta transferencia y pago en tienda. La devolución se admite dentro del plazo legal siempre que la pieza esté sin ",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T14:48+00:00",
-      "clase": "pieza",
-      "mensaje": "busco centralita motor de Mercedes-Benz CLA 200 CDI",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 39.8,
-      "resultados": [
-        {
-          "puntuacion": 0.767,
-          "tipo": "inventario",
-          "texto": "Centralita motor para MERCEDES-BENZ CLA 200 CDI (2016). Referencia interna: 69164. Referencia OEM: 6344GZ43D. Estado: Comprobada, funcionando. Garantí",
-          "id_pieza": "69164",
-          "url": "https://desguacesmadridnorte.com/69164-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.268,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T15:05+00:00",
-      "clase": "pieza",
-      "mensaje": "¿tenéis un compresor aire acondicionado para un Ford Fusion?",
-      "decision": "ESCALADA",
-      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
-      "veredicto": "correcta",
-      "existe_en_catalogo": false,
-      "ms": 47.8,
-      "resultados": [
-        {
-          "puntuacion": 0.162,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T15:22+00:00",
-      "clase": "pieza",
-      "mensaje": "busco parachoques trasero de Citroen C2 1.4 HDi",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 50.1,
-      "resultados": [
-        {
-          "puntuacion": 0.834,
-          "tipo": "inventario",
-          "texto": "Parachoques trasero para CITROEN C2 1.4 HDi (2005). Referencia interna: 69301. Referencia OEM: 7933KZ80A. Estado: Sin comprobar. Garantía: 1 año. Disp",
-          "id_pieza": "69301",
-          "url": "https://desguacesmadridnorte.com/69301-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.126,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T15:39+00:00",
-      "clase": "pieza",
-      "mensaje": "buenas tenes bomba de direccion pa un skoda fabia 2008",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 43.5,
-      "resultados": [
-        {
-          "puntuacion": 0.603,
-          "tipo": "inventario",
-          "texto": "Bomba de dirección para SKODA Fabia 1.4 TDI (2008). Referencia interna: 69159. Referencia OEM: 8614BB77B. Estado: Comprobada, funcionando. Garantía: 1",
-          "id_pieza": "69159",
-          "url": "https://desguacesmadridnorte.com/69159-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.131,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T15:56+00:00",
-      "clase": "pieza",
-      "mensaje": "¿tenéis un catalizador para un Renault Clio?",
-      "decision": "ESCALADA",
-      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
-      "veredicto": "correcta",
-      "existe_en_catalogo": false,
-      "ms": 43.5,
-      "resultados": [
-        {
-          "puntuacion": 0.178,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T16:13+00:00",
-      "clase": "pieza",
-      "mensaje": "¿tenéis un turbo para un Volkswagen Golf?",
-      "decision": "ESCALADA",
-      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
-      "veredicto": "correcta",
-      "existe_en_catalogo": false,
-      "ms": 38.5,
-      "resultados": [
-        {
-          "puntuacion": 0.181,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T16:30+00:00",
-      "clase": "pieza",
-      "mensaje": "buenas tenes compresor aire acondicionado pa un skoda octavia 2016",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 43.0,
-      "resultados": [
-        {
-          "puntuacion": 0.714,
-          "tipo": "inventario",
-          "texto": "Compresor aire acondicionado para SKODA Octavia 2.0 TDI (2016). Referencia interna: 69173. Referencia OEM: 8664JF64E. Estado: Comprobada, funcionando.",
-          "id_pieza": "69173",
-          "url": "https://desguacesmadridnorte.com/69173-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.149,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T16:47+00:00",
-      "clase": "pieza",
-      "mensaje": "necesito la referencia 7444XZ13D",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 43.5,
-      "resultados": [
-        {
-          "puntuacion": 0.75,
-          "tipo": "inventario",
-          "texto": "Puerta delantera derecha para RENAULT Megane 1.5 dCi (2010). Referencia interna: 69252. Referencia OEM: 7444XZ13D. Estado: Desmontada de vehículo. Gar",
-          "id_pieza": "69252",
-          "url": "https://desguacesmadridnorte.com/69252-pieza.html",
-          "precio": "500,99 € + IVA"
-        }
-      ]
-    },
-    {
       "hora": "2026-08-10T17:04+00:00",
       "clase": "pieza",
-      "mensaje": "¿tenéis un airbag volante para un Ford Focus?",
-      "decision": "ESCALADA",
-      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
+      "mensaje": "¿tenéis un radiador para un Hyundai i30 1.4 CRDi del 2006?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
-      "existe_en_catalogo": false,
-      "ms": 38.3,
+      "existe_en_catalogo": true,
+      "ms": 58.2,
       "resultados": [
         {
-          "puntuacion": 0.159,
+          "puntuacion": 0.823,
+          "tipo": "inventario",
+          "texto": "Radiador para HYUNDAI i30 1.4 CRDi (2006). Referencia interna: 70958. Referencia OEM: 1522WM76D. Estado: Comprobada, funcionando. Garantía: 1 año. Dis",
+          "id_pieza": "70958",
+          "url": "https://desguacesmadridnorte.com/70958-pieza.html",
+          "precio": "109,88 € + IVA"
+        },
+        {
+          "puntuacion": 0.576,
+          "tipo": "inventario",
+          "texto": "Radiador para HYUNDAI Tucson 2.0 CRDi (2019). Referencia interna: 69280. Referencia OEM: 4406ZV66B. Estado: Comprobada, funcionando. Garantía: 1 año. ",
+          "id_pieza": "69280",
+          "url": "https://desguacesmadridnorte.com/69280-pieza.html",
+          "precio": "97,41 € + IVA"
+        },
+        {
+          "puntuacion": 0.162,
           "tipo": "politica",
           "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
           "id_pieza": "",
@@ -920,23 +1061,15 @@
     {
       "hora": "2026-08-10T17:21+00:00",
       "clase": "pieza",
-      "mensaje": "¿tenéis un elevalunas delantero izquierdo para un Audi A3 2.0 TDI del 2015?",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
+      "mensaje": "¿tenéis un cremallera de dirección para un Kia Sportage?",
+      "decision": "ESCALADA",
+      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
       "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 53.0,
+      "existe_en_catalogo": false,
+      "ms": 54.6,
       "resultados": [
         {
-          "puntuacion": 0.828,
-          "tipo": "inventario",
-          "texto": "Elevalunas delantero izquierdo para AUDI A3 2.0 TDI (2015). Referencia interna: 69314. Referencia OEM: 6906JP74C. Estado: Comprobada, funcionando. Gar",
-          "id_pieza": "69314",
-          "url": "https://desguacesmadridnorte.com/69314-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.179,
+          "puntuacion": 0.202,
           "tipo": "politica",
           "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
           "id_pieza": "",
@@ -947,18 +1080,26 @@
     },
     {
       "hora": "2026-08-10T17:38+00:00",
-      "clase": "politica",
-      "mensaje": "cuanto tarda en llegar el pedido",
-      "decision": "RESUELTA",
-      "porque": "respondida con la política de la empresa",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un retrovisor izquierdo para un Citroen C4?",
+      "decision": "ESCALADA",
+      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
       "veredicto": "correcta",
-      "existe_en_catalogo": null,
-      "ms": 37.0,
+      "existe_en_catalogo": false,
+      "ms": 53.3,
       "resultados": [
         {
-          "puntuacion": 0.257,
+          "puntuacion": 0.187,
           "tipo": "politica",
-          "texto": "ENVIO Y PLAZOS. Envío a toda la península en 24-48 horas. Para piezas \"En stock\", normalmente sale al día siguiente. Para piezas \"Bajo pedido 24-48h\",",
+          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
+          "id_pieza": "",
+          "url": "",
+          "precio": ""
+        },
+        {
+          "puntuacion": 0.128,
+          "tipo": "politica",
+          "texto": "GARANTIA. Todas las piezas tienen 1 año de garantía, sean nuevas o de segunda mano (desmontadas de vehículo). La garantía cubre defectos de funcionami",
           "id_pieza": "",
           "url": "",
           "precio": ""
@@ -967,167 +1108,159 @@
     },
     {
       "hora": "2026-08-10T17:55+00:00",
-      "clase": "politica",
-      "mensaje": "envias a canarias?",
-      "decision": "ESCALADA",
-      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
-      "veredicto": "sin_respuesta",
-      "existe_en_catalogo": null,
-      "ms": 37.8,
-      "resultados": []
-    },
-    {
-      "hora": "2026-08-10T18:12+00:00",
       "clase": "pieza",
-      "mensaje": "buenas tenes cerradura puerta delantera pa un citroen c4 2011",
+      "mensaje": "busco cremallera de dirección de Bmw Serie 1 116d",
       "decision": "RESUELTA",
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 53.5,
+      "ms": 54.0,
       "resultados": [
         {
-          "puntuacion": 0.595,
+          "puntuacion": 0.708,
           "tipo": "inventario",
-          "texto": "Cerradura puerta delantera para CITROEN C4 1.6 HDi (2011). Referencia interna: 69112. Referencia OEM: 2723ZY91B. Estado: Comprobada, funcionando. Gara",
-          "id_pieza": "69112",
-          "url": "https://desguacesmadridnorte.com/69112-pieza.html",
-          "precio": "Consultar por WhatsApp"
+          "texto": "Cremallera de dirección para BMW Serie 1 116d (2009). Referencia interna: 70543. Referencia OEM: 3868GB25E. Estado: Desmontada de vehículo. Garantía: ",
+          "id_pieza": "70543",
+          "url": "https://desguacesmadridnorte.com/70543-pieza.html",
+          "precio": "198,39 € + IVA"
         },
         {
-          "puntuacion": 0.138,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
+          "puntuacion": 0.576,
+          "tipo": "inventario",
+          "texto": "Cremallera de dirección para BMW Serie 1 120i (2016). Referencia interna: 70037. Referencia OEM: 1937HJ38D. Estado: Comprobada, funcionando. Garantía:",
+          "id_pieza": "70037",
+          "url": "https://desguacesmadridnorte.com/70037-pieza.html",
+          "precio": "227,14 € + IVA"
+        }
+      ]
+    },
+    {
+      "hora": "2026-08-10T18:12+00:00",
+      "clase": "pieza",
+      "mensaje": "¿tenéis un centralita motor para un Skoda Octavia?",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
+      "veredicto": "falso_positivo",
+      "existe_en_catalogo": false,
+      "ms": 45.1,
+      "resultados": [
+        {
+          "puntuacion": 0.685,
+          "tipo": "inventario",
+          "texto": "Motor completo para SKODA Octavia 1.6 TDI (2019). Referencia interna: 71094. Referencia OEM: 7043ZF36D. Estado: Comprobada, funcionando. Garantía: 1 a",
+          "id_pieza": "71094",
+          "url": "https://desguacesmadridnorte.com/71094-pieza.html",
+          "precio": "3.268,11 € + IVA"
+        },
+        {
+          "puntuacion": 0.667,
+          "tipo": "inventario",
+          "texto": "Motor completo para SKODA Octavia 2.0 TDI (2011). Referencia interna: 69839. Referencia OEM: 5634RJ48C. Estado: Desmontada de vehículo. Garantía: 1 añ",
+          "id_pieza": "69839",
+          "url": "https://desguacesmadridnorte.com/69839-pieza.html",
+          "precio": "1.197,62 € + IVA"
+        },
+        {
+          "puntuacion": 0.649,
+          "tipo": "inventario",
+          "texto": "Motor de arranque para SKODA Octavia 1.6 TDI (2013). Referencia interna: 69287. Referencia OEM: 8634BW12F. Estado: Comprobada, funcionando. Garantía: ",
+          "id_pieza": "69287",
+          "url": "https://desguacesmadridnorte.com/69287-pieza.html",
+          "precio": "106,18 € + IVA"
         }
       ]
     },
     {
       "hora": "2026-08-10T18:29+00:00",
       "clase": "politica",
-      "mensaje": "la pieza tiene garantia?",
+      "mensaje": "me puedes hacer un descuento?",
       "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
+      "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 34.2,
+      "ms": 54.4,
       "resultados": [
         {
-          "puntuacion": 0.833,
+          "puntuacion": 0.413,
           "tipo": "politica",
-          "texto": "GARANTIA. Todas las piezas tienen 1 año de garantía, sean nuevas o de segunda mano (desmontadas de vehículo). La garantía cubre defectos de funcionami",
+          "texto": "PRECIOS Y DESCUENTOS. Muchas piezas muestran \"Consultar por WhatsApp\" en vez de precio publicado. En esos casos el precio se confirma antes de vender.",
           "id_pieza": "",
           "url": "",
           "precio": ""
-        },
-        {
-          "puntuacion": 0.765,
-          "tipo": "inventario",
-          "texto": "Puerta delantera derecha para NISSAN Qashqai 1.5 dCi (2014). Referencia interna: 69161. Referencia OEM: 4692ND86A. Estado: Comprobada, funcionando. Ga",
-          "id_pieza": "69161",
-          "url": "https://desguacesmadridnorte.com/69161-pieza.html",
-          "precio": "94,26 € + IVA"
-        },
-        {
-          "puntuacion": 0.76,
-          "tipo": "inventario",
-          "texto": "Motor de arranque para RENAULT Clio 1.5 dCi (2014). Referencia interna: 69265. Referencia OEM: 9880LD98B. Estado: Comprobada, funcionando. Garantía: 1",
-          "id_pieza": "69265",
-          "url": "https://desguacesmadridnorte.com/69265-pieza.html",
-          "precio": "763,26 € + IVA"
         }
       ]
     },
     {
       "hora": "2026-08-10T18:46+00:00",
       "clase": "pieza",
-      "mensaje": "¿tenéis un airbag volante para un Ford Focus?",
-      "decision": "ESCALADA",
-      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
+      "mensaje": "necesito la referencia 3553LH69B",
+      "decision": "RESUELTA",
+      "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
-      "existe_en_catalogo": false,
-      "ms": 37.8,
+      "existe_en_catalogo": true,
+      "ms": 47.9,
       "resultados": [
         {
-          "puntuacion": 0.159,
-          "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
-          "id_pieza": "",
-          "url": "",
-          "precio": ""
+          "puntuacion": 0.776,
+          "tipo": "inventario",
+          "texto": "Bomba de dirección para OPEL Corsa 1.2 16v (2011). Referencia interna: 69190. Referencia OEM: 3553LH69B. Estado: Sin comprobar. Garantía: 1 año. Dispo",
+          "id_pieza": "69190",
+          "url": "https://desguacesmadridnorte.com/69190-pieza.html",
+          "precio": "73,62 € + IVA"
         }
       ]
     },
     {
       "hora": "2026-08-10T19:03+00:00",
+      "clase": "politica",
+      "mensaje": "envias a canarias?",
+      "decision": "ESCALADA",
+      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
+      "veredicto": "sin_respuesta",
+      "existe_en_catalogo": null,
+      "ms": 40.2,
+      "resultados": []
+    },
+    {
+      "hora": "2026-08-10T19:20+00:00",
       "clase": "pieza",
-      "mensaje": "buenas tenes radiador pa un mercedes-benz cla 2016",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
+      "mensaje": "¿tenéis un retrovisor izquierdo para un Citroen C4?",
+      "decision": "ESCALADA",
+      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
       "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 46.2,
+      "existe_en_catalogo": false,
+      "ms": 48.5,
       "resultados": [
         {
-          "puntuacion": 0.622,
-          "tipo": "inventario",
-          "texto": "Radiador para MERCEDES-BENZ CLA 200 CDI (2016). Referencia interna: 69196. Referencia OEM: 5782KT62C. Estado: Sin comprobar. Garantía: 1 año. Disponib",
-          "id_pieza": "69196",
-          "url": "https://desguacesmadridnorte.com/69196-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.127,
+          "puntuacion": 0.187,
           "tipo": "politica",
           "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
           "id_pieza": "",
           "url": "",
           "precio": ""
-        }
-      ]
-    },
-    {
-      "hora": "2026-08-10T19:20+00:00",
-      "clase": "pieza",
-      "mensaje": "necesito la referencia 8258VZ34C",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
-      "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 41.9,
-      "resultados": [
+        },
         {
-          "puntuacion": 0.72,
-          "tipo": "inventario",
-          "texto": "Paso de rueda trasero izquierdo para RENAULT Clio 1.5 dCi (2014). Referencia interna: 69158. Referencia OEM: 8258VZ34C. Estado: Comprobada, funcionand",
-          "id_pieza": "69158",
-          "url": "https://desguacesmadridnorte.com/69158-pieza.html",
-          "precio": "Consultar por WhatsApp"
+          "puntuacion": 0.128,
+          "tipo": "politica",
+          "texto": "GARANTIA. Todas las piezas tienen 1 año de garantía, sean nuevas o de segunda mano (desmontadas de vehículo). La garantía cubre defectos de funcionami",
+          "id_pieza": "",
+          "url": "",
+          "precio": ""
         }
       ]
     },
     {
       "hora": "2026-08-10T19:37+00:00",
       "clase": "pieza",
-      "mensaje": "busco turbo de Bmw Serie 1 118d",
-      "decision": "RESUELTA",
-      "porque": "encontrada en catálogo con confianza suficiente",
+      "mensaje": "¿tenéis un cremallera de dirección para un Kia Sportage?",
+      "decision": "ESCALADA",
+      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
       "veredicto": "correcta",
-      "existe_en_catalogo": true,
-      "ms": 43.0,
+      "existe_en_catalogo": false,
+      "ms": 48.8,
       "resultados": [
         {
-          "puntuacion": 0.747,
-          "tipo": "inventario",
-          "texto": "Turbo para BMW Serie 1 118d (2015). Referencia interna: 69318. Referencia OEM: 8453RV52E. Estado: Comprobada, funcionando. Garantía: 1 año. Disponibil",
-          "id_pieza": "69318",
-          "url": "https://desguacesmadridnorte.com/69318-pieza.html",
-          "precio": "Consultar por WhatsApp"
-        },
-        {
-          "puntuacion": 0.135,
+          "puntuacion": 0.202,
           "tipo": "politica",
           "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
           "id_pieza": "",
@@ -1135,235 +1268,198 @@
           "precio": ""
         }
       ]
+    },
+    {
+      "hora": "2026-08-10T19:54+00:00",
+      "clase": "pieza",
+      "mensaje": "buenas tenes alternador pa un audi a3 2008",
+      "decision": "ESCALADA",
+      "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
+      "veredicto": "sin_respuesta",
+      "existe_en_catalogo": true,
+      "ms": 47.1,
+      "resultados": []
     }
   ],
   "ofertas": [
     {
       "cliente": "Taller Ruiz",
-      "id_pieza": "69165",
-      "descripcion": "Paso de rueda trasero izquierdo CITROEN C2",
-      "importe": 609.03,
+      "id_pieza": "69494",
+      "descripcion": "Aleta delantera izquierda OPEL Astra",
+      "importe": 112.54,
       "decision": "ACEPTAR",
-      "motivo": "pieza antigua (entre el 26% más antiguo): se acepta hasta un 12% y pide un 8%",
-      "precio_lista": 661.99,
+      "motivo": "pieza muy antigua (entre el 19% más antiguo): se acepta hasta un 20% y pide un 8%",
+      "precio_lista": 122.33,
       "descuento": 0.08,
-      "antiguedad": "antigua",
+      "antiguedad": "muy antigua",
       "contraoferta": null
     },
     {
       "cliente": "Taller Gómez",
-      "id_pieza": "69204",
-      "descripcion": "Portón trasero VOLKSWAGEN Passat",
-      "importe": 450.55,
-      "decision": "CONTRAOFERTA",
-      "motivo": "pide un 12% y el máximo automático para una pieza antigua es 12%",
-      "precio_lista": 511.99,
+      "id_pieza": "69677",
+      "descripcion": "Aleta delantera izquierda AUDI Q3",
+      "importe": 64.84,
+      "decision": "ACEPTAR",
+      "motivo": "pieza antigua (entre el 28% más antiguo): se acepta hasta un 12% y pide un 12%",
+      "precio_lista": 73.68,
       "descuento": 0.12,
       "antiguedad": "antigua",
-      "contraoferta": 450.55
+      "contraoferta": null
     },
     {
       "cliente": "Autos Delgado",
-      "id_pieza": "69361",
-      "descripcion": "Elevalunas delantero izquierdo BMW Serie 1",
-      "importe": 251.27,
-      "decision": "CONTRAOFERTA",
-      "motivo": "pide un 5% y el máximo automático para una pieza nueva es 0%",
-      "precio_lista": 264.5,
+      "id_pieza": "70214",
+      "descripcion": "Cremallera de dirección NISSAN Qashqai",
+      "importe": 210.72,
+      "decision": "ACEPTAR",
+      "motivo": "pieza reciente (entre el 55% más antiguo): se acepta hasta un 7% y pide un 5%",
+      "precio_lista": 221.81,
       "descuento": 0.05,
-      "antiguedad": "nueva",
-      "contraoferta": 264.5
+      "antiguedad": "reciente",
+      "contraoferta": null
     },
     {
       "cliente": "Particular",
-      "id_pieza": "69304",
-      "descripcion": "Radiador RENAULT Megane",
-      "importe": 734.85,
+      "id_pieza": "70956",
+      "descripcion": "Elevalunas delantero izquierdo SKODA Octavia",
+      "importe": 62.56,
       "decision": "CONTRAOFERTA",
       "motivo": "pide un 10% y el máximo automático para una pieza nueva es 0%",
-      "precio_lista": 816.5,
+      "precio_lista": 69.51,
       "descuento": 0.1,
       "antiguedad": "nueva",
-      "contraoferta": 816.5
+      "contraoferta": 69.51
     },
     {
       "cliente": "Taller Ruiz",
-      "id_pieza": "69242",
-      "descripcion": "Airbag volante MERCEDES-BENZ Clase E Coupé",
-      "importe": 695.65,
+      "id_pieza": "70531",
+      "descripcion": "Bomba de dirección VOLKSWAGEN Polo",
+      "importe": 124.54,
       "decision": "ACEPTAR",
-      "motivo": "pieza reciente (entre el 57% más antiguo): se acepta hasta un 7% y pide un 5%",
-      "precio_lista": 732.26,
+      "motivo": "pieza reciente (entre el 71% más antiguo): se acepta hasta un 7% y pide un 5%",
+      "precio_lista": 131.1,
       "descuento": 0.05,
       "antiguedad": "reciente",
       "contraoferta": null
     },
     {
       "cliente": "Recambios Vega",
-      "id_pieza": "69191",
-      "descripcion": "Piloto trasero izquierdo VOLKSWAGEN Golf",
-      "importe": 705.69,
+      "id_pieza": "70028",
+      "descripcion": "Bomba de dirección SKODA Octavia",
+      "importe": 68.67,
       "decision": "CONTRAOFERTA",
       "motivo": "pide un 15% y el máximo automático para una pieza antigua es 12%",
-      "precio_lista": 830.22,
+      "precio_lista": 80.79,
       "descuento": 0.15,
       "antiguedad": "antigua",
-      "contraoferta": 730.59
+      "contraoferta": 71.1
     },
     {
       "cliente": "Particular",
-      "id_pieza": "69108",
-      "descripcion": "Parachoques trasero MERCEDES-BENZ Clase E Coupé",
-      "importe": 151.09,
+      "id_pieza": "69219",
+      "descripcion": "Puerta delantera izquierda VOLKSWAGEN Passat",
+      "importe": 102.82,
       "decision": "ACEPTAR",
-      "motivo": "pieza muy antigua (entre el 2% más antiguo): se acepta hasta un 20% y pide un 18%",
-      "precio_lista": 184.26,
+      "motivo": "pieza muy antigua (entre el 6% más antiguo): se acepta hasta un 20% y pide un 18%",
+      "precio_lista": 125.39,
       "descuento": 0.18,
       "antiguedad": "muy antigua",
       "contraoferta": null
     },
     {
       "cliente": "Taller Gómez",
-      "id_pieza": "69117",
-      "descripcion": "Airbag volante RENAULT Megane",
-      "importe": 544.7,
+      "id_pieza": "69387",
+      "descripcion": "Portón trasero SKODA Fabia",
+      "importe": 84.15,
       "decision": "ACEPTAR",
-      "motivo": "pieza muy antigua (entre el 7% más antiguo): se acepta hasta un 20% y pide un 10%",
-      "precio_lista": 605.22,
+      "motivo": "pieza muy antigua (entre el 14% más antiguo): se acepta hasta un 20% y pide un 10%",
+      "precio_lista": 93.5,
       "descuento": 0.1,
       "antiguedad": "muy antigua",
       "contraoferta": null
     },
     {
       "cliente": "Taller Ruiz",
-      "id_pieza": "69140",
-      "descripcion": "Motor completo SEAT Ateca",
-      "importe": 574.49,
+      "id_pieza": "69520",
+      "descripcion": "Parachoques trasero SKODA Octavia",
+      "importe": 195.07,
       "decision": "ACEPTAR",
-      "motivo": "pieza muy antigua (entre el 16% más antiguo): se acepta hasta un 20% y pide un 3%",
-      "precio_lista": 592.26,
+      "motivo": "pieza muy antigua (entre el 21% más antiguo): se acepta hasta un 20% y pide un 3%",
+      "precio_lista": 201.1,
       "descuento": 0.03,
       "antiguedad": "muy antigua",
       "contraoferta": null
     },
     {
       "cliente": "Taller Gómez",
-      "id_pieza": "69116",
-      "descripcion": "Parachoques trasero FORD Fusion",
-      "importe": 660.56,
+      "id_pieza": "69333",
+      "descripcion": "Parachoques trasero BMW X1",
+      "importe": 204.17,
       "decision": "ACEPTAR",
-      "motivo": "pieza muy antigua (entre el 6% más antiguo): se acepta hasta un 20% y pide un 3%",
-      "precio_lista": 680.99,
+      "motivo": "pieza muy antigua (entre el 11% más antiguo): se acepta hasta un 20% y pide un 3%",
+      "precio_lista": 210.48,
       "descuento": 0.03,
       "antiguedad": "muy antigua",
       "contraoferta": null
     },
     {
       "cliente": "Autos Delgado",
-      "id_pieza": "69236",
-      "descripcion": "Piloto trasero derecho RENAULT Megane",
-      "importe": 431.39,
+      "id_pieza": "70465",
+      "descripcion": "Bomba de agua RENAULT Captur",
+      "importe": 52.14,
       "decision": "CONTRAOFERTA",
       "motivo": "pide un 12% y el máximo automático para una pieza reciente es 7%",
-      "precio_lista": 490.22,
+      "precio_lista": 59.25,
       "descuento": 0.12,
       "antiguedad": "reciente",
-      "contraoferta": 455.9
+      "contraoferta": 55.1
     },
     {
       "cliente": "Particular",
-      "id_pieza": "69217",
-      "descripcion": "Bomba de agua AUDI A4",
-      "importe": 520.2,
-      "decision": "ACEPTAR",
-      "motivo": "pieza antigua (entre el 47% más antiguo): se acepta hasta un 12% y pide un 10%",
-      "precio_lista": 578.0,
+      "id_pieza": "70813",
+      "descripcion": "Puerta delantera derecha CITROEN C4",
+      "importe": 234.64,
+      "decision": "CONTRAOFERTA",
+      "motivo": "pide un 10% y el máximo automático para una pieza nueva es 0%",
+      "precio_lista": 260.71,
       "descuento": 0.1,
-      "antiguedad": "antigua",
-      "contraoferta": null
+      "antiguedad": "nueva",
+      "contraoferta": 260.71
     },
     {
       "cliente": "Taller Ruiz",
-      "id_pieza": "69183",
-      "descripcion": "Portón trasero BMW Serie 1",
-      "importe": 648.94,
+      "id_pieza": "70324",
+      "descripcion": "Caja de cambios HYUNDAI i30",
+      "importe": 227.71,
       "decision": "A_MANO",
-      "motivo": "pide un 25%, demasiado por encima del 12% automático: lo decides tú",
-      "precio_lista": 865.26,
+      "motivo": "pide un 25%, demasiado por encima del 7% automático: lo decides tú",
+      "precio_lista": 303.61,
       "descuento": 0.25,
-      "antiguedad": "antigua",
-      "contraoferta": null
-    },
-    {
-      "cliente": "Recambios Vega",
-      "id_pieza": "69353",
-      "descripcion": "Retrovisor derecho SEAT Ateca",
-      "importe": 414.24,
-      "decision": "CONTRAOFERTA",
-      "motivo": "pide un 8% y el máximo automático para una pieza nueva es 0%",
-      "precio_lista": 450.26,
-      "descuento": 0.08,
-      "antiguedad": "nueva",
-      "contraoferta": 450.26
-    },
-    {
-      "cliente": "Particular",
-      "id_pieza": "69274",
-      "descripcion": "Cuadro de instrumentos SEAT Ateca",
-      "importe": 299.6,
-      "decision": "RECHAZAR",
-      "motivo": "65% por debajo del precio publicado, muy lejos de lo negociable",
-      "precio_lista": 855.99,
-      "descuento": 0.65,
       "antiguedad": "reciente",
       "contraoferta": null
     },
     {
-      "cliente": "Particular",
-      "id_pieza": "69269",
-      "descripcion": "Retrovisor derecho RENAULT Megane",
-      "importe": 220.0,
-      "decision": "A_MANO",
-      "motivo": "la pieza no tiene precio publicado ('Consultar por WhatsApp'), así que no hay base sobre la que calcular un porcentaje",
-      "precio_lista": null,
-      "descuento": null,
-      "antiguedad": null,
-      "contraoferta": null
-    },
-    {
-      "cliente": "Taller Ruiz",
-      "id_pieza": "69331",
-      "descripcion": "Puerta delantera derecha PEUGEOT 208",
-      "importe": 340.0,
-      "decision": "A_MANO",
-      "motivo": "la pieza no tiene precio publicado ('Consultar por WhatsApp'), así que no hay base sobre la que calcular un porcentaje",
-      "precio_lista": null,
-      "descuento": null,
-      "antiguedad": null,
-      "contraoferta": null
-    },
-    {
       "cliente": "Recambios Vega",
-      "id_pieza": "69292",
-      "descripcion": "Motor de arranque OPEL Astra",
-      "importe": 480.0,
-      "decision": "A_MANO",
-      "motivo": "la pieza no tiene precio publicado ('Consultar por WhatsApp'), así que no hay base sobre la que calcular un porcentaje",
-      "precio_lista": null,
-      "descuento": null,
-      "antiguedad": null,
+      "id_pieza": "69983",
+      "descripcion": "Retrovisor derecho KIA Sportage",
+      "importe": 68.68,
+      "decision": "ACEPTAR",
+      "motivo": "pieza antigua (entre el 44% más antiguo): se acepta hasta un 12% y pide un 8%",
+      "precio_lista": 74.65,
+      "descuento": 0.08,
+      "antiguedad": "antigua",
       "contraoferta": null
     },
     {
       "cliente": "Particular",
-      "id_pieza": "69301",
-      "descripcion": "Parachoques trasero CITROEN C2",
-      "importe": 220.0,
-      "decision": "A_MANO",
-      "motivo": "la pieza no tiene precio publicado ('Consultar por WhatsApp'), así que no hay base sobre la que calcular un porcentaje",
-      "precio_lista": null,
-      "descuento": null,
-      "antiguedad": null,
+      "id_pieza": "70578",
+      "descripcion": "Cinturón de seguridad SKODA Fabia",
+      "importe": 25.57,
+      "decision": "RECHAZAR",
+      "motivo": "65% por debajo del precio publicado, muy lejos de lo negociable",
+      "precio_lista": 73.05,
+      "descuento": 0.65,
+      "antiguedad": "reciente",
       "contraoferta": null
     }
   ]

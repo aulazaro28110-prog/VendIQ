@@ -25,13 +25,61 @@ async function api(ruta, cuerpo) {
 
 let ESTADO = null;
 
-/* --------------------------------------------------------------- pestañas */
-function activarPestana(clave) {
-  $$('.pestanas button').forEach((b) =>
-    b.setAttribute('aria-selected', String(b.dataset.tab === clave)));
-  $$('.panel-tab').forEach((p) => { p.hidden = p.id !== `tab-${clave}`; });
+/* ------------------------------------------------------------------ hero */
+function pintarHero(d) {
+  const r = d.resumen, v = d.verificacion, s = d.sistema;
+  $('#hero-pie').textContent =
+    `De ${r.consultas} mensajes medidos, ${r.resueltas_sin_persona} se resolvieron sin ` +
+    `intervenir. Catálogo de ${s.piezas_catalogo} piezas, todas con precio. ` +
+    `Los mensajes están simulados; las decisiones y los tiempos son reales.`;
+
+  const cifras = [
+    [pct(r.tasa_resolucion), 'resueltas sin persona'],
+    [`${r.ms_mediana} ms`, 'en responder'],
+    [pct(v.tasa_acierto_verificado), 'acierto verificado'],
+    [pct(r.tasa_ofertas_automaticas), 'ofertas cerradas solas'],
+  ];
+  $('#hero-cifras').replaceChildren(...cifras.map(([valor, que]) => {
+    const caja = crear('div');
+    caja.append(crear('p', 'valor', valor), crear('p', 'que', que));
+    return caja;
+  }));
 }
-$$('.pestanas button').forEach((b) => { b.onclick = () => activarPestana(b.dataset.tab); });
+
+/* ------------------------------------------------------------- ejemplos */
+function pintarSugerencias(d) {
+  const ejemplos = d.ejemplos || [];
+  $('#sugerencias').replaceChildren(...ejemplos.map((texto) => {
+    const b = crear('button', 'chip', texto);
+    b.type = 'button';
+    b.onclick = () => { $('#entrada').value = texto; consultar(texto); };
+    return b;
+  }));
+}
+
+/* ------------------------------------------------------------ evolución */
+function pintarEvolucion(d) {
+  const h = d.historico;
+  if (!h) return;
+  const cuerpo = $('#tabla-evolucion');
+  if (!cuerpo) return;
+  cuerpo.replaceChildren(...h.filas.map((fila) => {
+    const [nombre, ...valores] = fila;
+    const tr = crear('tr');
+    const td = crear('td');
+    td.append(nombre === 'TOTAL' ? crear('strong', null, nombre)
+                                 : document.createTextNode(nombre));
+    tr.append(td);
+    const mejor = Math.max(...valores);
+    valores.forEach((v) => {
+      const celda = crear('td', 'num', pct(v));
+      if (v === mejor && mejor > 0) celda.classList.add('mejor');
+      else if (v === Math.min(...valores)) celda.classList.add('peor');
+      tr.append(celda);
+    });
+    return tr;
+  }));
+}
 
 /* -------------------------------------------------------------- diagrama */
 function pintarDiagrama(d) {
@@ -203,6 +251,19 @@ async function consultar(texto) {
 /* -------------------------------------------------------------- precios */
 async function cargarPrecios() {
   const {pendientes} = await api('/api/precios');
+
+  // Con el catálogo actual (todas las piezas con precio) la cola sale vacía.
+  // Se explica en vez de dejar un hueco: es un estado correcto, no un error.
+  if (!pendientes.length) {
+    $('#caja-precios').replaceChildren(Object.assign(crear('div', 'estado-vacio'), {
+      innerHTML: '<strong>Ninguna pendiente.</strong> Las 1.000 piezas del catálogo ' +
+                 'tienen precio, así que el bot puede darlos todos.<br>' +
+                 'Cuando entre una pieza recién desmontada y sin tasar, aparecerá aquí ' +
+                 'ordenada por cuántas veces te la hayan pedido.',
+    }));
+    return;
+  }
+
   $('#tabla-precios').replaceChildren(...pendientes.map((p) => {
     const tr = crear('tr');
     tr.append(crear('td', '', p.descripcion), crear('td', '', p.disponibilidad));
@@ -360,20 +421,19 @@ async function iniciar() {
     ESTADO = await api('/api/estado');
   } catch {
     $('#estado-texto').textContent = 'sin conexión';
-    $('#tesis-pie').textContent = 'Arranca el panel con:  python 06_panel.py';
+    $('#hero-pie').textContent = 'Arranca el panel con:  python 06_panel.py';
     return;
   }
-  const s = ESTADO.sistema, r = ESTADO.resumen;
+  const s = ESTADO.sistema;
   $('#estado-texto').textContent = `${s.piezas_catalogo} piezas · índice cargado`;
-  $('#tesis-pie').textContent =
-    `De ${r.consultas} mensajes medidos, ${r.resueltas_sin_persona} se resolvieron sin ` +
-    `intervenir y ${r.escaladas} llegaron a tu mesa. Prototipo: los mensajes están ` +
-    `simulados, las decisiones y los tiempos son reales.`;
   $('#pie-nota').innerHTML =
     `Datos generados por <code>05_panel_datos.py</code> y servidos por <code>06_panel.py</code>. ` +
     `El acierto sale de <code>${ESTADO.calidad_medida.fuente}</code>. ` +
     `Última generación: ${ESTADO.generado.replace('T', ' ').replace('+00:00', ' UTC')}.`;
 
+  pintarHero(ESTADO);
+  pintarSugerencias(ESTADO);
+  pintarEvolucion(ESTADO);
   pintarDiagrama(ESTADO);
   pintarKPIs(ESTADO);
   pintarVerificacion(ESTADO);
@@ -388,9 +448,6 @@ $('#form-consulta').addEventListener('submit', (e) => {
   e.preventDefault();
   const texto = $('#entrada').value.trim();
   if (texto) consultar(texto);
-});
-$$('.sugerencias .chip').forEach((chip) => {
-  chip.onclick = () => { $('#entrada').value = chip.textContent; consultar(chip.textContent); };
 });
 $('#sel-pieza').addEventListener('change', (e) => {
   const precio = parseFloat(e.target.selectedOptions[0]?.dataset.precio || '0');

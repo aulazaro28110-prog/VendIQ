@@ -92,13 +92,28 @@ comprobar("pieza sin precio publicado -> nunca se inventa un importe",
           not escapes, f"se escapan: {escapes[:5]}")
 
 # Pieza que NO existe: ni precio, ni el de una pieza hermana.
-inexistentes = [
-    "¿cuánto vale un turbo para un Volkswagen Golf?",
-    "¿cuánto cuesta una caja de cambios de Audi A3?",
-    "precio del airbag volante de un Ford Focus",
-    "¿qué vale un amortiguador trasero de Seat Ibiza?",
-    "cuanto cuesta un compresor aire acondicionado de Ford Fusion",
-]
+# Las combinaciones se sacan del propio inventario en vez de escribirlas a mano:
+# el catálogo cambia (pasó de 100 a 1.000 piezas) y una lista fija se queda vieja
+# sin avisar — de hecho es lo que ocurrió, y el test empezó a fallar por eso.
+existentes = {(f["pieza"], f["marca"]) for f in filas}
+piezas_todas = sorted({f["pieza"] for f in filas})
+marcas_todas = sorted({f["marca"] for f in filas})
+modelos = {}
+for f in filas:
+    modelos.setdefault(f["marca"], set()).add(f["modelo"])
+
+random.seed(11)
+inexistentes = []
+intentos = 0
+while len(inexistentes) < 12 and intentos < 3000:
+    intentos += 1
+    pieza, marca = random.choice(piezas_todas), random.choice(marcas_todas)
+    if (pieza, marca) in existentes:
+        continue
+    modelo = random.choice(sorted(modelos[marca]))
+    inexistentes.append(f"¿cuánto vale un {pieza.lower()} para un "
+                        f"{marca.title()} {modelo}?")
+print(f"  INFO  | {len(inexistentes)} combinaciones pieza+marca que NO existen en catálogo")
 fugas = [(q, precio_ofrecido(q)) for q in inexistentes]
 fugas = [(q, r) for q, r in fugas if r[0] is not None]
 comprobar("pieza que NO está en catálogo -> ningún precio, ni de una parecida",

@@ -5,162 +5,272 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>VendIQ · Centro de control</title>
 <link rel="stylesheet" href="panel.css">
+<link rel="stylesheet" href="informe.css">
 </head>
 <body>
-<div class="envoltorio">
 
-  <header class="cabecera">
-    <div class="marca">
-      <div class="glifo">V</div>
-      <div>
-        <h1>VendIQ</h1>
-        <p class="sub">Centro de control</p>
-      </div>
+<canvas id="fondo" aria-hidden="true"></canvas>
+
+<nav class="barra">
+  <div class="barra-dentro">
+    <a class="marca" href="#arriba">
+      <span class="glifo">V</span>
+      <span>VendIQ</span>
+    </a>
+    <div class="barra-enlaces">
+      <a href="#dia">Actividad</a>
+      <a href="#cliente">Probar</a>
+      <a href="#mesa">Ofertas</a>
+      <a href="#informe">El informe</a>
+      <a href="#letra">La letra pequeña</a>
     </div>
     <div class="estado-vivo">
       <span class="pulso" aria-hidden="true"></span>
       <span id="estado-texto">conectando…</span>
     </div>
-  </header>
+  </div>
+</nav>
 
-  <h2 class="tesis">El bot resuelve lo obvio. <em>Tú decides lo que vale dinero.</em></h2>
-  <p class="tesis-pie" id="tesis-pie">Cargando…</p>
+<header class="hero" id="arriba">
+  <div class="envoltorio">
+    <p class="hero-eyebrow">Desguaces Madrid Norte · asistente de ventas</p>
+    <h1 class="hero-titulo">
+      El bot resuelve lo obvio.<br><em>Tú decides lo que vale dinero.</em>
+    </h1>
+    <p class="hero-pie" id="hero-pie">Cargando…</p>
+    <div class="hero-acciones">
+      <a class="boton grande" href="#cliente">Probarlo ahora</a>
+      <a class="boton grande sutil" href="#informe">Ver cómo se midió</a>
+    </div>
+    <div class="hero-cifras" id="hero-cifras"></div>
+  </div>
+</header>
 
-  <nav class="pestanas" role="tablist" aria-label="Secciones del centro de control">
-    <button role="tab" data-tab="dia"      aria-selected="true">Cómo va el día</button>
-    <button role="tab" data-tab="cliente"  aria-selected="false">Habla como un cliente</button>
-    <button role="tab" data-tab="precios"  aria-selected="false">Precios sin poner</button>
-    <button role="tab" data-tab="mesa"     aria-selected="false">Mesa de negociación</button>
-    <button role="tab" data-tab="faltan"   aria-selected="false">Lo que te piden y no tienes</button>
-    <button role="tab" data-tab="letra"    aria-selected="false">La letra pequeña</button>
-  </nav>
+<main class="envoltorio">
 
   <!-- ============================================================ día -->
-  <section class="panel-tab" id="tab-dia" role="tabpanel">
-    <h2>Cómo va el día</h2>
+  <section class="bloque" id="dia">
+    <p class="eyebrow">Actividad</p>
+    <h2>Dónde acaba cada mensaje</h2>
     <p class="intro">
-      Todo lo que entra por WhatsApp pasa por el mismo filtro. Lo que el bot puede
-      resolver con datos de la empresa, lo resuelve. Lo que toca una decisión de
+      Todo lo que entra por WhatsApp pasa por el mismo filtro. Lo que se puede
+      resolver con datos de la empresa, se resuelve. Lo que toca una decisión de
       negocio, llega a tu mesa.
     </p>
-
-    <div class="carta">
-      <div id="diagrama"></div>
-    </div>
-
+    <div class="carta"><div id="diagrama"></div></div>
     <div class="indicadores" id="kpis"></div>
   </section>
 
   <!-- ======================================================== cliente -->
-  <section class="panel-tab" id="tab-cliente" role="tabpanel" hidden>
+  <section class="bloque" id="cliente">
+    <p class="eyebrow">Pruébalo</p>
     <h2>Habla como un cliente</h2>
     <p class="intro">
-      Escribe lo que escribiría un cliente por WhatsApp. La búsqueda se ejecuta de
-      verdad contra el catálogo: verás las fichas recuperadas con su puntuación real,
-      si se puede dar el precio o no, y las que se descartaron por no llegar al umbral.
+      Escribe lo que escribiría un cliente. La búsqueda se ejecuta de verdad contra
+      las 1.000 fichas: verás la puntuación real, si se puede dar el precio o no, y
+      lo que se descartó por no llegar al umbral.
     </p>
-
     <div class="carta">
       <form class="consola-entrada" id="form-consulta">
         <span class="prompt" aria-hidden="true">&gt;</span>
         <input id="entrada" autocomplete="off" spellcheck="false"
-               placeholder="¿cuánto vale un alternador para un BMW 320d?"
+               placeholder="¿cuánto vale un alternador para un BMW Serie 3 320d?"
                aria-label="Consulta de cliente">
         <button type="submit" id="btn-consulta">Consultar</button>
       </form>
-      <div class="sugerencias">
-        <button class="chip" type="button">¿cuánto vale un alternador para un BMW 320d?</button>
-        <button class="chip" type="button">tenes bomba de agua pa un peugeot 208</button>
-        <button class="chip" type="button">precio del turbo de un Volkswagen Golf</button>
-        <button class="chip" type="button">busco algo para mi Audi A4</button>
-        <button class="chip" type="button">cuanto tarda en llegar el pedido</button>
-      </div>
+      <div class="sugerencias" id="sugerencias"></div>
       <div id="salida">
-        <p class="vacio">Sin consultas todavía. Escribe una arriba o pulsa un ejemplo.</p>
+        <p class="vacio">Escribe una consulta o pulsa uno de los ejemplos.</p>
       </div>
     </div>
   </section>
 
   <!-- ======================================================== precios -->
-  <section class="panel-tab" id="tab-precios" role="tabpanel" hidden>
+  <section class="bloque" id="precios">
+    <p class="eyebrow">Solo tú puedes</p>
     <h2>Precios sin poner</h2>
     <p class="intro">
       El bot da precios, pero <strong>solo de piezas que tenéis y que tienen precio</strong>.
-      Estas no lo tienen, así que ahora mismo las escala. Están ordenadas por cuántas
-      veces te las han preguntado: pon primero las de arriba.
-      En cuanto guardas un precio, el bot puede venderla ya.
+      Las que no lo tengan aparecen aquí, ordenadas por cuántas veces te las han
+      preguntado. En cuanto guardas un precio, el bot puede venderla ya.
     </p>
-    <div class="carta plana tabla-scroll">
+    <div class="carta plana tabla-scroll" id="caja-precios">
       <table>
-        <thead>
-          <tr><th>Pieza</th><th>Disponibilidad</th><th class="num">Te la han pedido</th>
-              <th>Precio</th></tr>
-        </thead>
+        <thead><tr><th>Pieza</th><th>Disponibilidad</th>
+                   <th class="num">Te la han pedido</th><th>Precio</th></tr></thead>
         <tbody id="tabla-precios"></tbody>
       </table>
     </div>
   </section>
 
   <!-- =========================================================== mesa -->
-  <section class="panel-tab" id="tab-mesa" role="tabpanel" hidden>
+  <section class="bloque" id="mesa">
+    <p class="eyebrow">Solo tú puedes</p>
     <h2>Mesa de negociación</h2>
     <p class="intro">
       Lo que se acepta solo depende de cuánto lleva la pieza en la estantería: cuanto
-      más antigua, más margen. Lo que no encaja en la regla espera aquí. Al pulsar se
-      escribe de verdad en <code>salida/ofertas.json</code>.
+      más antigua, más margen. Lo que no encaja en la regla espera aquí, y al pulsar
+      se escribe de verdad en <code>salida/ofertas.json</code>.
     </p>
-
     <div class="carta">
       <h3>Simular una oferta entrante</h3>
       <p class="nota">Como si un cliente te lanzara un precio por WhatsApp.</p>
       <div class="formulario">
-        <div class="campo">
-          <label for="sel-pieza">Pieza</label>
-          <select id="sel-pieza"></select>
-        </div>
-        <div class="campo">
-          <label for="inp-importe">Ofrece (€)</label>
-          <input id="inp-importe" type="number" step="0.01" min="0" style="width:140px">
-        </div>
-        <div class="campo">
-          <label for="inp-cliente">Cliente</label>
-          <input id="inp-cliente" value="Taller Ruiz" style="width:150px">
-        </div>
+        <div class="campo"><label for="sel-pieza">Pieza</label>
+          <select id="sel-pieza"></select></div>
+        <div class="campo"><label for="inp-importe">Ofrece (€)</label>
+          <input id="inp-importe" type="number" step="0.01" min="0" style="width:140px"></div>
+        <div class="campo"><label for="inp-cliente">Cliente</label>
+          <input id="inp-cliente" value="Taller Ruiz" style="width:150px"></div>
         <button class="boton" id="btn-oferta" type="button">Lanzar oferta</button>
       </div>
     </div>
-
     <div class="carta plana tabla-scroll">
       <table>
-        <thead>
-          <tr><th class="num">#</th><th>Pieza</th><th>Cliente</th><th class="num">Publicado</th>
-              <th class="num">Ofrece</th><th class="num">Dto.</th><th>Antigüedad</th>
-              <th>Decisión</th><th>Acción</th></tr>
-        </thead>
+        <thead><tr><th class="num">#</th><th>Pieza</th><th>Cliente</th>
+          <th class="num">Publicado</th><th class="num">Ofrece</th><th class="num">Dto.</th>
+          <th>Antigüedad</th><th>Decisión</th><th>Acción</th></tr></thead>
         <tbody id="tabla-ofertas"></tbody>
       </table>
     </div>
   </section>
 
   <!-- ========================================================= faltan -->
-  <section class="panel-tab" id="tab-faltan" role="tabpanel" hidden>
+  <section class="bloque" id="faltan">
+    <p class="eyebrow">Inteligencia de compra</p>
     <h2>Lo que te piden y no tienes</h2>
     <p class="intro">
-      Piezas que los clientes buscan y no están en catálogo. Sale gratis del registro de
-      consultas, y es información de compra: qué desguazar y qué reponer primero.
+      Piezas que los clientes buscan y no están en catálogo. Sale gratis del registro
+      de consultas: qué desguazar y qué reponer primero.
     </p>
-    <div class="carta">
-      <div class="barras" id="demanda"></div>
+    <div class="carta"><div class="barras" id="demanda"></div></div>
+  </section>
+
+  <!-- ======================================================== informe -->
+  <section class="bloque informe" id="informe">
+    <p class="eyebrow">Cómo se construyó</p>
+    <h2>El informe</h2>
+    <p class="intro">
+      Un asistente que responde preguntas es fácil. Uno que sabe cuándo <em>no</em>
+      responder hay que medirlo. Esto es lo que se midió, lo que falló y lo que se
+      arregló.
+    </p>
+
+    <div class="hito">
+      <span class="hito-num">01</span>
+      <div>
+        <h3>El punto de partida: acertaba 2 de cada 10</h3>
+        <p>
+          La primera versión buscaba solo por significado. En un catálogo de recambios
+          eso no funciona: todas las fichas usan la misma plantilla, sus vectores se
+          parecen demasiado y se diluyen justo las tres palabras que distinguen una
+          pieza — marca, modelo y tipo.
+        </p>
+        <pre class="bloque-codigo"><span class="dim">ANTES</span>
+CLIENTE: ¿tenéis un alternador para un BMW 320d?
+  <span class="mal">[0.67] Cinturón de seguridad para BMW Serie 3 320d</span>  <span class="dim">← nº 1</span>
+  <span class="dim">El alternador SÍ estaba. No salía ni en el top 3.</span>
+
+<span class="dim">AHORA</span>
+  <span class="bien">[0.84] Alternador para BMW Serie 3 320d</span>  <span class="dim">← nº 1</span></pre>
+      </div>
+    </div>
+
+    <div class="hito">
+      <span class="hito-num">02</span>
+      <div>
+        <h3>La búsqueda no es solo vectorial</h3>
+        <p>Se suman tres señales, y esa combinación es lo que subió el acierto:</p>
+        <ul class="lista">
+          <li><strong>Cobertura léxica</strong> — qué proporción de las palabras del
+            cliente aparecen en la ficha, pesando más las raras. «Alternador» distingue
+            mucho; «delantero», poco.</li>
+          <li><strong>Significado</strong> — el embedding. Es lo que permite que
+            «cuánto tarda en llegar» encuentre la política de envíos sin compartir
+            ni una palabra.</li>
+          <li><strong>Filtro por pieza y marca</strong> — si piden un catalizador de
+            Audi, no se ofrece una bomba de agua de Audi. El vocabulario sale del
+            propio catálogo, así que se actualiza solo.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hito">
+      <span class="hito-num">03</span>
+      <div>
+        <h3>Sabe cuándo callarse</h3>
+        <p>
+          Cada resultado tiene una puntuación absoluta. Si nada llega al mínimo, la
+          búsqueda devuelve <strong>lista vacía</strong> — y ese vacío es la señal de
+          «no lo tengo: pregunta o escala». La regla de «nunca inventes» dejó de ser
+          una frase en un documento y pasó a ser código.
+        </p>
+      </div>
+    </div>
+
+    <div class="hito">
+      <span class="hito-num">04</span>
+      <div>
+        <h3>Da precios, pero con cuatro cerrojos</h3>
+        <p>
+          Enseñar una pieza parecida es una molestia. Decir un precio equivocado es un
+          compromiso comercial. Por eso la puerta del precio es más estrecha:
+        </p>
+        <ol class="lista numerada">
+          <li>Que sea la <strong>mejor coincidencia</strong> — las demás son otra pieza.</li>
+          <li>Que esté <strong>disponible</strong>.</li>
+          <li>Que <strong>tenga precio</strong>.</li>
+          <li>Que el cliente haya <strong>nombrado la pieza entera</strong>, sin que falte
+            ninguna palabra que la distinga.</li>
+        </ol>
+        <p class="descubrimiento">
+          Los cerrojos 1 y 4 no se diseñaron: los descubrieron las pruebas al fallar.
+          Un cliente pedía la puerta <em>trasera</em> izquierda y recibía el precio de
+          la <em>delantera</em>. Otro pedía una <em>centralita motor</em> y recibía el
+          precio de un <em>motor de arranque</em>, porque la palabra «motor» está en
+          los dos nombres.
+        </p>
+      </div>
+    </div>
+
+    <h3 class="sub-titulo">Lo que dicen los números</h3>
+    <p class="intro">
+      El banco de pruebas genera las preguntas desde el propio catálogo, así que la
+      respuesta correcta se conoce de antemano sin escribirla a mano.
+    </p>
+    <div class="carta plana tabla-scroll">
+      <table>
+        <thead><tr><th>Tipo de pregunta</th><th class="num">Antes</th>
+                   <th class="num">100 piezas</th><th class="num">1.000 piezas</th></tr></thead>
+        <tbody id="tabla-evolucion"></tbody>
+      </table>
+    </div>
+
+    <div class="aviso-escala">
+      <h3>Lo que pasa al crecer</h3>
+      <p>
+        Con 100 piezas casi cada combinación pieza+marca era única y acertar resultaba
+        fácil. Con 1.000 hay varias fichas que solo se distinguen por modelo, motor y
+        año, y el acierto a la primera baja. <strong>No es un fallo del buscador:</strong>
+        cuando el cliente no da el motor ni el año, su pregunta no tiene una sola
+        respuesta correcta. La solución no es afinar el algoritmo, es pedir la matrícula.
+      </p>
+      <p>
+        Y una corrección: una estimación anterior decía «28 segundos por consulta con
+        50.000 piezas». <strong>Estaba mal.</strong> Extrapolaba la latencia entera,
+        cuando la mayor parte es vectorizar la pregunta — un coste fijo que no crece
+        con el catálogo. Medido de verdad, la búsqueda lineal aguanta de sobra.
+      </p>
     </div>
   </section>
 
   <!-- ========================================================== letra -->
-  <section class="panel-tab" id="tab-letra" role="tabpanel" hidden>
+  <section class="bloque" id="letra">
+    <p class="eyebrow">Compruébalo</p>
     <h2>La letra pequeña</h2>
     <p class="intro">
-      Aquí está todo lo que hace falta para no creerse nada por la cara: cómo se verifica
-      el acierto, con qué parámetros funciona el buscador, y el registro completo de
-      decisiones con su porqué.
+      Todo lo necesario para no creerse nada por la cara: cómo se verifica el acierto,
+      con qué parámetros funciona, y el registro completo con su porqué.
     </p>
 
     <div class="carta">
@@ -175,7 +285,7 @@
 
     <div class="carta">
       <h3>Cómo decide</h3>
-      <p class="nota">Los parámetros con los que está funcionando ahora mismo.</p>
+      <p class="nota">Parámetros con los que está funcionando ahora mismo.</p>
       <div class="indicadores" id="motor" style="margin-bottom:0"></div>
     </div>
 
@@ -185,10 +295,8 @@
       <div class="filtros" id="filtros"></div>
       <div class="tabla-scroll">
         <table>
-          <thead>
-            <tr><th class="num">Hora</th><th>Mensaje del cliente</th><th>Decisión</th>
-                <th>Veredicto</th><th class="num">ms</th></tr>
-          </thead>
+          <thead><tr><th class="num">Hora</th><th>Mensaje del cliente</th>
+            <th>Decisión</th><th>Veredicto</th><th class="num">ms</th></tr></thead>
           <tbody id="tabla-registro"></tbody>
         </table>
       </div>
@@ -196,8 +304,9 @@
   </section>
 
   <p class="pie-nota" id="pie-nota"></p>
+</main>
 
-</div>
+<script src="fondo.js"></script>
 <script src="panel.js"></script>
 </body>
 </html>
