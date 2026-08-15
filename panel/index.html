@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VendIQ · Centro de control</title>
+<link rel="stylesheet" href="panel.css">
+</head>
+<body>
+<div class="envoltorio">
+
+  <header class="cabecera">
+    <div class="marca">
+      <div class="glifo">V</div>
+      <div>
+        <h1>VendIQ</h1>
+        <p class="sub">Centro de control</p>
+      </div>
+    </div>
+    <div class="estado-vivo">
+      <span class="pulso" aria-hidden="true"></span>
+      <span id="estado-texto">conectando…</span>
+    </div>
+  </header>
+
+  <p class="aviso" id="aviso">Cargando…</p>
+
+  <!-- ------------------------------------------------------------ KPIs -->
+  <section class="seccion" aria-labelledby="t-kpi">
+    <h2 id="t-kpi">Actividad</h2>
+    <p class="pie">Medido ejecutando el sistema real sobre una semana de mensajes.</p>
+    <div class="indicadores" id="kpis"></div>
+  </section>
+
+  <!-- --------------------------------------------------------- consola -->
+  <section class="seccion" aria-labelledby="t-consola">
+    <h2 id="t-consola">Consulta en vivo</h2>
+    <p class="pie">
+      Escribe lo que escribiría un cliente. La búsqueda se ejecuta de verdad contra el
+      índice: lo que ves abajo son las fichas recuperadas con su puntuación real y el
+      motivo de la decisión.
+    </p>
+
+    <div class="consola">
+      <form class="consola-entrada" id="form-consulta">
+        <span class="prompt" aria-hidden="true">&gt;</span>
+        <input id="entrada" autocomplete="off" spellcheck="false"
+               placeholder="¿tenéis un alternador para un BMW 320d?"
+               aria-label="Consulta de cliente">
+        <button type="submit" id="btn-consulta">Consultar</button>
+      </form>
+
+      <div class="sugerencias">
+        <span>Prueba</span>
+        <button class="chip" type="button">¿tenéis un alternador para un BMW 320d?</button>
+        <button class="chip" type="button">tenes bomba de agua pa un peugeot 208</button>
+        <button class="chip" type="button">¿tenéis un turbo para un Volkswagen Golf?</button>
+        <button class="chip" type="button">cuanto tarda en llegar el pedido</button>
+        <button class="chip" type="button">necesito la referencia 7180VD80C</button>
+      </div>
+
+      <div class="consola-salida" id="salida">
+        <p class="vacio">Sin consultas todavía. Escribe una arriba o pulsa un ejemplo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------- verificación -->
+  <section class="seccion" aria-labelledby="t-verif">
+    <h2 id="t-verif">Verificación</h2>
+    <p class="pie">
+      Contrastado contra la respuesta correcta conocida de cada mensaje, no contra lo que
+      el sistema cree haber resuelto. Un panel que solo enseña su propia opinión no vale nada.
+    </p>
+    <div class="segmentada" id="seg-verif" role="img" aria-label="Reparto de aciertos"></div>
+    <div class="leyenda" id="leyenda-verif"></div>
+  </section>
+
+  <!-- ------------------------------------------------------- demanda -->
+  <section class="seccion" aria-labelledby="t-demanda">
+    <h2 id="t-demanda">Demanda no cubierta</h2>
+    <p class="pie">
+      Piezas que los clientes piden y no están en catálogo. Sale gratis del registro de
+      consultas y es información de compra: qué desguazar y qué reponer.
+    </p>
+    <div class="barras" id="demanda"></div>
+  </section>
+
+  <!-- -------------------------------------------------------- ofertas -->
+  <section class="seccion" aria-labelledby="t-ofertas">
+    <h2 id="t-ofertas">Ofertas</h2>
+    <p class="pie">
+      El margen que se acepta solo depende de la antigüedad de la pieza en stock. Lo que
+      no encaja en la regla espera aquí tu decisión — y al pulsar se escribe de verdad en
+      <code>salida/ofertas.json</code>.
+    </p>
+
+    <div class="formulario">
+      <div class="campo">
+        <label for="sel-pieza">Pieza</label>
+        <select id="sel-pieza"></select>
+      </div>
+      <div class="campo">
+        <label for="inp-importe">Oferta del cliente (€)</label>
+        <input id="inp-importe" type="number" step="0.01" min="0" style="width:150px">
+      </div>
+      <div class="campo">
+        <label for="inp-cliente">Cliente</label>
+        <input id="inp-cliente" value="Taller Ruiz" style="width:150px">
+      </div>
+      <button class="boton" id="btn-oferta" type="button">Lanzar oferta</button>
+    </div>
+
+    <div class="marco tabla-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th class="num">#</th><th>Pieza</th><th>Cliente</th>
+            <th class="num">Publicado</th><th class="num">Ofrece</th><th class="num">Dto.</th>
+            <th>Antigüedad</th><th>Decisión</th><th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-ofertas"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------- registro -->
+  <section class="seccion" aria-labelledby="t-registro">
+    <h2 id="t-registro">Registro de consultas</h2>
+    <p class="pie">Cada mensaje con su decisión y el porqué. Nada de esto está escrito a mano.</p>
+    <div class="filtros" id="filtros"></div>
+    <div class="marco tabla-scroll">
+      <table>
+        <thead>
+          <tr><th class="num">Hora</th><th>Mensaje del cliente</th><th>Decisión</th>
+              <th>Veredicto</th><th class="num">ms</th></tr>
+        </thead>
+        <tbody id="tabla-registro"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------- motor -->
+  <section class="seccion" aria-labelledby="t-motor">
+    <h2 id="t-motor">Cómo decide</h2>
+    <p class="pie">Los parámetros con los que está funcionando el buscador ahora mismo.</p>
+    <div class="indicadores" id="motor"></div>
+  </section>
+
+  <p class="pie-nota" id="pie-nota"></p>
+
+</div>
+<script src="panel.js"></script>
+</body>
+</html>

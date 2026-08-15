@@ -80,6 +80,40 @@ python 04_ofertas.py aceptar 4 --motivo "lleva tiempo parada"
 python 04_ofertas.py historial
 ```
 
+## Centro de control (`06_panel.py`)
+
+Panel web en local. Es la cara visible del proyecto: enseña cómo está funcionando la
+herramienta en lenguaje de negocio, y **opera sobre ella de verdad**.
+
+```bash
+python 05_panel_datos.py     # mide una semana de mensajes con el sistema real
+python 06_panel.py           # levanta el panel y abre el navegador
+```
+
+No añade dependencias: solo `http.server` de la librería estándar. El modelo se carga
+una vez al arrancar y se queda caliente, por eso las consultas tardan ~50 ms.
+
+**Por qué un servidor y no un HTML suelto:** el panel no enseña una foto de datos.
+Al escribir una consulta se ejecuta la búsqueda real contra el índice; al aceptar una
+oferta se escribe en `salida/ofertas.json`. Un fichero estático no puede hacer ninguna
+de las dos cosas, porque el buscador necesita el modelo de embeddings en memoria.
+
+Lo que hay dentro:
+
+- **Consulta en vivo** — escribes lo que escribiría un cliente y ves las fichas
+  recuperadas con su puntuación real, más las descartadas por no llegar al umbral.
+  Cuatro decisiones posibles: `RESPONDE`, `NO LA TENGO`, `ESCALA`.
+- **Verificación** — aciertos contrastados contra la respuesta correcta conocida, no
+  contra lo que el sistema cree haber resuelto.
+- **Demanda no cubierta** — piezas que piden y no hay. Sale gratis del registro y es
+  información de compra.
+- **Ofertas** — lanzar una oferta y aceptar o rechazar las pendientes, con persistencia.
+- **Cómo decide** — los umbrales y pesos con los que está funcionando ahora mismo.
+
+Los datos de actividad salen de `05_panel_datos.py`, que simula los **mensajes** (es un
+prototipo, no hay clientes reales) pero mide de verdad las decisiones, las puntuaciones
+y los tiempos. Si mañana la búsqueda empeora, los números del panel empeoran solos.
+
 ## Datos
 
 Se usa **`datos/inventario_sintetico.csv`** (100 piezas *sintéticas*, misma estructura que la web

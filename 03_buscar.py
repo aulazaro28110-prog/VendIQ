@@ -289,7 +289,10 @@ def cargar_buscador() -> Buscador:
 
     modelo = SentenceTransformer(nombre_modelo)
     dim_indice = embeddings.shape[1]
-    dim_modelo = modelo.get_sentence_embedding_dimension()
+    # El nombre del método cambió en versiones recientes de sentence-transformers.
+    obtener_dim = (getattr(modelo, "get_embedding_dimension", None)
+                   or modelo.get_sentence_embedding_dimension)
+    dim_modelo = obtener_dim()
     if dim_indice != dim_modelo:
         raise SystemExit(
             f"ERROR: el índice se creó con otro modelo "
