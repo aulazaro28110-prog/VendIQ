@@ -1,0 +1,132 @@
+/* Estilos del hero, la barra fija y la sección de informe.
+   Separado de panel.css para que ningún fichero se vaya de tamaño. */
+
+/* ---------------------------------------------------------------- fondo */
+#fondo{
+  position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none;
+  /* se desvanece hacia abajo: la malla acompaña arriba y no estorba al leer */
+  mask-image:linear-gradient(180deg,#000 0%,#000 45%,transparent 92%);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 45%,transparent 92%);
+}
+
+/* ----------------------------------------------------------- barra fija */
+.barra{
+  position:sticky;top:0;z-index:20;
+  background:rgba(6,8,12,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--borde);
+}
+.barra-dentro{
+  max-width:1180px;margin:0 auto;padding:12px 28px;
+  display:flex;align-items:center;gap:26px;
+}
+.barra .marca{
+  display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--tinta);
+  font-weight:640;font-size:15px;flex:none;
+}
+.barra .glifo{
+  width:26px;height:26px;border-radius:8px;display:grid;place-items:center;
+  background:var(--cian);color:#04120f;font-weight:800;font-size:13px;
+}
+.barra-enlaces{display:flex;gap:22px;flex:1;overflow-x:auto;scrollbar-width:none}
+.barra-enlaces::-webkit-scrollbar{display:none}
+.barra-enlaces a{
+  color:var(--tinta-2);text-decoration:none;font-size:13.5px;white-space:nowrap;
+  padding:4px 0;border-bottom:1px solid transparent;transition:all .16s;
+}
+.barra-enlaces a:hover{color:var(--tinta);border-bottom-color:var(--cian)}
+.barra-enlaces a:focus-visible{outline:2px solid var(--cian);outline-offset:3px}
+.barra .estado-vivo{flex:none;padding:6px 14px;font-size:12px}
+
+/* ----------------------------------------------------------------- hero */
+.hero{padding:96px 0 76px;position:relative}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--cian);margin:0 0 20px;
+}
+.hero-titulo{
+  font-size:clamp(2.2rem,6vw,4.1rem);font-weight:600;letter-spacing:-.035em;
+  line-height:1.06;margin:0 0 22px;text-wrap:balance;
+}
+.hero-titulo em{font-style:normal;color:var(--cian)}
+.hero-pie{color:var(--tinta-2);max-width:60ch;margin:0 0 32px;font-size:16.5px}
+.hero-acciones{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:56px}
+.boton.grande{padding:14px 30px;font-size:14.5px;text-decoration:none;display:inline-block}
+
+.hero-cifras{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:1px;background:var(--borde);border:1px solid var(--borde);border-radius:var(--r);
+  overflow:hidden;
+}
+.hero-cifras > div{background:rgba(11,14,20,.72);padding:20px 22px;backdrop-filter:blur(6px)}
+.hero-cifras .valor{
+  font-size:29px;font-weight:600;letter-spacing:-.03em;line-height:1;margin:0 0 8px;
+  color:var(--cian);
+}
+.hero-cifras .que{font-size:12.5px;color:var(--tinta-2);margin:0;line-height:1.45}
+
+/* -------------------------------------------------------------- bloques */
+.bloque{padding:64px 0;scroll-margin-top:70px}
+.bloque + .bloque{border-top:1px solid var(--borde)}
+.eyebrow{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--cian);margin:0 0 12px;
+}
+.bloque > h2{
+  font-size:clamp(1.5rem,3vw,2.1rem);font-weight:600;letter-spacing:-.028em;
+  margin:0 0 12px;text-wrap:balance;
+}
+.bloque > .intro{color:var(--tinta-2);margin:0 0 30px;max-width:70ch;font-size:15.5px}
+
+/* -------------------------------------------------------------- informe */
+.hito{display:grid;grid-template-columns:56px 1fr;gap:22px;margin-bottom:42px}
+.hito-num{
+  font-family:var(--mono);font-size:13px;font-weight:700;color:var(--cian);
+  border:1px solid var(--cian-20);border-radius:10px;height:38px;
+  display:grid;place-items:center;background:var(--cian-08);
+}
+.hito h3{font-size:17px;font-weight:600;margin:6px 0 10px;letter-spacing:-.015em}
+.hito p{color:var(--tinta-2);margin:0 0 12px;max-width:70ch;font-size:14.5px}
+.lista{color:var(--tinta-2);padding-left:20px;margin:0 0 12px;max-width:70ch;font-size:14.5px}
+.lista li{margin:9px 0}
+.lista strong{color:var(--tinta)}
+.lista.numerada li{margin:7px 0}
+
+.bloque-codigo{
+  font-family:var(--mono);font-size:12.5px;line-height:1.65;background:var(--carta);
+  border:1px solid var(--borde);border-radius:12px;padding:18px 20px;
+  overflow-x:auto;margin:16px 0;color:var(--tinta);
+}
+.bloque-codigo .mal{color:var(--rojo)}
+.bloque-codigo .bien{color:var(--cian)}
+.bloque-codigo .dim{color:var(--tinta-3)}
+
+.descubrimiento{
+  border-left:2px solid var(--ambar);padding-left:16px;
+  color:var(--tinta-2) !important;font-size:14px !important;
+}
+.descubrimiento em{color:var(--tinta);font-style:normal;font-weight:600}
+
+.sub-titulo{font-size:19px;font-weight:600;margin:52px 0 10px;letter-spacing:-.02em}
+
+.aviso-escala{
+  border:1px solid var(--borde-vivo);border-radius:var(--r);
+  background:var(--carta);padding:26px 28px;margin-top:26px;
+}
+.aviso-escala h3{font-size:16px;font-weight:600;margin:0 0 12px}
+.aviso-escala p{color:var(--tinta-2);margin:0 0 12px;max-width:72ch;font-size:14.5px}
+.aviso-escala p:last-child{margin-bottom:0}
+
+.mejor{color:var(--cian);font-weight:700}
+.peor{color:var(--tinta-3)}
+
+.estado-vacio{
+  padding:34px 28px;text-align:center;color:var(--tinta-2);font-size:14px;
+}
+.estado-vacio strong{color:var(--cian)}
+
+@media (max-width:640px){
+  .barra-enlaces{display:none}
+  .hero{padding:60px 0 50px}
+  .hito{grid-template-columns:1fr;gap:10px}
+  .hito-num{width:38px}
+}

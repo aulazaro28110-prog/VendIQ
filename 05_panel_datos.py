@@ -75,22 +75,26 @@ def construir_mensajes(filas):
         mensajes.append(("pieza", f"busco {f['pieza'].lower()} de {f['marca'].title()} "
                                   f"{f['modelo']} {f['motor']}", f"pieza-{f['id']}"))
 
-    # 2) Piezas que NO están. Se repiten a propósito: lo que más te piden y no tienes
-    #    es información de compra, y es lo que el panel debe sacar a la luz.
-    #    Se comprueba contra el inventario que de verdad no existe ninguna así.
-    no_disponibles = [
-        ("Turbo", "VOLKSWAGEN", "Golf", 4),
-        ("Caja de cambios", "AUDI", "A3", 3),
-        ("Airbag volante", "FORD", "Focus", 2),
-        ("Catalizador", "RENAULT", "Clio", 1),
-        ("Amortiguador trasero", "SEAT", "Ibiza", 1),
-        ("Compresor aire acondicionado", "FORD", "Fusion", 1),
-    ]
-    for pieza, marca, modelo, veces in no_disponibles:
-        existentes = [f for f in filas if f["pieza"] == pieza and f["marca"] == marca]
-        if existentes:
-            raise SystemExit(f"El guion dice que no hay '{pieza} {marca}' pero el "
-                             f"inventario tiene {len(existentes)}. Corrige el guion.")
+    # 2) Piezas que NO están. Las combinaciones se deducen del propio inventario,
+    #    nunca se escriben a mano: el catálogo cambia y una lista fija se queda vieja
+    #    en silencio. Se repiten a propósito, porque lo que más te piden y no tienes
+    #    es información de compra y el panel tiene que sacarlo a la luz.
+    existentes = {(f["pieza"], f["marca"]) for f in filas}
+    piezas_todas = sorted({f["pieza"] for f in filas})
+    marcas_todas = sorted({f["marca"] for f in filas})
+    modelos = {}
+    for f in filas:
+        modelos.setdefault(f["marca"], set()).add(f["modelo"])
+
+    repeticiones, elegidas, intentos = [4, 3, 2, 2, 1, 1], [], 0
+    while len(elegidas) < len(repeticiones) and intentos < 4000:
+        intentos += 1
+        pieza, marca = random.choice(piezas_todas), random.choice(marcas_todas)
+        if (pieza, marca) in existentes or (pieza, marca) in elegidas:
+            continue
+        elegidas.append((pieza, marca))
+    for (pieza, marca), veces in zip(elegidas, repeticiones):
+        modelo = random.choice(sorted(modelos[marca]))
         for _ in range(veces):
             mensajes.append(("pieza", f"¿tenéis un {pieza.lower()} para un "
                                       f"{marca.title()} {modelo}?", None))
@@ -132,8 +136,10 @@ def construir_ofertas(filas, ofertas_mod):
     f = random.choice(con_precio)
     lista.append((f["id"], round(ofertas_mod.precio_publicado(f["precio"]) * 0.35, 2), "Particular"))
 
-    # Y ofertas sobre piezas sin precio publicado (el caso mayoritario del catálogo real)
-    for i, f in enumerate(random.sample(sin_precio, 4)):
+    # Y ofertas sobre piezas sin precio publicado, si las hay. Con el catálogo actual
+    # (todas con precio) esta lista sale vacía, y es correcto: sin precio de lista no
+    # hay porcentaje que calcular, así que esas ofertas irían siempre a decisión manual.
+    for i, f in enumerate(random.sample(sin_precio, min(4, len(sin_precio)))):
         lista.append((f["id"], float(random.choice([150, 220, 340, 480])),
                       clientes[(i + 3) % len(clientes)]))
 
@@ -282,11 +288,26 @@ def main():
         },
         "calidad_medida": {
             "acierto_antes": 0.20,
-            "acierto_ahora": 0.96,
+            "acierto_ahora": 0.89,
             "guardarrail": 0.98,
             "preguntas_banco": 80,
             "piezas_inexistentes_probadas": 40,
             "fuente": "tests/test_busqueda.py",
+        },
+        # Histórico de las tres mediciones hechas con tests/test_busqueda.py.
+        # Se guardan a mano porque son ejecuciones de momentos distintos (búsqueda
+        # solo vectorial, híbrida con 100 piezas, híbrida con 1.000), no algo que
+        # este script pueda recalcular hoy. Cada columna es un run real.
+        "historico": {
+            "columnas": ["Solo vectorial", "Híbrida · 100", "Híbrida · 1.000"],
+            "filas": [
+                ["Pregunta natural",           0.24, 1.00, 1.00],
+                ["Datos incompletos",          0.07, 1.00, 0.67],
+                ["Mensaje sucio de WhatsApp",  0.13, 1.00, 1.00],
+                ["Por referencia OEM",         0.00, 1.00, 1.00],
+                ["Políticas",                  0.70, 0.70, 0.60],
+                ["TOTAL",                      0.20, 0.96, 0.89],
+            ],
         },
         "demanda_no_cubierta": [
             {"consulta": texto, "veces": n} for texto, n in demanda_no_cubierta.most_common(8)

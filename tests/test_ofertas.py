@@ -105,8 +105,14 @@ r = ofertas.evaluar(inv, mas_antigua["id"], lista_antigua * 1.10)
 comprobar("oferta por encima del precio publicado -> se acepta",
           r["decision"] == "ACEPTAR")
 
-sin_precio = next(f for f in filas if ofertas.precio_publicado(f["precio"]) is None)
-r = ofertas.evaluar(inv, sin_precio["id"], 500)
+# Se fabrica una pieza sin precio en vez de buscarla en el inventario: el catálogo
+# actual las tiene todas con precio, pero la regla tiene que seguir siendo cierta
+# el día que entre una pieza recién desmontada y todavía sin tasar.
+inv_sin_precio = ofertas.Inventario([
+    {"id": "1", "precio": "Consultar por WhatsApp", "pieza": "Motor completo",
+     "marca": "BMW", "modelo": "Serie 3", "motor": "320d", "anio": "2013"},
+])
+r = ofertas.evaluar(inv_sin_precio, "1", 500)
 comprobar("pieza SIN precio publicado -> siempre a mano, nunca automática",
           r["decision"] == "A_MANO", f"salió {r['decision']}")
 

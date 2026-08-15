@@ -1,101 +1,1001 @@
-﻿id;referencia_oem;pieza;marca;modelo;motor;anio;estado;garantia;disponibilidad;precio;url
-69103;2704ZV64A;Retrovisor izquierdo;SEAT;Ibiza;1.9 TDI;2008;Comprobada, funcionando;1 año;En stock;167,00 € + IVA;https://desguacesmadridnorte.com/69103-pieza.html
-69104;7325YV67E;Aleta delantera izquierda;AUDI;A4;2.0 TDI;2013;Desmontada de vehículo;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69104-pieza.html
-69108;2489LD22C;Parachoques trasero;MERCEDES-BENZ;Clase E Coupé;220 CDI;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;184,26 € + IVA;https://desguacesmadridnorte.com/69108-pieza.html
-69109;7180VD80C;Alternador;BMW;Serie 3;320d;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69109-pieza.html
-69110;2489CH45D;Cremallera de dirección;AUDI;A3;2.0 TDI;2015;Desmontada de vehículo;1 año;En stock;258,22 € + IVA;https://desguacesmadridnorte.com/69110-pieza.html
-69112;2723ZY91B;Cerradura puerta delantera;CITROEN;C4;1.6 HDi;2011;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69112-pieza.html
-69116;6963HZ17B;Parachoques trasero;FORD;Fusion;1.4 TDCi;2007;Comprobada, funcionando;1 año;Bajo pedido 24-48h;680,99 € + IVA;https://desguacesmadridnorte.com/69116-pieza.html
-69117;8505GY92D;Airbag volante;RENAULT;Megane;1.5 dCi;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;605,22 € + IVA;https://desguacesmadridnorte.com/69117-pieza.html
-69120;7470PW38B;Retrovisor derecho;AUDI;A4;2.0 TDI;2013;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69120-pieza.html
-69121;3911EY97D;Puerta delantera derecha;SKODA;Octavia;2.0 TDI;2016;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69121-pieza.html
-69125;2798VA78C;Elevalunas delantero izquierdo;PEUGEOT;308;1.6 HDi;2012;Desmontada de vehículo;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69125-pieza.html
-69127;3619JT23F;Bomba de agua;PEUGEOT;208;1.4 HDi;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69127-pieza.html
-69129;9100FV86C;Intercooler;AUDI;A3;2.0 TDI;2015;Sin comprobar;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69129-pieza.html
-69132;1346KH82A;Retrovisor izquierdo;HYUNDAI;i30;1.6 CRDi;2016;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69132-pieza.html
-69134;9993FJ87D;Puerta delantera izquierda;SKODA;Octavia;2.0 TDI;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;511,99 € + IVA;https://desguacesmadridnorte.com/69134-pieza.html
-69137;6548ZY76D;Portón trasero;MERCEDES-BENZ;Clase E Coupé;220 CDI;2009;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69137-pieza.html
-69140;1172WH90A;Motor completo;SEAT;Ateca;1.5 TSI;2019;Comprobada, funcionando;1 año;En stock;592,26 € + IVA;https://desguacesmadridnorte.com/69140-pieza.html
-69143;4652ZS26F;Piloto trasero izquierdo;NISSAN;Qashqai;1.5 dCi;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;268,22 € + IVA;https://desguacesmadridnorte.com/69143-pieza.html
-69147;2774GD65C;Cinturón de seguridad;AUDI;A4;2.0 TDI;2013;Sin comprobar;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69147-pieza.html
-69148;1512YD53A;Paso de rueda trasero izquierdo;NISSAN;Qashqai;1.5 dCi;2014;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69148-pieza.html
-69152;2553RH80A;Portón trasero;OPEL;Corsa;1.3 CDTI;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;212,22 € + IVA;https://desguacesmadridnorte.com/69152-pieza.html
-69154;1268GN58A;Faro delantero izquierdo;SEAT;Ateca;1.5 TSI;2019;Sin comprobar;1 año;Bajo pedido 24-48h;522,50 € + IVA;https://desguacesmadridnorte.com/69154-pieza.html
-69158;8258VZ34C;Paso de rueda trasero izquierdo;RENAULT;Clio;1.5 dCi;2014;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69158-pieza.html
-69159;8614BB77B;Bomba de dirección;SKODA;Fabia;1.4 TDI;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69159-pieza.html
-69161;4692ND86A;Puerta delantera derecha;NISSAN;Qashqai;1.5 dCi;2014;Comprobada, funcionando;1 año;En stock;94,26 € + IVA;https://desguacesmadridnorte.com/69161-pieza.html
-69164;6344GZ43D;Centralita motor;MERCEDES-BENZ;CLA;200 CDI;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69164-pieza.html
-69165;9318DC74C;Paso de rueda trasero izquierdo;CITROEN;C2;1.4 HDi;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;661,99 € + IVA;https://desguacesmadridnorte.com/69165-pieza.html
-69167;9820FR48E;Puerta delantera izquierda;KIA;Ceed;1.6 CRDi;2017;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69167-pieza.html
-69168;2209EJ80B;Cárter;RENAULT;Clio;1.5 dCi;2014;Desmontada de vehículo;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69168-pieza.html
-69171;2749JB64C;Compresor aire acondicionado;AUDI;A3;2.0 TDI;2015;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69171-pieza.html
-69173;8664JF64E;Compresor aire acondicionado;SKODA;Octavia;2.0 TDI;2016;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69173-pieza.html
-69174;3540WV26A;Parachoques delantero;OPEL;Corsa;1.3 CDTI;2014;Desmontada de vehículo;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69174-pieza.html
-69177;7735MV29B;Piloto trasero izquierdo;KIA;Ceed;1.6 CRDi;2017;Comprobada, funcionando;1 año;En stock;280,00 € + IVA;https://desguacesmadridnorte.com/69177-pieza.html
-69179;4373LP30F;Centralita motor;SEAT;Ibiza;1.9 TDI;2008;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69179-pieza.html
-69183;4508HA52C;Portón trasero;BMW;Serie 1;118d;2015;Comprobada, funcionando;1 año;Bajo pedido 24-48h;865,26 € + IVA;https://desguacesmadridnorte.com/69183-pieza.html
-69187;1218VL43B;Colector de admisión;TOYOTA;Proace City;1.5 D-4D;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69187-pieza.html
-69191;9218PX59E;Piloto trasero izquierdo;VOLKSWAGEN;Golf;2.0 TDI;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;830,22 € + IVA;https://desguacesmadridnorte.com/69191-pieza.html
-69195;4472ZZ65A;Piloto trasero izquierdo;MERCEDES-BENZ;Clase E Coupé;220 CDI;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;850,99 € + IVA;https://desguacesmadridnorte.com/69195-pieza.html
-69196;5782KT62C;Radiador;MERCEDES-BENZ;CLA;200 CDI;2016;Sin comprobar;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69196-pieza.html
-69198;3730NZ82C;Cárter;VOLKSWAGEN;Passat;1.9 TDI;2007;Sin comprobar;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69198-pieza.html
-69201;6576XY66D;Faro delantero izquierdo;RENAULT;Clio;1.5 dCi;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;829,99 € + IVA;https://desguacesmadridnorte.com/69201-pieza.html
-69203;6195KT40F;Cinturón de seguridad;BMW;Serie 3;320d;2013;Desmontada de vehículo;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69203-pieza.html
-69204;7744CR83B;Portón trasero;VOLKSWAGEN;Passat;1.9 TDI;2007;Sin comprobar;1 año;En stock;511,99 € + IVA;https://desguacesmadridnorte.com/69204-pieza.html
-69206;7324AD32F;Airbag volante;AUDI;A4;2.0 TDI;2013;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69206-pieza.html
-69208;3920DR69F;Piloto trasero derecho;OPEL;Corsa;1.3 CDTI;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69208-pieza.html
-69212;9556TP30F;Intercooler;CITROEN;C2;1.4 HDi;2005;Sin comprobar;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69212-pieza.html
-69214;8741JT40C;Alternador;SKODA;Octavia;2.0 TDI;2016;Sin comprobar;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69214-pieza.html
-69217;4492EE98B;Bomba de agua;AUDI;A4;2.0 TDI;2013;Comprobada, funcionando;1 año;En stock;578,00 € + IVA;https://desguacesmadridnorte.com/69217-pieza.html
-69220;4952PB63D;Centralita motor;PEUGEOT;208;1.4 HDi;2016;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69220-pieza.html
-69224;9865NP79E;Cremallera de dirección;PEUGEOT;308;1.6 HDi;2012;Comprobada, funcionando;1 año;En stock;385,22 € + IVA;https://desguacesmadridnorte.com/69224-pieza.html
-69228;7841NL31D;Motor completo;RENAULT;Megane;1.5 dCi;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69228-pieza.html
-69232;2758ZA64B;Amortiguador delantero;SEAT;Ibiza;1.9 TDI;2008;Sin comprobar;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69232-pieza.html
-69236;5870LN63C;Piloto trasero derecho;RENAULT;Megane;1.5 dCi;2010;Comprobada, funcionando;1 año;En stock;490,22 € + IVA;https://desguacesmadridnorte.com/69236-pieza.html
-69237;2899MH93A;Faro delantero derecho;SKODA;Fabia;1.4 TDI;2008;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69237-pieza.html
-69239;8816WG42C;Faro delantero derecho;TOYOTA;Camry;2.5 Hybrid;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;509,00 € + IVA;https://desguacesmadridnorte.com/69239-pieza.html
-69240;2692FK13C;Intercooler;SKODA;Fabia;1.4 TDI;2008;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69240-pieza.html
-69242;2915DK82A;Airbag volante;MERCEDES-BENZ;Clase E Coupé;220 CDI;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;732,26 € + IVA;https://desguacesmadridnorte.com/69242-pieza.html
-69245;8208AP65C;Módulo electrónico;MERCEDES-BENZ;CLA;200 CDI;2016;Sin comprobar;1 año;En stock;688,22 € + IVA;https://desguacesmadridnorte.com/69245-pieza.html
-69248;8546VS85C;Módulo electrónico;VOLKSWAGEN;Polo;1.2 TSI;2015;Desmontada de vehículo;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69248-pieza.html
-69252;7444XZ13D;Puerta delantera derecha;RENAULT;Megane;1.5 dCi;2010;Desmontada de vehículo;1 año;En stock;500,99 € + IVA;https://desguacesmadridnorte.com/69252-pieza.html
-69255;5669LJ11E;Cuadro de instrumentos;AUDI;A3;2.0 TDI;2015;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69255-pieza.html
-69259;8558HS12A;Caja de cambios;SKODA;Fabia;1.4 TDI;2008;Desmontada de vehículo;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69259-pieza.html
-69262;7863TM80C;Caja de cambios;RENAULT;Clio;1.5 dCi;2014;Desmontada de vehículo;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69262-pieza.html
-69265;9880LD98B;Motor de arranque;RENAULT;Clio;1.5 dCi;2014;Comprobada, funcionando;1 año;En stock;763,26 € + IVA;https://desguacesmadridnorte.com/69265-pieza.html
-69268;4469GK32C;Cinturón de seguridad;RENAULT;Megane;1.5 dCi;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69268-pieza.html
-69269;3753VK72A;Retrovisor derecho;RENAULT;Megane;1.5 dCi;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69269-pieza.html
-69273;5982FB71A;Bomba de agua;FORD;Focus;1.6 TDCi;2013;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69273-pieza.html
-69274;4221KC81D;Cuadro de instrumentos;SEAT;Ateca;1.5 TSI;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;855,99 € + IVA;https://desguacesmadridnorte.com/69274-pieza.html
-69278;7412RK82E;Catalizador;AUDI;A4;2.0 TDI;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69278-pieza.html
-69280;2260JZ40B;Puerta trasera izquierda;SKODA;Octavia;2.0 TDI;2016;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69280-pieza.html
-69284;5133XS39C;Parachoques trasero;SEAT;Ibiza;1.9 TDI;2008;Desmontada de vehículo;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69284-pieza.html
-69286;4535YW24E;Puerta delantera izquierda;MERCEDES-BENZ;CLA;200 CDI;2016;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69286-pieza.html
-69288;5549XW25D;Motor de arranque;BMW;Serie 1;118d;2015;Desmontada de vehículo;1 año;En stock;194,22 € + IVA;https://desguacesmadridnorte.com/69288-pieza.html
-69292;7852XB51E;Motor de arranque;OPEL;Astra;1.7 CDTI;2010;Desmontada de vehículo;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69292-pieza.html
-69293;1881ZJ32D;Puerta delantera derecha;AUDI;A4;2.0 TDI;2013;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69293-pieza.html
-69297;8456SC62C;Motor de arranque;VOLKSWAGEN;Polo;1.2 TSI;2015;Desmontada de vehículo;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69297-pieza.html
-69301;7933KZ80A;Parachoques trasero;CITROEN;C2;1.4 HDi;2005;Sin comprobar;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69301-pieza.html
-69304;9573TA62A;Radiador;RENAULT;Megane;1.5 dCi;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;816,50 € + IVA;https://desguacesmadridnorte.com/69304-pieza.html
-69308;5662BG26C;Cerradura puerta delantera;TOYOTA;Camry;2.5 Hybrid;2019;Sin comprobar;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69308-pieza.html
-69310;1665KV62A;Intercooler;BMW;Serie 3;320d;2013;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69310-pieza.html
-69312;5525KT71D;Paso de rueda trasero izquierdo;VOLKSWAGEN;Golf;2.0 TDI;2011;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69312-pieza.html
-69314;6906JP74C;Elevalunas delantero izquierdo;AUDI;A3;2.0 TDI;2015;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69314-pieza.html
-69318;8453RV52E;Turbo;BMW;Serie 1;118d;2015;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69318-pieza.html
-69321;7339HW62A;Paso de rueda trasero izquierdo;HYUNDAI;i30;1.6 CRDi;2016;Desmontada de vehículo;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69321-pieza.html
-69322;2638DR68A;Parachoques delantero;FORD;Focus;1.6 TDCi;2013;Comprobada, funcionando;1 año;En stock;629,22 € + IVA;https://desguacesmadridnorte.com/69322-pieza.html
-69326;7765JL20C;Parachoques delantero;SEAT;Ateca;1.5 TSI;2019;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69326-pieza.html
-69330;2340BX90F;Radiador;TOYOTA;Proace City;1.5 D-4D;2021;Desmontada de vehículo;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69330-pieza.html
-69331;3810DR48A;Puerta delantera derecha;PEUGEOT;208;1.4 HDi;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69331-pieza.html
-69334;9521EH82F;Piloto trasero derecho;RENAULT;Clio;1.5 dCi;2014;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69334-pieza.html
-69338;3337HS69F;Capó;SEAT;Ateca;1.5 TSI;2019;Desmontada de vehículo;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69338-pieza.html
-69339;9261RK19D;Alternador;MERCEDES-BENZ;CLA;200 CDI;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69339-pieza.html
-69343;4493RK71A;Turbo;TOYOTA;Proace City;1.5 D-4D;2021;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69343-pieza.html
-69346;7381KA11E;Cremallera de dirección;CITROEN;C4;1.6 HDi;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69346-pieza.html
-69349;6324HX91B;Cuadro de instrumentos;BMW;Serie 1;118d;2015;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69349-pieza.html
-69350;5907YB66A;Retrovisor derecho;TOYOTA;Proace City;1.5 D-4D;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69350-pieza.html
-69353;9997GE56E;Retrovisor derecho;SEAT;Ateca;1.5 TSI;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;450,26 € + IVA;https://desguacesmadridnorte.com/69353-pieza.html
-69357;2579KL19B;Parachoques trasero;RENAULT;Megane;1.5 dCi;2010;Comprobada, funcionando;1 año;En stock;Consultar por WhatsApp;https://desguacesmadridnorte.com/69357-pieza.html
-69358;9226AJ68C;Cárter;CITROEN;C4;1.6 HDi;2011;Desmontada de vehículo;1 año;Bajo pedido 24-48h;Consultar por WhatsApp;https://desguacesmadridnorte.com/69358-pieza.html
-69361;9435AX88B;Elevalunas delantero izquierdo;BMW;Serie 1;118d;2015;Comprobada, funcionando;1 año;En stock;264,50 € + IVA;https://desguacesmadridnorte.com/69361-pieza.html
-69363;2340SD78B;Centralita motor;VOLKSWAGEN;Golf;2.0 TDI;2011;Sin comprobar;1 año;En stock;63,22 € + IVA;https://desguacesmadridnorte.com/69363-pieza.html
+id;referencia_oem;pieza;marca;modelo;motor;anio;estado;garantia;disponibilidad;precio;url
+69103;7891VT72E;Puerta trasera izquierda;BMW;Serie 3;330i;2008;Desmontada de vehículo;1 año;En stock;428,23 € + IVA;https://desguacesmadridnorte.com/69103-pieza.html
+69106;9032YL36D;Capó;AUDI;Q3;2.0 TDI;2014;Comprobada, funcionando;1 año;En stock;337,07 € + IVA;https://desguacesmadridnorte.com/69106-pieza.html
+69109;5786KQ28F;Puerta trasera izquierda;VOLKSWAGEN;Passat;1.6 TDI;2007;Sin comprobar;1 año;En stock;237,47 € + IVA;https://desguacesmadridnorte.com/69109-pieza.html
+69112;9166DP74E;Módulo electrónico;AUDI;Q3;1.4 TFSI;2019;Desmontada de vehículo;1 año;Bajo pedido 24-48h;194,65 € + IVA;https://desguacesmadridnorte.com/69112-pieza.html
+69115;4678EB76F;Paso de rueda trasero izquierdo;VOLKSWAGEN;Polo;1.4 TDI;2020;Comprobada, funcionando;1 año;Bajo pedido 24-48h;53,17 € + IVA;https://desguacesmadridnorte.com/69115-pieza.html
+69118;8484YR79C;Puerta delantera derecha;MERCEDES-BENZ;Clase A;180 CDI;2012;Desmontada de vehículo;1 año;Bajo pedido 24-48h;387,56 € + IVA;https://desguacesmadridnorte.com/69118-pieza.html
+69119;1542EX86D;Parachoques trasero;RENAULT;Clio;1.2 16v;2018;Desmontada de vehículo;1 año;Bajo pedido 24-48h;98,38 € + IVA;https://desguacesmadridnorte.com/69119-pieza.html
+69121;1550KL68A;Puerta delantera izquierda;KIA;Ceed;1.4 CRDi;2019;Desmontada de vehículo;1 año;Bajo pedido 24-48h;270,91 € + IVA;https://desguacesmadridnorte.com/69121-pieza.html
+69123;7064DG62B;Piloto trasero derecho;HYUNDAI;i30;1.6 CRDi;2020;Desmontada de vehículo;1 año;En stock;104,00 € + IVA;https://desguacesmadridnorte.com/69123-pieza.html
+69124;1731TJ95F;Retrovisor derecho;BMW;Serie 1;116d;2007;Comprobada, funcionando;1 año;En stock;113,25 € + IVA;https://desguacesmadridnorte.com/69124-pieza.html
+69127;4652RV26E;Turbo;AUDI;A4;2.0 TFSI;2020;Desmontada de vehículo;1 año;En stock;899,00 € + IVA;https://desguacesmadridnorte.com/69127-pieza.html
+69129;9318PN29E;Cerradura puerta delantera;BMW;Serie 3;330i;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;81,38 € + IVA;https://desguacesmadridnorte.com/69129-pieza.html
+69130;1419SR51F;Bomba de agua;AUDI;A3;2.0 TDI;2006;Comprobada, funcionando;1 año;Bajo pedido 24-48h;82,78 € + IVA;https://desguacesmadridnorte.com/69130-pieza.html
+69132;6511QW39F;Portón trasero;KIA;Ceed;1.4 CRDi;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;127,02 € + IVA;https://desguacesmadridnorte.com/69132-pieza.html
+69133;8402XG71F;Cinturón de seguridad;MERCEDES-BENZ;CLA;200 CDI;2006;Comprobada, funcionando;1 año;En stock;72,59 € + IVA;https://desguacesmadridnorte.com/69133-pieza.html
+69135;5469PT63A;Radiador;RENAULT;Megane;1.5 dCi;2009;Desmontada de vehículo;1 año;En stock;50,30 € + IVA;https://desguacesmadridnorte.com/69135-pieza.html
+69137;5713QF51E;Cárter;CITROEN;C4;1.6 HDi;2019;Desmontada de vehículo;1 año;Bajo pedido 24-48h;82,54 € + IVA;https://desguacesmadridnorte.com/69137-pieza.html
+69139;6413PT95B;Caja de cambios;BMW;X1;20d;2011;Comprobada, funcionando;1 año;En stock;702,75 € + IVA;https://desguacesmadridnorte.com/69139-pieza.html
+69142;4513VK82C;Retrovisor izquierdo;TOYOTA;Camry;2.5 Hybrid;2011;Desmontada de vehículo;1 año;En stock;48,18 € + IVA;https://desguacesmadridnorte.com/69142-pieza.html
+69144;4039XX23E;Piloto trasero derecho;BMW;Serie 3;320d;2010;Comprobada, funcionando;1 año;En stock;37,22 € + IVA;https://desguacesmadridnorte.com/69144-pieza.html
+69146;5211PA17A;Intercooler;PEUGEOT;208;1.6 HDi;2010;Comprobada, funcionando;1 año;En stock;63,79 € + IVA;https://desguacesmadridnorte.com/69146-pieza.html
+69149;1622NL87B;Retrovisor izquierdo;HYUNDAI;Tucson;1.7 CRDi;2016;Sin comprobar;1 año;Bajo pedido 24-48h;76,28 € + IVA;https://desguacesmadridnorte.com/69149-pieza.html
+69151;5782MB65A;Módulo electrónico;MERCEDES-BENZ;Clase E Coupé;220 CDI;2021;Comprobada, funcionando;1 año;En stock;319,00 € + IVA;https://desguacesmadridnorte.com/69151-pieza.html
+69153;4234TB24B;Paso de rueda trasero izquierdo;HYUNDAI;Tucson;2.0 CRDi;2015;Sin comprobar;1 año;En stock;40,80 € + IVA;https://desguacesmadridnorte.com/69153-pieza.html
+69155;1471PV26C;Radiador;BMW;Serie 1;118d;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;183,70 € + IVA;https://desguacesmadridnorte.com/69155-pieza.html
+69158;9869YT60C;Cremallera de dirección;MERCEDES-BENZ;CLA;180 CDI;2009;Comprobada, funcionando;1 año;En stock;145,36 € + IVA;https://desguacesmadridnorte.com/69158-pieza.html
+69159;2465FT14F;Retrovisor derecho;AUDI;A3;2.0 TDI;2020;Desmontada de vehículo;1 año;En stock;147,62 € + IVA;https://desguacesmadridnorte.com/69159-pieza.html
+69162;9333EN56B;Airbag volante;KIA;Sportage;1.7 CRDi;2012;Desmontada de vehículo;1 año;En stock;184,45 € + IVA;https://desguacesmadridnorte.com/69162-pieza.html
+69164;6114GF90D;Motor de arranque;KIA;Ceed;1.4 CRDi;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;118,14 € + IVA;https://desguacesmadridnorte.com/69164-pieza.html
+69165;5899MT43B;Radiador;VOLKSWAGEN;Golf;2.0 TDI;2018;Comprobada, funcionando;1 año;En stock;174,92 € + IVA;https://desguacesmadridnorte.com/69165-pieza.html
+69168;3589SD20B;Turbo;OPEL;Astra;1.6 CDTI;2006;Desmontada de vehículo;1 año;En stock;409,17 € + IVA;https://desguacesmadridnorte.com/69168-pieza.html
+69171;5678ME59B;Alternador;OPEL;Corsa;1.2 16v;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;44,56 € + IVA;https://desguacesmadridnorte.com/69171-pieza.html
+69173;9832EF13A;Motor de arranque;RENAULT;Clio;1.2 16v;2010;Desmontada de vehículo;1 año;En stock;78,21 € + IVA;https://desguacesmadridnorte.com/69173-pieza.html
+69176;5065ED51D;Módulo electrónico;TOYOTA;Corolla;1.8 Hybrid;2014;Comprobada, funcionando;1 año;En stock;87,28 € + IVA;https://desguacesmadridnorte.com/69176-pieza.html
+69179;9502HM97D;Capó;MERCEDES-BENZ;Clase A;200 CDI;2016;Sin comprobar;1 año;En stock;242,54 € + IVA;https://desguacesmadridnorte.com/69179-pieza.html
+69180;6324PS81C;Puerta delantera izquierda;BMW;Serie 1;118d;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;238,89 € + IVA;https://desguacesmadridnorte.com/69180-pieza.html
+69182;6736PV58B;Colector de admisión;MERCEDES-BENZ;Clase A;180 CDI;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;122,24 € + IVA;https://desguacesmadridnorte.com/69182-pieza.html
+69184;8281JE79F;Piloto trasero derecho;SEAT;León;1.6 TDI;2013;Comprobada, funcionando;1 año;En stock;39,12 € + IVA;https://desguacesmadridnorte.com/69184-pieza.html
+69186;1355TZ52F;Elevalunas delantero izquierdo;KIA;Ceed;1.6 CRDi;2014;Desmontada de vehículo;1 año;En stock;71,10 € + IVA;https://desguacesmadridnorte.com/69186-pieza.html
+69188;1983NF11C;Retrovisor derecho;BMW;X1;20d;2021;Desmontada de vehículo;1 año;En stock;98,08 € + IVA;https://desguacesmadridnorte.com/69188-pieza.html
+69189;2979YJ51A;Puerta delantera derecha;CITROEN;C4;1.6 VTi;2020;Comprobada, funcionando;1 año;Bajo pedido 24-48h;177,26 € + IVA;https://desguacesmadridnorte.com/69189-pieza.html
+69190;3553LH69B;Bomba de dirección;OPEL;Corsa;1.2 16v;2011;Sin comprobar;1 año;En stock;73,62 € + IVA;https://desguacesmadridnorte.com/69190-pieza.html
+69193;3183DA44D;Turbo;SEAT;Ibiza;1.9 TDI;2018;Comprobada, funcionando;1 año;En stock;395,73 € + IVA;https://desguacesmadridnorte.com/69193-pieza.html
+69195;9000LJ14F;Motor completo;OPEL;Astra;1.6 CDTI;2015;Desmontada de vehículo;1 año;En stock;1.748,63 € + IVA;https://desguacesmadridnorte.com/69195-pieza.html
+69198;7552KG84A;Cárter;AUDI;A4;3.0 TDI;2019;Desmontada de vehículo;1 año;En stock;75,12 € + IVA;https://desguacesmadridnorte.com/69198-pieza.html
+69201;6326RL94C;Puerta delantera derecha;SEAT;León;2.0 TDI;2007;Comprobada, funcionando;1 año;En stock;264,24 € + IVA;https://desguacesmadridnorte.com/69201-pieza.html
+69202;4519AQ40B;Cárter;BMW;X1;18d;2021;Desmontada de vehículo;1 año;Bajo pedido 24-48h;134,95 € + IVA;https://desguacesmadridnorte.com/69202-pieza.html
+69205;9004ET96C;Puerta trasera izquierda;TOYOTA;Proace City;1.5 D-4D;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;253,76 € + IVA;https://desguacesmadridnorte.com/69205-pieza.html
+69208;2000YB45C;Retrovisor izquierdo;OPEL;Astra;1.7 CDTI;2009;Comprobada, funcionando;1 año;En stock;91,52 € + IVA;https://desguacesmadridnorte.com/69208-pieza.html
+69209;3521PX89D;Portón trasero;HYUNDAI;i30;1.6 CRDi;2010;Desmontada de vehículo;1 año;En stock;119,45 € + IVA;https://desguacesmadridnorte.com/69209-pieza.html
+69210;6316EZ75A;Retrovisor derecho;HYUNDAI;Tucson;2.0 CRDi;2007;Desmontada de vehículo;1 año;En stock;78,93 € + IVA;https://desguacesmadridnorte.com/69210-pieza.html
+69211;2475PY65B;Cárter;AUDI;A3;2.0 TDI;2015;Comprobada, funcionando;1 año;En stock;121,76 € + IVA;https://desguacesmadridnorte.com/69211-pieza.html
+69213;7933QM36C;Compresor aire acondicionado;FORD;Fusion;1.4 TDCi;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;110,20 € + IVA;https://desguacesmadridnorte.com/69213-pieza.html
+69216;3589DF36F;Compresor aire acondicionado;PEUGEOT;3008;1.6 HDi;2011;Desmontada de vehículo;1 año;En stock;94,84 € + IVA;https://desguacesmadridnorte.com/69216-pieza.html
+69218;5704MN11D;Retrovisor izquierdo;VOLKSWAGEN;Passat;2.0 TDI;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;128,31 € + IVA;https://desguacesmadridnorte.com/69218-pieza.html
+69219;6881QN87F;Puerta delantera izquierda;VOLKSWAGEN;Passat;1.6 TDI;2009;Sin comprobar;1 año;En stock;125,39 € + IVA;https://desguacesmadridnorte.com/69219-pieza.html
+69222;9688DJ47A;Cárter;VOLKSWAGEN;Polo;1.4 TDI;2007;Comprobada, funcionando;1 año;Bajo pedido 24-48h;53,55 € + IVA;https://desguacesmadridnorte.com/69222-pieza.html
+69225;8486WR79A;Piloto trasero izquierdo;AUDI;A3;1.4 TFSI;2008;Comprobada, funcionando;1 año;En stock;58,45 € + IVA;https://desguacesmadridnorte.com/69225-pieza.html
+69226;1756CW76A;Parachoques trasero;CITROEN;C3;1.4 HDi;2007;Comprobada, funcionando;1 año;En stock;66,33 € + IVA;https://desguacesmadridnorte.com/69226-pieza.html
+69229;6121PB72B;Intercooler;HYUNDAI;i30;1.6 CRDi;2019;Sin comprobar;1 año;En stock;172,20 € + IVA;https://desguacesmadridnorte.com/69229-pieza.html
+69230;7303BS69B;Puerta delantera derecha;NISSAN;Juke;1.5 dCi;2017;Comprobada, funcionando;1 año;En stock;178,94 € + IVA;https://desguacesmadridnorte.com/69230-pieza.html
+69232;9519FS25E;Elevalunas delantero izquierdo;TOYOTA;Proace City;1.5 D-4D;2018;Comprobada, funcionando;1 año;En stock;113,09 € + IVA;https://desguacesmadridnorte.com/69232-pieza.html
+69234;7568AH35A;Portón trasero;PEUGEOT;208;1.4 HDi;2017;Comprobada, funcionando;1 año;En stock;294,74 € + IVA;https://desguacesmadridnorte.com/69234-pieza.html
+69235;2895QT95A;Bomba de dirección;OPEL;Corsa;1.2 16v;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;58,53 € + IVA;https://desguacesmadridnorte.com/69235-pieza.html
+69238;2073JG10C;Colector de admisión;TOYOTA;Proace City;1.5 D-4D;2020;Sin comprobar;1 año;En stock;56,49 € + IVA;https://desguacesmadridnorte.com/69238-pieza.html
+69241;4899RB79C;Retrovisor derecho;NISSAN;Qashqai;1.5 dCi;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;89,72 € + IVA;https://desguacesmadridnorte.com/69241-pieza.html
+69242;8227YW32B;Cuadro de instrumentos;MERCEDES-BENZ;Clase A;180 CDI;2006;Comprobada, funcionando;1 año;En stock;77,03 € + IVA;https://desguacesmadridnorte.com/69242-pieza.html
+69244;2514AM19F;Parachoques trasero;OPEL;Astra;1.6 CDTI;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;236,38 € + IVA;https://desguacesmadridnorte.com/69244-pieza.html
+69246;2890EA58A;Puerta delantera derecha;TOYOTA;Proace City;1.5 D-4D;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;239,62 € + IVA;https://desguacesmadridnorte.com/69246-pieza.html
+69247;5133HD58B;Puerta trasera izquierda;RENAULT;Megane;1.6 dCi;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;109,72 € + IVA;https://desguacesmadridnorte.com/69247-pieza.html
+69250;3875ZQ85A;Faro delantero izquierdo;RENAULT;Megane;1.5 dCi;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;151,17 € + IVA;https://desguacesmadridnorte.com/69250-pieza.html
+69252;3418PJ12D;Capó;SKODA;Fabia;1.2 TSI;2007;Sin comprobar;1 año;En stock;68,09 € + IVA;https://desguacesmadridnorte.com/69252-pieza.html
+69254;2118NJ66D;Piloto trasero izquierdo;CITROEN;C4;1.6 HDi;2008;Comprobada, funcionando;1 año;En stock;25,62 € + IVA;https://desguacesmadridnorte.com/69254-pieza.html
+69257;1501GG99C;Faro delantero derecho;NISSAN;Qashqai;1.6 dCi;2015;Desmontada de vehículo;1 año;En stock;184,97 € + IVA;https://desguacesmadridnorte.com/69257-pieza.html
+69259;9789NG88E;Cerradura puerta delantera;TOYOTA;Proace City;1.5 D-4D;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;26,13 € + IVA;https://desguacesmadridnorte.com/69259-pieza.html
+69260;4201KF65F;Motor de arranque;OPEL;Corsa;1.2 16v;2019;Sin comprobar;1 año;En stock;61,53 € + IVA;https://desguacesmadridnorte.com/69260-pieza.html
+69263;6528TK62B;Amortiguador delantero;NISSAN;Qashqai;1.6 dCi;2014;Desmontada de vehículo;1 año;Bajo pedido 24-48h;72,18 € + IVA;https://desguacesmadridnorte.com/69263-pieza.html
+69265;7347WM41E;Parachoques delantero;HYUNDAI;i30;1.4 CRDi;2021;Sin comprobar;1 año;Bajo pedido 24-48h;120,06 € + IVA;https://desguacesmadridnorte.com/69265-pieza.html
+69267;3577PS34C;Cuadro de instrumentos;KIA;Ceed;1.6 CRDi;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;92,97 € + IVA;https://desguacesmadridnorte.com/69267-pieza.html
+69270;9452XD63B;Compresor aire acondicionado;BMW;Serie 1;118d;2017;Comprobada, funcionando;1 año;En stock;166,95 € + IVA;https://desguacesmadridnorte.com/69270-pieza.html
+69272;2630XD34E;Bomba de agua;VOLKSWAGEN;Golf;1.6 TDI;2015;Desmontada de vehículo;1 año;En stock;75,25 € + IVA;https://desguacesmadridnorte.com/69272-pieza.html
+69273;7940EC12F;Bomba de dirección;PEUGEOT;208;1.4 HDi;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;64,98 € + IVA;https://desguacesmadridnorte.com/69273-pieza.html
+69274;1770PF64F;Puerta delantera izquierda;VOLKSWAGEN;Golf;2.0 TDI;2006;Comprobada, funcionando;1 año;En stock;175,07 € + IVA;https://desguacesmadridnorte.com/69274-pieza.html
+69275;6038JP23F;Piloto trasero derecho;SEAT;León;1.6 TDI;2008;Comprobada, funcionando;1 año;En stock;34,81 € + IVA;https://desguacesmadridnorte.com/69275-pieza.html
+69278;6091HW77B;Bomba de dirección;VOLKSWAGEN;Golf;2.0 TDI;2013;Desmontada de vehículo;1 año;Bajo pedido 24-48h;93,80 € + IVA;https://desguacesmadridnorte.com/69278-pieza.html
+69280;4406ZV66B;Radiador;HYUNDAI;Tucson;2.0 CRDi;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;97,41 € + IVA;https://desguacesmadridnorte.com/69280-pieza.html
+69283;6531ZL91A;Capó;HYUNDAI;i30;1.4 CRDi;2012;Comprobada, funcionando;1 año;Bajo pedido 24-48h;63,75 € + IVA;https://desguacesmadridnorte.com/69283-pieza.html
+69285;8420VL82D;Parachoques delantero;RENAULT;Clio;1.2 16v;2008;Comprobada, funcionando;1 año;En stock;179,73 € + IVA;https://desguacesmadridnorte.com/69285-pieza.html
+69287;8634BW12F;Motor de arranque;SKODA;Octavia;1.6 TDI;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;106,18 € + IVA;https://desguacesmadridnorte.com/69287-pieza.html
+69290;5216AG37A;Motor completo;OPEL;Astra;1.7 CDTI;2018;Comprobada, funcionando;1 año;En stock;1.480,74 € + IVA;https://desguacesmadridnorte.com/69290-pieza.html
+69293;1890KE23D;Retrovisor derecho;CITROEN;C3;1.2 PureTech;2019;Comprobada, funcionando;1 año;En stock;43,57 € + IVA;https://desguacesmadridnorte.com/69293-pieza.html
+69296;1392KP57E;Bomba de agua;SEAT;Ateca;1.5 TSI;2017;Desmontada de vehículo;1 año;En stock;27,09 € + IVA;https://desguacesmadridnorte.com/69296-pieza.html
+69299;3703WN16A;Faro delantero izquierdo;VOLKSWAGEN;Golf;2.0 TDI;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;99,90 € + IVA;https://desguacesmadridnorte.com/69299-pieza.html
+69300;8041GJ69E;Centralita motor;MERCEDES-BENZ;Clase A;200 CDI;2005;Sin comprobar;1 año;En stock;213,94 € + IVA;https://desguacesmadridnorte.com/69300-pieza.html
+69302;2262MN19A;Faro delantero derecho;FORD;Focus;1.6 TDCi;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;139,51 € + IVA;https://desguacesmadridnorte.com/69302-pieza.html
+69304;9831TD79A;Retrovisor izquierdo;RENAULT;Captur;0.9 TCe;2012;Comprobada, funcionando;1 año;Bajo pedido 24-48h;42,13 € + IVA;https://desguacesmadridnorte.com/69304-pieza.html
+69305;7395JV92D;Cerradura puerta delantera;OPEL;Corsa;1.3 CDTI;2009;Comprobada, funcionando;1 año;En stock;21,52 € + IVA;https://desguacesmadridnorte.com/69305-pieza.html
+69308;5701TB81C;Puerta delantera derecha;FORD;Fiesta;1.0 EcoBoost;2007;Comprobada, funcionando;1 año;En stock;217,92 € + IVA;https://desguacesmadridnorte.com/69308-pieza.html
+69311;2693GK25C;Centralita motor;NISSAN;Juke;1.2 DIG-T;2013;Desmontada de vehículo;1 año;En stock;207,69 € + IVA;https://desguacesmadridnorte.com/69311-pieza.html
+69312;2113KP21B;Faro delantero izquierdo;NISSAN;Qashqai;1.6 dCi;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;204,50 € + IVA;https://desguacesmadridnorte.com/69312-pieza.html
+69314;9174SP97C;Colector de admisión;AUDI;A3;2.0 TDI;2005;Desmontada de vehículo;1 año;Bajo pedido 24-48h;114,59 € + IVA;https://desguacesmadridnorte.com/69314-pieza.html
+69316;2020XX53C;Turbo;FORD;Fiesta;1.0 EcoBoost;2020;Comprobada, funcionando;1 año;Bajo pedido 24-48h;489,51 € + IVA;https://desguacesmadridnorte.com/69316-pieza.html
+69317;8100QY16F;Retrovisor derecho;HYUNDAI;i30;1.4 CRDi;2007;Sin comprobar;1 año;En stock;95,36 € + IVA;https://desguacesmadridnorte.com/69317-pieza.html
+69319;2993JD41D;Parachoques trasero;NISSAN;Juke;1.2 DIG-T;2008;Comprobada, funcionando;1 año;En stock;146,96 € + IVA;https://desguacesmadridnorte.com/69319-pieza.html
+69321;6752FN92B;Airbag volante;HYUNDAI;Tucson;2.0 CRDi;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;74,87 € + IVA;https://desguacesmadridnorte.com/69321-pieza.html
+69323;4292CN58C;Piloto trasero derecho;HYUNDAI;Tucson;2.0 CRDi;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;54,02 € + IVA;https://desguacesmadridnorte.com/69323-pieza.html
+69325;2456GJ33A;Intercooler;OPEL;Corsa;1.2 16v;2012;Desmontada de vehículo;1 año;En stock;138,09 € + IVA;https://desguacesmadridnorte.com/69325-pieza.html
+69327;5754ZC90A;Faro delantero izquierdo;FORD;Fusion;1.4 TDCi;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;130,72 € + IVA;https://desguacesmadridnorte.com/69327-pieza.html
+69328;2960ZY45A;Radiador;KIA;Ceed;1.4 CRDi;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;101,69 € + IVA;https://desguacesmadridnorte.com/69328-pieza.html
+69331;5426AY46B;Intercooler;TOYOTA;Camry;2.5 Hybrid;2015;Sin comprobar;1 año;En stock;231,00 € + IVA;https://desguacesmadridnorte.com/69331-pieza.html
+69332;3111JJ60A;Portón trasero;SKODA;Octavia;1.6 TDI;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;416,72 € + IVA;https://desguacesmadridnorte.com/69332-pieza.html
+69333;1260ZB90C;Parachoques trasero;BMW;X1;20d;2005;Comprobada, funcionando;1 año;En stock;210,48 € + IVA;https://desguacesmadridnorte.com/69333-pieza.html
+69336;3553RG38A;Aleta delantera izquierda;AUDI;A4;2.0 TDI;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;117,60 € + IVA;https://desguacesmadridnorte.com/69336-pieza.html
+69339;9668ZD63F;Faro delantero izquierdo;AUDI;A3;1.6 TDI;2021;Desmontada de vehículo;1 año;En stock;348,00 € + IVA;https://desguacesmadridnorte.com/69339-pieza.html
+69340;1465HS40A;Parachoques trasero;VOLKSWAGEN;Golf;2.0 TDI;2012;Comprobada, funcionando;1 año;En stock;123,92 € + IVA;https://desguacesmadridnorte.com/69340-pieza.html
+69342;2416PR22C;Airbag volante;AUDI;Q3;2.0 TDI;2005;Comprobada, funcionando;1 año;En stock;141,13 € + IVA;https://desguacesmadridnorte.com/69342-pieza.html
+69344;1692SZ21B;Alternador;TOYOTA;Proace City;1.5 D-4D;2007;Sin comprobar;1 año;Bajo pedido 24-48h;132,29 € + IVA;https://desguacesmadridnorte.com/69344-pieza.html
+69345;9328CG35D;Puerta delantera izquierda;NISSAN;Juke;1.2 DIG-T;2010;Comprobada, funcionando;1 año;En stock;189,46 € + IVA;https://desguacesmadridnorte.com/69345-pieza.html
+69348;2739KR12F;Capó;NISSAN;Juke;1.2 DIG-T;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;141,54 € + IVA;https://desguacesmadridnorte.com/69348-pieza.html
+69349;6403DN73D;Cárter;TOYOTA;Corolla;1.4 D-4D;2015;Desmontada de vehículo;1 año;En stock;36,94 € + IVA;https://desguacesmadridnorte.com/69349-pieza.html
+69351;2944QY97F;Colector de admisión;VOLKSWAGEN;Passat;1.6 TDI;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;121,32 € + IVA;https://desguacesmadridnorte.com/69351-pieza.html
+69352;3848AS27F;Parachoques trasero;HYUNDAI;Tucson;2.0 CRDi;2009;Comprobada, funcionando;1 año;En stock;139,84 € + IVA;https://desguacesmadridnorte.com/69352-pieza.html
+69354;1413YW91F;Faro delantero derecho;RENAULT;Captur;1.5 dCi;2009;Comprobada, funcionando;1 año;En stock;89,84 € + IVA;https://desguacesmadridnorte.com/69354-pieza.html
+69355;5892DL25D;Retrovisor derecho;MERCEDES-BENZ;CLA;200 CDI;2021;Desmontada de vehículo;1 año;En stock;187,67 € + IVA;https://desguacesmadridnorte.com/69355-pieza.html
+69358;6971PG92D;Cremallera de dirección;TOYOTA;Camry;2.5 Hybrid;2009;Desmontada de vehículo;1 año;En stock;169,74 € + IVA;https://desguacesmadridnorte.com/69358-pieza.html
+69361;7599XD32A;Alternador;VOLKSWAGEN;Passat;1.6 TDI;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;81,18 € + IVA;https://desguacesmadridnorte.com/69361-pieza.html
+69364;7628ZV60E;Portón trasero;KIA;Sportage;1.7 CRDi;2006;Comprobada, funcionando;1 año;En stock;93,50 € + IVA;https://desguacesmadridnorte.com/69364-pieza.html
+69366;1557CG56A;Puerta delantera izquierda;HYUNDAI;Tucson;1.7 CRDi;2014;Comprobada, funcionando;1 año;En stock;356,48 € + IVA;https://desguacesmadridnorte.com/69366-pieza.html
+69367;5424HH90C;Bomba de agua;MERCEDES-BENZ;CLA;180 CDI;2020;Comprobada, funcionando;1 año;Bajo pedido 24-48h;50,83 € + IVA;https://desguacesmadridnorte.com/69367-pieza.html
+69368;6321JG23D;Retrovisor izquierdo;KIA;Sportage;1.7 CRDi;2018;Comprobada, funcionando;1 año;En stock;160,88 € + IVA;https://desguacesmadridnorte.com/69368-pieza.html
+69370;3594AM25A;Centralita motor;FORD;Fusion;1.4 TDCi;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;131,85 € + IVA;https://desguacesmadridnorte.com/69370-pieza.html
+69372;2900VA77B;Cárter;VOLKSWAGEN;Golf;1.4 TSI;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;103,26 € + IVA;https://desguacesmadridnorte.com/69372-pieza.html
+69375;3142FF37F;Cremallera de dirección;MERCEDES-BENZ;Clase E Coupé;220 CDI;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;493,00 € + IVA;https://desguacesmadridnorte.com/69375-pieza.html
+69377;5995FK59E;Puerta delantera izquierda;FORD;Focus;2.0 TDCi;2017;Comprobada, funcionando;1 año;En stock;119,33 € + IVA;https://desguacesmadridnorte.com/69377-pieza.html
+69378;3566WX72C;Catalizador;RENAULT;Captur;0.9 TCe;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;233,14 € + IVA;https://desguacesmadridnorte.com/69378-pieza.html
+69380;1842YM53A;Elevalunas delantero izquierdo;MERCEDES-BENZ;Clase A;180 CDI;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;60,64 € + IVA;https://desguacesmadridnorte.com/69380-pieza.html
+69383;4605HG75D;Airbag volante;MERCEDES-BENZ;Clase A;200 CDI;2018;Sin comprobar;1 año;En stock;123,70 € + IVA;https://desguacesmadridnorte.com/69383-pieza.html
+69386;7574KJ46D;Portón trasero;MERCEDES-BENZ;Clase E Coupé;250 CDI;2008;Sin comprobar;1 año;En stock;162,56 € + IVA;https://desguacesmadridnorte.com/69386-pieza.html
+69387;3088PN96A;Portón trasero;SKODA;Fabia;1.4 TDI;2010;Desmontada de vehículo;1 año;En stock;93,50 € + IVA;https://desguacesmadridnorte.com/69387-pieza.html
+69388;9184TS32A;Motor de arranque;MERCEDES-BENZ;Clase E Coupé;250 CDI;2007;Comprobada, funcionando;1 año;Bajo pedido 24-48h;93,73 € + IVA;https://desguacesmadridnorte.com/69388-pieza.html
+69391;9155CD10A;Alternador;MERCEDES-BENZ;CLA;200 CDI;2019;Sin comprobar;1 año;Bajo pedido 24-48h;152,46 € + IVA;https://desguacesmadridnorte.com/69391-pieza.html
+69392;3738AR12A;Aleta delantera izquierda;PEUGEOT;3008;2.0 HDi;2005;Desmontada de vehículo;1 año;Bajo pedido 24-48h;55,88 € + IVA;https://desguacesmadridnorte.com/69392-pieza.html
+69394;3511JJ37A;Cinturón de seguridad;CITROEN;C4;1.6 VTi;2020;Desmontada de vehículo;1 año;Bajo pedido 24-48h;50,52 € + IVA;https://desguacesmadridnorte.com/69394-pieza.html
+69396;8774QQ86B;Elevalunas delantero izquierdo;HYUNDAI;i30;1.4 CRDi;2011;Comprobada, funcionando;1 año;En stock;33,98 € + IVA;https://desguacesmadridnorte.com/69396-pieza.html
+69399;7457QE92C;Compresor aire acondicionado;BMW;X1;20d;2014;Comprobada, funcionando;1 año;En stock;236,91 € + IVA;https://desguacesmadridnorte.com/69399-pieza.html
+69402;7490SP85B;Compresor aire acondicionado;OPEL;Astra;1.7 CDTI;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;85,22 € + IVA;https://desguacesmadridnorte.com/69402-pieza.html
+69405;5474RC57F;Radiador;TOYOTA;Camry;2.5 Hybrid;2011;Comprobada, funcionando;1 año;En stock;156,41 € + IVA;https://desguacesmadridnorte.com/69405-pieza.html
+69407;7312LR82E;Centralita motor;RENAULT;Megane;1.6 dCi;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;89,66 € + IVA;https://desguacesmadridnorte.com/69407-pieza.html
+69408;7999JL10A;Parachoques trasero;BMW;Serie 3;330i;2011;Comprobada, funcionando;1 año;En stock;158,82 € + IVA;https://desguacesmadridnorte.com/69408-pieza.html
+69411;5658LB13D;Alternador;KIA;Sportage;2.0 CRDi;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;222,57 € + IVA;https://desguacesmadridnorte.com/69411-pieza.html
+69412;2048MP15C;Retrovisor derecho;KIA;Ceed;1.4 CRDi;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;114,00 € + IVA;https://desguacesmadridnorte.com/69412-pieza.html
+69415;7896CA19A;Puerta trasera izquierda;SEAT;Ateca;2.0 TDI;2007;Comprobada, funcionando;1 año;Bajo pedido 24-48h;187,86 € + IVA;https://desguacesmadridnorte.com/69415-pieza.html
+69416;6813RM95B;Faro delantero derecho;SEAT;Ibiza;1.6 TDI;2013;Sin comprobar;1 año;En stock;78,89 € + IVA;https://desguacesmadridnorte.com/69416-pieza.html
+69417;3691XC80F;Cerradura puerta delantera;SKODA;Fabia;1.4 TDI;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;38,23 € + IVA;https://desguacesmadridnorte.com/69417-pieza.html
+69419;3931HR90B;Faro delantero derecho;TOYOTA;Proace City;1.5 D-4D;2015;Comprobada, funcionando;1 año;Bajo pedido 24-48h;90,87 € + IVA;https://desguacesmadridnorte.com/69419-pieza.html
+69422;6348KE44D;Turbo;RENAULT;Megane;1.6 dCi;2015;Comprobada, funcionando;1 año;En stock;463,14 € + IVA;https://desguacesmadridnorte.com/69422-pieza.html
+69425;7201MM76C;Motor completo;VOLKSWAGEN;Polo;1.2 TSI;2013;Desmontada de vehículo;1 año;En stock;2.922,64 € + IVA;https://desguacesmadridnorte.com/69425-pieza.html
+69426;9532PZ37C;Retrovisor derecho;SKODA;Octavia;2.0 TDI;2013;Comprobada, funcionando;1 año;En stock;75,53 € + IVA;https://desguacesmadridnorte.com/69426-pieza.html
+69429;5696FP93D;Módulo electrónico;MERCEDES-BENZ;CLA;200 CDI;2020;Sin comprobar;1 año;Bajo pedido 24-48h;271,78 € + IVA;https://desguacesmadridnorte.com/69429-pieza.html
+69430;5479HZ13D;Compresor aire acondicionado;RENAULT;Captur;0.9 TCe;2012;Comprobada, funcionando;1 año;Bajo pedido 24-48h;74,56 € + IVA;https://desguacesmadridnorte.com/69430-pieza.html
+69431;9808AK99C;Colector de admisión;NISSAN;Qashqai;1.6 dCi;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;151,90 € + IVA;https://desguacesmadridnorte.com/69431-pieza.html
+69434;6144PH23C;Cárter;MERCEDES-BENZ;CLA;200 CDI;2006;Comprobada, funcionando;1 año;Bajo pedido 24-48h;138,39 € + IVA;https://desguacesmadridnorte.com/69434-pieza.html
+69436;7263QT24D;Parachoques trasero;RENAULT;Clio;1.2 16v;2008;Comprobada, funcionando;1 año;En stock;112,37 € + IVA;https://desguacesmadridnorte.com/69436-pieza.html
+69437;4038SJ80C;Faro delantero derecho;SEAT;Ibiza;1.2 TSI;2007;Comprobada, funcionando;1 año;En stock;49,31 € + IVA;https://desguacesmadridnorte.com/69437-pieza.html
+69440;8274TC72D;Cerradura puerta delantera;TOYOTA;Proace City;1.5 D-4D;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;71,30 € + IVA;https://desguacesmadridnorte.com/69440-pieza.html
+69443;6652LR53D;Capó;NISSAN;Qashqai;1.6 dCi;2020;Desmontada de vehículo;1 año;En stock;212,83 € + IVA;https://desguacesmadridnorte.com/69443-pieza.html
+69446;7732RB79E;Faro delantero derecho;SEAT;Ibiza;1.2 TSI;2021;Desmontada de vehículo;1 año;Bajo pedido 24-48h;92,28 € + IVA;https://desguacesmadridnorte.com/69446-pieza.html
+69449;8460CR67C;Parachoques trasero;KIA;Ceed;1.6 CRDi;2010;Desmontada de vehículo;1 año;En stock;92,18 € + IVA;https://desguacesmadridnorte.com/69449-pieza.html
+69450;8257FE88A;Alternador;MERCEDES-BENZ;Clase E Coupé;250 CDI;2011;Comprobada, funcionando;1 año;En stock;69,61 € + IVA;https://desguacesmadridnorte.com/69450-pieza.html
+69452;9301LZ48C;Intercooler;NISSAN;Qashqai;1.5 dCi;2021;Desmontada de vehículo;1 año;Bajo pedido 24-48h;83,38 € + IVA;https://desguacesmadridnorte.com/69452-pieza.html
+69455;9697GE67A;Parachoques delantero;BMW;Serie 1;118d;2010;Desmontada de vehículo;1 año;En stock;273,94 € + IVA;https://desguacesmadridnorte.com/69455-pieza.html
+69458;4411RX75D;Compresor aire acondicionado;KIA;Ceed;1.4 CRDi;2015;Comprobada, funcionando;1 año;Bajo pedido 24-48h;230,21 € + IVA;https://desguacesmadridnorte.com/69458-pieza.html
+69459;4670CF44C;Puerta delantera derecha;MERCEDES-BENZ;Clase A;200 CDI;2007;Comprobada, funcionando;1 año;Bajo pedido 24-48h;200,71 € + IVA;https://desguacesmadridnorte.com/69459-pieza.html
+69461;1223KH15E;Capó;VOLKSWAGEN;Passat;1.6 TDI;2012;Desmontada de vehículo;1 año;En stock;124,79 € + IVA;https://desguacesmadridnorte.com/69461-pieza.html
+69462;6517VC75B;Compresor aire acondicionado;CITROEN;C3;1.2 PureTech;2008;Desmontada de vehículo;1 año;En stock;192,78 € + IVA;https://desguacesmadridnorte.com/69462-pieza.html
+69463;6345TN60B;Puerta delantera derecha;RENAULT;Clio;1.2 16v;2014;Desmontada de vehículo;1 año;En stock;275,59 € + IVA;https://desguacesmadridnorte.com/69463-pieza.html
+69464;2280YY59B;Aleta delantera izquierda;CITROEN;C4;1.6 HDi;2014;Desmontada de vehículo;1 año;Bajo pedido 24-48h;119,62 € + IVA;https://desguacesmadridnorte.com/69464-pieza.html
+69467;6912ET60C;Amortiguador delantero;KIA;Ceed;1.4 CRDi;2010;Sin comprobar;1 año;En stock;39,96 € + IVA;https://desguacesmadridnorte.com/69467-pieza.html
+69468;1835AX14D;Motor de arranque;MERCEDES-BENZ;CLA;180 CDI;2007;Comprobada, funcionando;1 año;En stock;170,34 € + IVA;https://desguacesmadridnorte.com/69468-pieza.html
+69469;4367JS78E;Módulo electrónico;TOYOTA;Corolla;1.4 D-4D;2015;Comprobada, funcionando;1 año;En stock;128,74 € + IVA;https://desguacesmadridnorte.com/69469-pieza.html
+69472;9554FH40E;Parachoques trasero;VOLKSWAGEN;Golf;1.6 TDI;2015;Comprobada, funcionando;1 año;En stock;138,10 € + IVA;https://desguacesmadridnorte.com/69472-pieza.html
+69473;8228ML39C;Airbag volante;AUDI;A4;2.0 TFSI;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;156,30 € + IVA;https://desguacesmadridnorte.com/69473-pieza.html
+69474;6235MW91B;Faro delantero derecho;TOYOTA;Camry;2.5 Hybrid;2020;Sin comprobar;1 año;En stock;132,81 € + IVA;https://desguacesmadridnorte.com/69474-pieza.html
+69476;2494XG98E;Portón trasero;PEUGEOT;308;1.6 HDi;2006;Desmontada de vehículo;1 año;En stock;207,24 € + IVA;https://desguacesmadridnorte.com/69476-pieza.html
+69479;1117LR76D;Piloto trasero izquierdo;AUDI;Q3;2.0 TDI;2016;Comprobada, funcionando;1 año;En stock;56,94 € + IVA;https://desguacesmadridnorte.com/69479-pieza.html
+69482;4025LR51F;Puerta delantera derecha;SEAT;Ateca;1.5 TSI;2017;Comprobada, funcionando;1 año;Bajo pedido 24-48h;125,12 € + IVA;https://desguacesmadridnorte.com/69482-pieza.html
+69485;7292FQ69B;Colector de admisión;AUDI;Q3;1.4 TFSI;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;119,07 € + IVA;https://desguacesmadridnorte.com/69485-pieza.html
+69488;1183JG25A;Cerradura puerta delantera;HYUNDAI;i30;1.4 CRDi;2020;Comprobada, funcionando;1 año;En stock;37,35 € + IVA;https://desguacesmadridnorte.com/69488-pieza.html
+69490;2678LE19D;Bomba de dirección;NISSAN;Juke;1.2 DIG-T;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;99,67 € + IVA;https://desguacesmadridnorte.com/69490-pieza.html
+69493;2438SS54E;Centralita motor;MERCEDES-BENZ;Clase A;200 CDI;2018;Sin comprobar;1 año;En stock;170,27 € + IVA;https://desguacesmadridnorte.com/69493-pieza.html
+69494;2408QL73A;Aleta delantera izquierda;OPEL;Astra;1.7 CDTI;2019;Desmontada de vehículo;1 año;En stock;122,33 € + IVA;https://desguacesmadridnorte.com/69494-pieza.html
+69496;8356WQ75B;Parachoques delantero;BMW;Serie 3;330i;2020;Desmontada de vehículo;1 año;Bajo pedido 24-48h;377,00 € + IVA;https://desguacesmadridnorte.com/69496-pieza.html
+69498;3054GN50F;Portón trasero;OPEL;Astra;1.6 CDTI;2018;Sin comprobar;1 año;Bajo pedido 24-48h;282,81 € + IVA;https://desguacesmadridnorte.com/69498-pieza.html
+69500;6475JQ45A;Cinturón de seguridad;SEAT;Ibiza;1.9 TDI;2018;Comprobada, funcionando;1 año;En stock;56,01 € + IVA;https://desguacesmadridnorte.com/69500-pieza.html
+69501;7915YN97B;Compresor aire acondicionado;NISSAN;Qashqai;1.5 dCi;2011;Comprobada, funcionando;1 año;En stock;168,99 € + IVA;https://desguacesmadridnorte.com/69501-pieza.html
+69502;4458DR78B;Retrovisor izquierdo;HYUNDAI;i30;1.6 CRDi;2007;Comprobada, funcionando;1 año;En stock;34,88 € + IVA;https://desguacesmadridnorte.com/69502-pieza.html
+69504;9256RA69E;Turbo;HYUNDAI;Tucson;2.0 CRDi;2008;Comprobada, funcionando;1 año;En stock;290,26 € + IVA;https://desguacesmadridnorte.com/69504-pieza.html
+69506;2471FR97B;Bomba de dirección;SEAT;León;1.6 TDI;2019;Comprobada, funcionando;1 año;En stock;80,24 € + IVA;https://desguacesmadridnorte.com/69506-pieza.html
+69507;7804BB20B;Intercooler;RENAULT;Clio;1.2 16v;2008;Comprobada, funcionando;1 año;En stock;87,90 € + IVA;https://desguacesmadridnorte.com/69507-pieza.html
+69509;7424PW71A;Piloto trasero izquierdo;MERCEDES-BENZ;Clase A;180 CDI;2019;Desmontada de vehículo;1 año;Bajo pedido 24-48h;63,00 € + IVA;https://desguacesmadridnorte.com/69509-pieza.html
+69510;9390YJ13E;Bomba de agua;RENAULT;Clio;1.5 dCi;2018;Sin comprobar;1 año;En stock;40,86 € + IVA;https://desguacesmadridnorte.com/69510-pieza.html
+69512;1171BJ67A;Faro delantero derecho;SKODA;Octavia;1.6 TDI;2017;Desmontada de vehículo;1 año;En stock;213,49 € + IVA;https://desguacesmadridnorte.com/69512-pieza.html
+69514;6874BK37E;Puerta delantera izquierda;RENAULT;Megane;1.5 dCi;2010;Desmontada de vehículo;1 año;En stock;184,45 € + IVA;https://desguacesmadridnorte.com/69514-pieza.html
+69516;8147HT64C;Motor de arranque;HYUNDAI;Tucson;1.7 CRDi;2010;Comprobada, funcionando;1 año;En stock;40,56 € + IVA;https://desguacesmadridnorte.com/69516-pieza.html
+69518;7702CH71C;Faro delantero derecho;BMW;X1;18d;2020;Comprobada, funcionando;1 año;En stock;98,78 € + IVA;https://desguacesmadridnorte.com/69518-pieza.html
+69520;3954KV33A;Parachoques trasero;SKODA;Octavia;2.0 TDI;2010;Desmontada de vehículo;1 año;En stock;201,10 € + IVA;https://desguacesmadridnorte.com/69520-pieza.html
+69523;5294ZL26B;Motor completo;NISSAN;Qashqai;1.6 dCi;2013;Comprobada, funcionando;1 año;En stock;2.625,53 € + IVA;https://desguacesmadridnorte.com/69523-pieza.html
+69526;8182PB44B;Cárter;VOLKSWAGEN;Golf;1.4 TSI;2012;Comprobada, funcionando;1 año;En stock;90,14 € + IVA;https://desguacesmadridnorte.com/69526-pieza.html
+69529;6551NS22F;Centralita motor;OPEL;Astra;1.6 CDTI;2007;Desmontada de vehículo;1 año;En stock;169,37 € + IVA;https://desguacesmadridnorte.com/69529-pieza.html
+69530;5661RS67C;Puerta trasera izquierda;BMW;Serie 1;116d;2008;Comprobada, funcionando;1 año;En stock;128,03 € + IVA;https://desguacesmadridnorte.com/69530-pieza.html
+69533;8435MQ49E;Cinturón de seguridad;AUDI;A4;2.0 TDI;2020;Desmontada de vehículo;1 año;Bajo pedido 24-48h;116,00 € + IVA;https://desguacesmadridnorte.com/69533-pieza.html
+69534;3187BW36A;Bomba de agua;OPEL;Astra;1.7 CDTI;2005;Desmontada de vehículo;1 año;En stock;34,84 € + IVA;https://desguacesmadridnorte.com/69534-pieza.html
+69536;3618TZ72F;Puerta delantera izquierda;SKODA;Octavia;1.6 TDI;2007;Comprobada, funcionando;1 año;En stock;98,51 € + IVA;https://desguacesmadridnorte.com/69536-pieza.html
+69537;9670TD43C;Cuadro de instrumentos;SEAT;Ibiza;1.2 TSI;2011;Comprobada, funcionando;1 año;En stock;174,22 € + IVA;https://desguacesmadridnorte.com/69537-pieza.html
+69540;1818ZN59D;Alternador;NISSAN;Qashqai;1.5 dCi;2007;Comprobada, funcionando;1 año;En stock;122,01 € + IVA;https://desguacesmadridnorte.com/69540-pieza.html
+69542;1348RY16A;Motor completo;TOYOTA;Camry;2.5 Hybrid;2012;Comprobada, funcionando;1 año;Bajo pedido 24-48h;3.921,35 € + IVA;https://desguacesmadridnorte.com/69542-pieza.html
+69545;3202JV21B;Bomba de agua;KIA;Sportage;2.0 CRDi;2009;Desmontada de vehículo;1 año;En stock;73,80 € + IVA;https://desguacesmadridnorte.com/69545-pieza.html
+69547;9302TH92B;Parachoques delantero;BMW;Serie 3;330i;2010;Desmontada de vehículo;1 año;En stock;92,57 € + IVA;https://desguacesmadridnorte.com/69547-pieza.html
+69548;3778VK88B;Compresor aire acondicionado;MERCEDES-BENZ;Clase E Coupé;220 CDI;2009;Comprobada, funcionando;1 año;En stock;245,24 € + IVA;https://desguacesmadridnorte.com/69548-pieza.html
+69550;8733ED11E;Cuadro de instrumentos;CITROEN;C3;1.2 PureTech;2008;Comprobada, funcionando;1 año;En stock;146,08 € + IVA;https://desguacesmadridnorte.com/69550-pieza.html
+69552;3349DX23A;Intercooler;NISSAN;Qashqai;1.5 dCi;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;65,50 € + IVA;https://desguacesmadridnorte.com/69552-pieza.html
+69554;7707QF23D;Retrovisor izquierdo;OPEL;Corsa;1.3 CDTI;2015;Comprobada, funcionando;1 año;En stock;52,13 € + IVA;https://desguacesmadridnorte.com/69554-pieza.html
+69556;5182XC89C;Capó;TOYOTA;Camry;2.5 Hybrid;2017;Desmontada de vehículo;1 año;En stock;219,88 € + IVA;https://desguacesmadridnorte.com/69556-pieza.html
+69558;4610XV49E;Aleta delantera izquierda;OPEL;Astra;1.6 CDTI;2012;Comprobada, funcionando;1 año;En stock;132,80 € + IVA;https://desguacesmadridnorte.com/69558-pieza.html
+69560;3088BK13C;Aleta delantera izquierda;PEUGEOT;208;1.6 HDi;2007;Sin comprobar;1 año;En stock;105,53 € + IVA;https://desguacesmadridnorte.com/69560-pieza.html
+69563;2703VN50B;Cremallera de dirección;OPEL;Astra;1.6 CDTI;2015;Comprobada, funcionando;1 año;En stock;259,74 € + IVA;https://desguacesmadridnorte.com/69563-pieza.html
+69564;6097BQ58C;Parachoques trasero;FORD;Fusion;1.4 TDCi;2021;Comprobada, funcionando;1 año;En stock;101,14 € + IVA;https://desguacesmadridnorte.com/69564-pieza.html
+69566;7193EY17A;Portón trasero;CITROEN;C4;1.6 VTi;2005;Comprobada, funcionando;1 año;En stock;125,61 € + IVA;https://desguacesmadridnorte.com/69566-pieza.html
+69569;1198ZX24C;Intercooler;AUDI;Q3;1.4 TFSI;2012;Comprobada, funcionando;1 año;Bajo pedido 24-48h;101,88 € + IVA;https://desguacesmadridnorte.com/69569-pieza.html
+69571;3763EK50E;Caja de cambios;PEUGEOT;208;1.4 HDi;2019;Sin comprobar;1 año;En stock;225,66 € + IVA;https://desguacesmadridnorte.com/69571-pieza.html
+69572;4091CG83A;Módulo electrónico;PEUGEOT;208;1.6 HDi;2009;Comprobada, funcionando;1 año;En stock;103,12 € + IVA;https://desguacesmadridnorte.com/69572-pieza.html
+69575;4381NB58D;Alternador;MERCEDES-BENZ;Clase A;200 CDI;2008;Comprobada, funcionando;1 año;En stock;138,53 € + IVA;https://desguacesmadridnorte.com/69575-pieza.html
+69578;6890XD68E;Motor de arranque;CITROEN;C4;1.6 VTi;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;117,88 € + IVA;https://desguacesmadridnorte.com/69578-pieza.html
+69579;6234RL56F;Capó;HYUNDAI;Tucson;1.7 CRDi;2006;Comprobada, funcionando;1 año;Bajo pedido 24-48h;138,51 € + IVA;https://desguacesmadridnorte.com/69579-pieza.html
+69581;4589LE89D;Cuadro de instrumentos;AUDI;A3;1.4 TFSI;2006;Comprobada, funcionando;1 año;En stock;245,93 € + IVA;https://desguacesmadridnorte.com/69581-pieza.html
+69582;5879GS23C;Colector de admisión;NISSAN;Qashqai;1.6 dCi;2013;Sin comprobar;1 año;Bajo pedido 24-48h;66,25 € + IVA;https://desguacesmadridnorte.com/69582-pieza.html
+69584;2641FE80F;Colector de admisión;HYUNDAI;Tucson;1.7 CRDi;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;152,35 € + IVA;https://desguacesmadridnorte.com/69584-pieza.html
+69586;7016KP29F;Amortiguador delantero;SEAT;Ibiza;1.2 TSI;2012;Desmontada de vehículo;1 año;Bajo pedido 24-48h;67,63 € + IVA;https://desguacesmadridnorte.com/69586-pieza.html
+69589;2853PQ58C;Capó;KIA;Sportage;1.7 CRDi;2011;Comprobada, funcionando;1 año;En stock;75,97 € + IVA;https://desguacesmadridnorte.com/69589-pieza.html
+69590;7984VY86F;Motor completo;SEAT;Ateca;2.0 TDI;2007;Desmontada de vehículo;1 año;En stock;2.073,58 € + IVA;https://desguacesmadridnorte.com/69590-pieza.html
+69593;6417TG46B;Faro delantero izquierdo;FORD;Fusion;1.4 TDCi;2009;Desmontada de vehículo;1 año;En stock;67,98 € + IVA;https://desguacesmadridnorte.com/69593-pieza.html
+69595;1605FG72B;Alternador;SKODA;Octavia;1.6 TDI;2011;Sin comprobar;1 año;Bajo pedido 24-48h;131,86 € + IVA;https://desguacesmadridnorte.com/69595-pieza.html
+69597;2254BJ31C;Cuadro de instrumentos;TOYOTA;Proace City;1.5 D-4D;2008;Sin comprobar;1 año;En stock;138,18 € + IVA;https://desguacesmadridnorte.com/69597-pieza.html
+69600;3243SL34E;Radiador;OPEL;Corsa;1.2 16v;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;64,35 € + IVA;https://desguacesmadridnorte.com/69600-pieza.html
+69601;6580DY18D;Catalizador;OPEL;Astra;1.7 CDTI;2017;Sin comprobar;1 año;En stock;314,97 € + IVA;https://desguacesmadridnorte.com/69601-pieza.html
+69603;3643CJ43F;Puerta delantera izquierda;SEAT;Ateca;2.0 TDI;2016;Desmontada de vehículo;1 año;En stock;302,58 € + IVA;https://desguacesmadridnorte.com/69603-pieza.html
+69605;7868EB56C;Turbo;FORD;Focus;1.6 TDCi;2015;Comprobada, funcionando;1 año;Bajo pedido 24-48h;449,70 € + IVA;https://desguacesmadridnorte.com/69605-pieza.html
+69608;7360DP96B;Elevalunas delantero izquierdo;PEUGEOT;3008;2.0 HDi;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;34,74 € + IVA;https://desguacesmadridnorte.com/69608-pieza.html
+69609;4355MH49E;Faro delantero izquierdo;PEUGEOT;3008;2.0 HDi;2015;Comprobada, funcionando;1 año;Bajo pedido 24-48h;217,57 € + IVA;https://desguacesmadridnorte.com/69609-pieza.html
+69610;1830PK25D;Parachoques trasero;SKODA;Octavia;2.0 TDI;2019;Comprobada, funcionando;1 año;En stock;232,59 € + IVA;https://desguacesmadridnorte.com/69610-pieza.html
+69613;2993YS80F;Puerta trasera izquierda;PEUGEOT;3008;2.0 HDi;2016;Comprobada, funcionando;1 año;En stock;152,52 € + IVA;https://desguacesmadridnorte.com/69613-pieza.html
+69614;1418AL98B;Elevalunas delantero izquierdo;AUDI;A4;2.0 TFSI;2007;Comprobada, funcionando;1 año;Bajo pedido 24-48h;76,71 € + IVA;https://desguacesmadridnorte.com/69614-pieza.html
+69617;4991AX82B;Intercooler;AUDI;A3;2.0 TDI;2008;Comprobada, funcionando;1 año;En stock;118,07 € + IVA;https://desguacesmadridnorte.com/69617-pieza.html
+69619;5656YS59A;Faro delantero izquierdo;AUDI;Q3;2.0 TDI;2006;Desmontada de vehículo;1 año;En stock;123,78 € + IVA;https://desguacesmadridnorte.com/69619-pieza.html
+69620;2772SJ56B;Parachoques trasero;PEUGEOT;3008;2.0 HDi;2019;Comprobada, funcionando;1 año;En stock;269,42 € + IVA;https://desguacesmadridnorte.com/69620-pieza.html
+69621;2391DR91C;Centralita motor;KIA;Ceed;1.6 CRDi;2015;Comprobada, funcionando;1 año;En stock;171,92 € + IVA;https://desguacesmadridnorte.com/69621-pieza.html
+69624;1643JP78D;Retrovisor derecho;KIA;Sportage;2.0 CRDi;2009;Sin comprobar;1 año;En stock;113,05 € + IVA;https://desguacesmadridnorte.com/69624-pieza.html
+69626;9737WQ91F;Catalizador;BMW;X1;18d;2015;Sin comprobar;1 año;En stock;277,66 € + IVA;https://desguacesmadridnorte.com/69626-pieza.html
+69629;7817TJ21F;Amortiguador delantero;OPEL;Corsa;1.2 16v;2010;Desmontada de vehículo;1 año;Bajo pedido 24-48h;55,01 € + IVA;https://desguacesmadridnorte.com/69629-pieza.html
+69632;2398WR84C;Aleta delantera izquierda;TOYOTA;Corolla;1.4 D-4D;2012;Comprobada, funcionando;1 año;En stock;54,96 € + IVA;https://desguacesmadridnorte.com/69632-pieza.html
+69634;6478TK96F;Elevalunas delantero izquierdo;AUDI;Q3;1.4 TFSI;2018;Desmontada de vehículo;1 año;En stock;92,81 € + IVA;https://desguacesmadridnorte.com/69634-pieza.html
+69636;9555LG80A;Colector de admisión;PEUGEOT;3008;2.0 HDi;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;102,77 € + IVA;https://desguacesmadridnorte.com/69636-pieza.html
+69637;5446BZ93A;Portón trasero;MERCEDES-BENZ;CLA;180 CDI;2017;Comprobada, funcionando;1 año;Bajo pedido 24-48h;441,36 € + IVA;https://desguacesmadridnorte.com/69637-pieza.html
+69639;8619JH76F;Cinturón de seguridad;MERCEDES-BENZ;Clase E Coupé;220 CDI;2013;Sin comprobar;1 año;En stock;103,61 € + IVA;https://desguacesmadridnorte.com/69639-pieza.html
+69640;1585HF73A;Amortiguador delantero;FORD;Fiesta;1.0 EcoBoost;2018;Sin comprobar;1 año;En stock;56,41 € + IVA;https://desguacesmadridnorte.com/69640-pieza.html
+69643;7432XX77D;Cremallera de dirección;NISSAN;Juke;1.2 DIG-T;2010;Desmontada de vehículo;1 año;En stock;258,84 € + IVA;https://desguacesmadridnorte.com/69643-pieza.html
+69645;6164LJ12E;Cárter;FORD;Fusion;1.4 TDCi;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;60,45 € + IVA;https://desguacesmadridnorte.com/69645-pieza.html
+69646;4779VD24B;Puerta delantera izquierda;SEAT;Ibiza;1.9 TDI;2012;Comprobada, funcionando;1 año;Bajo pedido 24-48h;178,00 € + IVA;https://desguacesmadridnorte.com/69646-pieza.html
+69649;8947DV63F;Motor de arranque;TOYOTA;Camry;2.5 Hybrid;2020;Desmontada de vehículo;1 año;Bajo pedido 24-48h;164,17 € + IVA;https://desguacesmadridnorte.com/69649-pieza.html
+69650;5170YF37A;Retrovisor izquierdo;FORD;Fiesta;1.0 EcoBoost;2016;Comprobada, funcionando;1 año;En stock;30,96 € + IVA;https://desguacesmadridnorte.com/69650-pieza.html
+69652;3766TK63B;Bomba de agua;VOLKSWAGEN;Passat;1.6 TDI;2021;Comprobada, funcionando;1 año;En stock;79,48 € + IVA;https://desguacesmadridnorte.com/69652-pieza.html
+69653;2396RR98F;Puerta delantera derecha;BMW;Serie 1;116d;2010;Comprobada, funcionando;1 año;En stock;252,60 € + IVA;https://desguacesmadridnorte.com/69653-pieza.html
+69655;1955SC69B;Cerradura puerta delantera;MERCEDES-BENZ;Clase A;180 CDI;2010;Desmontada de vehículo;1 año;En stock;62,05 € + IVA;https://desguacesmadridnorte.com/69655-pieza.html
+69658;8025AT13F;Caja de cambios;BMW;X1;20d;2015;Comprobada, funcionando;1 año;En stock;1.661,13 € + IVA;https://desguacesmadridnorte.com/69658-pieza.html
+69659;6152JH43C;Cinturón de seguridad;SKODA;Fabia;1.4 TDI;2013;Comprobada, funcionando;1 año;En stock;37,30 € + IVA;https://desguacesmadridnorte.com/69659-pieza.html
+69662;2786EV44B;Airbag volante;FORD;Fiesta;1.5 TDCi;2008;Comprobada, funcionando;1 año;En stock;198,58 € + IVA;https://desguacesmadridnorte.com/69662-pieza.html
+69663;9697EG90F;Intercooler;SKODA;Octavia;1.6 TDI;2017;Comprobada, funcionando;1 año;Bajo pedido 24-48h;129,27 € + IVA;https://desguacesmadridnorte.com/69663-pieza.html
+69664;2344FF74B;Puerta delantera derecha;VOLKSWAGEN;Golf;2.0 TDI;2014;Comprobada, funcionando;1 año;En stock;333,29 € + IVA;https://desguacesmadridnorte.com/69664-pieza.html
+69665;5171PX51B;Retrovisor izquierdo;TOYOTA;Proace City;1.5 D-4D;2006;Comprobada, funcionando;1 año;Bajo pedido 24-48h;76,93 € + IVA;https://desguacesmadridnorte.com/69665-pieza.html
+69668;5455QV15E;Turbo;AUDI;A3;2.0 TDI;2005;Comprobada, funcionando;1 año;En stock;475,76 € + IVA;https://desguacesmadridnorte.com/69668-pieza.html
+69671;6080DP49C;Retrovisor derecho;HYUNDAI;Tucson;1.7 CRDi;2012;Comprobada, funcionando;1 año;En stock;112,45 € + IVA;https://desguacesmadridnorte.com/69671-pieza.html
+69673;7446BK77E;Piloto trasero izquierdo;VOLKSWAGEN;Golf;1.6 TDI;2018;Sin comprobar;1 año;Bajo pedido 24-48h;58,37 € + IVA;https://desguacesmadridnorte.com/69673-pieza.html
+69674;5643NB62C;Retrovisor izquierdo;VOLKSWAGEN;Golf;2.0 TDI;2013;Comprobada, funcionando;1 año;En stock;41,62 € + IVA;https://desguacesmadridnorte.com/69674-pieza.html
+69676;2555QL83A;Puerta delantera izquierda;MERCEDES-BENZ;Clase E Coupé;220 CDI;2011;Comprobada, funcionando;1 año;En stock;255,33 € + IVA;https://desguacesmadridnorte.com/69676-pieza.html
+69677;2048DJ55C;Aleta delantera izquierda;AUDI;Q3;1.4 TFSI;2010;Sin comprobar;1 año;En stock;73,68 € + IVA;https://desguacesmadridnorte.com/69677-pieza.html
+69678;4617AT60E;Caja de cambios;SKODA;Octavia;1.6 TDI;2007;Comprobada, funcionando;1 año;En stock;465,68 € + IVA;https://desguacesmadridnorte.com/69678-pieza.html
+69680;1079LA11D;Cárter;CITROEN;C4;1.6 VTi;2017;Comprobada, funcionando;1 año;En stock;66,04 € + IVA;https://desguacesmadridnorte.com/69680-pieza.html
+69681;6648BC70E;Caja de cambios;BMW;Serie 1;120i;2014;Comprobada, funcionando;1 año;En stock;394,81 € + IVA;https://desguacesmadridnorte.com/69681-pieza.html
+69684;7440KT17D;Colector de admisión;VOLKSWAGEN;Passat;2.0 TDI;2017;Desmontada de vehículo;1 año;En stock;150,18 € + IVA;https://desguacesmadridnorte.com/69684-pieza.html
+69687;5299DY58C;Aleta delantera izquierda;FORD;Focus;1.6 TDCi;2020;Comprobada, funcionando;1 año;Bajo pedido 24-48h;199,20 € + IVA;https://desguacesmadridnorte.com/69687-pieza.html
+69689;8187NH45C;Puerta delantera derecha;CITROEN;C4;1.6 VTi;2017;Desmontada de vehículo;1 año;Bajo pedido 24-48h;320,97 € + IVA;https://desguacesmadridnorte.com/69689-pieza.html
+69690;9837XP39C;Compresor aire acondicionado;BMW;Serie 1;118d;2012;Comprobada, funcionando;1 año;En stock;209,02 € + IVA;https://desguacesmadridnorte.com/69690-pieza.html
+69693;4638AH16C;Colector de admisión;MERCEDES-BENZ;Clase A;200 CDI;2011;Sin comprobar;1 año;En stock;221,17 € + IVA;https://desguacesmadridnorte.com/69693-pieza.html
+69696;3623AR25A;Cuadro de instrumentos;TOYOTA;Camry;2.5 Hybrid;2016;Comprobada, funcionando;1 año;En stock;337,93 € + IVA;https://desguacesmadridnorte.com/69696-pieza.html
+69698;7222CZ77D;Airbag volante;MERCEDES-BENZ;CLA;180 CDI;2011;Desmontada de vehículo;1 año;Bajo pedido 24-48h;314,40 € + IVA;https://desguacesmadridnorte.com/69698-pieza.html
+69701;4277LK85B;Motor de arranque;HYUNDAI;Tucson;2.0 CRDi;2011;Desmontada de vehículo;1 año;En stock;117,71 € + IVA;https://desguacesmadridnorte.com/69701-pieza.html
+69703;8714RD27F;Cerradura puerta delantera;AUDI;Q3;1.4 TFSI;2008;Desmontada de vehículo;1 año;En stock;59,50 € + IVA;https://desguacesmadridnorte.com/69703-pieza.html
+69706;9399LT79E;Capó;MERCEDES-BENZ;CLA;200 CDI;2006;Sin comprobar;1 año;En stock;103,18 € + IVA;https://desguacesmadridnorte.com/69706-pieza.html
+69708;5122YT89B;Retrovisor derecho;BMW;Serie 1;120i;2009;Comprobada, funcionando;1 año;En stock;110,91 € + IVA;https://desguacesmadridnorte.com/69708-pieza.html
+69709;3860JH65B;Paso de rueda trasero izquierdo;PEUGEOT;208;1.6 HDi;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;26,56 € + IVA;https://desguacesmadridnorte.com/69709-pieza.html
+69711;3703JV18C;Puerta delantera derecha;SEAT;Ibiza;1.6 TDI;2017;Desmontada de vehículo;1 año;Bajo pedido 24-48h;237,36 € + IVA;https://desguacesmadridnorte.com/69711-pieza.html
+69714;9070DC69B;Airbag volante;SEAT;Ateca;1.5 TSI;2017;Sin comprobar;1 año;En stock;117,15 € + IVA;https://desguacesmadridnorte.com/69714-pieza.html
+69716;7068XP33A;Cárter;CITROEN;C4;1.6 VTi;2012;Desmontada de vehículo;1 año;En stock;44,95 € + IVA;https://desguacesmadridnorte.com/69716-pieza.html
+69718;1906EW38B;Cárter;TOYOTA;Camry;2.5 Hybrid;2015;Comprobada, funcionando;1 año;Bajo pedido 24-48h;112,57 € + IVA;https://desguacesmadridnorte.com/69718-pieza.html
+69721;3211SP44F;Capó;FORD;Fusion;1.4 TDCi;2015;Desmontada de vehículo;1 año;En stock;102,49 € + IVA;https://desguacesmadridnorte.com/69721-pieza.html
+69722;8094PF93A;Cinturón de seguridad;SKODA;Fabia;1.2 TSI;2020;Comprobada, funcionando;1 año;En stock;38,33 € + IVA;https://desguacesmadridnorte.com/69722-pieza.html
+69723;6255KR77C;Alternador;PEUGEOT;208;1.4 HDi;2009;Comprobada, funcionando;1 año;En stock;95,13 € + IVA;https://desguacesmadridnorte.com/69723-pieza.html
+69725;5063VZ28F;Colector de admisión;CITROEN;C3;1.4 HDi;2019;Desmontada de vehículo;1 año;En stock;90,73 € + IVA;https://desguacesmadridnorte.com/69725-pieza.html
+69728;5781YP76F;Capó;AUDI;A3;1.4 TFSI;2019;Comprobada, funcionando;1 año;En stock;141,09 € + IVA;https://desguacesmadridnorte.com/69728-pieza.html
+69729;6707EJ13D;Airbag volante;RENAULT;Captur;0.9 TCe;2018;Desmontada de vehículo;1 año;Bajo pedido 24-48h;76,61 € + IVA;https://desguacesmadridnorte.com/69729-pieza.html
+69731;4518TC11C;Cremallera de dirección;FORD;Fusion;1.4 TDCi;2020;Sin comprobar;1 año;Bajo pedido 24-48h;151,03 € + IVA;https://desguacesmadridnorte.com/69731-pieza.html
+69732;4565PE47E;Faro delantero derecho;SKODA;Fabia;1.4 TDI;2007;Comprobada, funcionando;1 año;En stock;97,86 € + IVA;https://desguacesmadridnorte.com/69732-pieza.html
+69734;8226NH34D;Colector de admisión;NISSAN;Qashqai;1.5 dCi;2006;Comprobada, funcionando;1 año;En stock;90,85 € + IVA;https://desguacesmadridnorte.com/69734-pieza.html
+69735;5480CG29C;Airbag volante;TOYOTA;Corolla;1.4 D-4D;2009;Desmontada de vehículo;1 año;En stock;171,69 € + IVA;https://desguacesmadridnorte.com/69735-pieza.html
+69736;6046DM44D;Portón trasero;TOYOTA;Corolla;1.8 Hybrid;2021;Desmontada de vehículo;1 año;En stock;424,24 € + IVA;https://desguacesmadridnorte.com/69736-pieza.html
+69737;8905JA95A;Motor de arranque;NISSAN;Juke;1.2 DIG-T;2014;Comprobada, funcionando;1 año;En stock;33,50 € + IVA;https://desguacesmadridnorte.com/69737-pieza.html
+69739;2591CG84D;Faro delantero derecho;AUDI;Q3;1.4 TFSI;2006;Comprobada, funcionando;1 año;En stock;202,64 € + IVA;https://desguacesmadridnorte.com/69739-pieza.html
+69740;8452PL95E;Airbag volante;KIA;Ceed;1.4 CRDi;2008;Comprobada, funcionando;1 año;En stock;122,40 € + IVA;https://desguacesmadridnorte.com/69740-pieza.html
+69743;7656WJ25D;Cerradura puerta delantera;HYUNDAI;i30;1.4 CRDi;2015;Desmontada de vehículo;1 año;En stock;39,45 € + IVA;https://desguacesmadridnorte.com/69743-pieza.html
+69745;5922TX79B;Retrovisor derecho;SEAT;Ibiza;1.9 TDI;2012;Desmontada de vehículo;1 año;En stock;98,96 € + IVA;https://desguacesmadridnorte.com/69745-pieza.html
+69747;1922FP52C;Cinturón de seguridad;VOLKSWAGEN;Polo;1.4 TDI;2016;Comprobada, funcionando;1 año;En stock;76,65 € + IVA;https://desguacesmadridnorte.com/69747-pieza.html
+69749;7215JF97D;Módulo electrónico;HYUNDAI;i30;1.6 CRDi;2016;Desmontada de vehículo;1 año;En stock;131,84 € + IVA;https://desguacesmadridnorte.com/69749-pieza.html
+69750;8730QS54F;Turbo;BMW;Serie 3;320d;2020;Sin comprobar;1 año;En stock;899,00 € + IVA;https://desguacesmadridnorte.com/69750-pieza.html
+69751;6712AS49D;Motor de arranque;CITROEN;C3;1.2 PureTech;2008;Comprobada, funcionando;1 año;En stock;78,41 € + IVA;https://desguacesmadridnorte.com/69751-pieza.html
+69752;3028EZ55C;Colector de admisión;OPEL;Corsa;1.3 CDTI;2016;Sin comprobar;1 año;En stock;70,51 € + IVA;https://desguacesmadridnorte.com/69752-pieza.html
+69755;8371NL61C;Turbo;CITROEN;C3;1.4 HDi;2020;Comprobada, funcionando;1 año;En stock;339,53 € + IVA;https://desguacesmadridnorte.com/69755-pieza.html
+69758;8290SX73A;Motor de arranque;NISSAN;Juke;1.5 dCi;2018;Comprobada, funcionando;1 año;En stock;108,15 € + IVA;https://desguacesmadridnorte.com/69758-pieza.html
+69760;2715QR58E;Centralita motor;TOYOTA;Corolla;1.8 Hybrid;2011;Desmontada de vehículo;1 año;En stock;361,13 € + IVA;https://desguacesmadridnorte.com/69760-pieza.html
+69763;8859NW87E;Aleta delantera izquierda;KIA;Sportage;2.0 CRDi;2006;Comprobada, funcionando;1 año;En stock;47,33 € + IVA;https://desguacesmadridnorte.com/69763-pieza.html
+69766;6570HD25B;Cinturón de seguridad;PEUGEOT;208;1.4 HDi;2019;Comprobada, funcionando;1 año;En stock;52,88 € + IVA;https://desguacesmadridnorte.com/69766-pieza.html
+69768;2883BB59D;Puerta delantera derecha;TOYOTA;Corolla;1.8 Hybrid;2018;Comprobada, funcionando;1 año;En stock;241,39 € + IVA;https://desguacesmadridnorte.com/69768-pieza.html
+69769;1746GA26B;Motor completo;FORD;Focus;2.0 TDCi;2007;Comprobada, funcionando;1 año;En stock;2.646,92 € + IVA;https://desguacesmadridnorte.com/69769-pieza.html
+69771;1263QT70B;Radiador;SKODA;Octavia;2.0 TDI;2019;Desmontada de vehículo;1 año;En stock;142,25 € + IVA;https://desguacesmadridnorte.com/69771-pieza.html
+69772;2352EC86D;Piloto trasero izquierdo;TOYOTA;Proace City;1.5 D-4D;2009;Comprobada, funcionando;1 año;En stock;35,31 € + IVA;https://desguacesmadridnorte.com/69772-pieza.html
+69775;9327MJ73A;Faro delantero derecho;FORD;Focus;1.6 TDCi;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;134,19 € + IVA;https://desguacesmadridnorte.com/69775-pieza.html
+69778;1740BG49E;Portón trasero;NISSAN;Juke;1.2 DIG-T;2017;Sin comprobar;1 año;Bajo pedido 24-48h;254,78 € + IVA;https://desguacesmadridnorte.com/69778-pieza.html
+69780;2565RL13F;Módulo electrónico;VOLKSWAGEN;Passat;2.0 TDI;2018;Desmontada de vehículo;1 año;En stock;230,87 € + IVA;https://desguacesmadridnorte.com/69780-pieza.html
+69782;7586QJ52B;Parachoques delantero;NISSAN;Juke;1.5 dCi;2009;Desmontada de vehículo;1 año;En stock;160,17 € + IVA;https://desguacesmadridnorte.com/69782-pieza.html
+69784;3796SC66D;Puerta delantera derecha;RENAULT;Megane;1.6 dCi;2010;Desmontada de vehículo;1 año;En stock;173,71 € + IVA;https://desguacesmadridnorte.com/69784-pieza.html
+69786;8106RH66F;Centralita motor;FORD;Fusion;1.4 TDCi;2013;Desmontada de vehículo;1 año;En stock;219,22 € + IVA;https://desguacesmadridnorte.com/69786-pieza.html
+69789;3984EP44A;Cerradura puerta delantera;FORD;Fiesta;1.0 EcoBoost;2020;Comprobada, funcionando;1 año;En stock;40,80 € + IVA;https://desguacesmadridnorte.com/69789-pieza.html
+69791;9220HS26A;Puerta delantera izquierda;RENAULT;Clio;1.5 dCi;2006;Desmontada de vehículo;1 año;En stock;102,58 € + IVA;https://desguacesmadridnorte.com/69791-pieza.html
+69792;8148MH97A;Centralita motor;BMW;X1;18d;2016;Desmontada de vehículo;1 año;En stock;609,00 € + IVA;https://desguacesmadridnorte.com/69792-pieza.html
+69793;7536HZ50B;Faro delantero derecho;OPEL;Astra;1.6 CDTI;2009;Comprobada, funcionando;1 año;En stock;60,33 € + IVA;https://desguacesmadridnorte.com/69793-pieza.html
+69795;5492EB60A;Retrovisor derecho;SKODA;Fabia;1.2 TSI;2013;Desmontada de vehículo;1 año;Bajo pedido 24-48h;140,36 € + IVA;https://desguacesmadridnorte.com/69795-pieza.html
+69797;7558JC21C;Cinturón de seguridad;MERCEDES-BENZ;Clase A;200 CDI;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;81,91 € + IVA;https://desguacesmadridnorte.com/69797-pieza.html
+69798;3431ZN29F;Caja de cambios;TOYOTA;Corolla;1.8 Hybrid;2008;Sin comprobar;1 año;En stock;789,88 € + IVA;https://desguacesmadridnorte.com/69798-pieza.html
+69800;3151EV11D;Cremallera de dirección;MERCEDES-BENZ;Clase A;180 CDI;2020;Desmontada de vehículo;1 año;Bajo pedido 24-48h;493,00 € + IVA;https://desguacesmadridnorte.com/69800-pieza.html
+69801;1631LH42C;Retrovisor izquierdo;SEAT;Ibiza;1.9 TDI;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;59,92 € + IVA;https://desguacesmadridnorte.com/69801-pieza.html
+69802;7151AQ98B;Capó;BMW;X1;18d;2007;Comprobada, funcionando;1 año;En stock;140,57 € + IVA;https://desguacesmadridnorte.com/69802-pieza.html
+69805;4338GH26B;Centralita motor;TOYOTA;Camry;2.5 Hybrid;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;259,35 € + IVA;https://desguacesmadridnorte.com/69805-pieza.html
+69807;1703DT71E;Alternador;SKODA;Octavia;1.6 TDI;2020;Comprobada, funcionando;1 año;Bajo pedido 24-48h;176,14 € + IVA;https://desguacesmadridnorte.com/69807-pieza.html
+69810;3940ZH80F;Elevalunas delantero izquierdo;NISSAN;Juke;1.5 dCi;2006;Sin comprobar;1 año;Bajo pedido 24-48h;25,50 € + IVA;https://desguacesmadridnorte.com/69810-pieza.html
+69811;2128NJ80D;Portón trasero;OPEL;Corsa;1.2 16v;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;130,88 € + IVA;https://desguacesmadridnorte.com/69811-pieza.html
+69813;6563QA74C;Amortiguador delantero;VOLKSWAGEN;Passat;2.0 TDI;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;83,81 € + IVA;https://desguacesmadridnorte.com/69813-pieza.html
+69814;9985YH70A;Motor completo;KIA;Sportage;1.7 CRDi;2011;Comprobada, funcionando;1 año;En stock;4.161,36 € + IVA;https://desguacesmadridnorte.com/69814-pieza.html
+69815;8073NJ91C;Cinturón de seguridad;FORD;Fusion;1.4 TDCi;2005;Desmontada de vehículo;1 año;En stock;44,19 € + IVA;https://desguacesmadridnorte.com/69815-pieza.html
+69818;1207JX92A;Colector de admisión;MERCEDES-BENZ;Clase A;180 CDI;2014;Sin comprobar;1 año;En stock;188,55 € + IVA;https://desguacesmadridnorte.com/69818-pieza.html
+69820;8733SH89C;Puerta delantera izquierda;CITROEN;C4;1.6 HDi;2015;Comprobada, funcionando;1 año;En stock;247,58 € + IVA;https://desguacesmadridnorte.com/69820-pieza.html
+69821;6613BY36C;Portón trasero;TOYOTA;Proace City;1.5 D-4D;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;248,09 € + IVA;https://desguacesmadridnorte.com/69821-pieza.html
+69824;9301RS24A;Aleta delantera izquierda;RENAULT;Megane;1.5 dCi;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;197,61 € + IVA;https://desguacesmadridnorte.com/69824-pieza.html
+69826;1704JB29D;Motor de arranque;KIA;Sportage;1.7 CRDi;2010;Comprobada, funcionando;1 año;En stock;120,07 € + IVA;https://desguacesmadridnorte.com/69826-pieza.html
+69828;5178VG16B;Capó;PEUGEOT;3008;2.0 HDi;2014;Comprobada, funcionando;1 año;En stock;209,52 € + IVA;https://desguacesmadridnorte.com/69828-pieza.html
+69831;7507ZW67C;Cerradura puerta delantera;SEAT;León;1.6 TDI;2021;Desmontada de vehículo;1 año;Bajo pedido 24-48h;69,09 € + IVA;https://desguacesmadridnorte.com/69831-pieza.html
+69832;3021RB65C;Capó;NISSAN;Juke;1.2 DIG-T;2008;Desmontada de vehículo;1 año;En stock;72,34 € + IVA;https://desguacesmadridnorte.com/69832-pieza.html
+69833;6205TW37D;Motor completo;HYUNDAI;i30;1.6 CRDi;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;4.010,46 € + IVA;https://desguacesmadridnorte.com/69833-pieza.html
+69836;1691CD33A;Elevalunas delantero izquierdo;NISSAN;Juke;1.5 dCi;2020;Desmontada de vehículo;1 año;En stock;53,85 € + IVA;https://desguacesmadridnorte.com/69836-pieza.html
+69837;7948DX60F;Faro delantero derecho;SKODA;Fabia;1.4 TDI;2006;Comprobada, funcionando;1 año;En stock;80,15 € + IVA;https://desguacesmadridnorte.com/69837-pieza.html
+69839;5634RJ48C;Motor completo;SKODA;Octavia;2.0 TDI;2011;Desmontada de vehículo;1 año;Bajo pedido 24-48h;1.197,62 € + IVA;https://desguacesmadridnorte.com/69839-pieza.html
+69842;8622FD76F;Cárter;VOLKSWAGEN;Passat;2.0 TDI;2017;Comprobada, funcionando;1 año;En stock;131,54 € + IVA;https://desguacesmadridnorte.com/69842-pieza.html
+69843;8236ED46F;Bomba de agua;RENAULT;Megane;1.6 dCi;2016;Sin comprobar;1 año;Bajo pedido 24-48h;26,72 € + IVA;https://desguacesmadridnorte.com/69843-pieza.html
+69844;2869FM84A;Amortiguador delantero;SKODA;Octavia;1.6 TDI;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;73,86 € + IVA;https://desguacesmadridnorte.com/69844-pieza.html
+69845;5918TS51A;Bomba de dirección;PEUGEOT;208;1.4 HDi;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;69,79 € + IVA;https://desguacesmadridnorte.com/69845-pieza.html
+69848;1507FD18E;Cerradura puerta delantera;TOYOTA;Corolla;1.4 D-4D;2016;Desmontada de vehículo;1 año;En stock;63,57 € + IVA;https://desguacesmadridnorte.com/69848-pieza.html
+69851;5700NK93A;Cremallera de dirección;PEUGEOT;308;2.0 HDi;2015;Comprobada, funcionando;1 año;En stock;164,83 € + IVA;https://desguacesmadridnorte.com/69851-pieza.html
+69853;9073HF24C;Turbo;KIA;Sportage;2.0 CRDi;2009;Desmontada de vehículo;1 año;En stock;439,58 € + IVA;https://desguacesmadridnorte.com/69853-pieza.html
+69856;9367PC29A;Caja de cambios;SEAT;Ibiza;1.9 TDI;2012;Comprobada, funcionando;1 año;En stock;144,50 € + IVA;https://desguacesmadridnorte.com/69856-pieza.html
+69859;9593ZD35E;Piloto trasero derecho;RENAULT;Megane;1.5 dCi;2008;Desmontada de vehículo;1 año;Bajo pedido 24-48h;37,03 € + IVA;https://desguacesmadridnorte.com/69859-pieza.html
+69862;5768AM17A;Colector de admisión;RENAULT;Clio;1.5 dCi;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;38,25 € + IVA;https://desguacesmadridnorte.com/69862-pieza.html
+69864;1062EL83F;Motor completo;RENAULT;Clio;1.5 dCi;2013;Comprobada, funcionando;1 año;En stock;552,50 € + IVA;https://desguacesmadridnorte.com/69864-pieza.html
+69866;7899GH55C;Elevalunas delantero izquierdo;MERCEDES-BENZ;Clase E Coupé;250 CDI;2006;Desmontada de vehículo;1 año;Bajo pedido 24-48h;89,99 € + IVA;https://desguacesmadridnorte.com/69866-pieza.html
+69868;6331RJ31F;Intercooler;VOLKSWAGEN;Polo;1.2 TSI;2008;Comprobada, funcionando;1 año;En stock;109,88 € + IVA;https://desguacesmadridnorte.com/69868-pieza.html
+69869;2393WA55B;Puerta delantera derecha;CITROEN;C4;1.6 VTi;2008;Desmontada de vehículo;1 año;En stock;223,38 € + IVA;https://desguacesmadridnorte.com/69869-pieza.html
+69872;5353MR71D;Radiador;NISSAN;Qashqai;1.5 dCi;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;90,40 € + IVA;https://desguacesmadridnorte.com/69872-pieza.html
+69875;7399AM27E;Catalizador;NISSAN;Juke;1.5 dCi;2008;Comprobada, funcionando;1 año;En stock;152,29 € + IVA;https://desguacesmadridnorte.com/69875-pieza.html
+69877;2282XG43F;Puerta delantera derecha;CITROEN;C4;1.6 HDi;2008;Comprobada, funcionando;1 año;En stock;290,06 € + IVA;https://desguacesmadridnorte.com/69877-pieza.html
+69878;5577SV91E;Cárter;AUDI;A4;2.0 TFSI;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;147,72 € + IVA;https://desguacesmadridnorte.com/69878-pieza.html
+69881;9619AM67B;Cárter;CITROEN;C3;1.4 HDi;2019;Desmontada de vehículo;1 año;En stock;95,06 € + IVA;https://desguacesmadridnorte.com/69881-pieza.html
+69884;2773XB70B;Compresor aire acondicionado;NISSAN;Juke;1.5 dCi;2013;Comprobada, funcionando;1 año;En stock;193,82 € + IVA;https://desguacesmadridnorte.com/69884-pieza.html
+69887;8231HF23B;Bomba de agua;BMW;X1;18d;2005;Sin comprobar;1 año;En stock;73,86 € + IVA;https://desguacesmadridnorte.com/69887-pieza.html
+69888;8933CT64F;Puerta delantera derecha;HYUNDAI;Tucson;1.7 CRDi;2015;Comprobada, funcionando;1 año;Bajo pedido 24-48h;167,90 € + IVA;https://desguacesmadridnorte.com/69888-pieza.html
+69890;1889NC15E;Faro delantero derecho;AUDI;Q3;2.0 TDI;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;156,92 € + IVA;https://desguacesmadridnorte.com/69890-pieza.html
+69891;5225XC40F;Catalizador;SKODA;Fabia;1.2 TSI;2009;Sin comprobar;1 año;En stock;103,52 € + IVA;https://desguacesmadridnorte.com/69891-pieza.html
+69892;7207MT89E;Módulo electrónico;VOLKSWAGEN;Passat;1.6 TDI;2018;Comprobada, funcionando;1 año;En stock;193,13 € + IVA;https://desguacesmadridnorte.com/69892-pieza.html
+69894;4237PF71F;Caja de cambios;FORD;Focus;2.0 TDCi;2011;Desmontada de vehículo;1 año;En stock;952,52 € + IVA;https://desguacesmadridnorte.com/69894-pieza.html
+69897;2581QM85F;Piloto trasero izquierdo;AUDI;Q3;2.0 TDI;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;73,91 € + IVA;https://desguacesmadridnorte.com/69897-pieza.html
+69900;6044WY87E;Airbag volante;MERCEDES-BENZ;CLA;180 CDI;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;163,35 € + IVA;https://desguacesmadridnorte.com/69900-pieza.html
+69902;7134GP89C;Catalizador;FORD;Focus;1.6 TDCi;2016;Comprobada, funcionando;1 año;En stock;181,87 € + IVA;https://desguacesmadridnorte.com/69902-pieza.html
+69905;2843ZJ93B;Airbag volante;BMW;Serie 3;320d;2016;Comprobada, funcionando;1 año;En stock;351,16 € + IVA;https://desguacesmadridnorte.com/69905-pieza.html
+69908;5431GG89D;Motor de arranque;TOYOTA;Proace City;1.5 D-4D;2019;Desmontada de vehículo;1 año;En stock;136,42 € + IVA;https://desguacesmadridnorte.com/69908-pieza.html
+69909;1064XG61B;Puerta trasera izquierda;SEAT;Ateca;1.5 TSI;2012;Desmontada de vehículo;1 año;En stock;150,57 € + IVA;https://desguacesmadridnorte.com/69909-pieza.html
+69912;7514HJ64B;Piloto trasero izquierdo;RENAULT;Megane;1.5 dCi;2012;Comprobada, funcionando;1 año;En stock;73,55 € + IVA;https://desguacesmadridnorte.com/69912-pieza.html
+69913;7713QX28A;Puerta delantera izquierda;BMW;X1;20d;2007;Desmontada de vehículo;1 año;En stock;273,43 € + IVA;https://desguacesmadridnorte.com/69913-pieza.html
+69915;6920DD78C;Capó;TOYOTA;Camry;2.5 Hybrid;2012;Desmontada de vehículo;1 año;En stock;175,96 € + IVA;https://desguacesmadridnorte.com/69915-pieza.html
+69916;2081KJ46F;Airbag volante;SKODA;Octavia;1.6 TDI;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;196,68 € + IVA;https://desguacesmadridnorte.com/69916-pieza.html
+69917;3264HK29C;Aleta delantera izquierda;AUDI;A3;1.6 TDI;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;184,61 € + IVA;https://desguacesmadridnorte.com/69917-pieza.html
+69919;9243LF75D;Bomba de dirección;PEUGEOT;208;1.4 HDi;2005;Desmontada de vehículo;1 año;En stock;40,71 € + IVA;https://desguacesmadridnorte.com/69919-pieza.html
+69922;1003WH12A;Bomba de dirección;NISSAN;Qashqai;1.5 dCi;2007;Sin comprobar;1 año;En stock;38,25 € + IVA;https://desguacesmadridnorte.com/69922-pieza.html
+69923;2482ZG97E;Aleta delantera izquierda;SKODA;Fabia;1.2 TSI;2019;Comprobada, funcionando;1 año;En stock;128,13 € + IVA;https://desguacesmadridnorte.com/69923-pieza.html
+69926;7333ND70E;Módulo electrónico;VOLKSWAGEN;Golf;1.4 TSI;2020;Desmontada de vehículo;1 año;Bajo pedido 24-48h;155,62 € + IVA;https://desguacesmadridnorte.com/69926-pieza.html
+69928;6204BZ10D;Cárter;NISSAN;Qashqai;1.5 dCi;2017;Comprobada, funcionando;1 año;Bajo pedido 24-48h;56,07 € + IVA;https://desguacesmadridnorte.com/69928-pieza.html
+69930;6820TE25B;Colector de admisión;SEAT;Ibiza;1.2 TSI;2020;Sin comprobar;1 año;Bajo pedido 24-48h;75,83 € + IVA;https://desguacesmadridnorte.com/69930-pieza.html
+69932;1312EH91E;Colector de admisión;PEUGEOT;208;1.6 HDi;2016;Comprobada, funcionando;1 año;En stock;48,17 € + IVA;https://desguacesmadridnorte.com/69932-pieza.html
+69933;9913QG65A;Motor completo;TOYOTA;Camry;2.5 Hybrid;2006;Comprobada, funcionando;1 año;En stock;1.423,02 € + IVA;https://desguacesmadridnorte.com/69933-pieza.html
+69935;3609MF15F;Puerta trasera izquierda;PEUGEOT;308;1.6 HDi;2008;Comprobada, funcionando;1 año;En stock;140,62 € + IVA;https://desguacesmadridnorte.com/69935-pieza.html
+69937;8234LM58D;Aleta delantera izquierda;FORD;Fusion;1.4 TDCi;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;77,08 € + IVA;https://desguacesmadridnorte.com/69937-pieza.html
+69939;1925BS70E;Elevalunas delantero izquierdo;TOYOTA;Proace City;1.5 D-4D;2005;Comprobada, funcionando;1 año;En stock;46,82 € + IVA;https://desguacesmadridnorte.com/69939-pieza.html
+69941;9956QJ17B;Capó;MERCEDES-BENZ;Clase A;180 CDI;2006;Comprobada, funcionando;1 año;Bajo pedido 24-48h;249,00 € + IVA;https://desguacesmadridnorte.com/69941-pieza.html
+69943;2736WG76B;Radiador;VOLKSWAGEN;Passat;2.0 TDI;2016;Desmontada de vehículo;1 año;En stock;78,03 € + IVA;https://desguacesmadridnorte.com/69943-pieza.html
+69944;8572YA66C;Puerta delantera derecha;AUDI;A3;2.0 TDI;2007;Desmontada de vehículo;1 año;En stock;146,55 € + IVA;https://desguacesmadridnorte.com/69944-pieza.html
+69946;1273JP40F;Retrovisor derecho;AUDI;Q3;1.4 TFSI;2012;Comprobada, funcionando;1 año;En stock;191,96 € + IVA;https://desguacesmadridnorte.com/69946-pieza.html
+69947;5287VS51D;Catalizador;MERCEDES-BENZ;Clase E Coupé;220 CDI;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;532,31 € + IVA;https://desguacesmadridnorte.com/69947-pieza.html
+69950;6323LH33A;Puerta trasera izquierda;HYUNDAI;Tucson;2.0 CRDi;2008;Comprobada, funcionando;1 año;En stock;274,80 € + IVA;https://desguacesmadridnorte.com/69950-pieza.html
+69952;1318RW55C;Amortiguador delantero;PEUGEOT;208;1.4 HDi;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;35,12 € + IVA;https://desguacesmadridnorte.com/69952-pieza.html
+69954;5711DN60B;Centralita motor;CITROEN;C3;1.4 HDi;2019;Desmontada de vehículo;1 año;En stock;319,55 € + IVA;https://desguacesmadridnorte.com/69954-pieza.html
+69957;3585ZH57A;Cinturón de seguridad;VOLKSWAGEN;Polo;1.2 TSI;2015;Desmontada de vehículo;1 año;Bajo pedido 24-48h;32,60 € + IVA;https://desguacesmadridnorte.com/69957-pieza.html
+69959;2971HF17D;Colector de admisión;NISSAN;Qashqai;1.5 dCi;2018;Desmontada de vehículo;1 año;En stock;84,63 € + IVA;https://desguacesmadridnorte.com/69959-pieza.html
+69961;7720EG68C;Radiador;BMW;Serie 3;320d;2011;Desmontada de vehículo;1 año;Bajo pedido 24-48h;169,15 € + IVA;https://desguacesmadridnorte.com/69961-pieza.html
+69962;1588MS79B;Faro delantero izquierdo;MERCEDES-BENZ;Clase A;180 CDI;2010;Sin comprobar;1 año;Bajo pedido 24-48h;207,55 € + IVA;https://desguacesmadridnorte.com/69962-pieza.html
+69964;7316VZ14D;Parachoques trasero;SKODA;Octavia;1.6 TDI;2012;Comprobada, funcionando;1 año;En stock;219,91 € + IVA;https://desguacesmadridnorte.com/69964-pieza.html
+69965;8988XX16B;Capó;OPEL;Corsa;1.2 16v;2021;Desmontada de vehículo;1 año;En stock;96,06 € + IVA;https://desguacesmadridnorte.com/69965-pieza.html
+69966;5897XX75C;Piloto trasero izquierdo;RENAULT;Clio;1.5 dCi;2014;Comprobada, funcionando;1 año;En stock;69,10 € + IVA;https://desguacesmadridnorte.com/69966-pieza.html
+69967;9637ME53E;Elevalunas delantero izquierdo;AUDI;Q3;1.4 TFSI;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;134,04 € + IVA;https://desguacesmadridnorte.com/69967-pieza.html
+69969;9650GY28A;Compresor aire acondicionado;KIA;Sportage;1.7 CRDi;2008;Comprobada, funcionando;1 año;En stock;200,59 € + IVA;https://desguacesmadridnorte.com/69969-pieza.html
+69970;1342KZ55B;Módulo electrónico;PEUGEOT;3008;2.0 HDi;2010;Desmontada de vehículo;1 año;En stock;165,09 € + IVA;https://desguacesmadridnorte.com/69970-pieza.html
+69972;4614AQ34C;Aleta delantera izquierda;AUDI;Q3;2.0 TDI;2014;Desmontada de vehículo;1 año;Bajo pedido 24-48h;218,18 € + IVA;https://desguacesmadridnorte.com/69972-pieza.html
+69974;4545HY96A;Parachoques delantero;TOYOTA;Camry;2.5 Hybrid;2017;Comprobada, funcionando;1 año;En stock;131,07 € + IVA;https://desguacesmadridnorte.com/69974-pieza.html
+69976;4072DV82D;Cárter;AUDI;Q3;1.4 TFSI;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;170,79 € + IVA;https://desguacesmadridnorte.com/69976-pieza.html
+69977;7589MC90A;Piloto trasero izquierdo;PEUGEOT;3008;1.6 HDi;2015;Comprobada, funcionando;1 año;En stock;56,88 € + IVA;https://desguacesmadridnorte.com/69977-pieza.html
+69980;1206XP44B;Parachoques delantero;SKODA;Fabia;1.4 TDI;2008;Desmontada de vehículo;1 año;En stock;187,13 € + IVA;https://desguacesmadridnorte.com/69980-pieza.html
+69983;3532MB21D;Retrovisor derecho;KIA;Sportage;1.7 CRDi;2012;Desmontada de vehículo;1 año;En stock;74,65 € + IVA;https://desguacesmadridnorte.com/69983-pieza.html
+69984;5292DX80E;Capó;NISSAN;Juke;1.5 dCi;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;132,83 € + IVA;https://desguacesmadridnorte.com/69984-pieza.html
+69987;2156CV95D;Retrovisor derecho;PEUGEOT;3008;2.0 HDi;2019;Comprobada, funcionando;1 año;En stock;72,04 € + IVA;https://desguacesmadridnorte.com/69987-pieza.html
+69990;6039BQ20E;Motor de arranque;HYUNDAI;Tucson;2.0 CRDi;2016;Comprobada, funcionando;1 año;En stock;63,91 € + IVA;https://desguacesmadridnorte.com/69990-pieza.html
+69992;4972TZ97C;Módulo electrónico;MERCEDES-BENZ;CLA;200 CDI;2015;Desmontada de vehículo;1 año;En stock;148,22 € + IVA;https://desguacesmadridnorte.com/69992-pieza.html
+69995;4794MD17F;Puerta trasera izquierda;TOYOTA;Corolla;1.8 Hybrid;2019;Desmontada de vehículo;1 año;Bajo pedido 24-48h;150,63 € + IVA;https://desguacesmadridnorte.com/69995-pieza.html
+69996;9428PJ83A;Módulo electrónico;SEAT;Ibiza;1.6 TDI;2017;Comprobada, funcionando;1 año;Bajo pedido 24-48h;91,15 € + IVA;https://desguacesmadridnorte.com/69996-pieza.html
+69998;6086RN89B;Intercooler;FORD;Fusion;1.4 TDCi;2015;Sin comprobar;1 año;Bajo pedido 24-48h;152,64 € + IVA;https://desguacesmadridnorte.com/69998-pieza.html
+70000;9967PJ58A;Motor completo;VOLKSWAGEN;Golf;2.0 TDI;2016;Comprobada, funcionando;1 año;En stock;3.969,63 € + IVA;https://desguacesmadridnorte.com/70000-pieza.html
+70003;2963CG29D;Piloto trasero izquierdo;FORD;Fusion;1.4 TDCi;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;28,57 € + IVA;https://desguacesmadridnorte.com/70003-pieza.html
+70004;9235QD91C;Puerta trasera izquierda;PEUGEOT;3008;1.6 HDi;2007;Desmontada de vehículo;1 año;En stock;181,21 € + IVA;https://desguacesmadridnorte.com/70004-pieza.html
+70005;7054MH71D;Cuadro de instrumentos;NISSAN;Qashqai;1.6 dCi;2021;Desmontada de vehículo;1 año;En stock;145,20 € + IVA;https://desguacesmadridnorte.com/70005-pieza.html
+70008;4709ZV39B;Cinturón de seguridad;AUDI;A4;2.0 TFSI;2010;Sin comprobar;1 año;En stock;84,56 € + IVA;https://desguacesmadridnorte.com/70008-pieza.html
+70009;3558FP40E;Catalizador;CITROEN;C3;1.4 HDi;2005;Desmontada de vehículo;1 año;Bajo pedido 24-48h;185,92 € + IVA;https://desguacesmadridnorte.com/70009-pieza.html
+70010;3463EJ34E;Motor completo;NISSAN;Juke;1.5 dCi;2007;Comprobada, funcionando;1 año;En stock;1.337,84 € + IVA;https://desguacesmadridnorte.com/70010-pieza.html
+70011;5878VG34B;Bomba de dirección;BMW;Serie 3;330i;2020;Desmontada de vehículo;1 año;Bajo pedido 24-48h;232,00 € + IVA;https://desguacesmadridnorte.com/70011-pieza.html
+70014;7958RS48B;Paso de rueda trasero izquierdo;AUDI;A4;3.0 TDI;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;32,70 € + IVA;https://desguacesmadridnorte.com/70014-pieza.html
+70016;2578BV86E;Puerta trasera izquierda;CITROEN;C3;1.4 HDi;2020;Desmontada de vehículo;1 año;En stock;256,77 € + IVA;https://desguacesmadridnorte.com/70016-pieza.html
+70017;8534EQ82E;Bomba de dirección;NISSAN;Qashqai;1.5 dCi;2013;Comprobada, funcionando;1 año;En stock;42,01 € + IVA;https://desguacesmadridnorte.com/70017-pieza.html
+70019;2175JY42B;Capó;RENAULT;Captur;0.9 TCe;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;139,90 € + IVA;https://desguacesmadridnorte.com/70019-pieza.html
+70022;5840MK50D;Módulo electrónico;SEAT;Ibiza;1.6 TDI;2015;Comprobada, funcionando;1 año;Bajo pedido 24-48h;155,97 € + IVA;https://desguacesmadridnorte.com/70022-pieza.html
+70025;6278DY20E;Piloto trasero izquierdo;SEAT;Ateca;2.0 TDI;2011;Desmontada de vehículo;1 año;Bajo pedido 24-48h;38,81 € + IVA;https://desguacesmadridnorte.com/70025-pieza.html
+70027;3027YZ32C;Cerradura puerta delantera;MERCEDES-BENZ;CLA;180 CDI;2005;Comprobada, funcionando;1 año;En stock;69,12 € + IVA;https://desguacesmadridnorte.com/70027-pieza.html
+70028;7560MZ93A;Bomba de dirección;SKODA;Octavia;2.0 TDI;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;80,79 € + IVA;https://desguacesmadridnorte.com/70028-pieza.html
+70030;8970RP78C;Motor completo;RENAULT;Clio;1.5 dCi;2009;Comprobada, funcionando;1 año;En stock;552,50 € + IVA;https://desguacesmadridnorte.com/70030-pieza.html
+70031;6928NJ40B;Faro delantero izquierdo;OPEL;Astra;1.6 CDTI;2007;Desmontada de vehículo;1 año;Bajo pedido 24-48h;141,24 € + IVA;https://desguacesmadridnorte.com/70031-pieza.html
+70034;3830VA63A;Bomba de dirección;NISSAN;Qashqai;1.5 dCi;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;39,63 € + IVA;https://desguacesmadridnorte.com/70034-pieza.html
+70037;1937HJ38D;Cremallera de dirección;BMW;Serie 1;120i;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;227,14 € + IVA;https://desguacesmadridnorte.com/70037-pieza.html
+70038;2886KR99B;Bomba de agua;NISSAN;Qashqai;1.5 dCi;2013;Comprobada, funcionando;1 año;En stock;57,81 € + IVA;https://desguacesmadridnorte.com/70038-pieza.html
+70039;7055PF77C;Cerradura puerta delantera;BMW;Serie 3;320d;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;55,56 € + IVA;https://desguacesmadridnorte.com/70039-pieza.html
+70040;6476JP23A;Portón trasero;TOYOTA;Corolla;1.8 Hybrid;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;329,57 € + IVA;https://desguacesmadridnorte.com/70040-pieza.html
+70043;4444CF71B;Caja de cambios;SEAT;León;1.6 TDI;2008;Desmontada de vehículo;1 año;Bajo pedido 24-48h;482,34 € + IVA;https://desguacesmadridnorte.com/70043-pieza.html
+70045;7809FG52E;Caja de cambios;NISSAN;Juke;1.2 DIG-T;2015;Desmontada de vehículo;1 año;Bajo pedido 24-48h;444,59 € + IVA;https://desguacesmadridnorte.com/70045-pieza.html
+70048;4040QW41D;Motor de arranque;RENAULT;Captur;0.9 TCe;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;87,42 € + IVA;https://desguacesmadridnorte.com/70048-pieza.html
+70051;9205LA38F;Bomba de agua;MERCEDES-BENZ;CLA;200 CDI;2009;Comprobada, funcionando;1 año;En stock;80,31 € + IVA;https://desguacesmadridnorte.com/70051-pieza.html
+70054;7217NT41A;Faro delantero izquierdo;RENAULT;Captur;1.5 dCi;2020;Comprobada, funcionando;1 año;En stock;133,30 € + IVA;https://desguacesmadridnorte.com/70054-pieza.html
+70057;5536MH19B;Elevalunas delantero izquierdo;FORD;Fiesta;1.0 EcoBoost;2017;Comprobada, funcionando;1 año;Bajo pedido 24-48h;45,48 € + IVA;https://desguacesmadridnorte.com/70057-pieza.html
+70059;7261AD94E;Retrovisor izquierdo;NISSAN;Qashqai;1.6 dCi;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;25,50 € + IVA;https://desguacesmadridnorte.com/70059-pieza.html
+70062;7325PA59A;Retrovisor derecho;SKODA;Fabia;1.4 TDI;2010;Comprobada, funcionando;1 año;En stock;125,94 € + IVA;https://desguacesmadridnorte.com/70062-pieza.html
+70065;7926KL73F;Cinturón de seguridad;BMW;Serie 1;120i;2014;Comprobada, funcionando;1 año;En stock;70,98 € + IVA;https://desguacesmadridnorte.com/70065-pieza.html
+70066;8397HF24F;Puerta delantera izquierda;RENAULT;Captur;0.9 TCe;2021;Comprobada, funcionando;1 año;En stock;254,61 € + IVA;https://desguacesmadridnorte.com/70066-pieza.html
+70067;3297QL25C;Parachoques delantero;CITROEN;C4;1.6 HDi;2012;Comprobada, funcionando;1 año;En stock;194,18 € + IVA;https://desguacesmadridnorte.com/70067-pieza.html
+70069;6571HG84E;Bomba de dirección;RENAULT;Megane;1.6 dCi;2010;Comprobada, funcionando;1 año;En stock;51,11 € + IVA;https://desguacesmadridnorte.com/70069-pieza.html
+70072;3466TA58B;Airbag volante;RENAULT;Clio;1.5 dCi;2016;Comprobada, funcionando;1 año;En stock;94,20 € + IVA;https://desguacesmadridnorte.com/70072-pieza.html
+70073;3681BL84C;Retrovisor derecho;FORD;Fiesta;1.0 EcoBoost;2007;Comprobada, funcionando;1 año;Bajo pedido 24-48h;46,39 € + IVA;https://desguacesmadridnorte.com/70073-pieza.html
+70075;5915JC67A;Cuadro de instrumentos;HYUNDAI;i30;1.4 CRDi;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;187,61 € + IVA;https://desguacesmadridnorte.com/70075-pieza.html
+70077;5113GB89A;Cinturón de seguridad;PEUGEOT;3008;1.6 HDi;2021;Comprobada, funcionando;1 año;En stock;55,33 € + IVA;https://desguacesmadridnorte.com/70077-pieza.html
+70080;6839TX88D;Elevalunas delantero izquierdo;RENAULT;Megane;1.6 dCi;2010;Desmontada de vehículo;1 año;En stock;29,80 € + IVA;https://desguacesmadridnorte.com/70080-pieza.html
+70082;7276WR91D;Cárter;SKODA;Fabia;1.2 TSI;2017;Desmontada de vehículo;1 año;En stock;54,76 € + IVA;https://desguacesmadridnorte.com/70082-pieza.html
+70084;4393JQ72E;Faro delantero derecho;KIA;Sportage;2.0 CRDi;2015;Comprobada, funcionando;1 año;En stock;214,76 € + IVA;https://desguacesmadridnorte.com/70084-pieza.html
+70085;5738AB72A;Centralita motor;SEAT;Ibiza;1.2 TSI;2006;Comprobada, funcionando;1 año;En stock;114,88 € + IVA;https://desguacesmadridnorte.com/70085-pieza.html
+70088;6028FM29A;Faro delantero izquierdo;CITROEN;C4;1.6 HDi;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;129,30 € + IVA;https://desguacesmadridnorte.com/70088-pieza.html
+70091;9213YN32D;Puerta delantera izquierda;SEAT;Ateca;1.5 TSI;2014;Comprobada, funcionando;1 año;En stock;305,90 € + IVA;https://desguacesmadridnorte.com/70091-pieza.html
+70092;7398DN28D;Bomba de agua;CITROEN;C4;1.6 HDi;2007;Comprobada, funcionando;1 año;En stock;58,75 € + IVA;https://desguacesmadridnorte.com/70092-pieza.html
+70095;7006XL69F;Módulo electrónico;CITROEN;C4;1.6 VTi;2010;Comprobada, funcionando;1 año;En stock;136,02 € + IVA;https://desguacesmadridnorte.com/70095-pieza.html
+70097;1426LL13E;Módulo electrónico;BMW;Serie 3;320d;2013;Desmontada de vehículo;1 año;En stock;261,78 € + IVA;https://desguacesmadridnorte.com/70097-pieza.html
+70099;3605CZ60F;Cerradura puerta delantera;MERCEDES-BENZ;Clase A;180 CDI;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;76,31 € + IVA;https://desguacesmadridnorte.com/70099-pieza.html
+70102;8605HM91B;Turbo;PEUGEOT;3008;1.6 HDi;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;484,08 € + IVA;https://desguacesmadridnorte.com/70102-pieza.html
+70105;9717EZ21D;Parachoques delantero;BMW;Serie 1;120i;2020;Desmontada de vehículo;1 año;Bajo pedido 24-48h;250,59 € + IVA;https://desguacesmadridnorte.com/70105-pieza.html
+70108;1956CQ10C;Módulo electrónico;PEUGEOT;208;1.4 HDi;2020;Desmontada de vehículo;1 año;En stock;124,95 € + IVA;https://desguacesmadridnorte.com/70108-pieza.html
+70110;1563BE86A;Retrovisor derecho;AUDI;A3;1.6 TDI;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;31,12 € + IVA;https://desguacesmadridnorte.com/70110-pieza.html
+70112;7569SK77F;Turbo;VOLKSWAGEN;Golf;1.4 TSI;2010;Comprobada, funcionando;1 año;En stock;421,12 € + IVA;https://desguacesmadridnorte.com/70112-pieza.html
+70114;7301VK27B;Faro delantero derecho;CITROEN;C3;1.4 HDi;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;119,16 € + IVA;https://desguacesmadridnorte.com/70114-pieza.html
+70117;6239CL54F;Alternador;OPEL;Astra;1.7 CDTI;2019;Comprobada, funcionando;1 año;En stock;66,66 € + IVA;https://desguacesmadridnorte.com/70117-pieza.html
+70119;2912XV53B;Faro delantero derecho;RENAULT;Clio;1.5 dCi;2014;Desmontada de vehículo;1 año;En stock;155,32 € + IVA;https://desguacesmadridnorte.com/70119-pieza.html
+70122;6375FJ94E;Cinturón de seguridad;SKODA;Octavia;1.6 TDI;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;30,69 € + IVA;https://desguacesmadridnorte.com/70122-pieza.html
+70124;4979PR27C;Bomba de dirección;NISSAN;Qashqai;1.6 dCi;2012;Desmontada de vehículo;1 año;Bajo pedido 24-48h;76,33 € + IVA;https://desguacesmadridnorte.com/70124-pieza.html
+70127;9425TJ22A;Airbag volante;SEAT;Ibiza;1.9 TDI;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;205,33 € + IVA;https://desguacesmadridnorte.com/70127-pieza.html
+70128;3202NE70E;Elevalunas delantero izquierdo;PEUGEOT;208;1.4 HDi;2020;Comprobada, funcionando;1 año;Bajo pedido 24-48h;44,97 € + IVA;https://desguacesmadridnorte.com/70128-pieza.html
+70131;1101JX65B;Motor de arranque;TOYOTA;Corolla;1.4 D-4D;2007;Comprobada, funcionando;1 año;Bajo pedido 24-48h;68,73 € + IVA;https://desguacesmadridnorte.com/70131-pieza.html
+70132;6084TM87E;Faro delantero izquierdo;TOYOTA;Proace City;1.5 D-4D;2015;Comprobada, funcionando;1 año;En stock;192,99 € + IVA;https://desguacesmadridnorte.com/70132-pieza.html
+70135;8855FL69D;Cinturón de seguridad;KIA;Sportage;2.0 CRDi;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;22,51 € + IVA;https://desguacesmadridnorte.com/70135-pieza.html
+70137;1056HX24E;Colector de admisión;BMW;X1;20d;2013;Sin comprobar;1 año;En stock;73,63 € + IVA;https://desguacesmadridnorte.com/70137-pieza.html
+70138;4971GM23B;Faro delantero derecho;VOLKSWAGEN;Polo;1.4 TDI;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;276,62 € + IVA;https://desguacesmadridnorte.com/70138-pieza.html
+70141;4680QW56D;Retrovisor derecho;TOYOTA;Corolla;1.4 D-4D;2011;Sin comprobar;1 año;Bajo pedido 24-48h;53,27 € + IVA;https://desguacesmadridnorte.com/70141-pieza.html
+70143;3926VB99F;Compresor aire acondicionado;SKODA;Octavia;2.0 TDI;2014;Comprobada, funcionando;1 año;En stock;227,18 € + IVA;https://desguacesmadridnorte.com/70143-pieza.html
+70146;4574AD57C;Centralita motor;AUDI;A3;1.6 TDI;2008;Desmontada de vehículo;1 año;En stock;213,09 € + IVA;https://desguacesmadridnorte.com/70146-pieza.html
+70148;8764SE99D;Motor de arranque;AUDI;A4;3.0 TDI;2006;Desmontada de vehículo;1 año;Bajo pedido 24-48h;39,29 € + IVA;https://desguacesmadridnorte.com/70148-pieza.html
+70150;9907AH12E;Módulo electrónico;CITROEN;C4;1.6 VTi;2009;Comprobada, funcionando;1 año;En stock;162,11 € + IVA;https://desguacesmadridnorte.com/70150-pieza.html
+70153;2328CP94E;Motor completo;BMW;Serie 3;320d;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;4.065,46 € + IVA;https://desguacesmadridnorte.com/70153-pieza.html
+70156;4511PJ91A;Faro delantero derecho;VOLKSWAGEN;Golf;1.4 TSI;2018;Comprobada, funcionando;1 año;En stock;73,75 € + IVA;https://desguacesmadridnorte.com/70156-pieza.html
+70158;4543AX50C;Faro delantero derecho;MERCEDES-BENZ;Clase E Coupé;250 CDI;2019;Desmontada de vehículo;1 año;En stock;237,55 € + IVA;https://desguacesmadridnorte.com/70158-pieza.html
+70161;3390KL94F;Compresor aire acondicionado;BMW;Serie 1;118d;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;142,60 € + IVA;https://desguacesmadridnorte.com/70161-pieza.html
+70164;1746CK20A;Parachoques delantero;CITROEN;C3;1.2 PureTech;2016;Comprobada, funcionando;1 año;En stock;118,35 € + IVA;https://desguacesmadridnorte.com/70164-pieza.html
+70166;2179YE19D;Cinturón de seguridad;RENAULT;Captur;0.9 TCe;2007;Desmontada de vehículo;1 año;En stock;48,64 € + IVA;https://desguacesmadridnorte.com/70166-pieza.html
+70168;7059HK12D;Airbag volante;AUDI;A4;2.0 TDI;2018;Desmontada de vehículo;1 año;En stock;126,51 € + IVA;https://desguacesmadridnorte.com/70168-pieza.html
+70170;1878PK37E;Colector de admisión;NISSAN;Qashqai;1.5 dCi;2008;Desmontada de vehículo;1 año;Bajo pedido 24-48h;105,92 € + IVA;https://desguacesmadridnorte.com/70170-pieza.html
+70171;1321CG97D;Retrovisor izquierdo;MERCEDES-BENZ;Clase E Coupé;250 CDI;2014;Sin comprobar;1 año;Bajo pedido 24-48h;97,92 € + IVA;https://desguacesmadridnorte.com/70171-pieza.html
+70172;2504FJ33F;Piloto trasero izquierdo;SEAT;León;1.6 TDI;2012;Desmontada de vehículo;1 año;Bajo pedido 24-48h;31,30 € + IVA;https://desguacesmadridnorte.com/70172-pieza.html
+70175;5791RK96C;Módulo electrónico;RENAULT;Captur;0.9 TCe;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;155,53 € + IVA;https://desguacesmadridnorte.com/70175-pieza.html
+70178;1684GL74C;Parachoques trasero;CITROEN;C4;1.6 VTi;2019;Desmontada de vehículo;1 año;Bajo pedido 24-48h;211,59 € + IVA;https://desguacesmadridnorte.com/70178-pieza.html
+70180;9381CZ23D;Elevalunas delantero izquierdo;CITROEN;C3;1.2 PureTech;2020;Comprobada, funcionando;1 año;En stock;85,12 € + IVA;https://desguacesmadridnorte.com/70180-pieza.html
+70183;3688QY64F;Capó;HYUNDAI;i30;1.4 CRDi;2007;Desmontada de vehículo;1 año;En stock;125,59 € + IVA;https://desguacesmadridnorte.com/70183-pieza.html
+70184;7186VV27E;Faro delantero izquierdo;OPEL;Astra;1.6 CDTI;2015;Comprobada, funcionando;1 año;En stock;138,63 € + IVA;https://desguacesmadridnorte.com/70184-pieza.html
+70187;9919SC13C;Cuadro de instrumentos;SEAT;León;2.0 TDI;2011;Comprobada, funcionando;1 año;En stock;139,27 € + IVA;https://desguacesmadridnorte.com/70187-pieza.html
+70189;4261PR50F;Retrovisor derecho;OPEL;Corsa;1.2 16v;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;54,36 € + IVA;https://desguacesmadridnorte.com/70189-pieza.html
+70190;3658MV70C;Centralita motor;RENAULT;Clio;1.5 dCi;2012;Desmontada de vehículo;1 año;En stock;136,89 € + IVA;https://desguacesmadridnorte.com/70190-pieza.html
+70193;7615SS80B;Retrovisor derecho;OPEL;Astra;1.7 CDTI;2020;Comprobada, funcionando;1 año;En stock;117,32 € + IVA;https://desguacesmadridnorte.com/70193-pieza.html
+70196;1377VP70F;Faro delantero derecho;SEAT;León;1.6 TDI;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;38,25 € + IVA;https://desguacesmadridnorte.com/70196-pieza.html
+70197;2842TF10B;Módulo electrónico;SEAT;Ibiza;1.9 TDI;2014;Comprobada, funcionando;1 año;En stock;114,35 € + IVA;https://desguacesmadridnorte.com/70197-pieza.html
+70199;9238HY31C;Puerta delantera derecha;PEUGEOT;208;1.4 HDi;2010;Comprobada, funcionando;1 año;En stock;85,00 € + IVA;https://desguacesmadridnorte.com/70199-pieza.html
+70201;8083BY56D;Motor completo;VOLKSWAGEN;Polo;1.4 TDI;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;2.390,85 € + IVA;https://desguacesmadridnorte.com/70201-pieza.html
+70203;1166XG35C;Portón trasero;PEUGEOT;3008;2.0 HDi;2015;Sin comprobar;1 año;En stock;173,64 € + IVA;https://desguacesmadridnorte.com/70203-pieza.html
+70204;5524AW78E;Puerta delantera izquierda;RENAULT;Megane;1.6 dCi;2006;Desmontada de vehículo;1 año;Bajo pedido 24-48h;226,32 € + IVA;https://desguacesmadridnorte.com/70204-pieza.html
+70206;2190BD85B;Retrovisor derecho;SEAT;Ateca;1.5 TSI;2020;Comprobada, funcionando;1 año;Bajo pedido 24-48h;51,12 € + IVA;https://desguacesmadridnorte.com/70206-pieza.html
+70209;2309NM91E;Compresor aire acondicionado;TOYOTA;Corolla;1.4 D-4D;2008;Desmontada de vehículo;1 año;En stock;165,61 € + IVA;https://desguacesmadridnorte.com/70209-pieza.html
+70212;5910QA59B;Módulo electrónico;BMW;X1;18d;2007;Comprobada, funcionando;1 año;En stock;139,61 € + IVA;https://desguacesmadridnorte.com/70212-pieza.html
+70214;3350NW12F;Cremallera de dirección;NISSAN;Qashqai;1.5 dCi;2016;Desmontada de vehículo;1 año;En stock;221,81 € + IVA;https://desguacesmadridnorte.com/70214-pieza.html
+70216;1774AA88C;Puerta delantera izquierda;MERCEDES-BENZ;Clase A;180 CDI;2007;Comprobada, funcionando;1 año;En stock;178,95 € + IVA;https://desguacesmadridnorte.com/70216-pieza.html
+70218;8032XG22D;Airbag volante;NISSAN;Juke;1.2 DIG-T;2010;Comprobada, funcionando;1 año;En stock;178,64 € + IVA;https://desguacesmadridnorte.com/70218-pieza.html
+70220;1091VS87A;Capó;RENAULT;Megane;1.6 dCi;2011;Desmontada de vehículo;1 año;En stock;209,35 € + IVA;https://desguacesmadridnorte.com/70220-pieza.html
+70222;2222JC85B;Portón trasero;KIA;Ceed;1.6 CRDi;2017;Comprobada, funcionando;1 año;En stock;316,00 € + IVA;https://desguacesmadridnorte.com/70222-pieza.html
+70224;9413GQ57B;Parachoques delantero;MERCEDES-BENZ;Clase A;180 CDI;2005;Comprobada, funcionando;1 año;En stock;71,26 € + IVA;https://desguacesmadridnorte.com/70224-pieza.html
+70226;9930JC52E;Radiador;RENAULT;Captur;1.5 dCi;2013;Desmontada de vehículo;1 año;Bajo pedido 24-48h;65,86 € + IVA;https://desguacesmadridnorte.com/70226-pieza.html
+70227;4505FQ91E;Portón trasero;OPEL;Astra;1.6 CDTI;2017;Comprobada, funcionando;1 año;En stock;230,98 € + IVA;https://desguacesmadridnorte.com/70227-pieza.html
+70229;2696FM69B;Motor completo;MERCEDES-BENZ;Clase E Coupé;250 CDI;2021;Desmontada de vehículo;1 año;En stock;3.201,30 € + IVA;https://desguacesmadridnorte.com/70229-pieza.html
+70232;5589RL72F;Capó;FORD;Fusion;1.4 TDCi;2017;Comprobada, funcionando;1 año;En stock;180,88 € + IVA;https://desguacesmadridnorte.com/70232-pieza.html
+70234;6939ZL70E;Bomba de agua;NISSAN;Qashqai;1.6 dCi;2020;Comprobada, funcionando;1 año;En stock;70,78 € + IVA;https://desguacesmadridnorte.com/70234-pieza.html
+70235;2689DC53B;Portón trasero;SEAT;León;1.6 TDI;2012;Comprobada, funcionando;1 año;Bajo pedido 24-48h;143,24 € + IVA;https://desguacesmadridnorte.com/70235-pieza.html
+70236;7565WX82C;Motor completo;FORD;Fiesta;1.5 TDCi;2021;Desmontada de vehículo;1 año;Bajo pedido 24-48h;2.915,08 € + IVA;https://desguacesmadridnorte.com/70236-pieza.html
+70239;4357SM88B;Faro delantero derecho;HYUNDAI;i30;1.4 CRDi;2018;Desmontada de vehículo;1 año;En stock;78,33 € + IVA;https://desguacesmadridnorte.com/70239-pieza.html
+70242;7311DD24A;Cremallera de dirección;BMW;X1;20d;2019;Sin comprobar;1 año;Bajo pedido 24-48h;493,00 € + IVA;https://desguacesmadridnorte.com/70242-pieza.html
+70243;5394NZ65B;Colector de admisión;SEAT;Ateca;2.0 TDI;2013;Sin comprobar;1 año;En stock;131,93 € + IVA;https://desguacesmadridnorte.com/70243-pieza.html
+70246;5255AL23F;Puerta delantera derecha;CITROEN;C3;1.2 PureTech;2011;Desmontada de vehículo;1 año;Bajo pedido 24-48h;151,24 € + IVA;https://desguacesmadridnorte.com/70246-pieza.html
+70247;6475AL28C;Puerta trasera izquierda;AUDI;A3;1.4 TFSI;2008;Comprobada, funcionando;1 año;En stock;206,66 € + IVA;https://desguacesmadridnorte.com/70247-pieza.html
+70249;7401DW40B;Retrovisor izquierdo;FORD;Fiesta;1.5 TDCi;2017;Comprobada, funcionando;1 año;En stock;58,97 € + IVA;https://desguacesmadridnorte.com/70249-pieza.html
+70251;2824TZ40F;Cárter;PEUGEOT;308;1.6 HDi;2006;Sin comprobar;1 año;Bajo pedido 24-48h;34,63 € + IVA;https://desguacesmadridnorte.com/70251-pieza.html
+70254;7583ZP27B;Puerta trasera izquierda;NISSAN;Qashqai;1.6 dCi;2018;Desmontada de vehículo;1 año;Bajo pedido 24-48h;192,46 € + IVA;https://desguacesmadridnorte.com/70254-pieza.html
+70256;5463FN17C;Cerradura puerta delantera;SEAT;Ibiza;1.9 TDI;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;18,70 € + IVA;https://desguacesmadridnorte.com/70256-pieza.html
+70258;7805JA28C;Compresor aire acondicionado;NISSAN;Qashqai;1.5 dCi;2019;Desmontada de vehículo;1 año;En stock;267,65 € + IVA;https://desguacesmadridnorte.com/70258-pieza.html
+70261;8219KQ42B;Compresor aire acondicionado;BMW;X1;20d;2013;Sin comprobar;1 año;En stock;344,03 € + IVA;https://desguacesmadridnorte.com/70261-pieza.html
+70263;8114ER98D;Turbo;MERCEDES-BENZ;Clase E Coupé;250 CDI;2010;Desmontada de vehículo;1 año;Bajo pedido 24-48h;593,01 € + IVA;https://desguacesmadridnorte.com/70263-pieza.html
+70265;5583MN93E;Capó;PEUGEOT;3008;2.0 HDi;2019;Comprobada, funcionando;1 año;En stock;182,36 € + IVA;https://desguacesmadridnorte.com/70265-pieza.html
+70267;8911FB90C;Capó;NISSAN;Qashqai;1.5 dCi;2021;Sin comprobar;1 año;En stock;128,67 € + IVA;https://desguacesmadridnorte.com/70267-pieza.html
+70269;8315HC81B;Colector de admisión;KIA;Sportage;1.7 CRDi;2017;Desmontada de vehículo;1 año;Bajo pedido 24-48h;52,02 € + IVA;https://desguacesmadridnorte.com/70269-pieza.html
+70270;6620WP67B;Airbag volante;KIA;Sportage;1.7 CRDi;2015;Desmontada de vehículo;1 año;Bajo pedido 24-48h;83,15 € + IVA;https://desguacesmadridnorte.com/70270-pieza.html
+70272;5726RQ72E;Parachoques delantero;CITROEN;C4;1.6 VTi;2016;Desmontada de vehículo;1 año;En stock;187,13 € + IVA;https://desguacesmadridnorte.com/70272-pieza.html
+70273;3966CV56E;Radiador;AUDI;A3;1.6 TDI;2020;Sin comprobar;1 año;En stock;136,84 € + IVA;https://desguacesmadridnorte.com/70273-pieza.html
+70275;8251PQ86C;Centralita motor;RENAULT;Clio;1.2 16v;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;120,42 € + IVA;https://desguacesmadridnorte.com/70275-pieza.html
+70278;3705PA42A;Cremallera de dirección;FORD;Fiesta;1.5 TDCi;2007;Sin comprobar;1 año;Bajo pedido 24-48h;99,68 € + IVA;https://desguacesmadridnorte.com/70278-pieza.html
+70280;8041ZQ38C;Cuadro de instrumentos;CITROEN;C3;1.4 HDi;2007;Comprobada, funcionando;1 año;Bajo pedido 24-48h;118,63 € + IVA;https://desguacesmadridnorte.com/70280-pieza.html
+70281;1844RH37B;Catalizador;MERCEDES-BENZ;CLA;200 CDI;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;334,90 € + IVA;https://desguacesmadridnorte.com/70281-pieza.html
+70283;8182XZ59A;Cárter;RENAULT;Clio;1.2 16v;2015;Comprobada, funcionando;1 año;En stock;68,83 € + IVA;https://desguacesmadridnorte.com/70283-pieza.html
+70286;8476ZX91B;Cremallera de dirección;FORD;Fiesta;1.5 TDCi;2008;Sin comprobar;1 año;Bajo pedido 24-48h;209,83 € + IVA;https://desguacesmadridnorte.com/70286-pieza.html
+70289;9829MG34B;Turbo;NISSAN;Juke;1.5 dCi;2016;Comprobada, funcionando;1 año;En stock;262,80 € + IVA;https://desguacesmadridnorte.com/70289-pieza.html
+70291;5724LY33E;Cinturón de seguridad;RENAULT;Captur;0.9 TCe;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;47,74 € + IVA;https://desguacesmadridnorte.com/70291-pieza.html
+70293;7173CS62A;Piloto trasero izquierdo;FORD;Fiesta;1.5 TDCi;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;36,39 € + IVA;https://desguacesmadridnorte.com/70293-pieza.html
+70295;4974MJ37F;Piloto trasero derecho;OPEL;Astra;1.7 CDTI;2018;Comprobada, funcionando;1 año;En stock;54,68 € + IVA;https://desguacesmadridnorte.com/70295-pieza.html
+70297;7029NC61E;Elevalunas delantero izquierdo;BMW;Serie 3;318d;2008;Comprobada, funcionando;1 año;En stock;50,64 € + IVA;https://desguacesmadridnorte.com/70297-pieza.html
+70298;8281NK61C;Cremallera de dirección;SKODA;Octavia;1.6 TDI;2013;Comprobada, funcionando;1 año;En stock;154,99 € + IVA;https://desguacesmadridnorte.com/70298-pieza.html
+70301;7366SB45C;Colector de admisión;TOYOTA;Camry;2.5 Hybrid;2006;Comprobada, funcionando;1 año;Bajo pedido 24-48h;103,60 € + IVA;https://desguacesmadridnorte.com/70301-pieza.html
+70302;9892JX97F;Puerta trasera izquierda;VOLKSWAGEN;Passat;2.0 TDI;2020;Comprobada, funcionando;1 año;Bajo pedido 24-48h;329,93 € + IVA;https://desguacesmadridnorte.com/70302-pieza.html
+70304;9166LZ67B;Faro delantero derecho;FORD;Focus;1.6 TDCi;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;103,40 € + IVA;https://desguacesmadridnorte.com/70304-pieza.html
+70307;9045HW20E;Centralita motor;RENAULT;Captur;0.9 TCe;2007;Comprobada, funcionando;1 año;Bajo pedido 24-48h;176,45 € + IVA;https://desguacesmadridnorte.com/70307-pieza.html
+70308;8249ZJ57F;Capó;KIA;Ceed;1.6 CRDi;2020;Comprobada, funcionando;1 año;En stock;243,18 € + IVA;https://desguacesmadridnorte.com/70308-pieza.html
+70309;7947ML13B;Catalizador;KIA;Ceed;1.6 CRDi;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;211,72 € + IVA;https://desguacesmadridnorte.com/70309-pieza.html
+70312;7969HX92F;Bomba de agua;NISSAN;Juke;1.5 dCi;2013;Comprobada, funcionando;1 año;En stock;34,99 € + IVA;https://desguacesmadridnorte.com/70312-pieza.html
+70314;5653VF43E;Piloto trasero derecho;MERCEDES-BENZ;Clase A;200 CDI;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;70,35 € + IVA;https://desguacesmadridnorte.com/70314-pieza.html
+70316;9769EP92A;Piloto trasero izquierdo;SKODA;Octavia;2.0 TDI;2008;Desmontada de vehículo;1 año;En stock;54,17 € + IVA;https://desguacesmadridnorte.com/70316-pieza.html
+70317;4639FY43D;Piloto trasero izquierdo;PEUGEOT;208;1.6 HDi;2021;Desmontada de vehículo;1 año;En stock;27,42 € + IVA;https://desguacesmadridnorte.com/70317-pieza.html
+70318;2297CY19E;Intercooler;OPEL;Corsa;1.2 16v;2009;Comprobada, funcionando;1 año;En stock;126,25 € + IVA;https://desguacesmadridnorte.com/70318-pieza.html
+70319;6633HQ51E;Faro delantero derecho;PEUGEOT;208;1.4 HDi;2010;Comprobada, funcionando;1 año;En stock;122,14 € + IVA;https://desguacesmadridnorte.com/70319-pieza.html
+70320;3184HR17D;Alternador;SKODA;Octavia;1.6 TDI;2006;Comprobada, funcionando;1 año;En stock;42,14 € + IVA;https://desguacesmadridnorte.com/70320-pieza.html
+70322;7362JG69A;Parachoques trasero;MERCEDES-BENZ;Clase A;180 CDI;2015;Comprobada, funcionando;1 año;En stock;377,00 € + IVA;https://desguacesmadridnorte.com/70322-pieza.html
+70324;1991PC30C;Caja de cambios;HYUNDAI;i30;1.4 CRDi;2010;Desmontada de vehículo;1 año;En stock;303,61 € + IVA;https://desguacesmadridnorte.com/70324-pieza.html
+70325;7865WV91D;Puerta trasera izquierda;RENAULT;Captur;1.5 dCi;2016;Desmontada de vehículo;1 año;En stock;232,99 € + IVA;https://desguacesmadridnorte.com/70325-pieza.html
+70328;1365GK77A;Amortiguador delantero;BMW;X1;20d;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;58,58 € + IVA;https://desguacesmadridnorte.com/70328-pieza.html
+70331;6539HX53D;Portón trasero;AUDI;A4;2.0 TFSI;2008;Desmontada de vehículo;1 año;Bajo pedido 24-48h;333,46 € + IVA;https://desguacesmadridnorte.com/70331-pieza.html
+70333;1424QW60F;Puerta delantera izquierda;SKODA;Octavia;2.0 TDI;2010;Desmontada de vehículo;1 año;En stock;114,49 € + IVA;https://desguacesmadridnorte.com/70333-pieza.html
+70336;4436CA44D;Elevalunas delantero izquierdo;HYUNDAI;Tucson;1.7 CRDi;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;68,88 € + IVA;https://desguacesmadridnorte.com/70336-pieza.html
+70338;9057NF30D;Portón trasero;HYUNDAI;Tucson;1.7 CRDi;2020;Desmontada de vehículo;1 año;En stock;395,78 € + IVA;https://desguacesmadridnorte.com/70338-pieza.html
+70341;9782LJ82F;Parachoques trasero;CITROEN;C3;1.2 PureTech;2006;Comprobada, funcionando;1 año;En stock;126,56 € + IVA;https://desguacesmadridnorte.com/70341-pieza.html
+70342;1967KN96E;Caja de cambios;SEAT;León;2.0 TDI;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;518,15 € + IVA;https://desguacesmadridnorte.com/70342-pieza.html
+70344;5717JY97F;Paso de rueda trasero izquierdo;OPEL;Corsa;1.3 CDTI;2018;Comprobada, funcionando;1 año;En stock;39,05 € + IVA;https://desguacesmadridnorte.com/70344-pieza.html
+70345;8614NK51A;Colector de admisión;SEAT;Ibiza;1.6 TDI;2007;Comprobada, funcionando;1 año;En stock;46,96 € + IVA;https://desguacesmadridnorte.com/70345-pieza.html
+70348;9742SM25B;Bomba de agua;CITROEN;C4;1.6 VTi;2021;Desmontada de vehículo;1 año;En stock;88,49 € + IVA;https://desguacesmadridnorte.com/70348-pieza.html
+70350;3309XT85B;Retrovisor derecho;TOYOTA;Camry;2.5 Hybrid;2018;Comprobada, funcionando;1 año;En stock;127,34 € + IVA;https://desguacesmadridnorte.com/70350-pieza.html
+70351;6981XC48D;Portón trasero;OPEL;Astra;1.6 CDTI;2015;Comprobada, funcionando;1 año;En stock;195,23 € + IVA;https://desguacesmadridnorte.com/70351-pieza.html
+70353;6788LB97F;Centralita motor;RENAULT;Clio;1.5 dCi;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;212,91 € + IVA;https://desguacesmadridnorte.com/70353-pieza.html
+70356;2734YM97D;Piloto trasero derecho;OPEL;Astra;1.6 CDTI;2010;Desmontada de vehículo;1 año;En stock;46,77 € + IVA;https://desguacesmadridnorte.com/70356-pieza.html
+70358;7386QK38D;Amortiguador delantero;OPEL;Corsa;1.3 CDTI;2020;Sin comprobar;1 año;En stock;52,02 € + IVA;https://desguacesmadridnorte.com/70358-pieza.html
+70359;3437BM88B;Retrovisor derecho;AUDI;A4;2.0 TFSI;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;76,46 € + IVA;https://desguacesmadridnorte.com/70359-pieza.html
+70361;9127MG17A;Faro delantero derecho;VOLKSWAGEN;Passat;2.0 TDI;2012;Comprobada, funcionando;1 año;Bajo pedido 24-48h;52,07 € + IVA;https://desguacesmadridnorte.com/70361-pieza.html
+70364;1935FR16A;Motor completo;HYUNDAI;i30;1.4 CRDi;2006;Sin comprobar;1 año;Bajo pedido 24-48h;2.914,56 € + IVA;https://desguacesmadridnorte.com/70364-pieza.html
+70366;5593BA70D;Piloto trasero derecho;FORD;Fiesta;1.0 EcoBoost;2009;Comprobada, funcionando;1 año;En stock;54,70 € + IVA;https://desguacesmadridnorte.com/70366-pieza.html
+70368;5608XF25F;Radiador;BMW;X1;18d;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;206,68 € + IVA;https://desguacesmadridnorte.com/70368-pieza.html
+70370;6341FQ69E;Colector de admisión;SKODA;Octavia;1.6 TDI;2015;Comprobada, funcionando;1 año;Bajo pedido 24-48h;118,14 € + IVA;https://desguacesmadridnorte.com/70370-pieza.html
+70373;4165DZ78D;Alternador;AUDI;Q3;1.4 TFSI;2021;Desmontada de vehículo;1 año;En stock;242,22 € + IVA;https://desguacesmadridnorte.com/70373-pieza.html
+70376;3563XF42B;Airbag volante;KIA;Ceed;1.4 CRDi;2015;Desmontada de vehículo;1 año;Bajo pedido 24-48h;128,85 € + IVA;https://desguacesmadridnorte.com/70376-pieza.html
+70378;6015AK90F;Capó;HYUNDAI;i30;1.4 CRDi;2015;Desmontada de vehículo;1 año;Bajo pedido 24-48h;156,81 € + IVA;https://desguacesmadridnorte.com/70378-pieza.html
+70380;7726TN50A;Piloto trasero izquierdo;SEAT;Ibiza;1.2 TSI;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;21,25 € + IVA;https://desguacesmadridnorte.com/70380-pieza.html
+70381;2931GK37C;Alternador;CITROEN;C4;1.6 HDi;2018;Comprobada, funcionando;1 año;En stock;113,18 € + IVA;https://desguacesmadridnorte.com/70381-pieza.html
+70384;2283RB40D;Cerradura puerta delantera;KIA;Sportage;2.0 CRDi;2018;Desmontada de vehículo;1 año;En stock;64,09 € + IVA;https://desguacesmadridnorte.com/70384-pieza.html
+70385;4687FW34E;Capó;CITROEN;C3;1.4 HDi;2005;Desmontada de vehículo;1 año;En stock;138,38 € + IVA;https://desguacesmadridnorte.com/70385-pieza.html
+70387;5317DV82C;Aleta delantera izquierda;HYUNDAI;Tucson;2.0 CRDi;2011;Sin comprobar;1 año;En stock;147,05 € + IVA;https://desguacesmadridnorte.com/70387-pieza.html
+70389;1810PE66C;Piloto trasero derecho;BMW;X1;18d;2014;Desmontada de vehículo;1 año;En stock;74,54 € + IVA;https://desguacesmadridnorte.com/70389-pieza.html
+70392;7543QT69A;Cremallera de dirección;VOLKSWAGEN;Golf;1.4 TSI;2007;Comprobada, funcionando;1 año;Bajo pedido 24-48h;76,50 € + IVA;https://desguacesmadridnorte.com/70392-pieza.html
+70393;1211CX41B;Parachoques delantero;FORD;Focus;2.0 TDCi;2007;Comprobada, funcionando;1 año;En stock;55,25 € + IVA;https://desguacesmadridnorte.com/70393-pieza.html
+70394;1642CA10E;Colector de admisión;KIA;Sportage;1.7 CRDi;2021;Comprobada, funcionando;1 año;En stock;232,67 € + IVA;https://desguacesmadridnorte.com/70394-pieza.html
+70397;2557ZT41A;Retrovisor derecho;OPEL;Astra;1.6 CDTI;2005;Comprobada, funcionando;1 año;En stock;42,73 € + IVA;https://desguacesmadridnorte.com/70397-pieza.html
+70399;5492CH67D;Cinturón de seguridad;BMW;Serie 3;318d;2011;Desmontada de vehículo;1 año;Bajo pedido 24-48h;84,98 € + IVA;https://desguacesmadridnorte.com/70399-pieza.html
+70402;9963AE82D;Bomba de dirección;OPEL;Corsa;1.2 16v;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;114,01 € + IVA;https://desguacesmadridnorte.com/70402-pieza.html
+70405;1148ZR10F;Aleta delantera izquierda;MERCEDES-BENZ;CLA;200 CDI;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;268,25 € + IVA;https://desguacesmadridnorte.com/70405-pieza.html
+70406;5501ZC76B;Amortiguador delantero;FORD;Fiesta;1.5 TDCi;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;37,71 € + IVA;https://desguacesmadridnorte.com/70406-pieza.html
+70409;1124QP96C;Faro delantero izquierdo;BMW;Serie 3;318d;2013;Desmontada de vehículo;1 año;Bajo pedido 24-48h;343,55 € + IVA;https://desguacesmadridnorte.com/70409-pieza.html
+70411;5898PK88B;Motor completo;MERCEDES-BENZ;Clase E Coupé;220 CDI;2010;Sin comprobar;1 año;En stock;4.240,50 € + IVA;https://desguacesmadridnorte.com/70411-pieza.html
+70413;4653JE36E;Motor completo;RENAULT;Clio;1.5 dCi;2020;Desmontada de vehículo;1 año;Bajo pedido 24-48h;1.840,35 € + IVA;https://desguacesmadridnorte.com/70413-pieza.html
+70414;8852YS89A;Amortiguador delantero;CITROEN;C4;1.6 HDi;2006;Comprobada, funcionando;1 año;En stock;34,78 € + IVA;https://desguacesmadridnorte.com/70414-pieza.html
+70417;2438HN15D;Faro delantero derecho;RENAULT;Clio;1.2 16v;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;198,89 € + IVA;https://desguacesmadridnorte.com/70417-pieza.html
+70420;5499EE27C;Centralita motor;AUDI;A4;3.0 TDI;2021;Sin comprobar;1 año;En stock;263,11 € + IVA;https://desguacesmadridnorte.com/70420-pieza.html
+70423;5136MD61E;Radiador;CITROEN;C3;1.4 HDi;2014;Desmontada de vehículo;1 año;En stock;79,06 € + IVA;https://desguacesmadridnorte.com/70423-pieza.html
+70425;3204FH29B;Puerta delantera izquierda;TOYOTA;Proace City;1.5 D-4D;2007;Sin comprobar;1 año;En stock;116,29 € + IVA;https://desguacesmadridnorte.com/70425-pieza.html
+70426;2375PS36B;Parachoques trasero;KIA;Ceed;1.6 CRDi;2012;Desmontada de vehículo;1 año;Bajo pedido 24-48h;135,66 € + IVA;https://desguacesmadridnorte.com/70426-pieza.html
+70428;2953JH74D;Puerta delantera izquierda;AUDI;Q3;2.0 TDI;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;212,17 € + IVA;https://desguacesmadridnorte.com/70428-pieza.html
+70430;2695TF48C;Parachoques delantero;FORD;Fusion;1.4 TDCi;2012;Comprobada, funcionando;1 año;En stock;82,91 € + IVA;https://desguacesmadridnorte.com/70430-pieza.html
+70431;7418GM69F;Piloto trasero izquierdo;VOLKSWAGEN;Passat;1.6 TDI;2017;Comprobada, funcionando;1 año;En stock;48,66 € + IVA;https://desguacesmadridnorte.com/70431-pieza.html
+70434;6535KB26F;Retrovisor izquierdo;PEUGEOT;3008;1.6 HDi;2013;Desmontada de vehículo;1 año;Bajo pedido 24-48h;40,44 € + IVA;https://desguacesmadridnorte.com/70434-pieza.html
+70436;2194QH48C;Cinturón de seguridad;KIA;Ceed;1.4 CRDi;2020;Desmontada de vehículo;1 año;Bajo pedido 24-48h;54,56 € + IVA;https://desguacesmadridnorte.com/70436-pieza.html
+70438;1119FA20B;Bomba de agua;AUDI;Q3;1.4 TFSI;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;69,53 € + IVA;https://desguacesmadridnorte.com/70438-pieza.html
+70441;9877FM89F;Motor completo;BMW;Serie 1;120i;2011;Comprobada, funcionando;1 año;En stock;2.322,66 € + IVA;https://desguacesmadridnorte.com/70441-pieza.html
+70443;2033CH57F;Alternador;PEUGEOT;3008;2.0 HDi;2006;Comprobada, funcionando;1 año;En stock;129,89 € + IVA;https://desguacesmadridnorte.com/70443-pieza.html
+70444;4244HX71C;Alternador;BMW;X1;20d;2015;Comprobada, funcionando;1 año;En stock;214,63 € + IVA;https://desguacesmadridnorte.com/70444-pieza.html
+70447;8627KB31F;Caja de cambios;CITROEN;C3;1.4 HDi;2012;Comprobada, funcionando;1 año;Bajo pedido 24-48h;338,84 € + IVA;https://desguacesmadridnorte.com/70447-pieza.html
+70449;1588VL24B;Bomba de agua;SKODA;Octavia;2.0 TDI;2019;Comprobada, funcionando;1 año;En stock;80,97 € + IVA;https://desguacesmadridnorte.com/70449-pieza.html
+70452;4346YJ38B;Cinturón de seguridad;SEAT;Ibiza;1.2 TSI;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;74,46 € + IVA;https://desguacesmadridnorte.com/70452-pieza.html
+70455;2768JF62F;Cuadro de instrumentos;RENAULT;Megane;1.6 dCi;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;194,80 € + IVA;https://desguacesmadridnorte.com/70455-pieza.html
+70458;9904TH19C;Puerta trasera izquierda;MERCEDES-BENZ;Clase E Coupé;220 CDI;2017;Comprobada, funcionando;1 año;Bajo pedido 24-48h;447,75 € + IVA;https://desguacesmadridnorte.com/70458-pieza.html
+70459;5890PF29A;Cremallera de dirección;CITROEN;C3;1.4 HDi;2020;Comprobada, funcionando;1 año;En stock;219,64 € + IVA;https://desguacesmadridnorte.com/70459-pieza.html
+70461;1449PP20B;Módulo electrónico;AUDI;A3;1.4 TFSI;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;215,23 € + IVA;https://desguacesmadridnorte.com/70461-pieza.html
+70462;6703ML16B;Parachoques delantero;SKODA;Fabia;1.2 TSI;2005;Comprobada, funcionando;1 año;En stock;137,34 € + IVA;https://desguacesmadridnorte.com/70462-pieza.html
+70465;7818MR12C;Bomba de agua;RENAULT;Captur;0.9 TCe;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;59,25 € + IVA;https://desguacesmadridnorte.com/70465-pieza.html
+70468;9874PM23C;Bomba de dirección;SEAT;Ateca;2.0 TDI;2013;Comprobada, funcionando;1 año;En stock;65,37 € + IVA;https://desguacesmadridnorte.com/70468-pieza.html
+70469;8624KX39C;Motor de arranque;BMW;Serie 1;118d;2014;Comprobada, funcionando;1 año;En stock;181,13 € + IVA;https://desguacesmadridnorte.com/70469-pieza.html
+70471;6081HD92D;Turbo;AUDI;Q3;1.4 TFSI;2015;Comprobada, funcionando;1 año;En stock;531,77 € + IVA;https://desguacesmadridnorte.com/70471-pieza.html
+70472;2214KA22E;Amortiguador delantero;HYUNDAI;i30;1.6 CRDi;2010;Comprobada, funcionando;1 año;En stock;72,46 € + IVA;https://desguacesmadridnorte.com/70472-pieza.html
+70475;9660MY34C;Aleta delantera izquierda;AUDI;A3;1.4 TFSI;2016;Comprobada, funcionando;1 año;En stock;91,21 € + IVA;https://desguacesmadridnorte.com/70475-pieza.html
+70477;7396CD41F;Caja de cambios;SEAT;Ateca;2.0 TDI;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;745,01 € + IVA;https://desguacesmadridnorte.com/70477-pieza.html
+70478;4489PA12B;Turbo;VOLKSWAGEN;Passat;2.0 TDI;2007;Comprobada, funcionando;1 año;En stock;338,13 € + IVA;https://desguacesmadridnorte.com/70478-pieza.html
+70479;3415VZ93F;Módulo electrónico;SKODA;Fabia;1.4 TDI;2018;Comprobada, funcionando;1 año;En stock;194,03 € + IVA;https://desguacesmadridnorte.com/70479-pieza.html
+70482;8674RL65E;Cremallera de dirección;FORD;Focus;1.6 TDCi;2015;Desmontada de vehículo;1 año;En stock;236,45 € + IVA;https://desguacesmadridnorte.com/70482-pieza.html
+70485;9310CV41F;Alternador;SKODA;Octavia;1.6 TDI;2008;Sin comprobar;1 año;Bajo pedido 24-48h;75,98 € + IVA;https://desguacesmadridnorte.com/70485-pieza.html
+70486;4322WQ15D;Motor completo;KIA;Sportage;2.0 CRDi;2019;Desmontada de vehículo;1 año;Bajo pedido 24-48h;1.164,58 € + IVA;https://desguacesmadridnorte.com/70486-pieza.html
+70488;3597CG29D;Motor de arranque;HYUNDAI;Tucson;1.7 CRDi;2008;Sin comprobar;1 año;En stock;131,62 € + IVA;https://desguacesmadridnorte.com/70488-pieza.html
+70489;4870XQ56E;Motor de arranque;SKODA;Fabia;1.2 TSI;2013;Comprobada, funcionando;1 año;En stock;79,74 € + IVA;https://desguacesmadridnorte.com/70489-pieza.html
+70491;3754NB77F;Portón trasero;SKODA;Octavia;1.6 TDI;2014;Desmontada de vehículo;1 año;En stock;345,63 € + IVA;https://desguacesmadridnorte.com/70491-pieza.html
+70493;3085BK69C;Intercooler;PEUGEOT;3008;1.6 HDi;2012;Comprobada, funcionando;1 año;En stock;129,00 € + IVA;https://desguacesmadridnorte.com/70493-pieza.html
+70494;1683JX65B;Catalizador;AUDI;A4;2.0 TFSI;2012;Desmontada de vehículo;1 año;En stock;424,60 € + IVA;https://desguacesmadridnorte.com/70494-pieza.html
+70497;9101WS61F;Aleta delantera izquierda;PEUGEOT;308;1.6 HDi;2011;Comprobada, funcionando;1 año;En stock;118,92 € + IVA;https://desguacesmadridnorte.com/70497-pieza.html
+70499;1998JX45D;Caja de cambios;BMW;Serie 1;116d;2010;Desmontada de vehículo;1 año;Bajo pedido 24-48h;222,49 € + IVA;https://desguacesmadridnorte.com/70499-pieza.html
+70501;1106EB68C;Alternador;HYUNDAI;i30;1.6 CRDi;2014;Comprobada, funcionando;1 año;En stock;105,15 € + IVA;https://desguacesmadridnorte.com/70501-pieza.html
+70503;8313HT99D;Cuadro de instrumentos;HYUNDAI;Tucson;1.7 CRDi;2011;Desmontada de vehículo;1 año;Bajo pedido 24-48h;224,66 € + IVA;https://desguacesmadridnorte.com/70503-pieza.html
+70505;9492RH76E;Compresor aire acondicionado;OPEL;Astra;1.6 CDTI;2007;Desmontada de vehículo;1 año;Bajo pedido 24-48h;172,12 € + IVA;https://desguacesmadridnorte.com/70505-pieza.html
+70508;7823HC27E;Paso de rueda trasero izquierdo;KIA;Ceed;1.4 CRDi;2015;Comprobada, funcionando;1 año;En stock;28,82 € + IVA;https://desguacesmadridnorte.com/70508-pieza.html
+70511;7482MZ44F;Radiador;VOLKSWAGEN;Golf;1.6 TDI;2006;Desmontada de vehículo;1 año;Bajo pedido 24-48h;126,23 € + IVA;https://desguacesmadridnorte.com/70511-pieza.html
+70513;5558SR99E;Módulo electrónico;PEUGEOT;208;1.6 HDi;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;149,97 € + IVA;https://desguacesmadridnorte.com/70513-pieza.html
+70514;3512JY77C;Cinturón de seguridad;TOYOTA;Proace City;1.5 D-4D;2010;Sin comprobar;1 año;En stock;55,45 € + IVA;https://desguacesmadridnorte.com/70514-pieza.html
+70517;2485EM63D;Airbag volante;PEUGEOT;208;1.4 HDi;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;160,97 € + IVA;https://desguacesmadridnorte.com/70517-pieza.html
+70520;2649XE56E;Bomba de agua;RENAULT;Megane;1.6 dCi;2013;Desmontada de vehículo;1 año;En stock;58,13 € + IVA;https://desguacesmadridnorte.com/70520-pieza.html
+70521;6772AQ12D;Retrovisor izquierdo;FORD;Fiesta;1.0 EcoBoost;2015;Desmontada de vehículo;1 año;Bajo pedido 24-48h;117,76 € + IVA;https://desguacesmadridnorte.com/70521-pieza.html
+70522;6499GM85A;Airbag volante;BMW;X1;20d;2010;Sin comprobar;1 año;En stock;85,72 € + IVA;https://desguacesmadridnorte.com/70522-pieza.html
+70524;1114QS62D;Parachoques trasero;AUDI;A4;2.0 TDI;2011;Sin comprobar;1 año;Bajo pedido 24-48h;251,88 € + IVA;https://desguacesmadridnorte.com/70524-pieza.html
+70525;9431WJ37B;Retrovisor derecho;TOYOTA;Corolla;1.8 Hybrid;2011;Desmontada de vehículo;1 año;En stock;66,84 € + IVA;https://desguacesmadridnorte.com/70525-pieza.html
+70526;6237VF17E;Piloto trasero izquierdo;CITROEN;C3;1.4 HDi;2013;Comprobada, funcionando;1 año;En stock;55,42 € + IVA;https://desguacesmadridnorte.com/70526-pieza.html
+70527;9446LT42C;Aleta delantera izquierda;OPEL;Astra;1.7 CDTI;2011;Desmontada de vehículo;1 año;En stock;119,35 € + IVA;https://desguacesmadridnorte.com/70527-pieza.html
+70528;6405VB83D;Capó;SKODA;Fabia;1.2 TSI;2017;Comprobada, funcionando;1 año;En stock;102,99 € + IVA;https://desguacesmadridnorte.com/70528-pieza.html
+70531;4980DN92E;Bomba de dirección;VOLKSWAGEN;Polo;1.2 TSI;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;131,10 € + IVA;https://desguacesmadridnorte.com/70531-pieza.html
+70534;4978QG47B;Parachoques delantero;TOYOTA;Corolla;1.4 D-4D;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;104,64 € + IVA;https://desguacesmadridnorte.com/70534-pieza.html
+70537;9160DW43A;Caja de cambios;MERCEDES-BENZ;Clase E Coupé;220 CDI;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;1.027,65 € + IVA;https://desguacesmadridnorte.com/70537-pieza.html
+70538;5226WD33B;Bomba de dirección;OPEL;Corsa;1.2 16v;2018;Desmontada de vehículo;1 año;En stock;133,75 € + IVA;https://desguacesmadridnorte.com/70538-pieza.html
+70540;4778AR42D;Caja de cambios;RENAULT;Megane;1.5 dCi;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;626,34 € + IVA;https://desguacesmadridnorte.com/70540-pieza.html
+70543;3868GB25E;Cremallera de dirección;BMW;Serie 1;116d;2009;Desmontada de vehículo;1 año;En stock;198,39 € + IVA;https://desguacesmadridnorte.com/70543-pieza.html
+70545;9604EK67C;Cinturón de seguridad;AUDI;A4;2.0 TFSI;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;67,93 € + IVA;https://desguacesmadridnorte.com/70545-pieza.html
+70547;9198GZ35A;Retrovisor izquierdo;SKODA;Fabia;1.4 TDI;2015;Comprobada, funcionando;1 año;En stock;112,77 € + IVA;https://desguacesmadridnorte.com/70547-pieza.html
+70548;4594NF24D;Parachoques delantero;OPEL;Corsa;1.2 16v;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;100,96 € + IVA;https://desguacesmadridnorte.com/70548-pieza.html
+70550;9709MK51F;Cremallera de dirección;TOYOTA;Corolla;1.4 D-4D;2020;Desmontada de vehículo;1 año;En stock;349,71 € + IVA;https://desguacesmadridnorte.com/70550-pieza.html
+70552;4415ES53A;Módulo electrónico;SEAT;León;2.0 TDI;2018;Desmontada de vehículo;1 año;En stock;206,41 € + IVA;https://desguacesmadridnorte.com/70552-pieza.html
+70554;6776QV16B;Cárter;OPEL;Astra;1.6 CDTI;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;85,01 € + IVA;https://desguacesmadridnorte.com/70554-pieza.html
+70555;4174WQ29B;Portón trasero;HYUNDAI;i30;1.4 CRDi;2014;Comprobada, funcionando;1 año;En stock;288,84 € + IVA;https://desguacesmadridnorte.com/70555-pieza.html
+70557;3510XT38B;Parachoques trasero;PEUGEOT;208;1.6 HDi;2008;Comprobada, funcionando;1 año;En stock;94,70 € + IVA;https://desguacesmadridnorte.com/70557-pieza.html
+70558;8645HB48F;Amortiguador delantero;AUDI;Q3;2.0 TDI;2014;Desmontada de vehículo;1 año;Bajo pedido 24-48h;54,92 € + IVA;https://desguacesmadridnorte.com/70558-pieza.html
+70560;3886YZ96A;Módulo electrónico;TOYOTA;Camry;2.5 Hybrid;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;146,31 € + IVA;https://desguacesmadridnorte.com/70560-pieza.html
+70563;5205GA31E;Motor de arranque;PEUGEOT;308;1.6 HDi;2017;Comprobada, funcionando;1 año;En stock;108,64 € + IVA;https://desguacesmadridnorte.com/70563-pieza.html
+70565;4470GW35B;Motor completo;SKODA;Octavia;2.0 TDI;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;2.026,51 € + IVA;https://desguacesmadridnorte.com/70565-pieza.html
+70567;6184WC56F;Aleta delantera izquierda;OPEL;Astra;1.7 CDTI;2005;Desmontada de vehículo;1 año;En stock;71,47 € + IVA;https://desguacesmadridnorte.com/70567-pieza.html
+70568;5624CZ95D;Bomba de agua;MERCEDES-BENZ;Clase A;180 CDI;2016;Desmontada de vehículo;1 año;En stock;51,89 € + IVA;https://desguacesmadridnorte.com/70568-pieza.html
+70571;4418JJ78D;Elevalunas delantero izquierdo;FORD;Fiesta;1.0 EcoBoost;2011;Sin comprobar;1 año;En stock;77,68 € + IVA;https://desguacesmadridnorte.com/70571-pieza.html
+70572;8450FT73B;Cerradura puerta delantera;AUDI;A3;2.0 TDI;2018;Sin comprobar;1 año;En stock;77,49 € + IVA;https://desguacesmadridnorte.com/70572-pieza.html
+70575;8000PP84A;Parachoques trasero;BMW;X1;20d;2016;Comprobada, funcionando;1 año;En stock;377,00 € + IVA;https://desguacesmadridnorte.com/70575-pieza.html
+70576;7593FC67A;Intercooler;BMW;Serie 3;320d;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;304,50 € + IVA;https://desguacesmadridnorte.com/70576-pieza.html
+70578;6647AH76D;Cinturón de seguridad;SKODA;Fabia;1.2 TSI;2018;Desmontada de vehículo;1 año;En stock;73,05 € + IVA;https://desguacesmadridnorte.com/70578-pieza.html
+70579;9932FC86B;Alternador;RENAULT;Captur;0.9 TCe;2007;Comprobada, funcionando;1 año;En stock;110,97 € + IVA;https://desguacesmadridnorte.com/70579-pieza.html
+70581;9099VZ79F;Aleta delantera izquierda;FORD;Fusion;1.4 TDCi;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;61,08 € + IVA;https://desguacesmadridnorte.com/70581-pieza.html
+70583;6041NH46E;Puerta trasera izquierda;SEAT;Ateca;1.5 TSI;2019;Comprobada, funcionando;1 año;En stock;116,35 € + IVA;https://desguacesmadridnorte.com/70583-pieza.html
+70584;8717HL41E;Aleta delantera izquierda;AUDI;A3;1.4 TFSI;2020;Comprobada, funcionando;1 año;En stock;113,43 € + IVA;https://desguacesmadridnorte.com/70584-pieza.html
+70585;6577NL34A;Cerradura puerta delantera;FORD;Fiesta;1.5 TDCi;2020;Desmontada de vehículo;1 año;En stock;36,99 € + IVA;https://desguacesmadridnorte.com/70585-pieza.html
+70588;7813AF28A;Capó;SKODA;Fabia;1.4 TDI;2017;Desmontada de vehículo;1 año;Bajo pedido 24-48h;75,85 € + IVA;https://desguacesmadridnorte.com/70588-pieza.html
+70591;3248AA13B;Bomba de dirección;FORD;Fusion;1.4 TDCi;2009;Desmontada de vehículo;1 año;En stock;97,35 € + IVA;https://desguacesmadridnorte.com/70591-pieza.html
+70593;3827RL91D;Puerta delantera izquierda;BMW;Serie 3;330i;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;370,86 € + IVA;https://desguacesmadridnorte.com/70593-pieza.html
+70596;2882PV30E;Motor completo;CITROEN;C3;1.4 HDi;2020;Desmontada de vehículo;1 año;Bajo pedido 24-48h;2.407,30 € + IVA;https://desguacesmadridnorte.com/70596-pieza.html
+70597;1855CB41D;Centralita motor;OPEL;Corsa;1.3 CDTI;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;128,61 € + IVA;https://desguacesmadridnorte.com/70597-pieza.html
+70599;8372SM23A;Centralita motor;FORD;Fiesta;1.0 EcoBoost;2020;Comprobada, funcionando;1 año;Bajo pedido 24-48h;91,64 € + IVA;https://desguacesmadridnorte.com/70599-pieza.html
+70601;3924HK41C;Amortiguador delantero;BMW;Serie 3;320d;2008;Comprobada, funcionando;1 año;En stock;92,01 € + IVA;https://desguacesmadridnorte.com/70601-pieza.html
+70602;4347XB65F;Caja de cambios;FORD;Fiesta;1.5 TDCi;2019;Desmontada de vehículo;1 año;Bajo pedido 24-48h;674,72 € + IVA;https://desguacesmadridnorte.com/70602-pieza.html
+70605;4573MV48E;Cerradura puerta delantera;KIA;Sportage;2.0 CRDi;2011;Desmontada de vehículo;1 año;En stock;48,73 € + IVA;https://desguacesmadridnorte.com/70605-pieza.html
+70607;3126CT13B;Cuadro de instrumentos;HYUNDAI;i30;1.4 CRDi;2017;Comprobada, funcionando;1 año;En stock;173,11 € + IVA;https://desguacesmadridnorte.com/70607-pieza.html
+70609;4258XN84D;Puerta delantera izquierda;PEUGEOT;208;1.6 HDi;2012;Sin comprobar;1 año;Bajo pedido 24-48h;194,02 € + IVA;https://desguacesmadridnorte.com/70609-pieza.html
+70610;1920VN75E;Retrovisor derecho;KIA;Sportage;1.7 CRDi;2017;Comprobada, funcionando;1 año;En stock;180,75 € + IVA;https://desguacesmadridnorte.com/70610-pieza.html
+70611;1783QY97A;Parachoques trasero;TOYOTA;Camry;2.5 Hybrid;2015;Comprobada, funcionando;1 año;Bajo pedido 24-48h;90,52 € + IVA;https://desguacesmadridnorte.com/70611-pieza.html
+70614;4991HT77A;Puerta delantera derecha;AUDI;A4;3.0 TDI;2019;Desmontada de vehículo;1 año;En stock;522,00 € + IVA;https://desguacesmadridnorte.com/70614-pieza.html
+70617;4965XY45C;Centralita motor;OPEL;Astra;1.6 CDTI;2017;Comprobada, funcionando;1 año;En stock;434,29 € + IVA;https://desguacesmadridnorte.com/70617-pieza.html
+70619;4937ZR55F;Puerta trasera izquierda;TOYOTA;Camry;2.5 Hybrid;2011;Desmontada de vehículo;1 año;En stock;345,28 € + IVA;https://desguacesmadridnorte.com/70619-pieza.html
+70621;9931DR67C;Intercooler;KIA;Sportage;2.0 CRDi;2009;Desmontada de vehículo;1 año;Bajo pedido 24-48h;117,77 € + IVA;https://desguacesmadridnorte.com/70621-pieza.html
+70623;3391KN78D;Faro delantero izquierdo;CITROEN;C3;1.2 PureTech;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;97,22 € + IVA;https://desguacesmadridnorte.com/70623-pieza.html
+70624;7596PA16B;Cuadro de instrumentos;KIA;Ceed;1.6 CRDi;2021;Desmontada de vehículo;1 año;En stock;208,09 € + IVA;https://desguacesmadridnorte.com/70624-pieza.html
+70625;5062GV79D;Catalizador;BMW;X1;18d;2016;Comprobada, funcionando;1 año;En stock;696,00 € + IVA;https://desguacesmadridnorte.com/70625-pieza.html
+70628;1908KP87E;Compresor aire acondicionado;FORD;Fusion;1.4 TDCi;2007;Comprobada, funcionando;1 año;En stock;72,25 € + IVA;https://desguacesmadridnorte.com/70628-pieza.html
+70631;7203DQ40C;Centralita motor;BMW;X1;18d;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;487,53 € + IVA;https://desguacesmadridnorte.com/70631-pieza.html
+70633;5278HA34C;Módulo electrónico;AUDI;Q3;2.0 TDI;2011;Comprobada, funcionando;1 año;En stock;218,74 € + IVA;https://desguacesmadridnorte.com/70633-pieza.html
+70634;4348XR77A;Cinturón de seguridad;TOYOTA;Camry;2.5 Hybrid;2011;Comprobada, funcionando;1 año;En stock;72,38 € + IVA;https://desguacesmadridnorte.com/70634-pieza.html
+70636;9610XD84A;Bomba de agua;NISSAN;Juke;1.2 DIG-T;2021;Desmontada de vehículo;1 año;En stock;80,44 € + IVA;https://desguacesmadridnorte.com/70636-pieza.html
+70639;4181YL44B;Bomba de agua;PEUGEOT;208;1.6 HDi;2012;Desmontada de vehículo;1 año;En stock;30,58 € + IVA;https://desguacesmadridnorte.com/70639-pieza.html
+70642;7925EP90C;Alternador;OPEL;Corsa;1.3 CDTI;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;110,39 € + IVA;https://desguacesmadridnorte.com/70642-pieza.html
+70645;9908SY80E;Colector de admisión;OPEL;Corsa;1.2 16v;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;111,78 € + IVA;https://desguacesmadridnorte.com/70645-pieza.html
+70647;6162NX14F;Faro delantero izquierdo;VOLKSWAGEN;Passat;1.6 TDI;2010;Comprobada, funcionando;1 año;En stock;166,72 € + IVA;https://desguacesmadridnorte.com/70647-pieza.html
+70650;6110GV63E;Piloto trasero izquierdo;HYUNDAI;i30;1.6 CRDi;2019;Comprobada, funcionando;1 año;En stock;104,37 € + IVA;https://desguacesmadridnorte.com/70650-pieza.html
+70651;9997RB10F;Puerta delantera izquierda;NISSAN;Qashqai;1.6 dCi;2006;Desmontada de vehículo;1 año;Bajo pedido 24-48h;247,91 € + IVA;https://desguacesmadridnorte.com/70651-pieza.html
+70654;2923WF17B;Compresor aire acondicionado;VOLKSWAGEN;Passat;2.0 TDI;2018;Comprobada, funcionando;1 año;En stock;345,21 € + IVA;https://desguacesmadridnorte.com/70654-pieza.html
+70656;4848AJ61E;Cinturón de seguridad;OPEL;Astra;1.7 CDTI;2010;Desmontada de vehículo;1 año;En stock;21,25 € + IVA;https://desguacesmadridnorte.com/70656-pieza.html
+70658;8539QW48B;Turbo;FORD;Focus;2.0 TDCi;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;387,86 € + IVA;https://desguacesmadridnorte.com/70658-pieza.html
+70660;7696VQ12E;Puerta delantera izquierda;FORD;Fusion;1.4 TDCi;2018;Sin comprobar;1 año;En stock;147,34 € + IVA;https://desguacesmadridnorte.com/70660-pieza.html
+70663;1967YN50A;Cárter;SEAT;Ibiza;1.6 TDI;2020;Comprobada, funcionando;1 año;Bajo pedido 24-48h;47,63 € + IVA;https://desguacesmadridnorte.com/70663-pieza.html
+70665;3210MY85D;Centralita motor;RENAULT;Clio;1.2 16v;2006;Comprobada, funcionando;1 año;En stock;85,00 € + IVA;https://desguacesmadridnorte.com/70665-pieza.html
+70667;3829ZJ32D;Bomba de dirección;KIA;Sportage;2.0 CRDi;2018;Sin comprobar;1 año;En stock;90,02 € + IVA;https://desguacesmadridnorte.com/70667-pieza.html
+70669;8539ET46D;Capó;KIA;Ceed;1.4 CRDi;2005;Sin comprobar;1 año;Bajo pedido 24-48h;64,78 € + IVA;https://desguacesmadridnorte.com/70669-pieza.html
+70671;2028KF55F;Bomba de dirección;SEAT;Ateca;1.5 TSI;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;107,38 € + IVA;https://desguacesmadridnorte.com/70671-pieza.html
+70673;9956GE44E;Cárter;BMW;X1;20d;2005;Desmontada de vehículo;1 año;En stock;87,96 € + IVA;https://desguacesmadridnorte.com/70673-pieza.html
+70675;4963EX25D;Colector de admisión;KIA;Sportage;1.7 CRDi;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;157,72 € + IVA;https://desguacesmadridnorte.com/70675-pieza.html
+70677;7366QM34B;Portón trasero;TOYOTA;Camry;2.5 Hybrid;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;331,09 € + IVA;https://desguacesmadridnorte.com/70677-pieza.html
+70679;8719WB14F;Turbo;SEAT;Ibiza;1.6 TDI;2005;Sin comprobar;1 año;En stock;127,50 € + IVA;https://desguacesmadridnorte.com/70679-pieza.html
+70681;6990HW70F;Piloto trasero izquierdo;PEUGEOT;3008;1.6 HDi;2016;Comprobada, funcionando;1 año;En stock;64,26 € + IVA;https://desguacesmadridnorte.com/70681-pieza.html
+70683;4231WZ94D;Capó;RENAULT;Megane;1.5 dCi;2020;Desmontada de vehículo;1 año;En stock;124,30 € + IVA;https://desguacesmadridnorte.com/70683-pieza.html
+70686;9389TD39B;Elevalunas delantero izquierdo;MERCEDES-BENZ;CLA;200 CDI;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;113,43 € + IVA;https://desguacesmadridnorte.com/70686-pieza.html
+70689;5466ZK53F;Aleta delantera izquierda;FORD;Focus;1.6 TDCi;2007;Comprobada, funcionando;1 año;En stock;129,43 € + IVA;https://desguacesmadridnorte.com/70689-pieza.html
+70692;5947TW10D;Amortiguador delantero;BMW;Serie 1;120i;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;50,22 € + IVA;https://desguacesmadridnorte.com/70692-pieza.html
+70694;2534RJ16B;Amortiguador delantero;FORD;Fiesta;1.0 EcoBoost;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;76,77 € + IVA;https://desguacesmadridnorte.com/70694-pieza.html
+70697;8748XR93C;Faro delantero izquierdo;SKODA;Octavia;2.0 TDI;2008;Comprobada, funcionando;1 año;En stock;75,97 € + IVA;https://desguacesmadridnorte.com/70697-pieza.html
+70698;1736GE35C;Elevalunas delantero izquierdo;CITROEN;C4;1.6 HDi;2014;Comprobada, funcionando;1 año;En stock;58,41 € + IVA;https://desguacesmadridnorte.com/70698-pieza.html
+70700;3821ED74C;Piloto trasero izquierdo;SKODA;Octavia;1.6 TDI;2016;Comprobada, funcionando;1 año;En stock;76,01 € + IVA;https://desguacesmadridnorte.com/70700-pieza.html
+70701;2990HW48D;Motor de arranque;AUDI;A4;3.0 TDI;2011;Sin comprobar;1 año;Bajo pedido 24-48h;56,75 € + IVA;https://desguacesmadridnorte.com/70701-pieza.html
+70704;4464JL27D;Puerta delantera izquierda;MERCEDES-BENZ;CLA;200 CDI;2011;Sin comprobar;1 año;En stock;407,40 € + IVA;https://desguacesmadridnorte.com/70704-pieza.html
+70706;2657BH63B;Paso de rueda trasero izquierdo;SKODA;Octavia;2.0 TDI;2006;Desmontada de vehículo;1 año;En stock;22,81 € + IVA;https://desguacesmadridnorte.com/70706-pieza.html
+70709;3184WW59B;Bomba de dirección;TOYOTA;Camry;2.5 Hybrid;2007;Desmontada de vehículo;1 año;En stock;60,07 € + IVA;https://desguacesmadridnorte.com/70709-pieza.html
+70710;2383CK97C;Faro delantero izquierdo;HYUNDAI;i30;1.6 CRDi;2021;Comprobada, funcionando;1 año;En stock;65,58 € + IVA;https://desguacesmadridnorte.com/70710-pieza.html
+70713;4152VG51A;Cinturón de seguridad;TOYOTA;Proace City;1.5 D-4D;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;28,93 € + IVA;https://desguacesmadridnorte.com/70713-pieza.html
+70716;2191RK28A;Elevalunas delantero izquierdo;BMW;Serie 1;118d;2005;Desmontada de vehículo;1 año;Bajo pedido 24-48h;34,18 € + IVA;https://desguacesmadridnorte.com/70716-pieza.html
+70719;9375XL47F;Cremallera de dirección;RENAULT;Captur;0.9 TCe;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;207,28 € + IVA;https://desguacesmadridnorte.com/70719-pieza.html
+70722;9918LC81B;Centralita motor;OPEL;Astra;1.7 CDTI;2012;Comprobada, funcionando;1 año;En stock;306,58 € + IVA;https://desguacesmadridnorte.com/70722-pieza.html
+70723;5449WR17E;Airbag volante;OPEL;Corsa;1.3 CDTI;2009;Comprobada, funcionando;1 año;En stock;86,98 € + IVA;https://desguacesmadridnorte.com/70723-pieza.html
+70726;6803BE68C;Parachoques delantero;BMW;Serie 3;330i;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;258,66 € + IVA;https://desguacesmadridnorte.com/70726-pieza.html
+70727;5470FQ39D;Portón trasero;BMW;Serie 1;120i;2013;Comprobada, funcionando;1 año;En stock;407,22 € + IVA;https://desguacesmadridnorte.com/70727-pieza.html
+70728;3041VH70F;Airbag volante;PEUGEOT;308;2.0 HDi;2021;Comprobada, funcionando;1 año;En stock;159,12 € + IVA;https://desguacesmadridnorte.com/70728-pieza.html
+70731;5790EX67E;Motor de arranque;SEAT;Ibiza;1.9 TDI;2010;Sin comprobar;1 año;Bajo pedido 24-48h;66,87 € + IVA;https://desguacesmadridnorte.com/70731-pieza.html
+70733;5131YP21D;Cárter;TOYOTA;Proace City;1.5 D-4D;2020;Desmontada de vehículo;1 año;Bajo pedido 24-48h;44,62 € + IVA;https://desguacesmadridnorte.com/70733-pieza.html
+70736;8708GG67E;Módulo electrónico;BMW;X1;20d;2014;Desmontada de vehículo;1 año;Bajo pedido 24-48h;140,23 € + IVA;https://desguacesmadridnorte.com/70736-pieza.html
+70738;8087NM96F;Cinturón de seguridad;BMW;X1;20d;2010;Comprobada, funcionando;1 año;En stock;76,73 € + IVA;https://desguacesmadridnorte.com/70738-pieza.html
+70741;2334XG53C;Parachoques trasero;KIA;Ceed;1.4 CRDi;2012;Desmontada de vehículo;1 año;Bajo pedido 24-48h;118,88 € + IVA;https://desguacesmadridnorte.com/70741-pieza.html
+70743;7998JL15B;Motor de arranque;OPEL;Corsa;1.3 CDTI;2017;Desmontada de vehículo;1 año;En stock;137,10 € + IVA;https://desguacesmadridnorte.com/70743-pieza.html
+70745;4141RK19F;Alternador;FORD;Focus;2.0 TDCi;2021;Comprobada, funcionando;1 año;En stock;66,37 € + IVA;https://desguacesmadridnorte.com/70745-pieza.html
+70747;6986PW49D;Parachoques delantero;SEAT;Ateca;2.0 TDI;2015;Sin comprobar;1 año;En stock;96,32 € + IVA;https://desguacesmadridnorte.com/70747-pieza.html
+70750;7863CD57E;Puerta trasera izquierda;NISSAN;Qashqai;1.5 dCi;2010;Comprobada, funcionando;1 año;En stock;178,45 € + IVA;https://desguacesmadridnorte.com/70750-pieza.html
+70752;5714JZ94B;Módulo electrónico;AUDI;A4;3.0 TDI;2007;Comprobada, funcionando;1 año;En stock;98,39 € + IVA;https://desguacesmadridnorte.com/70752-pieza.html
+70754;5883DY65A;Cremallera de dirección;FORD;Focus;1.6 TDCi;2009;Sin comprobar;1 año;En stock;128,74 € + IVA;https://desguacesmadridnorte.com/70754-pieza.html
+70756;6573SX52F;Cárter;FORD;Focus;2.0 TDCi;2020;Comprobada, funcionando;1 año;En stock;98,00 € + IVA;https://desguacesmadridnorte.com/70756-pieza.html
+70759;6195HV22E;Piloto trasero izquierdo;CITROEN;C4;1.6 HDi;2006;Desmontada de vehículo;1 año;En stock;38,83 € + IVA;https://desguacesmadridnorte.com/70759-pieza.html
+70760;1625GS71E;Airbag volante;SKODA;Fabia;1.4 TDI;2014;Comprobada, funcionando;1 año;En stock;70,79 € + IVA;https://desguacesmadridnorte.com/70760-pieza.html
+70761;1475MA38D;Faro delantero izquierdo;TOYOTA;Proace City;1.5 D-4D;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;176,76 € + IVA;https://desguacesmadridnorte.com/70761-pieza.html
+70762;5092XP55C;Caja de cambios;BMW;Serie 1;120i;2017;Desmontada de vehículo;1 año;En stock;1.377,32 € + IVA;https://desguacesmadridnorte.com/70762-pieza.html
+70764;7184PK71C;Alternador;FORD;Fusion;1.4 TDCi;2013;Comprobada, funcionando;1 año;En stock;58,27 € + IVA;https://desguacesmadridnorte.com/70764-pieza.html
+70767;3514BL23A;Compresor aire acondicionado;CITROEN;C3;1.2 PureTech;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;210,53 € + IVA;https://desguacesmadridnorte.com/70767-pieza.html
+70770;5682RX55A;Bomba de dirección;MERCEDES-BENZ;Clase E Coupé;220 CDI;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;78,54 € + IVA;https://desguacesmadridnorte.com/70770-pieza.html
+70772;5840LJ54D;Amortiguador delantero;BMW;Serie 3;318d;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;58,39 € + IVA;https://desguacesmadridnorte.com/70772-pieza.html
+70775;7487AP71C;Retrovisor derecho;PEUGEOT;3008;2.0 HDi;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;60,54 € + IVA;https://desguacesmadridnorte.com/70775-pieza.html
+70778;9448VG67F;Paso de rueda trasero izquierdo;NISSAN;Qashqai;1.6 dCi;2007;Comprobada, funcionando;1 año;En stock;19,87 € + IVA;https://desguacesmadridnorte.com/70778-pieza.html
+70780;7319AF26A;Cárter;AUDI;A4;2.0 TDI;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;64,28 € + IVA;https://desguacesmadridnorte.com/70780-pieza.html
+70782;6544LE60C;Amortiguador delantero;BMW;Serie 1;116d;2020;Comprobada, funcionando;1 año;En stock;95,66 € + IVA;https://desguacesmadridnorte.com/70782-pieza.html
+70785;4255TJ95B;Motor completo;KIA;Sportage;2.0 CRDi;2014;Comprobada, funcionando;1 año;En stock;2.944,96 € + IVA;https://desguacesmadridnorte.com/70785-pieza.html
+70787;5685WY74E;Cremallera de dirección;SKODA;Fabia;1.2 TSI;2008;Comprobada, funcionando;1 año;En stock;136,14 € + IVA;https://desguacesmadridnorte.com/70787-pieza.html
+70789;6974AX38B;Cinturón de seguridad;SKODA;Octavia;2.0 TDI;2018;Sin comprobar;1 año;Bajo pedido 24-48h;30,52 € + IVA;https://desguacesmadridnorte.com/70789-pieza.html
+70790;2325NG93E;Cárter;SEAT;Ateca;1.5 TSI;2021;Sin comprobar;1 año;En stock;73,33 € + IVA;https://desguacesmadridnorte.com/70790-pieza.html
+70791;3613KX87C;Compresor aire acondicionado;FORD;Fiesta;1.5 TDCi;2012;Desmontada de vehículo;1 año;En stock;178,55 € + IVA;https://desguacesmadridnorte.com/70791-pieza.html
+70792;2149HP74E;Elevalunas delantero izquierdo;BMW;X1;18d;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;110,09 € + IVA;https://desguacesmadridnorte.com/70792-pieza.html
+70795;4366CK72E;Caja de cambios;SEAT;Ibiza;1.9 TDI;2006;Comprobada, funcionando;1 año;En stock;295,94 € + IVA;https://desguacesmadridnorte.com/70795-pieza.html
+70797;4190JM41F;Bomba de agua;SEAT;Ateca;1.5 TSI;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;32,23 € + IVA;https://desguacesmadridnorte.com/70797-pieza.html
+70800;3484CV55C;Faro delantero izquierdo;TOYOTA;Proace City;1.5 D-4D;2005;Desmontada de vehículo;1 año;En stock;102,71 € + IVA;https://desguacesmadridnorte.com/70800-pieza.html
+70803;6924WF62F;Intercooler;RENAULT;Megane;1.6 dCi;2020;Comprobada, funcionando;1 año;Bajo pedido 24-48h;94,30 € + IVA;https://desguacesmadridnorte.com/70803-pieza.html
+70806;6754RQ83D;Capó;HYUNDAI;i30;1.4 CRDi;2006;Desmontada de vehículo;1 año;Bajo pedido 24-48h;111,13 € + IVA;https://desguacesmadridnorte.com/70806-pieza.html
+70807;1006ZW26F;Caja de cambios;FORD;Fiesta;1.5 TDCi;2014;Comprobada, funcionando;1 año;En stock;318,71 € + IVA;https://desguacesmadridnorte.com/70807-pieza.html
+70810;7633YD98B;Bomba de dirección;OPEL;Astra;1.6 CDTI;2010;Desmontada de vehículo;1 año;En stock;95,56 € + IVA;https://desguacesmadridnorte.com/70810-pieza.html
+70811;5848XG47D;Elevalunas delantero izquierdo;VOLKSWAGEN;Passat;1.6 TDI;2006;Sin comprobar;1 año;Bajo pedido 24-48h;51,19 € + IVA;https://desguacesmadridnorte.com/70811-pieza.html
+70813;5588HD52D;Puerta delantera derecha;CITROEN;C4;1.6 VTi;2010;Comprobada, funcionando;1 año;En stock;260,71 € + IVA;https://desguacesmadridnorte.com/70813-pieza.html
+70814;7203HS31C;Alternador;AUDI;A3;1.4 TFSI;2008;Desmontada de vehículo;1 año;En stock;113,53 € + IVA;https://desguacesmadridnorte.com/70814-pieza.html
+70816;2806HV84D;Puerta delantera derecha;NISSAN;Qashqai;1.5 dCi;2018;Comprobada, funcionando;1 año;En stock;316,17 € + IVA;https://desguacesmadridnorte.com/70816-pieza.html
+70818;3128WR83C;Capó;CITROEN;C4;1.6 HDi;2017;Desmontada de vehículo;1 año;En stock;221,79 € + IVA;https://desguacesmadridnorte.com/70818-pieza.html
+70819;8900XY90B;Paso de rueda trasero izquierdo;CITROEN;C3;1.2 PureTech;2005;Comprobada, funcionando;1 año;En stock;18,08 € + IVA;https://desguacesmadridnorte.com/70819-pieza.html
+70821;5608RC70E;Compresor aire acondicionado;RENAULT;Clio;1.5 dCi;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;127,69 € + IVA;https://desguacesmadridnorte.com/70821-pieza.html
+70823;2209JR12B;Compresor aire acondicionado;NISSAN;Qashqai;1.5 dCi;2013;Comprobada, funcionando;1 año;En stock;301,01 € + IVA;https://desguacesmadridnorte.com/70823-pieza.html
+70824;6589MF13C;Puerta delantera izquierda;HYUNDAI;Tucson;2.0 CRDi;2019;Sin comprobar;1 año;En stock;218,25 € + IVA;https://desguacesmadridnorte.com/70824-pieza.html
+70825;9476KB49B;Retrovisor izquierdo;BMW;Serie 1;116d;2008;Desmontada de vehículo;1 año;Bajo pedido 24-48h;116,05 € + IVA;https://desguacesmadridnorte.com/70825-pieza.html
+70828;3015DC34A;Cárter;AUDI;Q3;1.4 TFSI;2016;Desmontada de vehículo;1 año;En stock;79,17 € + IVA;https://desguacesmadridnorte.com/70828-pieza.html
+70831;8944TM23D;Portón trasero;KIA;Sportage;1.7 CRDi;2011;Desmontada de vehículo;1 año;Bajo pedido 24-48h;263,22 € + IVA;https://desguacesmadridnorte.com/70831-pieza.html
+70832;2272NN27A;Retrovisor derecho;AUDI;Q3;1.4 TFSI;2020;Comprobada, funcionando;1 año;En stock;57,05 € + IVA;https://desguacesmadridnorte.com/70832-pieza.html
+70835;5267MX10B;Motor de arranque;SEAT;Ibiza;1.9 TDI;2015;Sin comprobar;1 año;En stock;143,22 € + IVA;https://desguacesmadridnorte.com/70835-pieza.html
+70838;7738LA64C;Paso de rueda trasero izquierdo;VOLKSWAGEN;Golf;2.0 TDI;2008;Comprobada, funcionando;1 año;En stock;41,99 € + IVA;https://desguacesmadridnorte.com/70838-pieza.html
+70840;8202YB95C;Colector de admisión;FORD;Fiesta;1.0 EcoBoost;2019;Sin comprobar;1 año;En stock;69,27 € + IVA;https://desguacesmadridnorte.com/70840-pieza.html
+70841;3007KM80F;Parachoques delantero;RENAULT;Megane;1.6 dCi;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;203,59 € + IVA;https://desguacesmadridnorte.com/70841-pieza.html
+70844;9870VT14F;Motor de arranque;RENAULT;Megane;1.6 dCi;2017;Comprobada, funcionando;1 año;En stock;147,05 € + IVA;https://desguacesmadridnorte.com/70844-pieza.html
+70847;6568FB51B;Módulo electrónico;KIA;Ceed;1.6 CRDi;2009;Comprobada, funcionando;1 año;En stock;165,97 € + IVA;https://desguacesmadridnorte.com/70847-pieza.html
+70850;5356BA34C;Retrovisor derecho;SEAT;Ibiza;1.9 TDI;2013;Comprobada, funcionando;1 año;En stock;140,01 € + IVA;https://desguacesmadridnorte.com/70850-pieza.html
+70851;4569YK85E;Turbo;KIA;Sportage;1.7 CRDi;2009;Comprobada, funcionando;1 año;En stock;288,20 € + IVA;https://desguacesmadridnorte.com/70851-pieza.html
+70854;7317ZQ95C;Aleta delantera izquierda;FORD;Focus;2.0 TDCi;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;151,96 € + IVA;https://desguacesmadridnorte.com/70854-pieza.html
+70855;2482VW18C;Compresor aire acondicionado;NISSAN;Qashqai;1.6 dCi;2014;Comprobada, funcionando;1 año;En stock;193,35 € + IVA;https://desguacesmadridnorte.com/70855-pieza.html
+70858;9543CP72F;Centralita motor;VOLKSWAGEN;Passat;2.0 TDI;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;198,14 € + IVA;https://desguacesmadridnorte.com/70858-pieza.html
+70861;3635CK39C;Faro delantero derecho;FORD;Fusion;1.4 TDCi;2018;Comprobada, funcionando;1 año;En stock;49,89 € + IVA;https://desguacesmadridnorte.com/70861-pieza.html
+70863;6494YM35F;Faro delantero izquierdo;FORD;Focus;2.0 TDCi;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;232,38 € + IVA;https://desguacesmadridnorte.com/70863-pieza.html
+70864;9894RL85A;Intercooler;OPEL;Corsa;1.2 16v;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;51,00 € + IVA;https://desguacesmadridnorte.com/70864-pieza.html
+70867;8094BV70E;Piloto trasero derecho;VOLKSWAGEN;Passat;2.0 TDI;2011;Sin comprobar;1 año;En stock;76,53 € + IVA;https://desguacesmadridnorte.com/70867-pieza.html
+70870;6035FF36A;Motor completo;SEAT;León;1.6 TDI;2007;Desmontada de vehículo;1 año;Bajo pedido 24-48h;2.495,42 € + IVA;https://desguacesmadridnorte.com/70870-pieza.html
+70871;2517LV24A;Motor de arranque;SKODA;Fabia;1.2 TSI;2017;Desmontada de vehículo;1 año;En stock;43,39 € + IVA;https://desguacesmadridnorte.com/70871-pieza.html
+70872;3896HT68D;Compresor aire acondicionado;VOLKSWAGEN;Passat;2.0 TDI;2006;Comprobada, funcionando;1 año;Bajo pedido 24-48h;162,24 € + IVA;https://desguacesmadridnorte.com/70872-pieza.html
+70875;7976VD54D;Cuadro de instrumentos;OPEL;Astra;1.6 CDTI;2015;Comprobada, funcionando;1 año;En stock;153,53 € + IVA;https://desguacesmadridnorte.com/70875-pieza.html
+70877;7781YK61E;Piloto trasero izquierdo;FORD;Focus;1.6 TDCi;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;40,29 € + IVA;https://desguacesmadridnorte.com/70877-pieza.html
+70878;6972GC57B;Parachoques delantero;FORD;Fusion;1.4 TDCi;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;73,25 € + IVA;https://desguacesmadridnorte.com/70878-pieza.html
+70880;4290HR65E;Aleta delantera izquierda;HYUNDAI;i30;1.6 CRDi;2010;Desmontada de vehículo;1 año;En stock;117,43 € + IVA;https://desguacesmadridnorte.com/70880-pieza.html
+70881;6631GY81A;Portón trasero;CITROEN;C3;1.2 PureTech;2019;Comprobada, funcionando;1 año;En stock;214,12 € + IVA;https://desguacesmadridnorte.com/70881-pieza.html
+70882;6646ZB76E;Caja de cambios;OPEL;Corsa;1.3 CDTI;2017;Sin comprobar;1 año;Bajo pedido 24-48h;765,22 € + IVA;https://desguacesmadridnorte.com/70882-pieza.html
+70883;8029JL74A;Portón trasero;VOLKSWAGEN;Passat;2.0 TDI;2021;Desmontada de vehículo;1 año;En stock;174,91 € + IVA;https://desguacesmadridnorte.com/70883-pieza.html
+70886;4280MT49F;Bomba de dirección;PEUGEOT;3008;1.6 HDi;2020;Desmontada de vehículo;1 año;En stock;127,87 € + IVA;https://desguacesmadridnorte.com/70886-pieza.html
+70888;2061QR59C;Caja de cambios;KIA;Ceed;1.6 CRDi;2015;Comprobada, funcionando;1 año;En stock;875,07 € + IVA;https://desguacesmadridnorte.com/70888-pieza.html
+70891;2659XN52C;Colector de admisión;CITROEN;C3;1.2 PureTech;2009;Comprobada, funcionando;1 año;En stock;81,38 € + IVA;https://desguacesmadridnorte.com/70891-pieza.html
+70893;9795PQ11D;Motor completo;TOYOTA;Proace City;1.5 D-4D;2014;Desmontada de vehículo;1 año;Bajo pedido 24-48h;3.099,02 € + IVA;https://desguacesmadridnorte.com/70893-pieza.html
+70895;1610SJ93F;Puerta trasera izquierda;NISSAN;Juke;1.2 DIG-T;2009;Comprobada, funcionando;1 año;En stock;182,18 € + IVA;https://desguacesmadridnorte.com/70895-pieza.html
+70898;5945JZ32F;Retrovisor izquierdo;VOLKSWAGEN;Golf;2.0 TDI;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;97,46 € + IVA;https://desguacesmadridnorte.com/70898-pieza.html
+70901;5177LM10E;Faro delantero izquierdo;PEUGEOT;208;1.4 HDi;2017;Comprobada, funcionando;1 año;Bajo pedido 24-48h;177,43 € + IVA;https://desguacesmadridnorte.com/70901-pieza.html
+70903;3586RB88B;Piloto trasero izquierdo;HYUNDAI;i30;1.6 CRDi;2006;Comprobada, funcionando;1 año;En stock;30,64 € + IVA;https://desguacesmadridnorte.com/70903-pieza.html
+70904;9511NP33B;Módulo electrónico;CITROEN;C3;1.2 PureTech;2005;Comprobada, funcionando;1 año;En stock;152,63 € + IVA;https://desguacesmadridnorte.com/70904-pieza.html
+70907;8158KF80C;Aleta delantera izquierda;PEUGEOT;208;1.6 HDi;2018;Comprobada, funcionando;1 año;En stock;145,20 € + IVA;https://desguacesmadridnorte.com/70907-pieza.html
+70910;2972PC56F;Airbag volante;CITROEN;C3;1.2 PureTech;2020;Comprobada, funcionando;1 año;En stock;85,04 € + IVA;https://desguacesmadridnorte.com/70910-pieza.html
+70913;4289MS16C;Retrovisor derecho;TOYOTA;Corolla;1.8 Hybrid;2008;Desmontada de vehículo;1 año;En stock;96,01 € + IVA;https://desguacesmadridnorte.com/70913-pieza.html
+70914;7933QP96D;Bomba de agua;AUDI;A4;2.0 TDI;2013;Comprobada, funcionando;1 año;En stock;86,34 € + IVA;https://desguacesmadridnorte.com/70914-pieza.html
+70915;3740PN73F;Paso de rueda trasero izquierdo;SEAT;Ibiza;1.9 TDI;2008;Desmontada de vehículo;1 año;En stock;18,21 € + IVA;https://desguacesmadridnorte.com/70915-pieza.html
+70916;6552JJ75A;Amortiguador delantero;MERCEDES-BENZ;CLA;200 CDI;2008;Desmontada de vehículo;1 año;En stock;72,67 € + IVA;https://desguacesmadridnorte.com/70916-pieza.html
+70919;4935FK70B;Cinturón de seguridad;MERCEDES-BENZ;Clase A;200 CDI;2006;Desmontada de vehículo;1 año;Bajo pedido 24-48h;43,51 € + IVA;https://desguacesmadridnorte.com/70919-pieza.html
+70920;6284ST98F;Caja de cambios;SKODA;Fabia;1.2 TSI;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;630,04 € + IVA;https://desguacesmadridnorte.com/70920-pieza.html
+70922;2295GE46A;Piloto trasero derecho;HYUNDAI;i30;1.4 CRDi;2012;Desmontada de vehículo;1 año;En stock;32,02 € + IVA;https://desguacesmadridnorte.com/70922-pieza.html
+70923;2147MZ69B;Intercooler;OPEL;Corsa;1.3 CDTI;2021;Desmontada de vehículo;1 año;Bajo pedido 24-48h;130,39 € + IVA;https://desguacesmadridnorte.com/70923-pieza.html
+70924;3762HN45F;Intercooler;SEAT;León;1.6 TDI;2013;Comprobada, funcionando;1 año;Bajo pedido 24-48h;188,33 € + IVA;https://desguacesmadridnorte.com/70924-pieza.html
+70925;5041XL79E;Piloto trasero derecho;SEAT;León;1.6 TDI;2017;Comprobada, funcionando;1 año;Bajo pedido 24-48h;46,26 € + IVA;https://desguacesmadridnorte.com/70925-pieza.html
+70928;6708XN20F;Radiador;NISSAN;Juke;1.5 dCi;2007;Comprobada, funcionando;1 año;En stock;59,35 € + IVA;https://desguacesmadridnorte.com/70928-pieza.html
+70929;2524WS24D;Colector de admisión;PEUGEOT;208;1.4 HDi;2017;Desmontada de vehículo;1 año;En stock;61,01 € + IVA;https://desguacesmadridnorte.com/70929-pieza.html
+70931;7851RM29E;Paso de rueda trasero izquierdo;SKODA;Fabia;1.4 TDI;2016;Comprobada, funcionando;1 año;En stock;27,67 € + IVA;https://desguacesmadridnorte.com/70931-pieza.html
+70933;5110BK99F;Intercooler;OPEL;Astra;1.6 CDTI;2008;Comprobada, funcionando;1 año;En stock;110,66 € + IVA;https://desguacesmadridnorte.com/70933-pieza.html
+70936;2411SW64C;Cuadro de instrumentos;KIA;Ceed;1.4 CRDi;2018;Sin comprobar;1 año;En stock;125,10 € + IVA;https://desguacesmadridnorte.com/70936-pieza.html
+70939;1154FQ42B;Intercooler;CITROEN;C4;1.6 HDi;2018;Sin comprobar;1 año;En stock;58,58 € + IVA;https://desguacesmadridnorte.com/70939-pieza.html
+70940;2287RC50B;Piloto trasero izquierdo;FORD;Fusion;1.4 TDCi;2011;Comprobada, funcionando;1 año;En stock;49,45 € + IVA;https://desguacesmadridnorte.com/70940-pieza.html
+70941;9100VZ52D;Cuadro de instrumentos;KIA;Sportage;2.0 CRDi;2007;Sin comprobar;1 año;En stock;129,10 € + IVA;https://desguacesmadridnorte.com/70941-pieza.html
+70943;3837WF44B;Turbo;TOYOTA;Corolla;1.8 Hybrid;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;471,72 € + IVA;https://desguacesmadridnorte.com/70943-pieza.html
+70945;7901SX88B;Cuadro de instrumentos;NISSAN;Qashqai;1.5 dCi;2006;Comprobada, funcionando;1 año;En stock;150,20 € + IVA;https://desguacesmadridnorte.com/70945-pieza.html
+70946;1820TK48E;Puerta trasera izquierda;KIA;Ceed;1.6 CRDi;2012;Desmontada de vehículo;1 año;Bajo pedido 24-48h;174,38 € + IVA;https://desguacesmadridnorte.com/70946-pieza.html
+70949;9980YX43D;Portón trasero;FORD;Fusion;1.4 TDCi;2009;Comprobada, funcionando;1 año;En stock;154,35 € + IVA;https://desguacesmadridnorte.com/70949-pieza.html
+70950;9026PE64D;Intercooler;CITROEN;C4;1.6 VTi;2020;Comprobada, funcionando;1 año;En stock;172,19 € + IVA;https://desguacesmadridnorte.com/70950-pieza.html
+70952;5168RR95B;Centralita motor;MERCEDES-BENZ;Clase A;200 CDI;2014;Sin comprobar;1 año;En stock;160,82 € + IVA;https://desguacesmadridnorte.com/70952-pieza.html
+70954;7640EE10C;Puerta trasera izquierda;SEAT;Ibiza;1.6 TDI;2016;Desmontada de vehículo;1 año;Bajo pedido 24-48h;152,88 € + IVA;https://desguacesmadridnorte.com/70954-pieza.html
+70955;1922BD41F;Bomba de dirección;SEAT;Ibiza;1.6 TDI;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;106,78 € + IVA;https://desguacesmadridnorte.com/70955-pieza.html
+70956;8933BG67A;Elevalunas delantero izquierdo;SKODA;Octavia;2.0 TDI;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;69,51 € + IVA;https://desguacesmadridnorte.com/70956-pieza.html
+70957;9912XL57E;Faro delantero izquierdo;KIA;Sportage;2.0 CRDi;2009;Comprobada, funcionando;1 año;En stock;176,19 € + IVA;https://desguacesmadridnorte.com/70957-pieza.html
+70958;1522WM76D;Radiador;HYUNDAI;i30;1.4 CRDi;2006;Comprobada, funcionando;1 año;En stock;109,88 € + IVA;https://desguacesmadridnorte.com/70958-pieza.html
+70960;1531XK28B;Catalizador;RENAULT;Captur;0.9 TCe;2012;Comprobada, funcionando;1 año;Bajo pedido 24-48h;93,50 € + IVA;https://desguacesmadridnorte.com/70960-pieza.html
+70961;4921VZ87D;Capó;FORD;Fiesta;1.0 EcoBoost;2016;Comprobada, funcionando;1 año;En stock;87,54 € + IVA;https://desguacesmadridnorte.com/70961-pieza.html
+70964;1296VA50B;Caja de cambios;OPEL;Corsa;1.3 CDTI;2011;Comprobada, funcionando;1 año;En stock;358,16 € + IVA;https://desguacesmadridnorte.com/70964-pieza.html
+70966;2700FG27C;Elevalunas delantero izquierdo;PEUGEOT;3008;1.6 HDi;2010;Comprobada, funcionando;1 año;En stock;72,37 € + IVA;https://desguacesmadridnorte.com/70966-pieza.html
+70967;1804LH22A;Parachoques trasero;KIA;Sportage;2.0 CRDi;2020;Comprobada, funcionando;1 año;En stock;212,39 € + IVA;https://desguacesmadridnorte.com/70967-pieza.html
+70970;4195LB89F;Amortiguador delantero;CITROEN;C3;1.4 HDi;2021;Sin comprobar;1 año;En stock;65,31 € + IVA;https://desguacesmadridnorte.com/70970-pieza.html
+70973;4906WC60B;Cuadro de instrumentos;NISSAN;Juke;1.5 dCi;2014;Comprobada, funcionando;1 año;Bajo pedido 24-48h;164,88 € + IVA;https://desguacesmadridnorte.com/70973-pieza.html
+70974;1734QG89C;Airbag volante;MERCEDES-BENZ;Clase E Coupé;220 CDI;2011;Comprobada, funcionando;1 año;En stock;376,74 € + IVA;https://desguacesmadridnorte.com/70974-pieza.html
+70977;9394FQ54B;Faro delantero derecho;KIA;Ceed;1.6 CRDi;2018;Comprobada, funcionando;1 año;En stock;218,89 € + IVA;https://desguacesmadridnorte.com/70977-pieza.html
+70978;5719ZJ51C;Turbo;RENAULT;Clio;1.2 16v;2007;Comprobada, funcionando;1 año;En stock;127,50 € + IVA;https://desguacesmadridnorte.com/70978-pieza.html
+70981;5798MA85D;Motor completo;SEAT;Ibiza;1.9 TDI;2017;Comprobada, funcionando;1 año;En stock;1.504,69 € + IVA;https://desguacesmadridnorte.com/70981-pieza.html
+70984;4912YH84A;Airbag volante;SEAT;Ibiza;1.9 TDI;2006;Desmontada de vehículo;1 año;En stock;63,11 € + IVA;https://desguacesmadridnorte.com/70984-pieza.html
+70987;6385YE63C;Portón trasero;RENAULT;Megane;1.5 dCi;2016;Desmontada de vehículo;1 año;En stock;294,51 € + IVA;https://desguacesmadridnorte.com/70987-pieza.html
+70990;3452JH27B;Cremallera de dirección;MERCEDES-BENZ;CLA;200 CDI;2006;Comprobada, funcionando;1 año;En stock;223,29 € + IVA;https://desguacesmadridnorte.com/70990-pieza.html
+70991;4648JK43D;Cerradura puerta delantera;KIA;Ceed;1.4 CRDi;2005;Desmontada de vehículo;1 año;En stock;43,42 € + IVA;https://desguacesmadridnorte.com/70991-pieza.html
+70993;4063DY39C;Colector de admisión;OPEL;Corsa;1.2 16v;2006;Comprobada, funcionando;1 año;Bajo pedido 24-48h;98,48 € + IVA;https://desguacesmadridnorte.com/70993-pieza.html
+70994;2965FD25A;Cremallera de dirección;NISSAN;Juke;1.5 dCi;2008;Comprobada, funcionando;1 año;En stock;194,18 € + IVA;https://desguacesmadridnorte.com/70994-pieza.html
+70997;1274QC92F;Puerta delantera izquierda;RENAULT;Clio;1.5 dCi;2021;Desmontada de vehículo;1 año;Bajo pedido 24-48h;140,17 € + IVA;https://desguacesmadridnorte.com/70997-pieza.html
+71000;1370AH68D;Módulo electrónico;AUDI;Q3;2.0 TDI;2010;Sin comprobar;1 año;En stock;79,62 € + IVA;https://desguacesmadridnorte.com/71000-pieza.html
+71002;1008XG26E;Piloto trasero derecho;KIA;Sportage;2.0 CRDi;2007;Desmontada de vehículo;1 año;En stock;53,78 € + IVA;https://desguacesmadridnorte.com/71002-pieza.html
+71004;6207QE70A;Centralita motor;SEAT;León;2.0 TDI;2010;Comprobada, funcionando;1 año;En stock;296,16 € + IVA;https://desguacesmadridnorte.com/71004-pieza.html
+71005;1815CJ55A;Retrovisor derecho;PEUGEOT;3008;2.0 HDi;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;39,81 € + IVA;https://desguacesmadridnorte.com/71005-pieza.html
+71008;8795SW12B;Alternador;NISSAN;Qashqai;1.6 dCi;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;77,66 € + IVA;https://desguacesmadridnorte.com/71008-pieza.html
+71011;6622CM20E;Cerradura puerta delantera;MERCEDES-BENZ;Clase E Coupé;250 CDI;2009;Comprobada, funcionando;1 año;En stock;58,60 € + IVA;https://desguacesmadridnorte.com/71011-pieza.html
+71012;4163XB70F;Radiador;OPEL;Astra;1.6 CDTI;2015;Desmontada de vehículo;1 año;Bajo pedido 24-48h;113,88 € + IVA;https://desguacesmadridnorte.com/71012-pieza.html
+71013;2313VT50A;Motor completo;SEAT;León;1.6 TDI;2012;Desmontada de vehículo;1 año;En stock;2.931,61 € + IVA;https://desguacesmadridnorte.com/71013-pieza.html
+71014;4153NC56D;Catalizador;CITROEN;C4;1.6 HDi;2013;Comprobada, funcionando;1 año;En stock;228,93 € + IVA;https://desguacesmadridnorte.com/71014-pieza.html
+71016;4896YF11C;Airbag volante;FORD;Focus;2.0 TDCi;2010;Comprobada, funcionando;1 año;Bajo pedido 24-48h;186,37 € + IVA;https://desguacesmadridnorte.com/71016-pieza.html
+71019;3343VR47E;Elevalunas delantero izquierdo;SEAT;Ibiza;1.9 TDI;2005;Desmontada de vehículo;1 año;Bajo pedido 24-48h;42,57 € + IVA;https://desguacesmadridnorte.com/71019-pieza.html
+71020;5658NJ88C;Centralita motor;CITROEN;C4;1.6 HDi;2012;Desmontada de vehículo;1 año;En stock;165,48 € + IVA;https://desguacesmadridnorte.com/71020-pieza.html
+71023;4096LC72B;Turbo;MERCEDES-BENZ;Clase E Coupé;250 CDI;2014;Desmontada de vehículo;1 año;Bajo pedido 24-48h;899,00 € + IVA;https://desguacesmadridnorte.com/71023-pieza.html
+71026;6591PZ98A;Parachoques delantero;TOYOTA;Corolla;1.8 Hybrid;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;249,07 € + IVA;https://desguacesmadridnorte.com/71026-pieza.html
+71027;4171NJ40C;Parachoques trasero;FORD;Fusion;1.4 TDCi;2018;Comprobada, funcionando;1 año;En stock;64,39 € + IVA;https://desguacesmadridnorte.com/71027-pieza.html
+71029;6814PH98E;Puerta trasera izquierda;TOYOTA;Proace City;1.5 D-4D;2010;Comprobada, funcionando;1 año;En stock;239,20 € + IVA;https://desguacesmadridnorte.com/71029-pieza.html
+71030;2289JK62D;Paso de rueda trasero izquierdo;KIA;Ceed;1.4 CRDi;2009;Desmontada de vehículo;1 año;En stock;18,67 € + IVA;https://desguacesmadridnorte.com/71030-pieza.html
+71031;9540DQ43B;Cremallera de dirección;SEAT;Ibiza;1.9 TDI;2013;Desmontada de vehículo;1 año;Bajo pedido 24-48h;210,67 € + IVA;https://desguacesmadridnorte.com/71031-pieza.html
+71034;9131DX86D;Intercooler;KIA;Sportage;1.7 CRDi;2010;Desmontada de vehículo;1 año;En stock;61,81 € + IVA;https://desguacesmadridnorte.com/71034-pieza.html
+71035;8106DT96D;Cárter;MERCEDES-BENZ;CLA;180 CDI;2017;Desmontada de vehículo;1 año;En stock;53,69 € + IVA;https://desguacesmadridnorte.com/71035-pieza.html
+71037;9817LC93C;Cerradura puerta delantera;SKODA;Octavia;2.0 TDI;2019;Desmontada de vehículo;1 año;Bajo pedido 24-48h;35,66 € + IVA;https://desguacesmadridnorte.com/71037-pieza.html
+71040;6750FQ17C;Cerradura puerta delantera;FORD;Focus;2.0 TDCi;2019;Comprobada, funcionando;1 año;En stock;75,46 € + IVA;https://desguacesmadridnorte.com/71040-pieza.html
+71043;2492JF15F;Aleta delantera izquierda;MERCEDES-BENZ;CLA;200 CDI;2005;Comprobada, funcionando;1 año;En stock;103,53 € + IVA;https://desguacesmadridnorte.com/71043-pieza.html
+71045;2828YJ96F;Centralita motor;OPEL;Astra;1.7 CDTI;2015;Desmontada de vehículo;1 año;Bajo pedido 24-48h;205,45 € + IVA;https://desguacesmadridnorte.com/71045-pieza.html
+71048;2878RW19D;Caja de cambios;CITROEN;C4;1.6 HDi;2020;Desmontada de vehículo;1 año;En stock;1.215,82 € + IVA;https://desguacesmadridnorte.com/71048-pieza.html
+71051;9732SC12F;Retrovisor derecho;SKODA;Octavia;2.0 TDI;2020;Comprobada, funcionando;1 año;Bajo pedido 24-48h;76,50 € + IVA;https://desguacesmadridnorte.com/71051-pieza.html
+71053;4330AQ96B;Portón trasero;OPEL;Astra;1.7 CDTI;2017;Comprobada, funcionando;1 año;En stock;281,84 € + IVA;https://desguacesmadridnorte.com/71053-pieza.html
+71055;1961XF13F;Elevalunas delantero izquierdo;OPEL;Corsa;1.3 CDTI;2017;Comprobada, funcionando;1 año;En stock;57,29 € + IVA;https://desguacesmadridnorte.com/71055-pieza.html
+71057;1931MG75E;Caja de cambios;PEUGEOT;308;2.0 HDi;2008;Comprobada, funcionando;1 año;En stock;541,38 € + IVA;https://desguacesmadridnorte.com/71057-pieza.html
+71059;5482AH85F;Piloto trasero izquierdo;MERCEDES-BENZ;Clase E Coupé;250 CDI;2016;Comprobada, funcionando;1 año;En stock;116,63 € + IVA;https://desguacesmadridnorte.com/71059-pieza.html
+71062;6272DC47F;Turbo;TOYOTA;Proace City;1.5 D-4D;2010;Sin comprobar;1 año;Bajo pedido 24-48h;139,10 € + IVA;https://desguacesmadridnorte.com/71062-pieza.html
+71064;9418SP42E;Módulo electrónico;BMW;Serie 1;116d;2006;Comprobada, funcionando;1 año;Bajo pedido 24-48h;63,61 € + IVA;https://desguacesmadridnorte.com/71064-pieza.html
+71065;3308WC60E;Cremallera de dirección;MERCEDES-BENZ;Clase A;200 CDI;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;120,42 € + IVA;https://desguacesmadridnorte.com/71065-pieza.html
+71066;9207QY95A;Módulo electrónico;BMW;Serie 1;118d;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;211,88 € + IVA;https://desguacesmadridnorte.com/71066-pieza.html
+71068;3830JG97C;Airbag volante;SEAT;Ateca;2.0 TDI;2014;Desmontada de vehículo;1 año;Bajo pedido 24-48h;229,07 € + IVA;https://desguacesmadridnorte.com/71068-pieza.html
+71070;9964ZY36F;Bomba de agua;SKODA;Octavia;2.0 TDI;2008;Sin comprobar;1 año;En stock;61,63 € + IVA;https://desguacesmadridnorte.com/71070-pieza.html
+71073;9670ZE47B;Cuadro de instrumentos;RENAULT;Megane;1.5 dCi;2005;Comprobada, funcionando;1 año;En stock;85,22 € + IVA;https://desguacesmadridnorte.com/71073-pieza.html
+71075;3102PE75E;Cremallera de dirección;HYUNDAI;i30;1.6 CRDi;2020;Comprobada, funcionando;1 año;En stock;230,12 € + IVA;https://desguacesmadridnorte.com/71075-pieza.html
+71078;3187ZK77C;Puerta trasera izquierda;BMW;Serie 3;320d;2012;Comprobada, funcionando;1 año;En stock;265,65 € + IVA;https://desguacesmadridnorte.com/71078-pieza.html
+71081;7062LL50F;Caja de cambios;NISSAN;Juke;1.2 DIG-T;2021;Comprobada, funcionando;1 año;Bajo pedido 24-48h;290,89 € + IVA;https://desguacesmadridnorte.com/71081-pieza.html
+71083;4680QL98F;Portón trasero;BMW;Serie 3;330i;2016;Comprobada, funcionando;1 año;Bajo pedido 24-48h;281,53 € + IVA;https://desguacesmadridnorte.com/71083-pieza.html
+71084;3339AK81C;Capó;KIA;Ceed;1.6 CRDi;2015;Desmontada de vehículo;1 año;En stock;96,58 € + IVA;https://desguacesmadridnorte.com/71084-pieza.html
+71085;3840WZ10B;Portón trasero;AUDI;Q3;1.4 TFSI;2014;Comprobada, funcionando;1 año;En stock;318,55 € + IVA;https://desguacesmadridnorte.com/71085-pieza.html
+71087;7673ME68C;Parachoques trasero;NISSAN;Qashqai;1.5 dCi;2017;Comprobada, funcionando;1 año;En stock;96,67 € + IVA;https://desguacesmadridnorte.com/71087-pieza.html
+71089;6126NM95B;Cerradura puerta delantera;FORD;Fiesta;1.5 TDCi;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;32,10 € + IVA;https://desguacesmadridnorte.com/71089-pieza.html
+71091;9113YN24E;Módulo electrónico;MERCEDES-BENZ;CLA;200 CDI;2005;Comprobada, funcionando;1 año;Bajo pedido 24-48h;101,41 € + IVA;https://desguacesmadridnorte.com/71091-pieza.html
+71094;7043ZF36D;Motor completo;SKODA;Octavia;1.6 TDI;2019;Comprobada, funcionando;1 año;En stock;3.268,11 € + IVA;https://desguacesmadridnorte.com/71094-pieza.html
+71096;5577LD47D;Puerta trasera izquierda;NISSAN;Qashqai;1.6 dCi;2009;Comprobada, funcionando;1 año;Bajo pedido 24-48h;190,37 € + IVA;https://desguacesmadridnorte.com/71096-pieza.html
+71097;2927XC87C;Cremallera de dirección;NISSAN;Qashqai;1.6 dCi;2012;Comprobada, funcionando;1 año;En stock;207,98 € + IVA;https://desguacesmadridnorte.com/71097-pieza.html
+71098;9465PD94A;Puerta delantera izquierda;KIA;Sportage;2.0 CRDi;2015;Desmontada de vehículo;1 año;En stock;263,63 € + IVA;https://desguacesmadridnorte.com/71098-pieza.html
+71099;3385XC45A;Faro delantero izquierdo;FORD;Fusion;1.4 TDCi;2010;Comprobada, funcionando;1 año;En stock;69,29 € + IVA;https://desguacesmadridnorte.com/71099-pieza.html
+71101;2984DV86B;Parachoques delantero;FORD;Fusion;1.4 TDCi;2009;Comprobada, funcionando;1 año;En stock;102,06 € + IVA;https://desguacesmadridnorte.com/71101-pieza.html
+71102;4436AV58E;Portón trasero;MERCEDES-BENZ;CLA;180 CDI;2019;Comprobada, funcionando;1 año;Bajo pedido 24-48h;353,25 € + IVA;https://desguacesmadridnorte.com/71102-pieza.html
+71105;9491ZT61D;Colector de admisión;SEAT;Ateca;2.0 TDI;2017;Desmontada de vehículo;1 año;En stock;84,25 € + IVA;https://desguacesmadridnorte.com/71105-pieza.html
+71108;9103CV34E;Airbag volante;CITROEN;C4;1.6 VTi;2008;Desmontada de vehículo;1 año;En stock;193,98 € + IVA;https://desguacesmadridnorte.com/71108-pieza.html
+71111;6788FX27B;Puerta delantera derecha;SEAT;León;1.6 TDI;2021;Comprobada, funcionando;1 año;En stock;166,21 € + IVA;https://desguacesmadridnorte.com/71111-pieza.html
+71112;2583XP16A;Faro delantero derecho;PEUGEOT;3008;2.0 HDi;2017;Comprobada, funcionando;1 año;En stock;144,19 € + IVA;https://desguacesmadridnorte.com/71112-pieza.html
+71113;4174DA65E;Cerradura puerta delantera;AUDI;A3;1.4 TFSI;2007;Desmontada de vehículo;1 año;Bajo pedido 24-48h;78,81 € + IVA;https://desguacesmadridnorte.com/71113-pieza.html
+71114;4490WY24F;Parachoques delantero;PEUGEOT;308;1.6 HDi;2011;Comprobada, funcionando;1 año;Bajo pedido 24-48h;183,28 € + IVA;https://desguacesmadridnorte.com/71114-pieza.html
+71116;2919EZ69C;Cuadro de instrumentos;NISSAN;Qashqai;1.5 dCi;2009;Comprobada, funcionando;1 año;En stock;151,51 € + IVA;https://desguacesmadridnorte.com/71116-pieza.html
+71118;5053PB32E;Cárter;FORD;Fiesta;1.5 TDCi;2018;Comprobada, funcionando;1 año;Bajo pedido 24-48h;44,68 € + IVA;https://desguacesmadridnorte.com/71118-pieza.html
+71119;9750XZ31D;Bomba de agua;SEAT;Ateca;1.5 TSI;2019;Desmontada de vehículo;1 año;Bajo pedido 24-48h;33,48 € + IVA;https://desguacesmadridnorte.com/71119-pieza.html
+71121;2430BQ42B;Bomba de agua;TOYOTA;Camry;2.5 Hybrid;2009;Sin comprobar;1 año;En stock;80,51 € + IVA;https://desguacesmadridnorte.com/71121-pieza.html
+71122;1056HJ73D;Aleta delantera izquierda;HYUNDAI;i30;1.6 CRDi;2006;Desmontada de vehículo;1 año;Bajo pedido 24-48h;58,40 € + IVA;https://desguacesmadridnorte.com/71122-pieza.html
+71125;6487ZG20E;Piloto trasero derecho;CITROEN;C4;1.6 VTi;2008;Comprobada, funcionando;1 año;Bajo pedido 24-48h;65,16 € + IVA;https://desguacesmadridnorte.com/71125-pieza.html
+71126;6428NH99F;Cremallera de dirección;SEAT;Ateca;1.5 TSI;2020;Comprobada, funcionando;1 año;En stock;275,50 € + IVA;https://desguacesmadridnorte.com/71126-pieza.html

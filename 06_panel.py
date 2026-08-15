@@ -134,7 +134,54 @@ class Sistema:
             "tipos_pieza": len(self.buscador.tipos_conocidos),
         }
         snapshot["sesion"] = self.consultas_sesion[-40:]
+        snapshot["ejemplos"] = self.ejemplos()
         return snapshot
+
+    def ejemplos(self):
+        """Consultas de ejemplo sacadas del catálogo real, no escritas a mano.
+
+        Se eligen a propósito para que enseñen los cuatro comportamientos: encuentra
+        y da precio, encuentra por referencia, no la tiene, y pregunta de condiciones.
+        """
+        import random
+        rnd = random.Random(7)
+        con_precio = [f for f in self.filas
+                      if self.ofertas_mod.precio_publicado(f["precio"])]
+        a, b = rnd.sample(con_precio, 2)
+
+        # Para el ejemplo de "no la tengo" no vale cualquier combinación ausente:
+        # si la marca tiene otra pieza que empieza por la misma palabra (piden puerta
+        # trasera y hay puerta delantera), el buscador ofrece la hermana y el ejemplo
+        # deja de enseñar lo que pretende. Se elige una cuya PALABRA PRINCIPAL no
+        # exista para esa marca, que es una ausencia inequívoca.
+        def cabeza_de(nombre):
+            tokens = [t for t in self.buscar_mod.normalizar(nombre)
+                      if t not in self.buscar_mod.PALABRAS_VACIAS and len(t) > 2]
+            return tokens[0] if tokens else None
+
+        cabezas_por_marca, modelos = {}, {}
+        for f in self.filas:
+            cabezas_por_marca.setdefault(f["marca"], set()).add(cabeza_de(f["pieza"]))
+            modelos.setdefault(f["marca"], set()).add(f["modelo"])
+
+        piezas = sorted({f["pieza"] for f in self.filas})
+        marcas = sorted(cabezas_por_marca)
+        ausente = None
+        for _ in range(4000):
+            p, m = rnd.choice(piezas), rnd.choice(marcas)
+            if cabeza_de(p) not in cabezas_por_marca.get(m, set()):
+                ausente = f"¿tenéis un {p.lower()} para un {m.title()} " \
+                          f"{rnd.choice(sorted(modelos[m]))}?"
+                break
+
+        return [e for e in [
+            f"¿cuánto vale el {a['pieza'].lower()} de un {a['marca'].title()} "
+            f"{a['modelo']} {a['motor']}?",
+            f"necesito la referencia {b['referencia_oem']}",
+            ausente,
+            f"busco algo para mi {a['marca'].title()} {a['modelo']}",
+            "cuanto tarda en llegar el pedido",
+        ] if e]
 
     def consultar(self, pregunta):
         """Ejecuta la búsqueda REAL y explica la decisión."""
