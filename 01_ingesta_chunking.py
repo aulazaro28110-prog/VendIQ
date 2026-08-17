@@ -31,6 +31,11 @@ from pathlib import Path
 BASE = Path(__file__).parent
 CSV_INVENTARIO = BASE / "datos" / "inventario_sintetico.csv"
 MD_POLITICAS = BASE / "datos" / "politicas.md"
+# Las respuestas que ha escrito una persona a preguntas que el bot no supo
+# contestar (ver 09_aprender.py). Se leen aquí para que sobrevivan a una
+# reconstrucción del índice: si no, cada vez que se ejecutan los pasos 01 y 02 se
+# perdería todo lo que Álvaro ha ido contestando, que es lo más valioso que hay.
+MD_APRENDIDAS = BASE / "datos" / "faq_aprendidas.md"
 SALIDA = BASE / "salida" / "chunks.jsonl"
 
 
@@ -98,8 +103,44 @@ def leer_politicas() -> list:
     return chunks
 
 
+def leer_aprendidas() -> list:
+    """Las FAQ que ha contestado una persona. Mismo formato que las políticas.
+
+    El texto de la respuesta se guarda aparte en `meta['respuesta']` porque el
+    redactor lo dice LITERAL: si alguien del equipo escribió una condición con
+    esas palabras, el bot no la reformula.
+    """
+    if not MD_APRENDIDAS.exists():
+        return []
+    chunks = []
+    for sec in re.split(r"(?=^## )", MD_APRENDIDAS.read_text(encoding="utf-8"),
+                        flags=re.MULTILINE):
+        lineas = [l.strip() for l in sec.strip().splitlines()]
+        if not lineas or not lineas[0].startswith("## "):
+            continue
+        titulo = lineas[0].replace("## ", "").strip()
+        pregunta, respuesta = "", []
+        for linea in lineas[1:]:
+            if linea.startswith("<!--") or not linea:
+                continue
+            if linea.startswith("Pregunta del cliente:"):
+                pregunta = linea.split(":", 1)[1].strip()
+            else:
+                respuesta.append(linea)
+        respuesta = " ".join(respuesta).strip()
+        if not respuesta:
+            continue
+        chunks.append({
+            "id": f"faq-{titulo.lower().replace(' ', '-')}",
+            "tipo": "politica",
+            "texto": f"{titulo}. {pregunta} {respuesta}",
+            "meta": {"seccion": titulo, "aprendida": True, "respuesta": respuesta},
+        })
+    return chunks
+
+
 def main():
-    chunks = leer_inventario() + leer_politicas()
+    chunks = leer_inventario() + leer_politicas() + leer_aprendidas()
 
     # Guardamos en formato JSONL = 'un JSON por línea'. Es el formato estándar para
     # datasets de este tipo: fácil de leer trozo a trozo sin cargar todo en memoria.
@@ -110,10 +151,12 @@ def main():
 
     # Pequeño resumen para saber que salió bien (verificar el artefacto, no fiarse).
     n_inv = sum(1 for c in chunks if c["tipo"] == "inventario")
-    n_pol = sum(1 for c in chunks if c["tipo"] == "politica")
+    n_apr = sum(1 for c in chunks if (c.get("meta") or {}).get("aprendida"))
+    n_pol = sum(1 for c in chunks if c["tipo"] == "politica") - n_apr
     print(f"OK. {len(chunks)} chunks escritos en {SALIDA.name}")
     print(f"   - inventario: {n_inv}")
     print(f"   - politicas:  {n_pol}")
+    print(f"   - FAQ contestadas por una persona: {n_apr}")
     print("\nEjemplo de chunk de inventario:")
     print("  ", next(c['texto'] for c in chunks if c['tipo'] == 'inventario'))
     print("Ejemplo de chunk de politica:")

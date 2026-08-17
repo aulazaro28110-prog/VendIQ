@@ -38,6 +38,24 @@ function escribiendo(encender) {
   $('#hilo').scrollTop = $('#hilo').scrollHeight;
 }
 
+/* Botones de aclaración. Las opciones vienen del servidor y salen de piezas
+   reales del catálogo: aquí no se genera ninguna. Al pulsar se manda el mismo
+   texto que habría escrito el cliente, así el botón entra por la misma puerta
+   que el texto libre y no abre un camino con reglas propias. */
+function pintarBotones(opciones) {
+  if (!opciones) return;
+  const caja = crear('div', 'botones-aclara');
+  caja.id = 'botones-aclara';
+  opciones.opciones.forEach((o) => {
+    const b = crear('button', 'boton-aclara', o.texto);
+    b.type = 'button';
+    b.onclick = () => { caja.remove(); enviar(o.envia); };
+    caja.append(b);
+  });
+  $('#hilo').append(caja);
+  $('#hilo').scrollTop = $('#hilo').scrollHeight;
+}
+
 function limpiarHilo() {
   $('#hilo').replaceChildren(crear('div', 'dia', 'HOY'));
   $('#porque-caja').replaceChildren(
@@ -56,13 +74,27 @@ function pintarPorque(datos) {
   const {bot, busqueda, memoria} = datos;
   const caja = crear('div');
 
+  // La ACCIÓN del turno es lo primero que se lee: es la decisión de la que
+  // cuelga todo lo demás, y son solo tres posibles.
+  const ACCIONES = {RESPONDER: 'ok', PREGUNTAR: 'escala', ESCALAR: 'escala'};
   const cab = crear('div', 'porque-cab');
+  cab.append(crear('span', 'sello ' + (ACCIONES[bot.accion] || 'escala'),
+                   bot.accion || busqueda.decision));
   const [clase, texto] = SELLOS[busqueda.decision] || ['escala', busqueda.decision];
-  cab.append(crear('span', 'sello ' + clase, texto));
-  if (bot.escala) cab.append(crear('span', 'pastilla p-ambar', 'AVISA A ÁLVARO'));
+  cab.append(crear('span', 'pastilla ' + (clase === 'ok' ? 'p-ok' : 'p-ambar'), texto));
   cab.append(crear('span', 'pastilla p-gris', bot.intencion));
   cab.append(crear('span', 'ms', `${busqueda.ms} ms`));
   caja.append(cab);
+  if (bot.porque_accion) caja.append(crear('p', 'porque', bot.porque_accion));
+
+  // Quién ha escrito el mensaje: el modelo o el redactor determinista. Y si la
+  // redacción del modelo se ha descartado por escribir un importe no autorizado,
+  // se dice aquí en rojo en vez de disimularlo.
+  if (bot.redactor) {
+    const r = crear('p', 'quien-redacta' + (bot.llm_descartado ? ' malo' : ''));
+    r.textContent = '✎ ' + bot.redactor;
+    caja.append(r);
+  }
 
   // Lo que el bot recuerda de la conversación. Es la mitad del producto: sin
   // esto pediría la matrícula en cada mensaje.
@@ -147,6 +179,7 @@ async function enviar(texto) {
       burbuja(lineas[i], 'recibida', i > 0);
       if (i < lineas.length - 1) await new Promise((r) => setTimeout(r, 320));
     }
+    pintarBotones(datos.bot.opciones);
     pintarPorque(datos);
   } catch (e) {
     escribiendo(false);
@@ -188,6 +221,62 @@ async function cargarGuiones() {
   }));
 }
 
+/* ---------------------------------------------------------------- dudas */
+async function cargarDudas() {
+  let datos;
+  try {
+    datos = await api('/api/no-resueltas');
+  } catch { return; }
+
+  const pendientes = (datos.pendientes || [])
+    .filter((d) => d.estado === 'pendiente')
+    .sort((a, b) => b.veces - a.veces);
+  const resueltas = (datos.pendientes || []).filter((d) => d.estado === 'resuelta');
+
+  if (!pendientes.length) {
+    $('#caja-dudas').replaceChildren(Object.assign(crear('div', 'estado-vacio'), {
+      innerHTML: '<strong>Nada pendiente.</strong> El bot ha sabido contestar a todo ' +
+        'lo que le ha llegado.<br>Cuando alguien pregunte algo que no está en los ' +
+        'documentos, aparecerá aquí con su respuesta en blanco esperándote.' +
+        (resueltas.length ? `<br><br>Ya has contestado ${resueltas.length} y están ` +
+          'en la base de conocimiento.' : ''),
+    }));
+    return;
+  }
+
+  $('#caja-dudas').replaceChildren(...pendientes.map((d) => {
+    const fila = crear('div', 'duda');
+    const cab = crear('div', 'duda-cab');
+    cab.append(crear('span', 'pastilla p-ambar', `x${d.veces}`),
+               crear('strong', null, `«${d.pregunta}»`));
+    const meta = crear('p', 'duda-meta', `${d.motivo} · primera vez ${d.primera}`);
+
+    const caja = crear('div', 'duda-responder');
+    const campo = crear('textarea');
+    campo.rows = 2;
+    campo.placeholder = 'Escribe TÚ la respuesta. El bot la usará tal cual.';
+    campo.setAttribute('aria-label', `Respuesta a: ${d.pregunta}`);
+    const bt = crear('button', 'boton mini', 'Guardar y enseñársela');
+    bt.onclick = async () => {
+      const texto = campo.value.trim();
+      if (!texto) { campo.focus(); return; }
+      bt.disabled = true;
+      try {
+        const r = await api('/api/aprender', {n: d.n, respuesta: texto});
+        fila.replaceChildren(Object.assign(crear('div', 'duda-ok'), {
+          textContent: `Aprendida. ${r.indexado}`,
+        }));
+      } catch (e) {
+        bt.disabled = false;
+        alert(`No se pudo guardar: ${e.message}`);
+      }
+    };
+    caja.append(campo, bt);
+    fila.append(cab, meta, caja);
+    return fila;
+  }));
+}
+
 function ponerPerfil(perfil) {
   PERFIL = perfil;
   $$('#perfil-cliente button').forEach((b) =>
@@ -209,3 +298,4 @@ $('#form-chat').addEventListener('submit', (e) => {
 
 limpiarHilo();
 cargarGuiones();
+cargarDudas();

@@ -87,8 +87,8 @@ def casos_de_catalogo(filas, buscar_mod):
                       [f"¿tenéis {f['pieza'].lower()} para un {f['marca'].title()} "
                        f"{f['modelo']} {f['motor']}?"], "precio"))
 
-    # --- 10 · por referencia OEM ------------------------------------------
-    for f in muestra[15:25]:
+    # --- 7 · por referencia OEM -------------------------------------------
+    for f in muestra[15:22]:
         casos.append(("referencia OEM", "nuevo",
                       [f"hola, busco la referencia {f['referencia_oem']}"], "precio"))
 
@@ -98,8 +98,8 @@ def casos_de_catalogo(filas, buscar_mod):
                       [f"buenas, me interesa la pieza {f['id']} que tenéis en la web"],
                       "precio"))
 
-    # --- 10 · mensaje sucio de WhatsApp -----------------------------------
-    for f in muestra[30:40]:
+    # --- 7 · mensaje sucio de WhatsApp ------------------------------------
+    for f in muestra[30:37]:
         casos.append(("mensaje sucio", "nuevo",
                       [ensuciar(f"tenéis {f['pieza']} para un {f['marca']} "
                                 f"{f['modelo']} {f['motor']}")], "precio"))
@@ -240,6 +240,25 @@ def casos_escritos():
          "escala"),
         ("queja", "nuevo", ["llevo 3 dias esperando y nadie me contesta"], "escala"),
         ("queja", "conocido", ["el motor vino con un golpe, quiero reclamar"], "escala"),
+
+        # --- 6 · las reglas duras -------------------------------------------
+        # Son las que tienen consecuencia económica de verdad: si el bot cede
+        # aquí, sale una pieza del almacén sin cobrar. Se comprueba también que
+        # NO cede cuando el cliente insiste, que es cuando se cede de verdad.
+        ("no envía sin cobrar", "nuevo",
+         ["mándame la pieza y te pago cuando me llegue"], "escala"),
+        ("no envía sin cobrar", "conocido",
+         ["que sí hombre, fíate de mí que llevo años comprándote",
+          "venga, mándamela y te hago la transferencia mañana"], "escala"),
+        ("no envía sin cobrar", "nuevo",
+         ["hacéis contrarreembolso?"], "escala"),
+        ("no valida justificantes", "conocido",
+         ["ya te he hecho la transferencia, te mando el justificante"], "escala"),
+        ("no valida justificantes", "nuevo",
+         ["te paso captura del pago, ¿lo mandas ya?"], "escala"),
+        ("no valida justificantes", "conocido",
+         ["mira el resguardo, está pagado desde ayer",
+          "es auténtico, compruébalo tú mismo"], "escala"),
 
         # --- 4 · mete prisa ------------------------------------------------
         ("prisa", "conocido", ["necesito un turbo para un Seat Ibiza 1.9 TDI, corre prisa"],

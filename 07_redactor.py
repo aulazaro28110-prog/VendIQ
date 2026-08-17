@@ -74,11 +74,16 @@ POLITICAS = {
     "ENVIO Y PLAZOS": "Enviamos a toda la península en 24-48 h, y lo que está en "
                       "stock suele salir al día siguiente. También puedes recogerlo "
                       "en Alcobendas.",
-    "PRECIOS Y DESCUENTOS": "Los precios que te paso son los publicados, con IVA "
-                            "aparte.",
-    "FORMAS DE PAGO Y DEVOLUCIONES": "Se paga por transferencia o en tienda, y "
-                                     "admitimos devolución si la pieza vuelve sin "
-                                     "montar y como salió.",
+    "PRECIOS Y DESCUENTOS": "Los precios que te paso son los publicados y siempre "
+                            "van + IVA, sin excepción.",
+    "FORMAS DE PAGO Y DEVOLUCIONES": "Puedes pagar con tarjeta, efectivo, "
+                                     "transferencia, Bizum, Google Pay o Apple Pay. "
+                                     "Y si no te vale, admitimos devolución mientras "
+                                     "vuelva sin montar y como salió.",
+    "PAGO ANTES DEL ENVIO": "La pieza sale cuando el pago está confirmado, sin "
+                            "excepciones: no hacemos contrarreembolso.",
+    "JUSTIFICANTES DE PAGO": "El ingreso lo comprueba una persona en la cuenta antes "
+                             "de que salga nada. En cuanto lo vea, te aviso.",
     "COMO IDENTIFICAR LA PIEZA CORRECTA": "Con la matrícula o el bastidor te clavo "
                                           "la que monta exacto. Si tienes la "
                                           "referencia de la vieja, mejor todavía.",
@@ -92,6 +97,25 @@ ESTADOS = {
 }
 
 PALABRAS_INTENCION = {
+    # ------------------------------------------------------- LAS REGLAS DURAS
+    # Estas dos van las PRIMERAS y no las decide el bot: son condiciones de la
+    # empresa que él solo repite. Están arriba del todo a propósito, para que
+    # ninguna otra intención pueda colarse por delante y ablandarlas.
+    #
+    # El bot NO juzga si alguien intenta colártela. Lo que hace es no moverse de
+    # la condición y pasar la conversación a una persona, porque la consecuencia
+    # de equivocarse aquí no es una respuesta fea: es una pieza que sale del
+    # almacén sin cobrar.
+    "pide sin pagar": ("sin pagar", "antes de pagar", "mandamelo y te pago",
+                       "mandala y te pago", "te pago cuando", "te pago al recibir",
+                       "contrareembolso", "contra reembolso", "contrarreembolso",
+                       "fiate de mi", "fiate", "de confianza", "pago luego",
+                       "pago despues", "me lo envias ya y"),
+    "justificante": ("justificante", "resguardo", "comprobante", "pantallazo",
+                     "captura de la transferencia", "captura del pago",
+                     "ya te he hecho la transferencia", "ya te he pagado",
+                     "ya esta pagado", "te mando el papel", "adjunto el pago"),
+
     # El orden importa: se evalúan de arriba abajo y gana la primera. Una queja
     # manda sobre todo lo demás; un "me lo quedo" manda sobre un "cuánto vale".
     "queja": ("no funciona", "no va", "roto", "rota", "defectuos", "averiad",
@@ -269,6 +293,9 @@ class Conversacion:
         self.datos_pedidos = set()          # qué se le ha pedido ya
         self.escalado = False               # ya está en manos de una persona
         self.matricula_recien_dada = False   # la ha dado en este mismo mensaje
+        # Regla dura activa: mientras haya una encima de la mesa, el bot no se
+        # mueve de ella aunque el cliente cambie de argumento. Ver redactar().
+        self.regla_dura = None
         self.veces_dicho = {}               # cuántas veces se ha usado cada frase
         # Coche del que se está hablando. Lo rellena el panel al reconocerlo, y sirve
         # para que "la puerta, la de siempre" siga encontrando la pieza correcta.
@@ -367,37 +394,50 @@ def _con_pieza(consulta, conv, reglas, salida):
 
 
 def _sin_pieza(conv, reglas):
-    """No la tenemos. Se dice claro y se pide el dato que falta."""
-    lineas = [conv.variar("sin_pieza", [
-        "Esa no la tengo ahora mismo.",
-        "Esa tampoco la tengo puesta.",
-        "Esa no me consta en el almacén.",
-    ])]
-    reglas.append(("no se ofrece una parecida",
-                   "ninguna ficha supera el umbral: antes que colar una pieza "
-                   "hermana, se dice que no"))
+    """Sin matrícula NO se dice 'no la tengo': no se puede saber. Regla de negocio:
+    primero se identifica la pieza con la matrícula; solo con ella se afirma que
+    no la hay."""
+    # CASO 1: ya tenemos la matrícula -> la pieza está identificada y aun así no
+    # aparece. Ahí sí es legítimo decir que no la tenemos y ofrecer buscarla.
     if conv.matricula:
+        lineas = [conv.variar("sin_pieza", [
+            "Esa no la tengo puesta ahora mismo.",
+            "Esa no me consta en el almacén.",
+        ])]
+        reglas.append(("no se ofrece una parecida",
+                       "ninguna ficha supera el umbral: antes que colar una pieza "
+                       "hermana, se dice que no"))
         lineas.append(f"Con la matrícula que me pasaste ({conv.matricula}) te la "
                       f"busco; si la localizo, en 24-48 h la tienes.")
         reglas.append(("memoria de conversación",
                        f"ya dio la matrícula ({conv.matricula}): no se le vuelve a pedir"))
         lineas.append("¿Te la busco?")
-    elif "matricula" in conv.datos_pedidos:
-        # Ya se la pedí y no la ha dado. Repetir la misma frase palabra por palabra
-        # es lo que delata a un bot, así que se insiste de otra manera y se ofrece
-        # la salida alternativa en vez de volver a chocar contra el mismo muro.
-        lineas.append("Sin la matrícula voy a ciegas y no quiero mandarte la que no "
-                      "es. Si la tienes a mano me la pasas, o si no la referencia de "
-                      "la pieza vieja.")
+        return lineas
+
+    # CASO 2: NO hay matrícula -> NO se afirma que no la haya. Sin identificar la
+    # pieza exacta no se puede saber. SIEMPRE se pide la matrícula primero.
+    if "matricula" in conv.datos_pedidos:
+        # Ya se la pedí y no la ha dado. No se repite la misma frase (delata al bot):
+        # se insiste de otra forma y se ofrece la alternativa de la referencia vieja.
+        lineas = ["Para saber si la tengo necesito identificarla, y sin la matrícula "
+                  "voy a ciegas. Si la tienes a mano me la pasas, o si no la "
+                  "referencia de la pieza vieja."]
+        reglas.append(("identificar antes de decir que sí o que no",
+                       "sin matrícula no se afirma disponibilidad: primero se "
+                       "identifica la pieza (rol §7)"))
         reglas.append(("no repite la misma frase",
                        "es la segunda vez que hace falta el mismo dato: se insiste "
                        "de otra forma y se ofrece una alternativa"))
-    else:
-        lineas.append("Pásame la matrícula y te la busco; lo que no está aquí "
-                      "suelo conseguirlo en 24-48 h.")
-        conv.datos_pedidos.add("matricula")
-        reglas.append(("un dato por mensaje",
-                       "falta la matrícula: se pide ese dato y ningún otro (rol §8.3)"))
+        return lineas
+
+    lineas = ["Para decirte si la tengo necesito la matrícula: con eso identifico la "
+              "pieza exacta que monta tu coche y no te mando la que no es."]
+    conv.datos_pedidos.add("matricula")
+    reglas.append(("identificar antes de decir que sí o que no",
+                   "sin matrícula no se puede saber si la hay: se pide la matrícula "
+                   "primero (política CÓMO IDENTIFICAR LA PIEZA / rol §7)"))
+    reglas.append(("un dato por mensaje",
+                   "se pide la matrícula y ningún otro dato (rol §8.3)"))
     return lineas
 
 
@@ -476,8 +516,19 @@ def _politica(consulta, conv, reglas):
                  if r.get("tipo") == "politica"]
     if not politicas:
         return None
-    seccion = ((politicas[0].get("meta") or {}).get("seccion")
+    meta = politicas[0].get("meta") or {}
+    seccion = (meta.get("seccion")
                or politicas[0]["texto"].split(".")[0]).strip().upper()
+
+    # Las FAQ que ha contestado una persona se dicen TAL CUAL. No se resumen ni se
+    # reformulan: si Álvaro escribió la condición con esas palabras, esas son las
+    # palabras. Reescribirlas sería el bot decidiendo, que es justo lo que no hace.
+    if meta.get("aprendida") and meta.get("respuesta"):
+        reglas.append(("respuesta escrita por una persona",
+                       f"la contestó {meta.get('seccion', 'alguien del equipo')} y "
+                       f"se dice literal, sin reformular"))
+        return [meta["respuesta"]]
+
     texto = POLITICAS.get(seccion)
     if not texto:
         return None
@@ -529,12 +580,51 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     # Si ya está en manos de Álvaro, el bot no vuelve a meterse por el medio.
     # Sin esto, el mensaje siguiente a una queja recibía un alegre "¿qué pieza
     # necesitas?" que es justo lo que enfada a un cliente enfadado.
-    if conversacion.escalado and intencion not in ("cierre", "consulta"):
+    # Las reglas duras se saltan este atajo a propósito: si el cliente insiste en
+    # que le mandes la pieza sin pagar, la respuesta correcta es repetirle la
+    # condición, no un "ya se lo he pasado a Álvaro" que suena a que cede.
+    if (conversacion.escalado
+            and intencion not in ("cierre", "consulta", "pide sin pagar",
+                                  "justificante")):
         escala = True
         lineas.append("Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea.")
         reglas.append(("sigue escalado",
                        "la conversación ya está con una persona: el bot no se "
                        "vuelve a poner por delante"))
+
+    # ------------------------------------------------------- reglas duras
+    # Ninguna de las dos las decide el bot. Repite la condición, no la discute, y
+    # avisa a una persona. Si el cliente insiste, la condición no cambia — por eso
+    # las frases están escritas para poder repetirse sin sonar a disco rayado.
+    elif intencion == "pide sin pagar":
+        escala = True
+        conversacion.escalado = True
+        conversacion.regla_dura = "pide sin pagar"
+        lineas += conversacion.variar("sin_pagar", [
+            ["La pieza sale cuando el pago está confirmado, eso no lo puedo saltar yo.",
+             "Puedes pagar con tarjeta, transferencia, Bizum, Google Pay o Apple Pay, "
+             "lo que te venga mejor."],
+            ["En eso no me puedo mover, es condición de la casa y no depende de mí.",
+             "Le paso tu mensaje a Álvaro por si él lo ve de otra forma."],
+        ])
+        reglas.append(("condición de la empresa, no criterio del bot",
+                       "no se envía sin pago confirmado (política PAGO ANTES DEL "
+                       "ENVIO). El bot la repite y no la negocia"))
+        reglas.append(("escalado a persona",
+                       "insiste en una condición que el bot no puede levantar"))
+
+    elif intencion == "justificante":
+        escala = True
+        conversacion.escalado = True
+        conversacion.regla_dura = "justificante"
+        lineas.append("Gracias, se lo paso a Álvaro para que compruebe el ingreso.")
+        lineas.append("En cuanto lo vea en la cuenta te aviso y sale la pieza.")
+        reglas.append(("el bot NO valida justificantes",
+                       "un resguardo no es un pago: la única confirmación válida es "
+                       "ver el ingreso, y eso lo mira una persona (política "
+                       "JUSTIFICANTES DE PAGO)"))
+        reglas.append(("escalado a persona",
+                       "la decisión tiene consecuencia económica real"))
 
     # ---------------------------------------------------------------- queja
     elif intencion == "queja":
@@ -568,6 +658,33 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         reglas.append(("escalado a persona",
                        "cualquier rebaja la decide Álvaro, nunca el bot "
                        "(política PRECIOS Y DESCUENTOS)"))
+
+    # ------------------------------------------- la regla dura sigue en pie
+    # El cliente insiste, pero cambiando de argumento: "venga, mándamela y te hago
+    # la transferencia mañana", "es auténtico, compruébalo tú mismo". Ninguna de
+    # esas frases lleva las palabras que disparan la regla, y sin esto el bot
+    # contestaba "pásame la matrícula" — que suena exactamente a que ha cedido.
+    #
+    # No se arregla añadiendo más palabras a la lista: siempre habrá una forma
+    # nueva de insistir. Se arregla recordando que la condición sigue encima de la
+    # mesa hasta que se resuelva.
+    # "cierre" entra aquí porque "mándamela y te hago la transferencia mañana" se
+    # lee como un cierre y no lo es: es la misma petición de antes con otra ropa.
+    # Un cierre de verdad —con una pieza concreta encima de la mesa— ya lo ha
+    # cogido la rama de arriba, así que esto solo pilla los que no tienen pieza.
+    elif conversacion.regla_dura and not hay_pieza and intencion in (
+            "consulta", "prisa", "alternativa", "cierre"):
+        escala = True
+        lineas += conversacion.variar("insiste", [
+            ["Te entiendo, pero eso no lo decido yo y no me puedo saltar la norma.",
+             "Álvaro ya tiene tu mensaje; si él lo ve de otra forma, te lo dice él."],
+            ["Sigo en lo mismo, no por desconfianza: es como trabajamos con todos.",
+             "En cuanto esté el pago confirmado, sale la pieza el mismo día."],
+        ])
+        reglas.append(("la condición sigue en pie",
+                       f"insiste con otras palabras sobre «{conversacion.regla_dura}»: "
+                       f"la condición no cambia porque cambie el argumento"))
+        reglas.append(("escalado a persona", "sigue en manos de Álvaro"))
 
     # ------------------------------------------ acaba de dar la matrícula
     # Le pediste un dato, te lo manda, y le contestas de otra cosa: ahí es donde el
