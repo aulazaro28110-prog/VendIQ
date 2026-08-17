@@ -47,6 +47,7 @@ class Sistema:
         import csv
         self.buscar_mod = cargar("03_buscar.py", "buscar")
         self.ofertas_mod = cargar("04_ofertas.py", "ofertas")
+        self.redactor = cargar("07_redactor.py", "redactor")
 
         print("Cargando el índice y el modelo (una sola vez)...")
         t0 = time.time()
@@ -64,6 +65,7 @@ class Sistema:
         print(f"Listo en {time.time() - t0:.1f}s · {len(self.buscador.items)} fichas indexadas")
 
         self.consultas_sesion = []                 # lo que se pregunta desde el panel
+        self.chats = {}                            # conversaciones abiertas del simulador
 
     # ------------------------------------------------------------- precios
     def precios_pendientes(self):
@@ -234,6 +236,10 @@ class Sistema:
                 "url": (it.get("meta") or {}).get("url", ""),
                 "precio": (it.get("meta") or {}).get("precio", ""),
                 "id_pieza": (it.get("meta") or {}).get("id", ""),
+                # La ficha entera viaja con el resultado porque el redactor escribe
+                # SOLO con esto: si un dato no está aquí, no puede aparecer en el
+                # mensaje al cliente. Es lo que hace demostrable el guardarraíl.
+                "meta": it.get("meta") or {},
                 # La decisión de precio va con cada ficha: es lo más delicado que
                 # enseña el panel y nunca debe aparecer un importe sin su motivo.
                 "precio_cliente": it.get("precio_cliente"),
@@ -253,6 +259,174 @@ class Sistema:
         self.consultas_sesion.append({k: resultado[k] for k in
                                       ("pregunta", "decision", "ms", "hora", "porque")})
         return resultado
+
+    # ----------------------------------------------------------- simulador
+    def _vehiculo_en(self, texto):
+        """Qué coche nombra el mensaje, según el vocabulario del propio catálogo.
+
+        Igual que las marcas y los tipos de pieza, los modelos se aprenden de los
+        datos: no hay ninguna lista escrita a mano que haya que mantener.
+        """
+        if not hasattr(self, "_vocab_vehiculo"):
+            self._vocab_vehiculo = {}
+            for f in self.filas:
+                for campo in ("marca", "modelo"):
+                    for token in self.buscar_mod.normalizar(f[campo]):
+                        if len(token) > 1:
+                            self._vocab_vehiculo[token] = f[campo]
+        vistos = []
+        for token in self.buscar_mod.normalizar(texto):
+            canonico = self._vocab_vehiculo.get(token)
+            if canonico and canonico not in vistos:
+                vistos.append(canonico)
+        return " ".join(vistos)
+
+    def chatear(self, sesion, mensaje, perfil="nuevo", nombre="", reiniciar=False):
+        """Un turno de conversación de WhatsApp: busca, redacta y recuerda.
+
+        La conversación vive en el servidor y no en el navegador a propósito: la
+        memoria (matrícula dada, pieza ofrecida, garantía ya mencionada) es parte
+        del comportamiento del bot, no del pintado. Si viviera en el JS, refrescar
+        la página cambiaría lo que responde.
+        """
+        conv = self.chats.get(sesion)
+        if conv is None or reiniciar or conv.perfil != perfil:
+            conv = self.redactor.Conversacion(perfil=perfil, nombre=nombre)
+            self.chats[sesion] = conv
+        conv.registrar(mensaje)
+
+        # MEMORIA DEL COCHE. Un cliente no repite la marca en cada mensaje: dice
+        # "para el Ford Fusion" una vez y luego "la puerta, la de siempre". Suelto,
+        # ese segundo mensaje no encuentra nada (0.47 y por debajo del umbral);
+        # con el coche que ya había dicho, encuentra la pieza correcta a 0.60.
+        # Se busca con el contexto añadido, pero se GUARDA el mensaje original: lo
+        # que el cliente escribió no se toca.
+        # El contexto añade el COCHE, así que solo sirve si el cliente ya ha dicho
+        # la PIEZA. Añadirlo siempre fue un error que se vio enseguida: a "¿y de
+        # garantía qué me das?" le pegaba "FORD Fusion" detrás y el buscador
+        # contestaba con un parachoques de Ford Fusion, que no venía a cuento.
+        palabras = set(self.buscar_mod.normalizar(mensaje))
+        habla_de_pieza = bool(palabras & self.buscador.tipos_conocidos)
+
+        vehiculo = self._vehiculo_en(mensaje)
+        if vehiculo:
+            conv.vehiculo = vehiculo
+            texto_busqueda, contexto = mensaje, None
+        elif conv.vehiculo and habla_de_pieza:
+            texto_busqueda, contexto = f"{mensaje} {conv.vehiculo}", conv.vehiculo
+        else:
+            texto_busqueda, contexto = mensaje, None
+
+        busqueda = self.consultar(texto_busqueda)
+        busqueda["pregunta"] = mensaje
+        busqueda["contexto"] = contexto
+        respuesta = self.redactor.redactar(busqueda, conv)
+
+        # Comprobación en caliente del guardarraíl: el redactor solo puede publicar
+        # un importe que el buscador haya marcado publicable. Si alguna vez no
+        # cuadrara, el panel lo enseña en rojo en lugar de disimularlo.
+        autorizados = {(r.get("precio_cliente") or {}).get("importe")
+                       for r in busqueda["resultados"]
+                       if (r.get("precio_cliente") or {}).get("publicable")}
+        # Los ya autorizados en turnos anteriores siguen valiendo: repetir el mismo
+        # importe de la misma pieza cuando el cliente vuelve a preguntar no es
+        # publicar un precio nuevo, y prohibirlo obligaría al bot a hacerse el sordo.
+        if not hasattr(conv, "precios_autorizados"):
+            conv.precios_autorizados = set()
+        conv.precios_autorizados |= {p for p in autorizados if p}
+        respuesta["precio_autorizado"] = (
+            respuesta["precio_dado"] is None
+            or respuesta["precio_dado"] in autorizados
+            or respuesta["precio_dado"] in conv.precios_autorizados)
+
+        # Si se ha localizado una pieza, su coche es mejor contexto que lo que el
+        # cliente escribió: viene con modelo y motor exactos.
+        pieza = conv.ultima_pieza or {}
+        if pieza.get("marca"):
+            conv.vehiculo = f"{pieza['marca']} {pieza.get('modelo', '')}".strip()
+
+        return {"bot": respuesta, "busqueda": busqueda,
+                "memoria": {"turnos": conv.turnos, "matricula": conv.matricula,
+                            "perfil": conv.perfil, "nombre": conv.nombre,
+                            "vehiculo": conv.vehiculo, "escalado": conv.escalado,
+                            "pieza": pieza.get("pieza"),
+                            "precio": conv.ultimo_precio,
+                            "garantia_dicha": conv.garantia_dicha}}
+
+    def guiones(self):
+        """Conversaciones tipo, construidas con piezas REALES del catálogo.
+
+        No están escritas a mano: si el catálogo cambia, los guiones cambian con él
+        y siguen funcionando. Cada uno enseña un comportamiento distinto del tono.
+        """
+        import random
+        rnd = random.Random(11)
+        con_precio = [f for f in self.filas
+                      if self.ofertas_mod.precio_publicado(f["precio"])
+                      and f["disponibilidad"].lower() == "en stock"]
+        a, b = rnd.sample(con_precio, 2)
+
+        def pedir(f):
+            return (f"{f['pieza'].lower()} para un {f['marca'].title()} "
+                    f"{f['modelo']} {f['motor']}")
+
+        # Para el guion de "no la tengo" no vale cualquier combinación que falte:
+        # tiene que ser una ausencia INEQUÍVOCA. Si el nombre de la pieza comparte
+        # una sola palabra con algo que sí tenemos de esa marca (pedir "cerradura
+        # puerta delantera" cuando hay "puerta delantera izquierda"), el buscador
+        # ofrece la hermana y el guion enseña lo contrario de lo que pretende.
+        # Por eso se exige que NINGUNA palabra del nombre exista para esa marca.
+        def tokens_de(nombre):
+            return {x for x in self.buscar_mod.normalizar(nombre)
+                    if x not in self.buscar_mod.PALABRAS_VACIAS and len(x) > 2}
+
+        def cabeza(nombre):
+            t = sorted(tokens_de(nombre), key=lambda x: self.buscar_mod
+                       .normalizar(nombre).index(x))
+            return t[0] if t else None
+
+        vocabulario, modelos = {}, {}
+        for f in self.filas:
+            vocabulario.setdefault(f["marca"], set()).update(tokens_de(f["pieza"]))
+            modelos.setdefault(f["marca"], set()).add(f["modelo"])
+        piezas, marcas = sorted({f["pieza"] for f in self.filas}), sorted(vocabulario)
+        ausente = "un turbo para un Ferrari F430"
+        for _ in range(4000):
+            p, m = rnd.choice(piezas), rnd.choice(marcas)
+            if not (tokens_de(p) & vocabulario.get(m, set())):
+                ausente = (f"un {p.lower()} para un {m.title()} "
+                           f"{rnd.choice(sorted(modelos[m]))}")
+                break
+
+        return [
+            {"nombre": "Compra directa", "perfil": "nuevo", "cliente": "",
+             "que_prueba": "Encuentra la pieza, da el precio publicado y cierra.",
+             "mensajes": ["buenas, ¿tenéis " + pedir(a) + "?",
+                          "vale, ¿y me llega esta semana?",
+                          "perfecto, me lo quedo"]},
+            {"nombre": "Cliente que regatea", "perfil": "conocido",
+             "cliente": "Juan Carlos",
+             "que_prueba": "No baja el precio: cede el transporte y avisa a Álvaro.",
+             "mensajes": ["buenas! necesito " + pedir(b),
+                          "uf, está caro. ¿me lo dejas en algo menos?",
+                          "vale, déjame que lo mire"]},
+            {"nombre": "No la tenemos", "perfil": "nuevo", "cliente": "",
+             "que_prueba": "Dice que no en vez de ofrecer una pieza parecida, y "
+                           "pide la matrícula una sola vez.",
+             "mensajes": ["hola, busco " + ausente,
+                          "mi matricula es 4521 KBD",
+                          "y cuanto tarda en llegar"]},
+            {"nombre": "Datos a medias", "perfil": "conocido", "cliente": "Roberto",
+             "que_prueba": "Con la pieza sin nombrar entera NO da precio: confirma.",
+             "mensajes": [f"oye necesito algo para el {a['marca'].title()} "
+                          f"{a['modelo']}",
+                          f"la {cabeza(a['pieza'])}, la de siempre",
+                          "y de garantía qué me das"]},
+            {"nombre": "Va mal la pieza", "perfil": "conocido", "cliente": "Roberto",
+             "que_prueba": "Una queja no la contesta el bot: la escala entera.",
+             "mensajes": ["el alternador que me mandasteis no funciona",
+                          "pues vaya faena, lo tengo el coche parado"]},
+        ]
 
     def ofertar(self, id_pieza, importe, cliente):
         oferta = self.ofertas_mod.registrar(self.inventario, id_pieza, importe, cliente)
@@ -308,6 +482,8 @@ class Handler(BaseHTTPRequestHandler):
                                "piezas": SISTEMA.piezas_ejemplo()})
         if ruta == "/api/precios":
             return self._json({"pendientes": SISTEMA.precios_pendientes()})
+        if ruta == "/api/guiones":
+            return self._json({"guiones": SISTEMA.guiones()})
 
         fichero = "index.html" if ruta == "/" else ruta.lstrip("/")
         destino = (WEB / fichero).resolve()
@@ -336,6 +512,16 @@ class Handler(BaseHTTPRequestHandler):
                 if not pregunta:
                     return self._json({"error": "escribe una consulta"}, 400)
                 return self._json(SISTEMA.consultar(pregunta))
+
+            if ruta == "/api/chat":
+                mensaje = (cuerpo.get("mensaje") or "").strip()
+                if not mensaje:
+                    return self._json({"error": "escribe un mensaje"}, 400)
+                return self._json(SISTEMA.chatear(
+                    cuerpo.get("sesion") or "demo", mensaje,
+                    perfil=cuerpo.get("perfil") or "nuevo",
+                    nombre=cuerpo.get("nombre") or "",
+                    reiniciar=bool(cuerpo.get("reiniciar"))))
 
             if ruta == "/api/oferta":
                 return self._json(SISTEMA.ofertar(cuerpo["id_pieza"],

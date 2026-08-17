@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>VendIQ · Centro de control</title>
 <link rel="stylesheet" href="panel.css">
+<link rel="stylesheet" href="chat.css">
 <link rel="stylesheet" href="informe.css">
 </head>
 <body>
@@ -19,7 +20,7 @@
     </a>
     <div class="barra-enlaces">
       <a href="#dia">Actividad</a>
-      <a href="#cliente">Probar</a>
+      <a href="#cliente">El chat</a>
       <a href="#mesa">Ofertas</a>
       <a href="#informe">El informe</a>
       <a href="#letra">La letra pequeña</a>
@@ -66,9 +67,66 @@
     <p class="eyebrow">Pruébalo</p>
     <h2>Habla como un cliente</h2>
     <p class="intro">
-      Escribe lo que escribiría un cliente. La búsqueda se ejecuta de verdad contra
-      las 1.000 fichas: verás la puntuación real, si se puede dar el precio o no, y
-      lo que se descartó por no llegar al umbral.
+      Una conversación de WhatsApp de verdad: el bot recuerda lo que ya le has
+      dicho, cambia el trato según quién escriba y decide en cada mensaje si puede
+      dar el precio. A la derecha, la regla que ha aplicado en cada frase.
+    </p>
+
+    <div class="chat-mandos">
+      <div class="mando">
+        <label>Quién escribe</label>
+        <div class="segmentos" id="perfil-cliente" role="group">
+          <button type="button" data-perfil="nuevo" aria-pressed="true">Cliente nuevo</button>
+          <button type="button" data-perfil="conocido" aria-pressed="false">De confianza</button>
+        </div>
+      </div>
+      <div class="mando" id="mando-nombre" hidden>
+        <label for="nombre-cliente">Su nombre</label>
+        <input id="nombre-cliente" value="Juan Carlos" autocomplete="off">
+      </div>
+      <div class="mando crece">
+        <label>Conversaciones tipo</label>
+        <div class="sugerencias" id="guiones"></div>
+      </div>
+    </div>
+
+    <div class="chat-rejilla">
+      <!-- ---------------------------------------------------- el móvil -->
+      <div class="movil">
+        <div class="movil-barra">
+          <span class="avatar" aria-hidden="true">RC</span>
+          <div class="movil-quien">
+            <strong>Desguaces Madrid Norte</strong>
+            <span id="chat-subtitulo">en línea</span>
+          </div>
+          <button type="button" class="reiniciar" id="btn-reiniciar"
+                  title="Empezar de cero">Reiniciar</button>
+        </div>
+        <div class="movil-hilo" id="hilo" aria-live="polite" aria-label="Conversación">
+        </div>
+        <form class="movil-entrada" id="form-chat">
+          <input id="chat-entrada" autocomplete="off" spellcheck="false"
+                 placeholder="Escribe como un cliente…"
+                 aria-label="Mensaje del cliente">
+          <button type="submit" id="btn-enviar" aria-label="Enviar">➤</button>
+        </form>
+      </div>
+
+      <!-- ------------------------------------------------- el por qué -->
+      <aside class="porque-panel">
+        <h3>Por qué ha contestado eso</h3>
+        <p class="nota">Se actualiza con cada mensaje. Nada de esto está escrito a
+          mano: sale de la búsqueda real.</p>
+        <div id="porque-caja">
+          <p class="vacio">Manda un mensaje o elige una conversación tipo.</p>
+        </div>
+      </aside>
+    </div>
+
+    <h3 class="sub-titulo">La búsqueda por dentro</h3>
+    <p class="intro">
+      Sin conversación ni memoria: una consulta suelta contra las 1.000 fichas, con
+      la puntuación de cada una y lo que se descartó por no llegar al umbral.
     </p>
     <div class="carta">
       <form class="consola-entrada" id="form-consulta">
@@ -308,5 +366,6 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
 
 <script src="fondo.js"></script>
 <script src="panel.js"></script>
+<script src="chat.js"></script>
 </body>
 </html>
