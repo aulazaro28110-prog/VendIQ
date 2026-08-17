@@ -1,0 +1,191 @@
+/* VendIQ · simulador de WhatsApp
+   La ventana del chat usa la paleta real de WhatsApp en modo oscuro y no la del
+   panel. Es a propósito: lo que se enseña aquí es cómo le llega el mensaje AL
+   CLIENTE, y se entiende en medio segundo si parece lo que parece. Todo lo que
+   rodea al móvil sí es del panel. */
+
+:root{
+  --wa-fondo:    #0b141a;
+  --wa-barra:    #1f2c33;
+  --wa-recibido: #202c33;
+  --wa-enviado:  #005c4b;
+  --wa-tinta:    #e9edef;
+  --wa-tinta-2:  #8696a0;
+  --wa-verde:    #00a884;
+  --wa-azul:     #53bdeb;
+}
+
+/* ------------------------------------------------------------- mandos */
+.chat-mandos{
+  display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start;
+  background:var(--carta);border:1px solid var(--borde);border-radius:var(--r);
+  padding:20px 24px;margin-bottom:18px;
+}
+.mando{display:flex;flex-direction:column;gap:9px;min-width:0}
+.mando.crece{flex:1;min-width:280px}
+.mando > label{font-size:12.5px;color:var(--tinta-3)}
+.mando input{
+  background:var(--carta-alta);border:1px solid var(--borde);color:var(--tinta);
+  border-radius:10px;padding:9px 13px;font-family:var(--ui);font-size:13.5px;
+  outline:none;width:170px;
+}
+.mando input:focus-visible{outline:2px solid var(--cian);outline-offset:-1px}
+
+.segmentos{display:flex;background:var(--carta-alta);border:1px solid var(--borde);
+  border-radius:10px;padding:3px;gap:3px}
+.segmentos button{
+  background:transparent;border:0;color:var(--tinta-2);border-radius:8px;
+  padding:8px 16px;font-family:var(--ui);font-size:13px;cursor:pointer;
+  white-space:nowrap;transition:all .15s;
+}
+.segmentos button:hover{color:var(--tinta)}
+.segmentos button[aria-pressed="true"]{background:var(--cian);color:#04120f;font-weight:620}
+.segmentos button:focus-visible{outline:2px solid var(--cian);outline-offset:1px}
+
+.chat-mandos .sugerencias{margin-bottom:0}
+.chip.cargando{opacity:.5;cursor:progress}
+
+/* ------------------------------------------------------------ rejilla */
+.chat-rejilla{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);
+  gap:20px;align-items:start;margin-bottom:34px}
+@media (max-width:900px){.chat-rejilla{grid-template-columns:1fr}}
+
+/* -------------------------------------------------------------- móvil */
+.movil{
+  background:var(--wa-fondo);border:1px solid var(--borde-vivo);border-radius:18px;
+  overflow:hidden;display:flex;flex-direction:column;height:560px;
+  box-shadow:0 24px 60px rgba(0,0,0,.55);
+}
+.movil-barra{display:flex;align-items:center;gap:12px;background:var(--wa-barra);
+  padding:11px 14px;flex:none}
+.movil-barra .avatar{
+  width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;
+  background:var(--wa-verde);color:#04120f;font-weight:700;font-size:13px;
+}
+.movil-quien{display:flex;flex-direction:column;line-height:1.3;min-width:0;flex:1}
+.movil-quien strong{font-size:14px;color:var(--wa-tinta);font-weight:600}
+.movil-quien span{font-size:11.5px;color:var(--wa-tinta-2)}
+.movil-barra .reiniciar{
+  background:transparent;border:1px solid #33434c;color:var(--wa-tinta-2);
+  border-radius:999px;padding:5px 13px;font-family:var(--ui);font-size:11.5px;
+  cursor:pointer;flex:none;transition:all .15s;
+}
+.movil-barra .reiniciar:hover{color:var(--wa-tinta);border-color:var(--wa-tinta-2)}
+
+/* El fondo de cuadernillo de WhatsApp, dibujado con gradientes: nada de imágenes
+   externas, que el panel tiene que funcionar sin internet. */
+.movil-hilo{
+  flex:1;overflow-y:auto;padding:18px 14px 8px;display:flex;flex-direction:column;
+  gap:3px;scrollbar-width:thin;scroll-behavior:smooth;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,.014) 0 2px, transparent 2px),
+    radial-gradient(circle at 70% 65%, rgba(255,255,255,.014) 0 2px, transparent 2px);
+  background-size:64px 64px, 96px 96px;
+}
+.movil-hilo::-webkit-scrollbar{width:6px}
+.movil-hilo::-webkit-scrollbar-thumb{background:#2a3942;border-radius:3px}
+
+.dia{align-self:center;background:var(--wa-barra);color:var(--wa-tinta-2);
+  font-size:11px;padding:5px 13px;border-radius:8px;margin:4px 0 10px}
+
+.burbuja{
+  max-width:82%;padding:7px 10px 5px;border-radius:8px;font-size:13.5px;
+  line-height:1.45;color:var(--wa-tinta);position:relative;word-wrap:break-word;
+  animation:entra .22s ease-out;
+}
+@keyframes entra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.burbuja{animation:none}}
+
+.burbuja.recibida{align-self:flex-start;background:var(--wa-recibido);
+  border-top-left-radius:2px}
+.burbuja.enviada{align-self:flex-end;background:var(--wa-enviado);
+  border-top-right-radius:2px}
+/* Solo la primera burbuja de una tanda lleva pico, como en WhatsApp de verdad */
+.burbuja.seguida.recibida{border-top-left-radius:8px}
+.burbuja.seguida.enviada{border-top-right-radius:8px}
+
+.burbuja .hora{
+  font-size:10px;color:var(--wa-tinta-2);float:right;margin:6px 0 0 8px;
+  line-height:1;white-space:nowrap;
+}
+.burbuja.enviada .hora{color:rgba(233,237,239,.6)}
+.burbuja .visto{color:var(--wa-azul);font-size:11px;margin-left:3px}
+
+/* Escribiendo… */
+.escribiendo{align-self:flex-start;background:var(--wa-recibido);border-radius:8px;
+  border-top-left-radius:2px;padding:12px 14px;display:flex;gap:4px}
+.escribiendo i{width:6px;height:6px;border-radius:50%;background:var(--wa-tinta-2);
+  animation:puntito 1.3s infinite}
+.escribiendo i:nth-child(2){animation-delay:.18s}
+.escribiendo i:nth-child(3){animation-delay:.36s}
+@keyframes puntito{0%,60%,100%{opacity:.3;transform:translateY(0)}
+                   30%{opacity:1;transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){.escribiendo i{animation:none;opacity:.6}}
+
+.movil-entrada{display:flex;gap:8px;padding:9px 10px;background:var(--wa-barra);flex:none}
+.movil-entrada input{
+  flex:1;min-width:0;background:#2a3942;border:0;color:var(--wa-tinta);
+  border-radius:999px;padding:11px 16px;font-family:var(--ui);font-size:13.5px;outline:none;
+}
+.movil-entrada input::placeholder{color:var(--wa-tinta-2)}
+.movil-entrada input:focus-visible{outline:2px solid var(--wa-verde);outline-offset:-2px}
+.movil-entrada button{
+  width:42px;height:42px;flex:none;border:0;border-radius:50%;background:var(--wa-verde);
+  color:#04120f;font-size:15px;cursor:pointer;transition:filter .15s;
+}
+.movil-entrada button:hover{filter:brightness(1.1)}
+.movil-entrada button:disabled{opacity:.45;cursor:progress}
+.movil-entrada button:focus-visible{outline:2px solid var(--wa-verde);outline-offset:2px}
+
+/* ------------------------------------------------------------ por qué */
+.porque-panel{
+  background:var(--carta);border:1px solid var(--borde);border-radius:var(--r);
+  padding:24px 26px;max-height:560px;overflow-y:auto;scrollbar-width:thin;
+}
+.porque-panel > h3{font-size:14px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+.porque-panel > .nota{color:var(--tinta-3);font-size:12.5px;margin:0 0 20px}
+
+.porque-cab{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px}
+.porque-cab .ms{font-family:var(--mono);font-size:11.5px;color:var(--tinta-3);
+  margin-left:auto}
+
+.regla{
+  border-left:2px solid var(--cian);padding:2px 0 2px 14px;margin-bottom:14px;
+}
+.regla .que{font-size:13px;font-weight:600;margin:0 0 3px;color:var(--tinta)}
+.regla .detalle{font-size:12.5px;color:var(--tinta-2);margin:0;line-height:1.5}
+.regla.aviso{border-left-color:var(--ambar)}
+.regla.malo{border-left-color:var(--rojo)}
+
+.memoria{display:flex;flex-wrap:wrap;gap:7px;margin:4px 0 20px}
+.memoria .dato{
+  font-size:11.5px;border:1px solid var(--borde-vivo);border-radius:999px;
+  padding:4px 11px;color:var(--tinta-2);background:var(--carta-alta);
+}
+.memoria .dato b{color:var(--tinta);font-weight:600}
+
+.porque-sub{font-size:11.5px;color:var(--tinta-3);margin:22px 0 10px;
+  text-transform:uppercase;letter-spacing:.07em}
+
+.sello-precio{
+  display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;
+  border:1px solid var(--borde);border-radius:10px;padding:12px 14px;
+  background:var(--carta-alta);margin-bottom:16px;
+}
+.sello-precio .importe{font-family:var(--mono);font-size:15px;font-weight:700;
+  color:var(--cian)}
+.sello-precio .bloqueado{color:var(--ambar);font-weight:600;font-size:12.5px}
+.sello-precio .razon{color:var(--tinta-3);font-size:12px;flex:1;min-width:180px}
+.sello-precio.fuga{border-color:var(--rojo);background:var(--rojo-12)}
+
+.contexto{
+  font-size:12px;color:var(--tinta-2);background:var(--cian-08);
+  border:1px solid var(--cian-20);border-radius:8px;padding:9px 12px;margin-bottom:16px;
+}
+.contexto code{font-family:var(--mono);color:var(--cian)}
+
+@media (max-width:640px){
+  .movil{height:500px}
+  .porque-panel{max-height:none;padding:20px}
+  .chat-mandos{padding:18px}
+}

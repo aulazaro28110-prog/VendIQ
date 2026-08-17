@@ -8,6 +8,11 @@ salida/chroma/
 # El registro de ofertas es datos de trabajo, no código.
 salida/ofertas.json
 
+# Detalle del banco de conversaciones: se regenera con
+#   python tests/test_conversaciones.py --json salida/conversaciones.json
+salida/conversaciones.json
+salida/precios_fijados.json
+
 # Python
 __pycache__/
 *.py[cod]

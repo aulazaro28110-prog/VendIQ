@@ -50,30 +50,48 @@ def ensuciar(texto: str) -> str:
 
 
 def construir_casos(filas, semilla=7):
-    """Preguntas cuya respuesta correcta conocemos. Devuelve (categoria, pregunta, id)."""
+    """Preguntas con su respuesta correcta. Devuelve (categoria, pregunta, {ids ok}).
+
+    El esperado es un CONJUNTO, no un id. Casi siempre tiene un solo elemento, pero
+    hay preguntas que no tienen una única respuesta correcta y medirlas como si la
+    tuvieran es medir mal — ver 'datos incompletos' abajo.
+    """
     random.seed(semilla)
     muestra = random.sample(filas, 25)
     casos = []
+
+    # Índice de fichas que solo se distinguen por motor y año.
+    hermanas = {}
+    for f in filas:
+        hermanas.setdefault((f["pieza"], f["marca"], f["modelo"]), []).append(f["id"])
 
     for f in muestra:
         casos.append(("pregunta natural",
                       f"¿tenéis un {f['pieza'].lower()} para un {f['marca'].title()} "
                       f"{f['modelo']} {f['motor']} del {f['anio']}?",
-                      f"pieza-{f['id']}"))
+                      {f"pieza-{f['id']}"}))
+
+    # DATOS INCOMPLETOS: el cliente da pieza + marca + modelo, y NO da motor ni año.
+    # 487 de las 1.000 fichas comparten esos tres datos con alguna otra, así que la
+    # pregunta tiene varias respuestas igual de correctas. Antes se exigía acertar
+    # una concreta y la categoría salía al 67% — un número que no medía el buscador,
+    # medía la suerte. Se acepta cualquier ficha que encaje con lo que el cliente
+    # DIJO; distinguir más no es trabajo del buscador, es pedir la matrícula.
     for f in muestra[:15]:
         casos.append(("datos incompletos",
                       f"busco {f['pieza'].lower()} de {f['marca'].title()} {f['modelo']}",
-                      f"pieza-{f['id']}"))
+                      {f"pieza-{i}" for i in
+                       hermanas[(f["pieza"], f["marca"], f["modelo"])]}))
     for f in muestra[:15]:
         casos.append(("mensaje sucio WhatsApp",
                       ensuciar(f"tenes {f['pieza']} pa un {f['marca']} {f['modelo']} {f['anio']}"),
-                      f"pieza-{f['id']}"))
+                      {f"pieza-{f['id']}"}))
     for f in muestra[:15]:
         casos.append(("referencia OEM",
                       f"necesito la referencia {f['referencia_oem']}",
-                      f"pieza-{f['id']}"))
+                      {f"pieza-{f['id']}"}))
 
-    casos += [
+    casos += [(c, p, {e}) for c, p, e in [
         ("politica", "cuanto tiempo tarda en llegar el pedido", "politica-envio_y_plazos"),
         ("politica", "la pieza tiene garantia?", "politica-garantia"),
         ("politica", "me puedes hacer un descuento?", "politica-precios_y_descuentos"),
@@ -85,7 +103,7 @@ def construir_casos(filas, semilla=7):
         ("politica", "puedo pasar a recogerla a la tienda?", "politica-envio_y_plazos"),
         ("politica", "que pasa si la pieza sale defectuosa", "politica-garantia"),
         ("politica", "el precio lleva iva incluido?", "politica-precios_y_descuentos"),
-    ]
+    ]]
     return casos
 
 
@@ -124,8 +142,8 @@ def evaluar(buscador, casos, fuera):
         # sin umbral: aquí medimos si SABE ordenar, no si sabe callarse
         hits = buscador.buscar(pregunta, k=3, aplicar_umbral=False)
         ranking = [item["id"] for _, item in hits]
-        acierto1 = bool(ranking) and ranking[0] == esperado
-        acierto3 = esperado in ranking
+        acierto1 = bool(ranking) and ranking[0] in esperado
+        acierto3 = bool(esperado & set(ranking))
 
         d = por_categoria.setdefault(categoria, {"n": 0, "r1": 0, "r3": 0})
         for clave, valor in (("n", 1), ("r1", acierto1), ("r3", acierto3)):
@@ -190,7 +208,7 @@ def main():
         print(f"Preguntas sin acierto en el top 3: {len(fallos)}")
         for categoria, pregunta, esperado, obtenido in fallos[:8]:
             print(f"  [{categoria}] {pregunta}")
-            print(f"     esperaba {esperado}, primero fue {obtenido}")
+            print(f"     esperaba {' o '.join(sorted(esperado))}, primero fue {obtenido}")
 
     # Estos mínimos son los que ya se han alcanzado: si un cambio futuro los baja,
     # el test falla y te enteras antes de desplegar.

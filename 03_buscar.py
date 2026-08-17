@@ -82,6 +82,28 @@ PESO_SEMANTICO = 0.40
 UMBRAL_PIEZA = 0.50       # sobre la puntuación combinada
 UMBRAL_POLITICA = 0.30    # sobre la similitud de significado
 
+# Peso discriminante mínimo para fiarse de la señal léxica. Equivale a una palabra
+# que aparezca en menos de un tercio de las fichas: por debajo de eso, la pregunta
+# está hecha de palabras que comparte medio catálogo y la coincidencia no significa
+# nada. Ver _cobertura().
+INFORMACION_MINIMA = 1.0
+
+# Los dos ejes de un coche. Un piloto trasero IZQUIERDO y uno DERECHO comparten
+# casi todas las palabras, así que para el buscador se parecen muchísimo — y para
+# el cliente son piezas distintas que no valen la una por la otra. Esta tabla es
+# la única lista escrita a mano del sistema, y es corta a propósito: se limita a
+# decir qué palabras se excluyen entre sí.
+LADOS = {"izquierdo": "izq", "izquierda": "izq", "izq": "izq",
+         "derecho": "der", "derecha": "der", "dcho": "der", "dcha": "der",
+         "delantero": "del", "delantera": "del", "delant": "del",
+         "trasero": "tra", "trasera": "tra", "tras": "tra"}
+OPUESTO = {"izq": "der", "der": "izq", "del": "tra", "tra": "del"}
+
+
+def _lados(tokens) -> set:
+    """Qué lados nombra un texto ya normalizado: {'tra', 'izq'}, o vacío."""
+    return {LADOS[t] for t in tokens if t in LADOS}
+
 # ---------------------------------------------------------------------------
 # REGLA DE PRECIO (la más delicada del sistema)
 # ---------------------------------------------------------------------------
@@ -100,15 +122,38 @@ UMBRAL_PRECIO = 0.65      # más alto que UMBRAL_PIEZA a propósito
 DISPONIBILIDAD_VALIDA = {"en stock", "bajo pedido 24-48h"}
 
 # Palabras de relleno: aparecen en cualquier mensaje y no ayudan a distinguir nada.
+#
+# ES LA ÚNICA LISTA A MANO QUE QUEDA, y hace falta explicar por qué. Todo lo demás
+# (marcas, modelos, tipos de pieza) se aprende del catálogo, pero estas palabras no
+# están en ningún catálogo: son la forma de hablar del cliente. Y no filtrarlas
+# cuesta ventas de verdad, porque una palabra que no aparece en ninguna ficha se
+# lleva el peso máximo. "colector, la que te digo siempre" perdía contra sí misma:
+# 'digo' y 'siempre' pesaban más que 'colector' y la pieza correcta se quedaba en
+# 0,31 sobre un mínimo de 0,50.
+#
+# En un despliegue real esta lista NO se escribe: se saca de los mensajes que ya
+# tiene la empresa en WhatsApp, quedándose con las palabras más frecuentes que no
+# son de catálogo. Aquí está a mano porque no hay ese registro.
 PALABRAS_VACIAS = {
+    # gramática
     "que", "de", "del", "la", "el", "los", "las", "un", "una", "unos", "unas",
     "para", "por", "con", "sin", "y", "o", "a", "al", "en", "es", "son", "me",
     "te", "se", "lo", "mi", "tu", "su", "hay", "tiene", "tienen", "teneis",
-    "tenes", "tienes", "tengo", "busco", "buscando", "necesito", "quiero",
-    "queria", "quisiera", "hola", "buenas", "gracias", "porfa", "favor",
-    "pieza", "piezas", "coche", "vehiculo", "seria", "sera", "cuanto", "cuanta",
-    "como", "cual", "cuales", "donde", "cuando", "si", "no", "mas", "menos",
-    "este", "esta", "esa", "ese", "vale", "puedo", "puedes", "podeis",
+    "tenes", "tienes", "tengo", "este", "esta", "esa", "ese", "esos", "esas",
+    "otro", "otra", "mismo", "misma", "algo", "nada", "cosa", "aqui", "alli",
+    # peticiones
+    "busco", "buscando", "necesito", "quiero", "queria", "quisiera",
+    "puedo", "puedes", "podeis", "pasame", "dime", "mandame", "ponme",
+    # cortesía y muletillas de WhatsApp
+    "hola", "buenas", "gracias", "porfa", "favor", "oye", "mira", "pues",
+    "bueno", "venga", "vale", "digo", "dices", "sabes", "creo", "siempre",
+    "luego", "entonces", "tambien", "ademas", "solo", "ya", "aun", "todavia",
+    "muy", "tan", "poco", "mucho", "bien", "mal", "ahora", "hoy", "manana",
+    # vocabulario que está en TODAS las fichas y por tanto no distingue nada
+    "pieza", "piezas", "coche", "vehiculo", "referencia", "precio", "garantia",
+    # interrogativos
+    "seria", "sera", "cuanto", "cuanta", "como", "cual", "cuales", "donde",
+    "cuando", "si", "no", "mas", "menos",
 }
 
 
@@ -153,21 +198,31 @@ class Buscador:
         """
         self.marca_de = []      # por chunk: marca canónica, o None si no es una pieza
         self.tipo_pieza_de = []  # por chunk: palabra que nombra la pieza ('alternador'...)
+        self.lados_de = []       # por chunk: {'izq'} / {'tra','izq'} / set()
+        self.modelo_de = []      # por chunk: modelo canónico ('C4', 'Serie 3'...)
         self.marcas_conocidas = {}   # 'bmw' -> 'BMW',  'mercedes' -> 'MERCEDES-BENZ'
+        self.modelos_conocidos = {}  # 'c4' -> {'C4'},  'serie' -> {'Serie 3','Serie 5'}
         self.tipos_conocidos = set()
+        self.por_codigo = {}     # '69328' / '7891vt72e' -> posición en el índice
 
         for item in self.items:
             meta = item.get("meta") or {}
             marca = meta.get("marca")
             pieza = meta.get("pieza")
+            modelo = meta.get("modelo")
             if item["tipo"] != "inventario" or not marca or not pieza:
                 self.marca_de.append(None)
+                self.modelo_de.append(None)
                 self.tipo_pieza_de.append(None)
+                self.lados_de.append(set())
                 continue
 
             for token in normalizar(marca):
                 if len(token) > 1:
                     self.marcas_conocidas[token] = marca
+            for token in normalizar(modelo or ""):
+                if len(token) > 1:
+                    self.modelos_conocidos.setdefault(token, set()).add(modelo)
 
             # La palabra que nombra la pieza es la primera con contenido:
             # 'Bomba de agua' -> 'bomba', 'Puerta delantera derecha' -> 'puerta'.
@@ -180,7 +235,16 @@ class Buscador:
                 self.tipos_conocidos.add(cabeza)
 
             self.marca_de.append(marca)
+            self.modelo_de.append(modelo)
             self.tipo_pieza_de.append(cabeza)
+            self.lados_de.append(_lados(tokens))
+
+            # Índice de códigos exactos. Un código no se parece a otro: o coincide
+            # o no. Ver el atajo en buscar().
+            for codigo in (meta.get("id"), meta.get("referencia_oem")):
+                for token in normalizar(str(codigo or "")):
+                    if len(token) >= 4:
+                        self.por_codigo[token] = len(self.marca_de) - 1
 
     def _descartar_incompatibles(self, pregunta: str) -> np.ndarray:
         """Máscara: qué fichas siguen siendo candidatas después de leer la pregunta.
@@ -194,13 +258,35 @@ class Buscador:
         filtra nada y la búsqueda funciona como antes: nunca deja al cliente sin respuesta
         por no usar el vocabulario exacto de la empresa.
         """
-        palabras = set(normalizar(pregunta))
+        secuencia = normalizar(pregunta)
+        palabras = set(secuencia)
         marcas_pedidas = {self.marcas_conocidas[p] for p in palabras
                           if p in self.marcas_conocidas}
         tipos_pedidos = palabras & self.tipos_conocidos
 
+        # EL MODELO. Pedir un Citroën C4 y recibir un C3 es el mismo error que pedir
+        # un catalizador y recibir una bomba de agua, y estaba sin cubrir: el filtro
+        # miraba la marca pero no el modelo. Un token puede apuntar a varios modelos
+        # ('serie' está en Serie 3 y en Serie 5), así que se admite la unión: se
+        # filtra lo que seguro que no es, nunca lo que podría ser.
+        modelos_pedidos = set()
+        for p in palabras:
+            modelos_pedidos |= self.modelos_conocidos.get(p, set())
+
+        # EL NÚCLEO: cuando el cliente nombra dos tipos de pieza en el mismo mensaje,
+        # manda el PRIMERO. En español el núcleo del sintagma va delante y lo que
+        # sigue lo complementa: "centralita motor" es una centralita, no un motor;
+        # "cerradura puerta delantera" es una cerradura, no una puerta.
+        # Sin esta regla el buscador contestaba con un MOTOR DE ARRANQUE a quien
+        # pedía una CENTRALITA MOTOR, porque la palabra 'motor' está en los dos.
+        nucleo = next((p for p in secuencia if p in self.tipos_conocidos), None)
+
+        # EL LADO: si el cliente dice izquierdo y la ficha dice derecho, no es la
+        # pieza aunque todo lo demás coincida. Esto también salía de un fallo real.
+        lados_pedidos = _lados(secuencia)
+
         candidatas = np.ones(len(self.items), dtype=bool)
-        if not marcas_pedidas and not tipos_pedidos:
+        if not marcas_pedidas and not tipos_pedidos and not modelos_pedidos:
             return candidatas
 
         for i, item in enumerate(self.items):
@@ -208,7 +294,13 @@ class Buscador:
                 continue  # las políticas siempre siguen disponibles
             if marcas_pedidas and self.marca_de[i] not in marcas_pedidas:
                 candidatas[i] = False
+            elif modelos_pedidos and self.modelo_de[i] not in modelos_pedidos:
+                candidatas[i] = False
+            elif nucleo and self.tipo_pieza_de[i] != nucleo:
+                candidatas[i] = False
             elif tipos_pedidos and self.tipo_pieza_de[i] not in tipos_pedidos:
+                candidatas[i] = False
+            elif any(OPUESTO[l] in self.lados_de[i] for l in lados_pedidos):
                 candidatas[i] = False
         return candidatas
 
@@ -225,18 +317,58 @@ class Buscador:
             return self._idf_max
         return math.log(1 + (self._n - n + 0.5) / (n + 0.5))
 
-    def _cobertura(self, pregunta: str) -> np.ndarray:
-        """Proporción (0..1) del peso de la pregunta que cubre cada chunk."""
+    def _cobertura(self, pregunta: str):
+        """Cobertura (0..1) de cada chunk, y cuánta información traía la pregunta.
+
+        La cobertura sola engaña cuando TODAS las palabras del cliente aparecen en
+        TODAS las fichas. "¿El precio lleva IVA incluido?" es el caso puro: 'precio'
+        e 'iva' están en las 1.000 fichas del catálogo, así que las 1.000 cubren el
+        100% de la pregunta y todas puntúan altísimo — y la respuesta correcta no es
+        ninguna pieza, es la política de precios, que se quedaba fuera.
+
+        Por eso se devuelve también la CONFIANZA LÉXICA: cuánto peso discriminante
+        traía la pregunta en total. Si es casi cero, la señal léxica no dice nada y
+        hay que fiarse del significado. No es un parche para dos preguntas: es que
+        una pregunta hecha solo de palabras que todos comparten no aporta evidencia.
+        """
+        # Se descarta la CHÁCHARA: palabras cortas que no aparecen en ninguna ficha.
+        # Es el fallo que más caro salía en los mensajes reales de WhatsApp. En
+        # "teneis intercooler pa un peugeot 208 1.6 hdi", el "pa" no está en ninguna
+        # ficha, así que se lleva el peso máximo (7,6, más que 'intercooler') y como
+        # nadie puede cubrirlo hunde la puntuación de 0,82 a 0,60 — por debajo del
+        # mínimo para dar precio. El cliente escribía bien y se quedaba sin respuesta
+        # por una preposición mal escrita.
+        #
+        # Solo se descartan las CORTAS. Una palabra larga desconocida sí es
+        # información ('ferrari' tiene que seguir hundiendo la puntuación de un
+        # alternador de BMW: es justo lo que permite decir "esa no la tengo").
         palabras = [p for p in normalizar(pregunta)
-                    if p not in PALABRAS_VACIAS and len(p) > 1]
+                    if p not in PALABRAS_VACIAS and len(p) > 1
+                    and not (len(p) <= 3 and self._apariciones.get(p, 0) == 0)]
         if not palabras:
-            return np.zeros(len(self.items))
-        pesos = {p: self._peso(p) for p in set(palabras)}
+            return np.zeros(len(self.items)), 0.0
+
+        # De las palabras que NO están en ninguna ficha solo cuenta UNA.
+        # El motivo: "aquí hay algo que no tenemos" es un hecho binario. Repetirlo
+        # no lo hace más cierto, y sí hunde la puntuación de forma acumulativa.
+        # Con la regla vieja, "colector, la que te digo siempre" perdía contra su
+        # propia charla: 'digo' y 'siempre' se llevaban 15 puntos de peso entre las
+        # dos —más que 'colector', 'peugeot' y '208' juntas— y la pieza correcta se
+        # quedaba en 0,46, por debajo del umbral. Así el cliente puede hablar como
+        # habla, y una marca que no vendemos ('ferrari') sigue hundiendo la
+        # puntuación igual que antes, porque con una sola vez basta.
+        desconocidas = sorted((p for p in set(palabras)
+                               if self._apariciones.get(p, 0) == 0),
+                              key=len, reverse=True)
+        ignoradas = set(desconocidas[1:])
+        pesos = {p: self._peso(p) for p in set(palabras) if p not in ignoradas}
         total = sum(pesos.values())
-        return np.array([
+        confianza = min(1.0, total / INFORMACION_MINIMA)
+        cobertura = np.array([
             sum(w for p, w in pesos.items() if p in encontradas) / total
             for encontradas in self.palabras_por_chunk
         ])
+        return cobertura, confianza
 
     def _significado(self, pregunta: str) -> np.ndarray:
         """Similitud coseno (0..1) entre la pregunta y cada chunk."""
@@ -252,19 +384,42 @@ class Buscador:
         if not pregunta or not pregunta.strip():
             return []
 
-        cobertura = self._cobertura(pregunta)
+        cobertura, confianza_lexica = self._cobertura(pregunta)
         significado = self._significado(pregunta)
-        puntuaciones = PESO_LEXICO * cobertura + PESO_SEMANTICO * significado
+        puntuaciones = (PESO_LEXICO * confianza_lexica * cobertura
+                        + PESO_SEMANTICO * significado)
 
         # Las fichas incompatibles con lo que ha pedido el cliente quedan fuera de juego.
         puntuaciones = np.where(self._descartar_incompatibles(pregunta), puntuaciones, -1.0)
 
+        # ATAJO POR CÓDIGO EXACTO. Si el cliente da el nº de stock de la web o la
+        # referencia OEM, la pieza está identificada y no hay nada que puntuar: un
+        # código no se parece a otro, o coincide o no.
+        # Hacía falta porque el resto del mensaje lo estropeaba: "me interesa la
+        # pieza 69328 que tenéis en la web" se quedaba en 0,25 —por debajo del
+        # umbral— cuando el 69328 identificaba la ficha sin ninguna duda. Las
+        # palabras de alrededor no pueden tapar un dato exacto.
+        for token in set(normalizar(pregunta)):
+            posicion = self.por_codigo.get(token)
+            if posicion is not None:
+                puntuaciones[posicion] = 1.0
+
+        # El umbral se aplica ANTES de cortar por k, y no después. Parece un detalle
+        # y no lo es: el umbral de una política es absoluto (mira el significado, no
+        # la posición), así que una política puede merecer respuesta y aun así quedar
+        # fuera del top-k por culpa del ruido de las 1.000 fichas de inventario.
+        # Pasaba de verdad: "¿y de garantía qué me das?" no encontraba la política de
+        # garantía porque tres piezas cualesquiera puntuaban por delante y se comían
+        # los tres huecos. Filtrar primero y recortar después lo arregla, y no cambia
+        # nada para el inventario, cuyo umbral sí depende de la puntuación.
+        orden = np.argsort(puntuaciones)[::-1]
+        if aplicar_umbral:
+            orden = [i for i in orden
+                     if self._es_fiable(self.items[i], puntuaciones[i], significado[i])]
         resultados = []
         ya_hubo_pieza = False
-        for i in np.argsort(puntuaciones)[::-1][:k]:
+        for i in orden[:k]:
             item = self.items[i]
-            if aplicar_umbral and not self._es_fiable(item, puntuaciones[i], significado[i]):
-                continue
             es_mejor = item["tipo"] == "inventario" and not ya_hubo_pieza
             if item["tipo"] == "inventario":
                 ya_hubo_pieza = True
