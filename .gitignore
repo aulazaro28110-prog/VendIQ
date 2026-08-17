@@ -13,6 +13,14 @@ salida/ofertas.json
 salida/conversaciones.json
 salida/precios_fijados.json
 
+# CLAVES. Nunca al repositorio. Ver docs/CONFIGURAR_GROQ.md
+.env
+.env.*
+!.env.ejemplo
+
+# Registro de dudas: es actividad, no código. Se regenera solo.
+salida/no_resueltas.json
+
 # Python
 __pycache__/
 *.py[cod]

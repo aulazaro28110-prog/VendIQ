@@ -34,8 +34,17 @@ PUERTO = 8420
 
 
 def cargar(fichero, alias):
+    """Importa un fichero cuyo nombre empieza por un número (no vale 'import').
+
+    Se registra en sys.modules antes de ejecutarlo, que es el patrón correcto de
+    importlib: sin eso, el módulo existe pero es invisible para todo lo que lo
+    busque por su nombre, y las herramientas que resuelven la clase de un objeto
+    a su módulo fallan con un KeyError que no dice nada.
+    """
+    import sys
     spec = importlib.util.spec_from_file_location(alias, BASE / fichero)
     modulo = importlib.util.module_from_spec(spec)
+    sys.modules[alias] = modulo
     spec.loader.exec_module(modulo)
     return modulo
 
@@ -48,6 +57,9 @@ class Sistema:
         self.buscar_mod = cargar("03_buscar.py", "buscar")
         self.ofertas_mod = cargar("04_ofertas.py", "ofertas")
         self.redactor = cargar("07_redactor.py", "redactor")
+        self.conversar = cargar("08_conversar.py", "conversar")
+        self.aprender = cargar("09_aprender.py", "aprender")
+        self.config_llm = self.conversar.leer_env()
 
         print("Cargando el índice y el modelo (una sola vez)...")
         t0 = time.time()
@@ -66,6 +78,10 @@ class Sistema:
 
         self.consultas_sesion = []                 # lo que se pregunta desde el panel
         self.chats = {}                            # conversaciones abiertas del simulador
+        self.historiales = {}                      # turnos previos, para el LLM
+        print("Redacta: " + ("Groq (" + (self.config_llm.get("GROQ_MODELO")
+              or self.conversar.MODELO_POR_DEFECTO) + ")" if self.conversar.hay_llm()
+              else "redactor determinista — sin GROQ_API_KEY en .env"))
 
     # ------------------------------------------------------------- precios
     def precios_pendientes(self):
@@ -281,6 +297,34 @@ class Sistema:
                 vistos.append(canonico)
         return " ".join(vistos)
 
+    @staticmethod
+    def conversar_cifras(texto):
+        """Los importes en euros que aparecen en un texto, normalizados.
+
+        Se compara el NÚMERO, no la cadena: el modelo puede escribir "147,34 €",
+        "147.34€" o "147,34 euros" y las tres son el mismo importe. Comparar
+        cadenas dejaría pasar exactamente el caso que esto vigila.
+        """
+        import re
+        # Dos formas, y solo dos, para no confundir un importe con una matrícula
+        # (4521 KBD), un año (del 2018), un motor (1.6 TDI) ni un plazo (24-48 h):
+        #   1) decimal español de dos cifras -> 147,34  ·  2.931,61
+        #   2) cualquier número pegado a la moneda -> 150 €  ·  150 euros
+        patron = re.compile(r"\d[\d.]*,\d{2}|\d[\d.,]*\s*(?:€|eur\b|euros\b)",
+                            re.IGNORECASE)
+        cifras = []
+        for bruto in patron.findall(texto or ""):
+            limpio = re.sub(r"[^\d.,]", "", bruto)
+            if "," in limpio and "." in limpio:      # 2.931,61 -> 2931.61
+                limpio = limpio.replace(".", "").replace(",", ".")
+            elif "," in limpio:                       # 147,34   -> 147.34
+                limpio = limpio.replace(",", ".")
+            try:
+                cifras.append(round(float(limpio), 2))
+            except ValueError:
+                continue
+        return cifras
+
     def chatear(self, sesion, mensaje, perfil="nuevo", nombre="", reiniciar=False):
         """Un turno de conversación de WhatsApp: busca, redacta y recuerda.
 
@@ -322,6 +366,45 @@ class Sistema:
         busqueda["contexto"] = contexto
         respuesta = self.redactor.redactar(busqueda, conv)
 
+        # ------------------------------------------------- las tres acciones
+        # RESPONDER / PREGUNTAR / ESCALAR. La elige el código a partir de lo que
+        # ya han decidido la búsqueda y el redactor; el LLM no la elige.
+        # Para los botones se busca MÁS ANCHO que para responder. Con k=4 salen
+        # cuatro faros del mismo lado y años distintos, y el bot pregunta por el
+        # año cuando lo que falta es el lado. Con k=10 aparecen las hermanas de
+        # verdad y la pregunta es la que desbloquea la venta.
+        candidatas = {"resultados": [
+            {"tipo": it["tipo"], "meta": it.get("meta") or {},
+             "precio_cliente": it.get("precio_cliente")}
+            for _, it in self.buscador.buscar(texto_busqueda, k=10)]}
+        opciones = self.conversar.opciones_desambiguacion(candidatas)
+        accion, porque_accion = self.conversar.elegir_accion(
+            busqueda, respuesta, opciones)
+        respuesta["accion"] = accion
+        respuesta["porque_accion"] = porque_accion
+        respuesta["opciones"] = opciones if accion == "PREGUNTAR" else None
+
+        historial = self.historiales.setdefault(sesion, [])
+
+        # El LLM reescribe el mismo contenido con mejor forma. Si no hay clave o
+        # falla, se queda el borrador determinista y la conversación sigue.
+        lineas_llm, nota = self.conversar.redactar_con_llm(
+            busqueda, respuesta, accion, respuesta["opciones"], historial,
+            self.config_llm)
+        respuesta["redactor"] = nota
+        if lineas_llm:
+            respuesta["borrador"] = respuesta["lineas"]
+            respuesta["lineas"] = lineas_llm
+            respuesta["mensaje"] = "\n".join(lineas_llm)
+
+        historial.append({"cliente": mensaje, "bot": respuesta["mensaje"]})
+        del historial[:-12]        # el historial largo se corta, no crece sin fin
+
+        # Lo que no supo contestar se guarda para que lo conteste una persona.
+        reglas = " · ".join(r["regla"] for r in respuesta["reglas"])
+        if "no se reconoce la consulta" in reglas or "no tiene una respuesta" in reglas:
+            self.aprender.anotar(mensaje, porque_accion, sesion, busqueda["decision"])
+
         # Comprobación en caliente del guardarraíl: el redactor solo puede publicar
         # un importe que el buscador haya marcado publicable. Si alguna vez no
         # cuadrara, el panel lo enseña en rojo en lugar de disimularlo.
@@ -338,6 +421,26 @@ class Sistema:
             respuesta["precio_dado"] is None
             or respuesta["precio_dado"] in autorizados
             or respuesta["precio_dado"] in conv.precios_autorizados)
+
+        # AUDITORÍA DEL TEXTO FINAL. Lo anterior comprueba lo que el redactor
+        # determinista DECIDIÓ decir. Cuando redacta el LLM hay que comprobar lo
+        # que de verdad SALE, porque un modelo puede escribir una cifra que nadie
+        # le ha dado. Se leen todos los importes del mensaje y se contrastan con
+        # los autorizados; si aparece uno que no lo está, se descarta la redacción
+        # del modelo entera y sale el borrador, que sí es demostrable.
+        cifras = self.conversar_cifras(respuesta["mensaje"])
+        permitidas = {self.conversar_cifras(p) and self.conversar_cifras(p)[0]
+                      for p in (autorizados | conv.precios_autorizados) if p}
+        intrusas = [c for c in cifras if c not in permitidas]
+        if intrusas and respuesta.get("borrador"):
+            respuesta["lineas"] = respuesta["borrador"]
+            respuesta["mensaje"] = "\n".join(respuesta["borrador"])
+            respuesta["redactor"] = (f"descartada la redacción del modelo: escribió "
+                                     f"{intrusas[0]} € y ese importe no está "
+                                     f"autorizado")
+            respuesta["llm_descartado"] = True
+        elif intrusas:
+            respuesta["precio_autorizado"] = False
 
         # Si se ha localizado una pieza, su coche es mejor contexto que lo que el
         # cliente escribió: viene con modelo y motor exactos.
@@ -484,6 +587,9 @@ class Handler(BaseHTTPRequestHandler):
             return self._json({"pendientes": SISTEMA.precios_pendientes()})
         if ruta == "/api/guiones":
             return self._json({"guiones": SISTEMA.guiones()})
+        if ruta == "/api/no-resueltas":
+            return self._json({"pendientes": SISTEMA.aprender.leer_registro(),
+                               "redactor": SISTEMA.conversar.hay_llm()})
 
         fichero = "index.html" if ruta == "/" else ruta.lstrip("/")
         destino = (WEB / fichero).resolve()
@@ -502,9 +608,11 @@ class Handler(BaseHTTPRequestHandler):
         ruta = urlparse(self.path).path
         largo = int(self.headers.get("Content-Length", 0))
         try:
-            cuerpo = json.loads(self.rfile.read(largo) or b"{}")
-        except json.JSONDecodeError:
-            return self._json({"error": "JSON no válido"}, 400)
+            # utf-8 explícito: si el cliente manda otra codificación es un error
+            # suyo y toca un 400, no una excepción que ensucie la consola.
+            cuerpo = json.loads((self.rfile.read(largo) or b"{}").decode("utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError) as e:
+            return self._json({"error": f"cuerpo no válido ({e})"}, 400)
 
         try:
             if ruta == "/api/consultar":
@@ -522,6 +630,16 @@ class Handler(BaseHTTPRequestHandler):
                     perfil=cuerpo.get("perfil") or "nuevo",
                     nombre=cuerpo.get("nombre") or "",
                     reiniciar=bool(cuerpo.get("reiniciar"))))
+
+            if ruta == "/api/aprender":
+                # La respuesta la escribe una PERSONA. No hay ninguna ruta en el
+                # panel que genere el texto sola, y es la regla del proyecto.
+                texto = (cuerpo.get("respuesta") or "").strip()
+                if not texto:
+                    return self._json({"error": "escribe la respuesta"}, 400)
+                return self._json(SISTEMA.aprender.aprender(
+                    cuerpo["n"], texto, cuerpo.get("quien") or "Álvaro",
+                    buscador=SISTEMA.buscador))
 
             if ruta == "/api/oferta":
                 return self._json(SISTEMA.ofertar(cuerpo["id_pieza"],

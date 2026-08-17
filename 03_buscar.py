@@ -80,7 +80,10 @@ PESO_SEMANTICO = 0.40
 # Ambos números están calibrados midiendo preguntas contra piezas que SÍ están en
 # catálogo y contra piezas que NO están (ver tests/test_busqueda.py).
 UMBRAL_PIEZA = 0.50       # sobre la puntuación combinada
-UMBRAL_POLITICA = 0.30    # sobre la similitud de significado
+# 0.34 y no 0.30: el barrido de --calibrar dice que hasta 0.34 se siguen
+# encontrando el 100% de las políticas del banco, así que subirlo es gratis y
+# deja fuera preguntas que solo se parecían de lejos.
+UMBRAL_POLITICA = 0.34    # sobre la similitud de significado
 
 # Peso discriminante mínimo para fiarse de la señal léxica. Equivale a una palabra
 # que aparezca en menos de un tercio de las fichas: por debajo de eso, la pregunta
