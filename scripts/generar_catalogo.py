@@ -38,8 +38,12 @@ SALIDA = BASE / "datos" / "inventario_sintetico.csv"
 # (mínimo, máximo) en euros para un utilitario de gama media y edad media.
 # El clamp final usa estos mismos límites ampliados por los factores.
 RANGOS = {
-    "Motor completo":                 (650, 4000),
-    "Caja de cambios":                (170, 1150),
+    # El tope de la casa son 5.000 € (un motor de gama alta y reciente). Como los
+    # factores multiplican hasta 2,2 veces (premium + coche grande + año nuevo),
+    # el máximo de la franja base tiene que ser 5.000/2,2 ≈ 2.300 para que el
+    # catálogo entero se quede dentro de esa referencia.
+    "Motor completo":                 (650, 2300),
+    "Caja de cambios":                (170,  900),
     "Turbo":                          (150,  620),
     "Catalizador":                    (110,  480),
     "Centralita motor":               (100,  420),
@@ -204,16 +208,20 @@ def generar(n: int, semilla: int = 2026) -> list:
             continue
         vistas.add(clave)
 
+        # Los factores mueven el RANGO ENTERO, no el precio ya sorteado.
+        #
+        # Antes se sorteaba dentro del rango base y luego se recortaba a unos
+        # topes fijos. Con 1.000 piezas colaba; con 5.000 se veía el truco: 17
+        # piezas clavadas a 21,25 € y 12 a 25,50 €, que son exactamente el tope
+        # inferior. Un desguace no tiene diecisiete piezas al mismo céntimo.
+        # Moviendo el rango, un recambio viejo de un utilitario cae abajo sin
+        # amontonarse, y no hace falta recortar nada.
         minimo, maximo = RANGOS[pieza]
-        base = random.uniform(minimo, maximo)
-        precio = (base
-                  * FACTOR_MARCA.get(marca, 1.0)
+        factor = (FACTOR_MARCA.get(marca, 1.0)
                   * factor_segmento(pieza, modelo)
-                  * factor_antiguedad(anio)
-                  * random.uniform(0.88, 1.12))
-        # Recorte: ningún factor puede sacar la pieza de su franja razonable.
-        precio = max(minimo * 0.85, min(precio, maximo * 1.45))
-        precio = round(precio, 2)
+                  * factor_antiguedad(anio))
+        precio = random.uniform(minimo * factor, maximo * factor)
+        precio = round(max(12.0, precio * random.uniform(0.94, 1.06)), 2)
 
         id_actual += random.randint(1, 3)      # los ids del almacén no son correlativos exactos
         filas.append({

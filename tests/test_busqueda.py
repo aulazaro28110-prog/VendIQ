@@ -108,28 +108,65 @@ def construir_casos(filas, semilla=7):
 
 
 def construir_fuera_de_catalogo(filas, semilla=11, n=40):
-    """Piezas que NO existen: combinaciones pieza+marca que no están en el inventario.
+    """Piezas que NO existen. Es el test del guardarraíl.
 
-    Es el test del guardarraíl. Se generan cruzando piezas y marcas que sí existen por
-    separado pero nunca juntas — es el caso difícil de verdad, mucho más que preguntar
-    por un Ferrari: el sistema tiene fichas de esa marca Y fichas de esa pieza.
+    LA AUSENCIA CAMBIA DE SITIO AL CRECER EL CATÁLOGO
+    -------------------------------------------------
+    La primera versión cruzaba pieza + MARCA: "¿tenéis un turbo de Kia?" cuando el
+    catálogo tenía turbos y tenía Kias, pero ningún turbo de Kia. Con 1.000 piezas
+    funcionaba. Con 5.000 dejó de funcionar de golpe y el test reventó con una
+    división por cero, porque **ya no queda ni una combinación pieza+marca libre**:
+    37 tipos por 15 marcas son 555 casillas y el catálogo las llena todas.
+
+    No era un fallo del test, era el test quedándose obsoleto por el tamaño. Con más
+    stock, al cliente ya no le falta "un turbo de Kia": le falta "un turbo de Kia
+    CEED". Así que la ausencia se genera ahora a nivel pieza+marca+modelo, y se
+    prueban además los dos casos que a esta escala son los que de verdad engañan:
+
+      - MISMO COCHE, OTRO MODELO — hay catalizador de Audi A3, se pide para el Q3.
+      - MISMA PIEZA, OTRO LADO   — hay piloto trasero derecho, se pide el izquierdo.
+
+    En los dos, la ficha equivocada comparte casi todas las palabras con la pedida.
     """
     random.seed(semilla)
-    existentes = {(f["pieza"], f["marca"]) for f in filas}
+    existentes = {(f["pieza"], f["marca"], f["modelo"]) for f in filas}
     piezas = sorted({f["pieza"] for f in filas})
-    marcas = sorted({f["marca"] for f in filas})
     modelos = {}
     for f in filas:
         modelos.setdefault(f["marca"], set()).add(f["modelo"])
+    marcas = sorted(modelos)
 
-    preguntas, intentos = [], 0
-    while len(preguntas) < n and intentos < 4000:
+    OPUESTAS = {"izquierdo": "derecho", "derecho": "izquierdo",
+                "izquierda": "derecha", "derecha": "izquierda"}
+
+    preguntas = []
+
+    # (a) mismo coche, pieza que ese modelo concreto no tiene
+    intentos = 0
+    while len(preguntas) < n // 2 and intentos < 20000:
         intentos += 1
         pieza, marca = random.choice(piezas), random.choice(marcas)
-        if (pieza, marca) in existentes:
-            continue
         modelo = random.choice(sorted(modelos[marca]))
+        if (pieza, marca, modelo) in existentes:
+            continue
         preguntas.append(f"¿tenéis un {pieza.lower()} para un {marca.title()} {modelo}?")
+
+    # (b) el lado contrario de una pieza que sí tenemos
+    lados = [f for f in filas
+             if any(p.lower() in OPUESTAS for p in f["pieza"].split())]
+    random.shuffle(lados)
+    for f in lados:
+        if len(preguntas) >= n:
+            break
+        palabra = next(p for p in f["pieza"].split() if p.lower() in OPUESTAS)
+        contraria = f["pieza"].replace(palabra, OPUESTAS[palabra.lower()])
+        if (contraria, f["marca"], f["modelo"]) in existentes:
+            continue
+        preguntas.append(f"¿tenéis un {contraria.lower()} para un "
+                         f"{f['marca'].title()} {f['modelo']}?")
+
+    if not preguntas:
+        raise SystemExit("no se pudo generar ninguna ausencia: revisa el catálogo")
     return preguntas
 
 

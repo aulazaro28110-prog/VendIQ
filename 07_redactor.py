@@ -110,7 +110,9 @@ PALABRAS_INTENCION = {
                        "mandala y te pago", "te pago cuando", "te pago al recibir",
                        "contrareembolso", "contra reembolso", "contrarreembolso",
                        "fiate de mi", "fiate", "de confianza", "pago luego",
-                       "pago despues", "me lo envias ya y"),
+                       "pago despues", "me lo envias ya y",
+                       "a cuenta", "fin de mes", "lo cuadramos", "ya te lo abono",
+                       "apuntamelo", "a deber", "cuando pueda te pago"),
     "justificante": ("justificante", "resguardo", "comprobante", "pantallazo",
                      "captura de la transferencia", "captura del pago",
                      "ya te he hecho la transferencia", "ya te he pagado",
@@ -125,7 +127,10 @@ PALABRAS_INTENCION = {
               # pregunta parezca de plazos. Contestarle con la política de envíos
               # es lo peor que se puede hacer: hay que dárselo a una persona.
               "nadie me contesta", "no me contestais", "sigo esperando",
-              "dias esperando", "días esperando", "sin noticias"),
+              "dias esperando", "días esperando", "sin noticias",
+              "cobrado dos veces", "me habeis cobrado", "cargo duplicado",
+              "es de otro modelo", "no es la que pedi", "no es lo que pedi",
+              "me habeis mandado otra", "esto no es lo que"),
     # El regateo va ANTES del cierre: "te doy la mitad y me lo llevo hoy" lleva las
     # dos cosas, y lo que hay encima de la mesa es una negociación, no una venta
     # cerrada. Darla por cerrada sería aceptar un precio que nadie ha aprobado.
@@ -133,7 +138,15 @@ PALABRAS_INTENCION = {
                 "último precio", "me lo dejas", "me la dejas", "te doy", "te ofrezco",
                 "que menos", "se puede bajar", "puedes bajar", "bajar algo",
                 "hacemos precio", "mejor precio", "muy caro", "es caro", "carisimo",
-                "la mitad"),
+                "la mitad",
+                # Todas estas salieron del banco de 200: el cliente regatea sin
+                # decir nunca la palabra "descuento". Añadir sinónimos uno a uno no
+                # escala, pero estas son las formas que de verdad se usan.
+                "quitame el iva", "en efectivo", "en negro",
+                "me compro uno nuevo", "por ese dinero", "algo tendras que hacerme",
+                "algo me haras", "redondea", "cerramos en", "te lo pago en mano",
+                "esta por las nubes", "se te ha ido", "no me cuadra el precio",
+                "ajustame", "afinar el precio", "ultima oferta", "mi ultima"),
     "cierre": ("me lo quedo", "me la quedo", "lo quiero", "la quiero", "me lo llevo",
                "me la llevo", "apartamelo", "apartamela", "resérvamelo", "reservamelo",
                "reservamela", "adelante", "tramitalo", "mandamelo", "mandamela",
@@ -152,10 +165,15 @@ PALABRAS_INTENCION = {
     # encontrarlas: la respuesta está en la conversación, no en el índice. Sin
     # estas cuatro, todas caían en la rama de "no te he entendido" y el bot
     # contestaba lo mismo cinco veces seguidas.
+    # El kilometraje va aparte del estado a propósito: el catálogo NO lo guarda,
+    # y contestar "está comprobada" a "¿cuántos km tiene?" es esquivar la pregunta.
+    # Un profesional nota la esquiva en el primer mensaje.
+    "kilometros": ("cuantos km", "kilometros", "kilometraje", "que km tiene",
+                   "km lleva", "cuanto ha rodado"),
     "estado": ("esta comprobada", "esta comprobado", "está comprobad", "comprobada",
                "comprobado", "funciona bien", "en que estado", "que tal esta",
-               "es original", "cuantos km", "kilometros", "la habeis probado",
-               "esta probada", "va bien"),
+               "es original", "la habeis probado", "esta probada", "va bien",
+               "esta bien la pieza", "seguro que funciona"),
     "precio otra vez": ("cuanto me costaria", "cuanto cuesta", "cuanto vale",
                         "que precio", "mandame el precio", "pasame el precio",
                         "dime el precio", "cuanto seria", "cuanto me dices",
@@ -193,7 +211,9 @@ def detectar_matricula(texto: str):
 # quiere saber la política de garantía antes de comprar. Tratarlo como reclamación
 # y escalarlo pierde la venta y le hace pensar que algo va mal.
 HIPOTETICO = ("que pasa si", "y si ", "en caso de", "si sale", "si me sale",
-              "si no me", "si viniera", "si llegara", "que pasaria")
+              "si no me", "si viniera", "si llegara", "que pasaria",
+              "si me equivoco", "por si acaso", "en el caso de que",
+              "puedo devolverla", "puedo devolverlo", "se puede devolver")
 
 
 def detectar_intencion(mensaje: str) -> str:
@@ -300,6 +320,9 @@ class Conversacion:
         # Coche del que se está hablando. Lo rellena el panel al reconocerlo, y sirve
         # para que "la puerta, la de siempre" siga encontrando la pieza correcta.
         self.vehiculo = None
+        # Lo último que pidió el cliente, para cuando cambie de coche y no repita
+        # la pieza ("y para un Clase A?").
+        self.pieza_pedida = None
 
     @property
     def conocido(self):
@@ -441,7 +464,8 @@ def _sin_pieza(conv, reglas):
     return lineas
 
 
-SEGUIMIENTO = ("estado", "precio otra vez", "compatibilidad", "alternativa")
+SEGUIMIENTO = ("estado", "kilometros", "precio otra vez", "compatibilidad",
+               "alternativa")
 
 
 def _seguimiento(intencion, conv, reglas, salida):
@@ -450,9 +474,26 @@ def _seguimiento(intencion, conv, reglas, salida):
     g = _genero(meta.get("pieza", ""))
     nombre = meta.get("pieza", "la pieza").lower()
 
+    if intencion == "kilometros":
+        # El catálogo no guarda kilometraje. Decirlo es mejor que contestar otra
+        # cosa: el cliente ha preguntado algo concreto y se da cuenta de la esquiva.
+        reglas.append(("dice lo que NO sabe",
+                       "el kilometraje no está en la ficha: no se inventa ni se "
+                       "responde con otro dato"))
+        return conv.variar("km", [
+            [f"El kilometraje exacto no lo tengo apuntado en la ficha.",
+             f"Si te hace falta el dato, lo miro en el coche y te digo."],
+            ["Eso tendría que mirarlo físicamente, no me consta en el sistema.",
+             "¿Te lo compruebo?"],
+        ])
+
     if intencion == "estado":
         estado = _estado(meta) or "en buen estado"
-        lineas = [f"{_art(g).capitalize()} {nombre} está {estado}."]
+        lineas = [conv.variar("estado", [
+            f"{_art(g).capitalize()} {nombre} está {estado}.",
+            f"Sí, {_art(g)} {nombre} está {estado}, sin sorpresas.",
+            f"Te lo confirmo: {estado}.",
+        ])]
         if "desmontad" in estado:
             lineas[-1] += " Sale de un coche que entró hace poco y va de 10."
         if not conv.garantia_dicha:
@@ -779,8 +820,12 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
             reglas.append(("memoria de conversación",
                            "ya tiene la matrícula: pide la pieza, no repite el dato"))
         else:
-            lineas.append("Pásame la matrícula del coche y qué pieza buscas, y te "
-                          "digo si la tengo.")
+            lineas += conversacion.variar("pide_datos", [
+                ["Pásame la matrícula del coche y qué pieza buscas, y te digo si "
+                 "la tengo."],
+                ["Cuéntame qué coche es y qué necesitas y lo miro."],
+                ["Dime la pieza y la matrícula y te lo confirmo en un momento."],
+            ])
             conversacion.datos_pedidos.add("matricula")
             reglas.append(("no se reconoce la consulta",
                            "no hay pieza ni política clara: se piden los datos "

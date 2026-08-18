@@ -1,7 +1,7 @@
 """
 tests/test_conversaciones.py
 ============================
-Banco de 100 CONVERSACIONES. No mide la búsqueda: mide el bot entero.
+Banco de 200 CONVERSACIONES. No mide la búsqueda: mide el bot entero.
 
 Diferencia con tests/test_busqueda.py: allí se comprueba si encuentra la ficha
 correcta. Aquí se comprueba lo que de verdad le llega al cliente — el mensaje
@@ -56,7 +56,7 @@ def ensuciar(texto):
 
 
 # ---------------------------------------------------------------------------
-# LAS 100 CONVERSACIONES
+# LAS 200 CONVERSACIONES
 # ---------------------------------------------------------------------------
 # Cada caso: (categoria, perfil, [mensajes...], desenlace_esperado)
 # El desenlace se juzga sobre el ÚLTIMO mensaje de la conversación.
@@ -79,39 +79,47 @@ def casos_de_catalogo(filas, buscar_mod):
                 and f["disponibilidad"].lower() in ("en stock", "bajo pedido 24-48h"))
 
     vendibles = [f for f in filas if publicable(f)]
-    muestra = rnd.sample(vendibles, 63)
+    muestra = rnd.sample(vendibles, 130)
+    cursor = [0]
 
-    # --- 15 · pide la pieza exacta y espera precio -------------------------
-    for f in muestra[:15]:
+    def tomar(n):
+        """Saca n fichas del muestreo. Un cursor y no rebanadas escritas a mano:
+        cambiar el tamaño de una categoría no debe descuadrar las de abajo."""
+        i = cursor[0]
+        cursor[0] += n
+        return muestra[i:i + n]
+
+    # --- 25 · pide la pieza exacta y espera precio -------------------------
+    for f in tomar(25):
         casos.append(("precio exacto", "nuevo",
                       [f"¿tenéis {f['pieza'].lower()} para un {f['marca'].title()} "
                        f"{f['modelo']} {f['motor']}?"], "precio"))
 
-    # --- 7 · por referencia OEM -------------------------------------------
-    for f in muestra[15:22]:
+    # --- 12 · por referencia OEM ------------------------------------------
+    for f in tomar(12):
         casos.append(("referencia OEM", "nuevo",
                       [f"hola, busco la referencia {f['referencia_oem']}"], "precio"))
 
-    # --- 5 · por el número de stock de la web -----------------------------
-    for f in muestra[25:30]:
+    # --- 10 · por el número de stock de la web ----------------------------
+    for f in tomar(10):
         casos.append(("número de stock", "conocido",
                       [f"buenas, me interesa la pieza {f['id']} que tenéis en la web"],
                       "precio"))
 
-    # --- 7 · mensaje sucio de WhatsApp ------------------------------------
-    for f in muestra[30:37]:
+    # --- 15 · mensaje sucio de WhatsApp -----------------------------------
+    for f in tomar(15):
         casos.append(("mensaje sucio", "nuevo",
                       [ensuciar(f"tenéis {f['pieza']} para un {f['marca']} "
                                 f"{f['modelo']} {f['motor']}")], "precio"))
 
-    # --- 10 · datos a medias ----------------------------------------------
+    # --- 18 · datos a medias ----------------------------------------------
     # El cliente nombra la pieza por su palabra principal y nada más. Si a la pieza
     # le faltan palabras ("faro" de "Faro delantero derecho"), el bot NO puede dar
     # precio: tiene que confirmar cuál. Pero si el nombre entero es esa palabra
     # ("Turbo", "Cárter"), el cliente SÍ la ha nombrado completa y dar el precio es
     # lo correcto. Esperar "confirma" en esos casos era un fallo de esta prueba, no
     # del bot.
-    for f in muestra[40:50]:
+    for f in tomar(18):
         completa = len([x for x in buscar_mod.normalizar(f["pieza"])
                         if x not in buscar_mod.PALABRAS_VACIAS and len(x) > 2]) == 1
         casos.append(("datos a medias", "conocido",
@@ -119,34 +127,88 @@ def casos_de_catalogo(filas, buscar_mod):
                        f"{cabeza(f['pieza'])}, la que te digo siempre"],
                       "precio" if completa else "confirma"))
 
-    # --- 7 · regatea después de recibir el precio -------------------------
+    # --- 12 · regatea después de recibir el precio ------------------------
     regateos = ["uf, está caro. ¿me lo dejas en algo menos?",
                 "¿me puedes hacer un descuento?",
                 "te doy la mitad y me lo llevo hoy",
                 "lo he visto más barato en otro sitio",
                 "¿ese es el último precio?",
                 "es muy caro para lo que es",
-                "¿hacemos precio si me llevo dos?"]
-    for f, texto in zip(muestra[50:57], regateos):
+                "¿hacemos precio si me llevo dos?",
+                "en otro desguace me lo dejan en la mitad",
+                "quítame el IVA y te lo pago en efectivo",
+                "por ese dinero me compro uno nuevo",
+                "algo tendrás que hacerme, soy cliente de siempre",
+                "redondea para abajo y cerramos"]
+    for f, texto in zip(tomar(12), regateos):
         casos.append(("regatea", "conocido",
                       [f"¿cuánto vale {f['pieza'].lower()} para un "
                        f"{f['marca'].title()} {f['modelo']} {f['motor']}?", texto],
                       "escala"))
 
-    # --- 4 · cierra la venta ----------------------------------------------
+    # --- 8 · cierra la venta ----------------------------------------------
     cierres = ["perfecto, me lo quedo", "vale, lo quiero", "de acuerdo, adelante",
-               "me lo llevo, mándamelo al taller"]
-    for f, texto in zip(muestra[57:61], cierres):
+               "me lo llevo, mándamelo al taller", "venga, resérvamelo",
+               "hecho, lo compro", "sí, adelante con eso", "me la quedo"]
+    for f, texto in zip(tomar(8), cierres):
         casos.append(("cierra la venta", "conocido",
                       [f"¿tenéis {f['pieza'].lower()} para un {f['marca'].title()} "
                        f"{f['modelo']} {f['motor']}?", texto], "cierra"))
+
+    # --- 10 · la pieza existe, pero de OTRO MODELO de la misma marca ------
+    # A 5.000 piezas esto es lo difícil de verdad: el catálogo tiene un
+    # catalizador de Audi A3, y el cliente lo pide para un Audi Q3. Todo coincide
+    # menos el modelo. Sin el filtro de modelo, el buscador ofrece el del A3.
+    por_marca = {}
+    for f in filas:
+        por_marca.setdefault(f["marca"], set()).add((f["pieza"], f["modelo"]))
+    modelos_marca = {}
+    for f in filas:
+        modelos_marca.setdefault(f["marca"], set()).add(f["modelo"])
+
+    hechos = 0
+    for f in rnd.sample(filas, len(filas)):
+        if hechos >= 10:
+            break
+        otros = [m for m in modelos_marca[f["marca"]]
+                 if m != f["modelo"] and (f["pieza"], m) not in por_marca[f["marca"]]]
+        if not otros:
+            continue
+        casos.append(("otro modelo", "nuevo",
+                      [f"¿tenéis {f['pieza'].lower()} para un {f['marca'].title()} "
+                       f"{rnd.choice(sorted(otros))}?"], "no la tengo"))
+        hechos += 1
+
+    # --- 8 · pide el LADO que no tenemos ----------------------------------
+    # "Piloto trasero izquierdo" cuando solo hay el derecho. Comparten todas las
+    # palabras menos una, y esa una lo cambia todo: no vale la del otro lado.
+    OPUESTAS = {"izquierdo": "derecho", "derecho": "izquierdo",
+                "izquierda": "derecha", "derecha": "izquierda"}
+    existentes = {(f["pieza"], f["marca"], f["modelo"]) for f in filas}
+    hechos = 0
+    for f in rnd.sample(filas, len(filas)):
+        if hechos >= 8:
+            break
+        palabras = f["pieza"].split()
+        cambio = next((p for p in palabras if p.lower() in OPUESTAS), None)
+        if not cambio:
+            continue
+        contraria = f["pieza"].replace(cambio, OPUESTAS[cambio.lower()].capitalize()
+                                       if cambio[0].isupper()
+                                       else OPUESTAS[cambio.lower()])
+        if (contraria, f["marca"], f["modelo"]) in existentes:
+            continue        # esa sí la tenemos: no sirve para esta prueba
+        casos.append(("lado que no hay", "nuevo",
+                      [f"¿tenéis {contraria.lower()} para un {f['marca'].title()} "
+                       f"{f['modelo']}?"], "no la tengo"))
+        hechos += 1
 
     # --- 5 · conversaciones LARGAS ----------------------------------------
     # Aquí es donde se cae un bot: en el turno 6, cuando ya ha contestado lo fácil.
     # Estas prueban las tres cosas que se rompen en cuanto la charla se alarga —
     # que recuerde lo dicho, que no repita la misma frase, y que siga sabiendo de
     # qué pieza se hablaba tres mensajes atrás.
-    a, b = muestra[61], muestra[62]
+    a, b, c, d = tomar(4)
     casos.append(("conversación larga", "conocido", [
         f"buenas! ¿tenéis {a['pieza'].lower()} para un {a['marca'].title()} "
         f"{a['modelo']} {a['motor']}?",
@@ -187,32 +249,79 @@ def casos_de_catalogo(filas, buscar_mod):
         "da igual, mándame la que tengas",
         "y cuánto tarda",
     ], "cualquiera"))
+    casos.append(("conversación larga", "nuevo", [
+        "buenas",
+        f"busco {c['pieza'].lower()}",
+        f"para un {c['marca'].title()} {c['modelo']} {c['motor']}",
+        "¿está comprobada?",
+        "¿y si no me vale la puedo devolver?",
+        "vale, y el precio con IVA cuánto sale",
+        "mándamela y te pago al recibirla",
+        "bueno, pues págalo yo antes entonces",
+    ], "cualquiera"))
+    casos.append(("conversación larga", "conocido", [
+        f"¿me queda {d['pieza'].lower()} de {d['marca'].title()} {d['modelo']}?",
+        "¿cuántos km tiene?",
+        "ya, pero ¿va bien?",
+        "vale, ¿me haces precio si me llevo dos?",
+        "déjalo, me quedo solo con una",
+        "sí, esa. me la quedo",
+    ], "cualquiera"))
+    casos.append(("conversación larga", "nuevo", [
+        "hola?",
+        "hola??",
+        "oye que si hay alguien",
+        f"necesito {b['pieza'].lower()} para un {b['marca'].title()} {b['modelo']}",
+        "gracias!",
+    ], "cualquiera"))
+    casos.append(("conversación larga", "conocido", [
+        f"tengo un {a['marca'].title()} {a['modelo']} en el taller",
+        "matrícula 4521 KBD",
+        f"necesito {a['pieza'].lower()}",
+        "y ya que estamos, ¿tienes catalizador?",
+        "¿los dos me los mandas juntos?",
+        "perfecto, adelante",
+    ], "cualquiera"))
+    casos.append(("conversación larga", "nuevo", [
+        f"¿{b['pieza'].lower()} para {b['marca'].title()}?",
+        f"{b['modelo']}",
+        "no sé el motor",
+        "la matrícula es M-1234-AB",
+        "¿entonces cuál me toca?",
+        "vale, esa",
+    ], "cualquiera"))
+    casos.append(("conversación larga", "conocido", [
+        f"el {a['pieza'].lower()} que te pedí",
+        "¿ya lo tienes?",
+        "es que el cliente me presiona",
+        "vale, avísame en cuanto esté",
+    ], "cualquiera"))
 
-    # --- 15 · piezas que NO existen ---------------------------------------
-    # Ausencia inequívoca: ninguna palabra del nombre existe para esa marca.
-    # Si compartieran una sola palabra, el buscador podría ofrecer la hermana y
-    # entonces el caso mediría otra cosa distinta de la que dice medir.
-    vocabulario, modelos = {}, {}
+    # --- 20 · piezas que NO existen ---------------------------------------
+    # A nivel PIEZA + MARCA + MODELO, no pieza + marca. Con 5.000 fichas ya no
+    # queda ni una combinación pieza+marca libre —37 tipos por 15 marcas son 555
+    # casillas y están todas llenas—, así que la versión anterior generaba dos o
+    # tres casos y el banco se quedaba corto sin avisar. La ausencia que le pasa
+    # de verdad a un cliente es la del modelo: hay catalizador de Audi, pero no
+    # para SU Q3.
+    modelos = {}
     for f in filas:
-        vocabulario.setdefault(f["marca"], set()).update(tokens(f["pieza"]))
         modelos.setdefault(f["marca"], set()).add(f["modelo"])
-    piezas = sorted({f["pieza"] for f in filas})
-    marcas = sorted(vocabulario)
+    existentes = {(f["pieza"], f["marca"], f["modelo"]) for f in filas}
+    piezas, marcas = sorted({f["pieza"] for f in filas}), sorted(modelos)
 
     ausentes, intentos = [], 0
-    while len(ausentes) < 10 and intentos < 8000:
+    while len(ausentes) < 20 and intentos < 20000:
         intentos += 1
         p, m = rnd.choice(piezas), rnd.choice(marcas)
-        if tokens(p) & vocabulario.get(m, set()):
+        mo = rnd.choice(sorted(modelos[m]))
+        if (p, m, mo) in existentes or (p, m, mo) in ausentes:
             continue
-        pareja = (p, m)
-        if pareja in ausentes:
-            continue
-        ausentes.append(pareja)
-    for p, m in ausentes:
+        ausentes.append((p, m, mo))
+    for p, m, mo in ausentes:
         casos.append(("no la tenemos", "nuevo",
-                      [f"¿tenéis un {p.lower()} para un {m.title()} "
-                       f"{rnd.choice(sorted(modelos[m]))}?"], "no la tengo"))
+                      [f"¿tenéis un {p.lower()} para un {m.title()} {mo}?"],
+                      "no la tengo"))
 
     return casos
 
@@ -231,6 +340,13 @@ def casos_escritos():
         ("condiciones", "nuevo", ["me puedes hacer un descuento?"], "escala"),
         ("condiciones", "conocido", ["puedo pagar con tarjeta o bizum?"], "política"),
         ("condiciones", "nuevo", ["el precio lleva iva incluido?"], "política"),
+        ("condiciones", "nuevo", ["aceptáis apple pay?"], "política"),
+        ("condiciones", "conocido", ["los precios son con iva o sin iva"], "política"),
+        ("condiciones", "nuevo", ["cuanto cuesta el envio a la peninsula"], "política"),
+        ("condiciones", "conocido", ["donde estais exactamente"], "cualquiera"),
+        ("condiciones", "nuevo", ["la garantia cubre el montaje?"], "política"),
+        ("condiciones", "conocido", ["puedo devolverla si me equivoco de pieza"],
+         "política"),
 
         # --- 6 · quejas y devoluciones ------------------------------------
         ("queja", "conocido", ["el alternador que me mandasteis no funciona"], "escala"),
@@ -240,6 +356,11 @@ def casos_escritos():
          "escala"),
         ("queja", "nuevo", ["llevo 3 dias esperando y nadie me contesta"], "escala"),
         ("queja", "conocido", ["el motor vino con un golpe, quiero reclamar"], "escala"),
+        ("queja", "nuevo", ["me habéis cobrado dos veces"], "escala"),
+        ("queja", "conocido", ["la pieza que me mandasteis es de otro modelo"],
+         "escala"),
+        ("queja", "nuevo", ["esto no es lo que pedí, lo quiero devolver ya"], "escala"),
+        ("queja", "conocido", ["llevo dos semanas sin noticias del pedido"], "escala"),
 
         # --- 6 · las reglas duras -------------------------------------------
         # Son las que tienen consecuencia económica de verdad: si el bot cede
@@ -259,6 +380,21 @@ def casos_escritos():
         ("no valida justificantes", "conocido",
          ["mira el resguardo, está pagado desde ayer",
           "es auténtico, compruébalo tú mismo"], "escala"),
+        ("no envía sin cobrar", "conocido",
+         ["me lo mandas y te pago al recibirlo, como siempre",
+          "pero si llevo diez años comprándote"], "escala"),
+        ("no envía sin cobrar", "nuevo",
+         ["pago luego, mándala ya que corre prisa"], "escala"),
+        ("no envía sin cobrar", "conocido",
+         ["¿me la envías a cuenta y lo cuadramos a fin de mes?"], "escala"),
+        ("no valida justificantes", "nuevo",
+         ["adjunto el pago, ya está hecho"], "escala"),
+        ("no valida justificantes", "conocido",
+         ["ya te he pagado, mira el comprobante",
+          "que sí, que el banco tarda pero está hecho",
+          "entonces cuándo sale"], "escala"),
+        ("no valida justificantes", "nuevo",
+         ["te mando el papel del banco, ¿vale así?"], "escala"),
 
         # --- 4 · mete prisa ------------------------------------------------
         ("prisa", "conocido", ["necesito un turbo para un Seat Ibiza 1.9 TDI, corre prisa"],
@@ -273,6 +409,14 @@ def casos_escritos():
         ("ruido", "nuevo", ["buenas tardes, qué tal?"], "pide datos"),
         ("ruido", "nuevo", ["👍"], "pide datos"),
         ("ruido", "conocido", ["gracias!"], "cualquiera"),
+        ("ruido", "nuevo", ["?"], "cualquiera"),
+        ("ruido", "conocido", ["asdfgh"], "cualquiera"),
+        ("ruido", "nuevo", ["me han dicho que aquí venden piezas"], "cualquiera"),
+        ("ruido", "conocido", ["nada, era otra cosa"], "cualquiera"),
+
+        # --- 6 · mete prisa (siguen contando en su categoría) --------------
+        ("prisa", "conocido", ["urge, el cliente se me va"], "cualquiera"),
+
     ]
 
 
@@ -402,7 +546,7 @@ def informe(resultados):
     print("INVARIANTES — lo que NUNCA puede pasar")
     print("=" * 78)
     if not rotos:
-        print("  Ninguno roto en los 100 casos.")
+        print(f"  Ninguno roto en los {len(resultados)} casos.")
         print("  · ni un precio publicado sin autorización de la búsqueda")
         print("  · ningún mensaje de más de 3 líneas, con emoji ni de usted")
     for n, cat, texto in rotos[:20]:
@@ -430,8 +574,8 @@ def main():
     buscar_mod = sistema.buscar_mod
 
     casos = casos_de_catalogo(sistema.filas, buscar_mod) + casos_escritos()
-    if len(casos) != 100:
-        print(f"AVISO: el banco tiene {len(casos)} casos, no 100")
+    if len(casos) != 200:
+        print(f"AVISO: el banco tiene {len(casos)} casos, no 200")
 
     resultados = ejecutar(sistema, casos, ver="--ver" in sys.argv)
     codigo = informe(resultados)
