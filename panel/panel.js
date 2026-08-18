@@ -256,7 +256,7 @@ async function cargarPrecios() {
   // Se explica en vez de dejar un hueco: es un estado correcto, no un error.
   if (!pendientes.length) {
     $('#caja-precios').replaceChildren(Object.assign(crear('div', 'estado-vacio'), {
-      innerHTML: '<strong>Ninguna pendiente.</strong> Las 1.000 piezas del catálogo ' +
+      innerHTML: '<strong>Ninguna pendiente.</strong> Todas las piezas del catálogo ' +
                  'tienen precio, así que el bot puede darlos todos.<br>' +
                  'Cuando entre una pieza recién desmontada y sin tasar, aparecerá aquí ' +
                  'ordenada por cuántas veces te la hayan pedido.',

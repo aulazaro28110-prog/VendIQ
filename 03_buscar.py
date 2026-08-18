@@ -202,6 +202,9 @@ class Buscador:
         self.marca_de = []      # por chunk: marca canónica, o None si no es una pieza
         self.tipo_pieza_de = []  # por chunk: palabra que nombra la pieza ('alternador'...)
         self.lados_de = []       # por chunk: {'izq'} / {'tra','izq'} / set()
+        self.nombre_de = []      # por chunk: nombre completo de la pieza
+        # {frozenset({'motor','completo'}): 'Motor completo', ...}
+        self.nombres_pieza = {}
         self.modelo_de = []      # por chunk: modelo canónico ('C4', 'Serie 3'...)
         self.marcas_conocidas = {}   # 'bmw' -> 'BMW',  'mercedes' -> 'MERCEDES-BENZ'
         self.modelos_conocidos = {}  # 'c4' -> {'C4'},  'serie' -> {'Serie 3','Serie 5'}
@@ -218,14 +221,20 @@ class Buscador:
                 self.modelo_de.append(None)
                 self.tipo_pieza_de.append(None)
                 self.lados_de.append(set())
+                self.nombre_de.append(None)
                 continue
 
             for token in normalizar(marca):
                 if len(token) > 1:
                     self.marcas_conocidas[token] = marca
-            for token in normalizar(modelo or ""):
-                if len(token) > 1:
-                    self.modelos_conocidos.setdefault(token, set()).add(modelo)
+            # Palabras que DISTINGUEN el modelo: sin relleno, y los números
+            # cuentan aunque sean de un dígito — el "3" de "Serie 3" es justo lo
+            # que lo separa del "Serie 1".
+            distintivas = frozenset(
+                t for t in normalizar(modelo or "")
+                if t not in PALABRAS_VACIAS and (len(t) > 1 or t.isdigit()))
+            if distintivas:
+                self.modelos_conocidos[modelo] = distintivas
 
             # La palabra que nombra la pieza es la primera con contenido:
             # 'Bomba de agua' -> 'bomba', 'Puerta delantera derecha' -> 'puerta'.
@@ -241,6 +250,9 @@ class Buscador:
             self.modelo_de.append(modelo)
             self.tipo_pieza_de.append(cabeza)
             self.lados_de.append(_lados(tokens))
+            self.nombre_de.append(pieza)
+            if len(tokens) > 1:
+                self.nombres_pieza[frozenset(tokens)] = pieza
 
             # Índice de códigos exactos. Un código no se parece a otro: o coincide
             # o no. Ver el atajo en buscar().
@@ -268,13 +280,26 @@ class Buscador:
         tipos_pedidos = palabras & self.tipos_conocidos
 
         # EL MODELO. Pedir un Citroën C4 y recibir un C3 es el mismo error que pedir
-        # un catalizador y recibir una bomba de agua, y estaba sin cubrir: el filtro
-        # miraba la marca pero no el modelo. Un token puede apuntar a varios modelos
-        # ('serie' está en Serie 3 y en Serie 5), así que se admite la unión: se
-        # filtra lo que seguro que no es, nunca lo que podría ser.
+        # un catalizador y recibir una bomba de agua.
+        #
+        # La primera versión unía todos los modelos que compartieran una palabra con
+        # la pregunta, para "filtrar solo lo que seguro que no es". Con 5.000 piezas
+        # eso soltó dos precios equivocados: quien pedía un MERCEDES CLASE E COUPÉ
+        # recibía el precio de un CLASE A, y quien pedía un BMW SERIE 3 recibía el
+        # de un SERIE 1. Comparten la palabra "clase" y "serie", y la unión los
+        # daba por buenos a los dos.
+        #
+        # Regla nueva, en dos pasos:
+        #   1. Un modelo es candidato solo si TODAS sus palabras distintivas están
+        #      en la pregunta. "Serie 1" necesita el "1", y no está.
+        #   2. De los que quedan, mandan los que aportan MÁS palabras. Pedir
+        #      "Clase E Coupé" deja fuera al "Clase A", que solo aporta "clase".
+        candidatos = {m: t for m, t in self.modelos_conocidos.items()
+                      if t <= palabras}
         modelos_pedidos = set()
-        for p in palabras:
-            modelos_pedidos |= self.modelos_conocidos.get(p, set())
+        if candidatos:
+            mejor = max(len(t) for t in candidatos.values())
+            modelos_pedidos = {m for m, t in candidatos.items() if len(t) == mejor}
 
         # EL NÚCLEO: cuando el cliente nombra dos tipos de pieza en el mismo mensaje,
         # manda el PRIMERO. En español el núcleo del sintagma va delante y lo que
@@ -284,12 +309,27 @@ class Buscador:
         # pedía una CENTRALITA MOTOR, porque la palabra 'motor' está en los dos.
         nucleo = next((p for p in secuencia if p in self.tipos_conocidos), None)
 
+        # EL NOMBRE COMPLETO manda sobre el núcleo. "Motor completo" y "Motor de
+        # arranque" comparten núcleo ('motor') y son piezas que no se parecen en
+        # nada: una vale 3.000 € y la otra 60. El núcleo no puede separarlas, y a
+        # 5.000 piezas eso se convirtió en las dos únicas fugas del guardarraíl.
+        #
+        # Si el cliente ha dicho TODAS las palabras de un nombre del catálogo, ya
+        # no hay nada que adivinar: quiere esa pieza y ninguna otra. Se busca la
+        # coincidencia más larga, por si un nombre estuviera contenido en otro.
+        nombre_pedido = None
+        for tokens, nombre in self.nombres_pieza.items():
+            if tokens <= palabras and (nombre_pedido is None
+                                       or len(tokens) > len(nombre_pedido[0])):
+                nombre_pedido = (tokens, nombre)
+        nombre_pedido = nombre_pedido[1] if nombre_pedido else None
+
         # EL LADO: si el cliente dice izquierdo y la ficha dice derecho, no es la
         # pieza aunque todo lo demás coincida. Esto también salía de un fallo real.
         lados_pedidos = _lados(secuencia)
 
         candidatas = np.ones(len(self.items), dtype=bool)
-        if not marcas_pedidas and not tipos_pedidos and not modelos_pedidos:
+        if not (marcas_pedidas or tipos_pedidos or modelos_pedidos or nombre_pedido):
             return candidatas
 
         for i, item in enumerate(self.items):
@@ -298,6 +338,8 @@ class Buscador:
             if marcas_pedidas and self.marca_de[i] not in marcas_pedidas:
                 candidatas[i] = False
             elif modelos_pedidos and self.modelo_de[i] not in modelos_pedidos:
+                candidatas[i] = False
+            elif nombre_pedido and self.nombre_de[i] != nombre_pedido:
                 candidatas[i] = False
             elif nucleo and self.tipo_pieza_de[i] != nucleo:
                 candidatas[i] = False

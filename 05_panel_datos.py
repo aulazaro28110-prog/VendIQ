@@ -298,15 +298,21 @@ def main():
         # Se guardan a mano porque son ejecuciones de momentos distintos (búsqueda
         # solo vectorial, híbrida con 100 piezas, híbrida con 1.000), no algo que
         # este script pueda recalcular hoy. Cada columna es un run real.
+        # Acierto a la primera, medido con tests/test_busqueda.py en cada etapa.
+        # "Datos incompletos" sube de 0,67 a 1,00 entre las dos últimas columnas y
+        # no es que el buscador mejorara: es que la MEDIDA estaba mal. La pregunta
+        # no da motor ni año, así que tiene varias respuestas correctas, y el banco
+        # exigía adivinar una concreta. Medía suerte, no acierto.
         "historico": {
-            "columnas": ["Solo vectorial", "Híbrida · 100", "Híbrida · 1.000"],
+            "columnas": ["Solo vectorial", "Híbrida · 100", "Híbrida · 1.000",
+                         "Híbrida · 5.000"],
             "filas": [
-                ["Pregunta natural",           0.24, 1.00, 1.00],
-                ["Datos incompletos",          0.07, 1.00, 0.67],
-                ["Mensaje sucio de WhatsApp",  0.13, 1.00, 1.00],
-                ["Por referencia OEM",         0.00, 1.00, 1.00],
-                ["Políticas",                  0.70, 0.70, 0.60],
-                ["TOTAL",                      0.20, 0.96, 0.89],
+                ["Pregunta natural",           0.24, 1.00, 1.00, 0.96],
+                ["Datos incompletos",          0.07, 1.00, 0.67, 1.00],
+                ["Mensaje sucio de WhatsApp",  0.13, 1.00, 1.00, 0.80],
+                ["Por referencia OEM",         0.00, 1.00, 1.00, 1.00],
+                ["Políticas",                  0.70, 0.70, 0.60, 0.70],
+                ["TOTAL",                      0.20, 0.96, 0.89, 0.91],
             ],
         },
         "demanda_no_cubierta": [

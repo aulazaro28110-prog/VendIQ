@@ -126,7 +126,7 @@
 
     <h3 class="sub-titulo">La búsqueda por dentro</h3>
     <p class="intro">
-      Sin conversación ni memoria: una consulta suelta contra las 1.000 fichas, con
+      Sin conversación ni memoria: una consulta suelta contra el catálogo entero, con
       la puntuación de cada una y lo que se descartó por no llegar al umbral.
     </p>
     <div class="carta">
@@ -317,7 +317,8 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
     <div class="carta plana tabla-scroll">
       <table>
         <thead><tr><th>Tipo de pregunta</th><th class="num">Antes</th>
-                   <th class="num">100 piezas</th><th class="num">1.000 piezas</th></tr></thead>
+                   <th class="num">100</th><th class="num">1.000</th>
+                   <th class="num">5.000</th></tr></thead>
         <tbody id="tabla-evolucion"></tbody>
       </table>
     </div>
@@ -326,10 +327,19 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
       <h3>Lo que pasa al crecer</h3>
       <p>
         Con 100 piezas casi cada combinación pieza+marca era única y acertar resultaba
-        fácil. Con 1.000 hay varias fichas que solo se distinguen por modelo, motor y
+        fácil. Con 5.000 hay hasta doce fichas que solo se distinguen por motor y
         año, y el acierto a la primera baja. <strong>No es un fallo del buscador:</strong>
         cuando el cliente no da el motor ni el año, su pregunta no tiene una sola
         respuesta correcta. La solución no es afinar el algoritmo, es pedir la matrícula.
+      </p>
+      <p>
+        Lo que sí enseñó el salto a 5.000 fue algo que no esperábamos: <strong>el
+        propio banco de pruebas se quedó obsoleto</strong>. Medía el guardarraíl
+        buscando combinaciones pieza+marca que no existieran, y con 5.000 fichas ya
+        no queda ni una libre — 37 tipos por 15 marcas son 555 casillas y están todas
+        llenas. El test reventó con una división por cero. Al crecer el catálogo, la
+        ausencia cambia de sitio: al cliente ya no le falta «un turbo de Kia», le
+        falta «un turbo de Kia <em>Ceed</em>».
       </p>
       <p>
         Y una corrección: una estimación anterior decía «28 segundos por consulta con

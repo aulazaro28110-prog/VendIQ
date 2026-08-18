@@ -351,15 +351,33 @@ class Sistema:
         # contestaba con un parachoques de Ford Fusion, que no venía a cuento.
         palabras = set(self.buscar_mod.normalizar(mensaje))
         habla_de_pieza = bool(palabras & self.buscador.tipos_conocidos)
-
         vehiculo = self._vehiculo_en(mensaje)
+
+        # La conversación tiene DOS mitades y el cliente solo repite una cada vez:
+        #   "parachoques trasero para un Clase E Coupé"  ->  "¿y para un Clase A?"
+        #   "algo para el Ford Fusion"                   ->  "la puerta, la de siempre"
+        # En el primero cambia el coche y mantiene la pieza; en el segundo al revés.
+        # Se recuerdan las dos y se completa la que falte. Sin esto, el segundo
+        # mensaje se busca a ciegas y devuelve cualquier cosa de ese coche.
+        if habla_de_pieza:
+            conv.pieza_pedida = mensaje
         if vehiculo:
             conv.vehiculo = vehiculo
-            texto_busqueda, contexto = mensaje, None
-        elif conv.vehiculo and habla_de_pieza:
-            texto_busqueda, contexto = f"{mensaje} {conv.vehiculo}", conv.vehiculo
-        else:
-            texto_busqueda, contexto = mensaje, None
+
+        contexto = None
+        texto_busqueda = mensaje
+        if habla_de_pieza and not vehiculo and conv.vehiculo:
+            contexto = conv.vehiculo
+            texto_busqueda = f"{mensaje} {conv.vehiculo}"
+        elif vehiculo and not habla_de_pieza and getattr(conv, "pieza_pedida", None):
+            # Solo la PIEZA del mensaje anterior, no el mensaje entero: arrastrar
+            # el coche viejo junto al nuevo confundiría los dos.
+            pieza = " ".join(p for p in self.buscar_mod.normalizar(conv.pieza_pedida)
+                             if p in self.buscador.tipos_conocidos
+                             or p in self.buscar_mod.LADOS)
+            if pieza:
+                contexto = pieza
+                texto_busqueda = f"{mensaje} {pieza}"
 
         busqueda = self.consultar(texto_busqueda)
         busqueda["pregunta"] = mensaje
