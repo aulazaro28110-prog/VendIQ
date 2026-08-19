@@ -15,7 +15,9 @@ no es lo mismo que "no puede decirlo".
 
 Este redactor sí puede demostrarlo, porque **no tiene acceso a ningún precio**: solo
 usa el importe que el buscador ya marcó como publicable. Si el buscador dice que no,
-aquí no hay de dónde sacarlo. Ver tests/test_redactor.py.
+aquí no hay de dónde sacarlo. Lo comprueban los invariantes de
+tests/test_conversaciones.py sobre las 200 conversaciones: ni un solo importe
+publicado sin autorización de la búsqueda.
 
 `redactar()` es la única puerta de entrada. El día que se enchufe un LLM, se cambia
 esa función y el resto del sistema no se entera.
