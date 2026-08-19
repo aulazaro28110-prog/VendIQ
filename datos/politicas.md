@@ -49,3 +49,4 @@ se pasa a una persona.
 Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN).
 Con eso se identifica marca, modelo, motor y año, y se cruza con el inventario. Cuando existe,
 la referencia OEM de la pieza antigua es la forma más fiable de confirmar que encaja.
+No se confirma que una pieza no esté disponible hasta haber identificado el vehículo: sin matrícula solo se ha buscado por descripción, y la misma pieza puede estar en el almacén con otro nombre, otro motor u otro año.

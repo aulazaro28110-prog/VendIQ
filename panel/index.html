@@ -516,6 +516,29 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
     </div>
 
     <div class="carta">
+      <h3>La regla de la matrícula</h3>
+      <p class="nota">
+        <strong>Sin matrícula el bot no dice nunca «no la tengo».</strong> No es cortesía
+        comercial: es que no lo sabe. Un desguace vende la pieza que monta <em>ese</em> coche,
+        y hasta identificarlo la búsqueda solo ha comparado palabras. Un «no» a ciegas cierra
+        una venta que quizá estaba en el almacén con otro motor o de otro año.
+      </p>
+      <div class="barras" style="gap:10px">
+        <div class="barra"><div class="fila"><span class="nombre">Ya te dio la matrícula</span>
+          <span class="valor">dice que no y se ofrece a buscarla</span></div></div>
+        <div class="barra"><div class="fila"><span class="nombre">Ya se la pediste y no la dio</span>
+          <span class="valor">insiste de otra forma, ofrece la referencia vieja</span></div></div>
+        <div class="barra"><div class="fila"><span class="nombre">Primera vez</span>
+          <span class="valor">pide la matrícula y ningún otro dato</span></div></div>
+      </div>
+      <p class="nota" style="margin-top:16px;margin-bottom:0">
+        Cuando <strong>escala</strong> no se le exige pedirla: una queja también cae en
+        «no disponible», pero ahí el cliente no está preguntando si la tenemos. Lo protege un
+        invariante del banco, verificado rompiéndolo a propósito.
+      </p>
+    </div>
+
+    <div class="carta">
       <h3>Cómo decide</h3>
       <p class="nota">Parámetros con los que está funcionando ahora mismo.</p>
       <div class="indicadores" id="motor" style="margin-bottom:0"></div>

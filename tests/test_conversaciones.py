@@ -460,8 +460,24 @@ EMOJI = re.compile("[\U0001F300-\U0001FAFF☀-➿]")
 
 PIDE_MATRICULA = re.compile(r"pásame la matrícula|me la pasas", re.I)
 
+# Afirmar que NO se tiene una pieza. Ojo: «no lo tengo apuntado en la ficha» niega
+# un DATO, no la pieza, y es una respuesta correcta. Por eso este patrón NO se aplica
+# a cualquier mensaje: solo cuando la búsqueda ya ha decidido NO DISPONIBLE, que es
+# exactamente la situación en la que la regla de la matrícula manda.
+NIEGA_TENERLA = re.compile(
+    r"no (?:la|lo|las|los) tengo"
+    r"|no (?:la|lo|me) consta"
+    r"|no (?:la|lo|las|los) tenemos"
+    r"|no (?:la|lo|las|los) hay"
+    r"|no (?:me |nos )?queda[nr]?"
+    r"|no est[áa] en (?:el )?(?:cat[áa]logo|almac[ée]n|stock)", re.I)
 
-def invariantes(respuesta, historial, matricula_dada):
+# Pedir el dato que identifica la pieza. Vale la matrícula o el bastidor: son las dos
+# formas que la política acepta.
+IDENTIFICA = re.compile(r"matr[íi]cula|bastidor|vin", re.I)
+
+
+def invariantes(respuesta, historial, matricula_dada, decision):
     """Cosas que NUNCA pueden pasar. Devuelve la lista de las que se han roto."""
     rotos = []
     if not respuesta["precio_autorizado"]:
@@ -480,6 +496,26 @@ def invariantes(respuesta, historial, matricula_dada):
     # vez el que acaba de darte es lo que hace que se vaya.
     if matricula_dada and PIDE_MATRICULA.search(respuesta["mensaje"]):
         rotos.append("pide la matrícula que el cliente YA le había dado")
+
+    # LA REGLA DE LA MATRÍCULA. Cuando la búsqueda dice NO DISPONIBLE —el cliente
+    # pidió una pieza y ninguna ficha supera el umbral— el bot NO puede afirmar que
+    # no la tiene. No es cortesía comercial: es que no lo sabe. Hasta identificar qué
+    # pieza monta ese coche, decir «no la tengo» es adivinar, y adivinar en contra
+    # pierde una venta que quizá estaba en el almacén con otro nombre.
+    #
+    # Con matrícula sí puede decirlo, y entonces es una respuesta, no una excusa.
+    # La excepción: cuando el bot ESCALA no se le exige pedir la matrícula. Una queja
+    # («el alternador que me mandasteis no funciona») también cae en NO DISPONIBLE,
+    # porque el cliente nombra una pieza y ninguna ficha encaja — pero ahí no está
+    # preguntando si la tenemos. Pedirle la matrícula sería sordo. La regla es «no
+    # digas que no sin matrícula», no «pide siempre la matrícula».
+    if decision == "NO DISPONIBLE" and not matricula_dada and not respuesta.get("escala"):
+        if NIEGA_TENERLA.search(respuesta["mensaje"]):
+            rotos.append("dice que NO la tiene sin matrícula: sin identificar la "
+                         "pieza no puede saberlo")
+        if not IDENTIFICA.search(respuesta["mensaje"]):
+            rotos.append("no tiene la pieza y no pide la matrícula: se queda en "
+                         "un «no» sin salida")
 
     # Repetir el mismo mensaje palabra por palabra es lo que delata a un bot. Dos
     # veces en una conversación puede colar; tres ya es un contestador automático.
@@ -502,7 +538,8 @@ def ejecutar(sistema, casos, ver=False):
             bot, busqueda = datos["bot"], datos["busqueda"]
             # La matrícula se comprueba ANTES del mensaje del bot: si el cliente la
             # dio en este turno, el bot ya no puede volver a pedirla en su respuesta.
-            rotos += invariantes(bot, historial, datos["memoria"]["matricula"])
+            rotos += invariantes(bot, historial, datos["memoria"]["matricula"],
+                                 busqueda["decision"])
             historial.append(bot["mensaje"])
             turnos.append({"cliente": mensaje, "bot": bot["lineas"],
                            "decision": busqueda["decision"], "ms": busqueda["ms"],
