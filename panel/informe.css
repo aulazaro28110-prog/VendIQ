@@ -38,7 +38,63 @@
 .barra .estado-vivo{flex:none;padding:6px 14px;font-size:12px}
 
 /* ----------------------------------------------------------------- hero */
-.hero{padding:96px 0 76px;position:relative}
+/* ------------------------------------------------------------- cabecera
+   Dos lados: el texto a la izquierda, las pastillas de contexto a la derecha.
+   Debajo, la fila de indicadores. Es el esqueleto de Plan 2026. */
+.top{padding:86px 0 40px;position:relative}
+.top-dentro{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  flex-wrap:wrap;gap:26px;margin-bottom:34px;
+}
+.top-txt{flex:1;min-width:min(100%,460px)}
+.col-fecha{display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+.pildora{
+  font-family:var(--mono);font-size:11.5px;color:var(--tinta-3);
+  background:var(--carta);border:1px solid var(--borde-vivo);border-radius:11px;
+  padding:10px 15px;box-shadow:var(--sombra);white-space:nowrap;
+}
+.pildora b{color:var(--cian);font-weight:700}
+.pildora.fuerte{
+  background:linear-gradient(120deg,var(--carta-alta),var(--carta));color:var(--tinta-2);
+}
+.pildora.fuerte b{font-size:15px}
+
+/* ------------------------------------------------------- fila de stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stats > div{
+  position:relative;background:var(--carta);border:1px solid var(--borde);
+  border-radius:15px;padding:17px 18px;overflow:hidden;box-shadow:var(--sombra);
+  transition:transform .18s,box-shadow .18s;
+}
+.stats > div:hover{transform:translateY(-2px);box-shadow:var(--sombra-alta)}
+@media (prefers-reduced-motion:reduce){.stats > div,.stats > div:hover{transition:none;transform:none}}
+.stats > div::after{
+  content:'';position:absolute;top:0;left:0;height:3px;width:100%;
+  background:linear-gradient(90deg,var(--cian),transparent);
+}
+
+/* ------------------------------------- rejilla principal + lateral fijo */
+.rejilla-principal{display:grid;grid-template-columns:1fr 342px;gap:28px;align-items:start}
+.columna-principal{min-width:0}
+.lateral{
+  position:sticky;top:78px;display:flex;flex-direction:column;gap:18px;
+  padding-top:64px;
+}
+.lateral .carta{margin-bottom:0}
+/* El lateral pegajoso solo tiene sentido si sobra ancho. Por debajo baja al
+   final de la pagina en flujo normal, que es donde se lee sin estorbar. */
+@media (max-width:1060px){
+  .rejilla-principal{grid-template-columns:1fr}
+  .lateral{position:static;padding-top:0;margin-top:40px}
+}
+@media (max-width:760px){.stats{grid-template-columns:1fr 1fr}}
+
+/* ------------------------------------------------------------------ pie */
+.pie{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;
+  gap:16px;margin-top:40px;padding-top:22px;border-top:1px solid var(--borde-vivo);
+}
+.pie .pie-nota{margin:0;padding:0;border:0;flex:1;min-width:min(100%,340px)}
 .hero-eyebrow{
   font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;
   color:var(--cian);margin:0 0 20px;display:flex;align-items:center;gap:10px;
@@ -61,33 +117,23 @@
   -webkit-text-fill-color:transparent;
 }
 .hero-pie{color:var(--tinta-2);max-width:60ch;margin:0 0 32px;font-size:16.5px}
-.hero-acciones{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:56px}
+.hero-acciones{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:0}
 .boton.grande{padding:14px 30px;font-size:14.5px;text-decoration:none;display:inline-block}
 
-.hero-cifras{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:1px;background:var(--borde);border:1px solid var(--borde);border-radius:var(--r);
-  overflow:hidden;
+/* La etiqueta va ARRIBA en versalitas y la cifra debajo, como en Plan 2026:
+   primero sabes que estas mirando, luego cuanto vale. */
+.stats .que{
+  font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--tinta-3);margin:0 0 11px;line-height:1.4;
 }
-.hero-cifras > div{
-  background:rgba(11,14,20,.72);padding:22px 22px 20px;backdrop-filter:blur(6px);
-  position:relative;
-}
-.hero-cifras > div::before{
-  content:'';position:absolute;inset:0 0 auto 0;height:2px;
-  background:linear-gradient(90deg,var(--cian),transparent 82%);
-}
-.hero-cifras .valor{
-  font-family:var(--mono);font-size:27px;font-weight:700;letter-spacing:-.01em;
-  line-height:1;margin:0 0 9px;color:var(--cian);
-}
-.hero-cifras .que{
-  font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.13em;
-  text-transform:uppercase;color:var(--tinta-3);margin:0;line-height:1.5;
+.stats .valor{
+  font-family:var(--mono);font-size:30px;font-weight:700;letter-spacing:-.01em;
+  line-height:1;margin:0;color:var(--cian);
 }
 
 /* -------------------------------------------------------------- bloques */
-.bloque{padding:64px 0;scroll-margin-top:70px}
+.bloque{padding:64px 0;scroll-margin-top:78px}
+.columna-principal > .bloque:first-child{padding-top:0}
 .bloque + .bloque{border-top:1px solid var(--borde)}
 .eyebrow{
   font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;

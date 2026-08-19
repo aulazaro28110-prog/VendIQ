@@ -627,6 +627,10 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", f"{tipo}; charset=utf-8")
         self.send_header("Content-Length", str(len(datos)))
+        # Sin esto el navegador cachea el CSS y se queda con la version vieja:
+        # tocas la hoja de estilos, recargas y no ves nada. Es un panel local de
+        # desarrollo, asi que no cachear no cuesta nada y ahorra confusion.
+        self.send_header("Cache-Control", "no-store, must-revalidate")
         self.end_headers()
         self.wfile.write(datos)
 

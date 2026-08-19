@@ -33,22 +33,33 @@
   </div>
 </nav>
 
-<header class="hero" id="arriba">
+<header class="top" id="arriba">
   <div class="envoltorio">
-    <p class="hero-eyebrow">Desguaces Madrid Norte · asistente de ventas</p>
-    <h1 class="hero-titulo">
-      El bot resuelve lo obvio.<br><em>Tú decides lo que vale dinero.</em>
-    </h1>
-    <p class="hero-pie" id="hero-pie">Cargando…</p>
-    <div class="hero-acciones">
-      <a class="boton grande" href="#cliente">Probarlo ahora</a>
-      <a class="boton grande sutil" href="#informe">Ver cómo se midió</a>
+    <div class="top-dentro">
+      <div class="top-txt">
+        <p class="hero-eyebrow">Desguaces Madrid Norte · asistente de ventas</p>
+        <h1 class="hero-titulo">
+          El bot resuelve lo obvio.<br><em>Tú decides lo que vale dinero.</em>
+        </h1>
+        <p class="hero-pie" id="hero-pie">Cargando…</p>
+        <div class="hero-acciones">
+          <a class="boton grande" href="#cliente">Probarlo ahora</a>
+          <a class="boton grande sutil" href="#informe">Ver cómo se midió</a>
+        </div>
+      </div>
+      <div class="col-fecha">
+        <div class="pildora">Catálogo · <b id="pil-catalogo">—</b></div>
+        <div class="pildora fuerte">Medido en <b id="pil-dias">—</b> días</div>
+        <div class="pildora">Generado <b id="pil-generado">—</b></div>
+      </div>
     </div>
-    <div class="hero-cifras" id="hero-cifras"></div>
+    <div class="stats" id="hero-cifras"></div>
   </div>
 </header>
 
 <main class="envoltorio">
+<div class="rejilla-principal">
+<div class="columna-principal">
 
   <!-- ============================================================ día -->
   <section class="bloque" id="dia">
@@ -81,21 +92,10 @@
       <div class="leyenda" id="leyenda-dias"></div>
     </div>
 
-    <div class="rejilla-2">
-      <div class="carta">
-        <h3>A qué hora te escriben</h3>
-        <p class="nota">Conversaciones iniciadas en cada franja.</p>
-        <div id="g-horas"></div>
-      </div>
-      <div class="carta">
-        <h3>Qué hace en cada mensaje</h3>
-        <p class="nota">Las tres únicas acciones posibles por turno.</p>
-        <div class="segmentada" id="seg-acciones" role="img"
-             aria-label="Reparto de acciones"></div>
-        <div class="leyenda" id="leyenda-acciones"></div>
-        <h3 style="margin-top:26px">Por qué llega a tu mesa</h3>
-        <div class="barras" id="g-motivos"></div>
-      </div>
+    <div class="carta">
+      <h3>A qué hora te escriben</h3>
+      <p class="nota">Conversaciones iniciadas en cada franja.</p>
+      <div id="g-horas"></div>
     </div>
 
     <div class="rejilla-2">
@@ -544,11 +544,6 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
       </p>
     </div>
 
-    <div class="carta">
-      <h3>Cómo decide</h3>
-      <p class="nota">Parámetros con los que está funcionando ahora mismo.</p>
-      <div class="indicadores" id="motor" style="margin-bottom:0"></div>
-    </div>
 
     <div class="carta">
       <h3>Registro de consultas</h3>
@@ -564,7 +559,33 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
     </div>
   </section>
 
-  <p class="pie-nota" id="pie-nota"></p>
+</div>
+
+    <aside class="lateral">
+      <div class="carta">
+        <h3>Qué hace en cada mensaje</h3>
+        <p class="nota">Las tres únicas acciones posibles por turno.</p>
+        <div class="segmentada" id="seg-acciones" role="img"
+             aria-label="Reparto de acciones"></div>
+        <div class="leyenda" id="leyenda-acciones"></div>
+        <h3 style="margin-top:24px">Por qué llega a tu mesa</h3>
+        <div class="barras" id="g-motivos"></div>
+      </div>
+
+      <div class="carta">
+        <h3>Cómo decide</h3>
+        <p class="nota">Parámetros con los que está funcionando ahora mismo.</p>
+        <div class="indicadores" id="motor" style="margin-bottom:0"></div>
+      </div>
+    </aside>
+</div>
+
+  <footer class="pie">
+    <p class="pie-nota" id="pie-nota"></p>
+    <div class="pie-acciones">
+      <a class="boton mini sutil" href="#arriba">Volver arriba</a>
+    </div>
+  </footer>
 </main>
 
 <script src="fondo.js"></script>
