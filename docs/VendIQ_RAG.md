@@ -71,6 +71,7 @@ Un asistente genérico se inventa precios, plazos y disponibilidad. VendIQ no: *
 - **No inventa precio, stock ni estado.** Si no está en el inventario → pregunta o escala. (La web ya funciona así: "Consultar por WhatsApp".)
 - **No concede rebajas por su cuenta.** Informa de la política; el "sí, te lo bajo" final es decisión de Álvaro (su margen).
 - **No promete plazos que no puede confirmar.** Da el plazo estándar; si depende del proveedor, dice "te confirmo".
+- **No dice "no la tengo" sin matrícula.** Es el guardarraíl que más ventas salva y el más fácil de romper sin darse cuenta. Sin identificar el vehículo la búsqueda solo ha comparado palabras: la misma pieza puede estar en el almacén con otro nombre, otro motor u otro año. Primero se pide la matrícula; con ella sí se puede afirmar que no la hay. **Excepción:** cuando escala a una persona no se le exige pedirla — una queja también cae en "no disponible", pero ahí el cliente no está preguntando si la tenemos. Implementado en `07_redactor.py::_sin_pieza()` y protegido por un invariante de `tests/test_conversaciones.py`.
 
 ---
 

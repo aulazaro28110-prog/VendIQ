@@ -93,6 +93,34 @@ ya ejecutable en código y no solo escrita en prosa.
 
 Los umbrales están calibrados con medidas, no a ojo (ver `tests/test_busqueda.py --calibrar`).
 
+## La regla de la matrícula
+
+**Sin matrícula el bot no dice nunca "no la tengo".** Pide la matrícula primero.
+
+No es cortesía comercial: es que **no lo sabe**. Un desguace no vende catálogos, vende la
+pieza concreta que monta *ese* coche. Hasta identificar el vehículo, la búsqueda solo ha
+comparado palabras — y "no la tengo" dicho a ciegas cierra una venta que a lo mejor estaba
+en el almacén con otro nombre, otro motor o el mismo modelo de otro año.
+
+Con matrícula sí puede decir que no. Entonces es una respuesta; sin ella es una excusa.
+
+Tres caminos en [`07_redactor.py`](07_redactor.py), `_sin_pieza()`:
+
+| Situación | Qué hace |
+|---|---|
+| Ya dio la matrícula | Dice que no la tiene y se ofrece a buscarla en 24-48 h |
+| Ya se la pediste y no la dio | Insiste **de otra forma** y ofrece la referencia de la pieza vieja |
+| Primera vez | Pide la matrícula, y **ningún otro dato** |
+
+La excepción: cuando el bot **escala**, no se le exige pedir la matrícula. Una queja
+("el alternador que me mandasteis no funciona") también cae en `NO DISPONIBLE`, porque el
+cliente nombra una pieza y ninguna ficha encaja — pero ahí no está preguntando si la tenemos.
+La regla es *"no digas que no sin matrícula"*, no *"pide siempre la matrícula"*.
+
+Lo protege un invariante del banco de conversaciones, no un comentario: si alguien cambia
+`_sin_pieza()` para que niegue la pieza sin identificarla, los 200 casos fallan. Está
+verificado rompiéndolo a propósito y comprobando que salta.
+
 ## Ofertas (`04_ofertas.py`)
 
 Un cliente ofrece 780 € por una pieza publicada a 865 €. El módulo decide una de cuatro cosas:
@@ -231,12 +259,14 @@ ninguna ficha (**100 %**).
 200 conversaciones en 17 situaciones (precio exacto, no la tenemos, regateo, quejas, mensajes
 sucios, pago sin cobrar, conversaciones de 8 turnos…). **100 % acaban como deben.**
 
-Y cinco **invariantes**, cosas que nunca pueden pasar. Ninguno roto en los 200 casos:
+Y seis **invariantes**, cosas que nunca pueden pasar. Ninguno roto en los 200 casos:
 
 - ni un importe publicado que la búsqueda no autorizara
-- ningún mensaje de más de 3 líneas, con emoji, ni tratando de usted
+- ningún mensaje de más de 3 líneas, con emoji, tratando de usted ni vacío
 - no vuelve a pedir un dato que el cliente ya dio
-- no repite el mismo mensaje palabra por palabra
+- **no dice "no la tengo" sin matrícula**, ni se queda en un «no» sin pedirla
+- no repite el mensaje anterior palabra por palabra
+- no dice por tercera vez la misma frase
 
 ### Volumen — `10_simular.py`
 
