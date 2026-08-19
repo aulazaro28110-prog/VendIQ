@@ -501,11 +501,17 @@ function pintarHeroActividad(a) {
     [miles(r.precios_dados), 'precios dados solos'],
     [String(r.fugas_de_precio), 'precios sin autorizar'],
   ];
+  // Etiqueta primero, cifra despues: se lee que es antes de cuanto vale.
   $('#hero-cifras').replaceChildren(...cifras.map(([valor, que]) => {
     const caja = crear('div');
-    caja.append(crear('p', 'valor', valor), crear('p', 'que', que));
+    caja.append(crear('p', 'que', que), crear('p', 'valor', valor));
     return caja;
   }));
+
+  // Las pastillas de contexto de la cabecera, tambien medidas.
+  $('#pil-catalogo').textContent = miles(a.catalogo.piezas) + ' piezas';
+  $('#pil-dias').textContent = String(a.parametros.dias);
+  $('#pil-generado').textContent = a.generado.slice(0, 10);
 }
 
 cargarActividad();

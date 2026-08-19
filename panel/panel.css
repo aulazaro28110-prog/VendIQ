@@ -149,6 +149,15 @@ body{
 .carta > .nota{color:var(--tinta-3);font-size:13px;margin:0 0 20px;max-width:66ch}
 .carta.plana{padding:0;overflow:hidden}
 
+/* En el lateral no caben cuatro columnas de indicadores: van en una sola y
+   mas compactos, que es lo que hace que la columna quepa en una pantalla. */
+.lateral .indicadores{grid-template-columns:1fr;gap:9px}
+.lateral .ind{padding:13px 15px;box-shadow:none}
+.lateral .ind .cifra{font-size:20px}
+.lateral .ind .etiqueta{margin-bottom:8px}
+.lateral .ind .nota{font-size:11.5px;margin-top:6px}
+.lateral .carta{padding:20px 21px}
+
 /* ---------------------------------------------------------- indicadores */
 .indicadores{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;
