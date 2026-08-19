@@ -61,8 +61,15 @@ def ensuciar(texto):
 # Cada caso: (categoria, perfil, [mensajes...], desenlace_esperado)
 # El desenlace se juzga sobre el ÚLTIMO mensaje de la conversación.
 
-def casos_de_catalogo(filas, buscar_mod):
-    rnd = random.Random(23)
+def casos_de_catalogo(filas, buscar_mod, semilla=23):
+    """Conversaciones construidas desde el catálogo.
+
+    La semilla es un parámetro y no una constante porque 10_simular.py llama a
+    esta misma función con semillas distintas para generar el tráfico del centro
+    de control. Así la actividad simulada y el banco de pruebas usan exactamente
+    el mismo generador: lo que se mide es lo mismo que se enseña.
+    """
+    rnd = random.Random(semilla)
     casos = []
 
     def tokens(nombre):

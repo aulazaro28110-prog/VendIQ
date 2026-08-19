@@ -29,6 +29,7 @@ from urllib.parse import urlparse
 BASE = Path(__file__).parent
 WEB = BASE / "panel"
 PANEL_JSON = BASE / "salida" / "panel.json"
+ACTIVIDAD_JSON = BASE / "salida" / "actividad.json"
 PRECIOS_FIJADOS = BASE / "salida" / "precios_fijados.json"
 PUERTO = 8420
 
@@ -605,6 +606,13 @@ class Handler(BaseHTTPRequestHandler):
             return self._json({"pendientes": SISTEMA.precios_pendientes()})
         if ruta == "/api/guiones":
             return self._json({"guiones": SISTEMA.guiones()})
+        if ruta == "/api/actividad":
+            # Se sirve tal cual lo escribió 10_simular.py, sin recalcular nada.
+            # Si el panel tocara estos números dejarían de ser lo que se midió.
+            if not ACTIVIDAD_JSON.exists():
+                return self._json({"error": "ejecuta antes: python 10_simular.py"}, 404)
+            return self._json(json.loads(
+                ACTIVIDAD_JSON.read_text(encoding="utf-8-sig")))
         if ruta == "/api/no-resueltas":
             return self._json({"pendientes": SISTEMA.aprender.leer_registro(),
                                "redactor": SISTEMA.conversar.hay_llm()})

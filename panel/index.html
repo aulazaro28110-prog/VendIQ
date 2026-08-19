@@ -59,8 +59,84 @@
       resolver con datos de la empresa, se resuelve. Lo que toca una decisión de
       negocio, llega a tu mesa.
     </p>
-    <div class="carta"><div id="diagrama"></div></div>
+
+    <!-- La etiqueta va ARRIBA y no en letra pequeña al final: quien mira este
+         panel tiene que saber qué está mirando antes de leer ningún número. -->
+    <div class="declaracion" id="declaracion"></div>
+
     <div class="indicadores" id="kpis"></div>
+    <div class="carta"><div id="diagrama"></div></div>
+
+    <div class="carta">
+      <h3>Volumen por día</h3>
+      <p class="nota">Cada barra es un día de tráfico pasado por el sistema.
+        Domingo cerrado.</p>
+      <div id="g-dias"></div>
+      <div class="leyenda" id="leyenda-dias"></div>
+    </div>
+
+    <div class="rejilla-2">
+      <div class="carta">
+        <h3>A qué hora te escriben</h3>
+        <p class="nota">Conversaciones iniciadas en cada franja.</p>
+        <div id="g-horas"></div>
+      </div>
+      <div class="carta">
+        <h3>Qué hace en cada mensaje</h3>
+        <p class="nota">Las tres únicas acciones posibles por turno.</p>
+        <div class="segmentada" id="seg-acciones" role="img"
+             aria-label="Reparto de acciones"></div>
+        <div class="leyenda" id="leyenda-acciones"></div>
+        <h3 style="margin-top:26px">Por qué llega a tu mesa</h3>
+        <div class="barras" id="g-motivos"></div>
+      </div>
+    </div>
+
+    <div class="rejilla-2">
+      <div class="carta">
+        <h3>De qué te hablan</h3>
+        <p class="nota">Intención detectada en cada mensaje. Un solo color: aquí
+          no hay categorías que comparar, solo cuántos mensajes de cada tipo.</p>
+        <div class="barras" id="g-intenciones"></div>
+      </div>
+      <div class="carta">
+        <h3>Qué pasó con los precios</h3>
+        <p class="nota">Cada vez que un importe entró en juego. El redactor solo
+          recibe los autorizados: los otros no puede decirlos aunque quiera,
+          porque nunca llegan a su texto.</p>
+        <div class="segmentada" id="seg-precios" role="img"
+             aria-label="Reparto de precios"></div>
+        <div class="leyenda" id="leyenda-precios"></div>
+        <p class="nota" id="nota-precios" style="margin-top:18px"></p>
+      </div>
+    </div>
+
+    <div class="carta">
+      <h3>Lo que se le atragantó</h3>
+      <p class="nota">Consultas que no resolvió solo, ordenadas por veces que se
+        repitieron. Salen del mismo tráfico y no están filtradas: esto es lo
+        siguiente que hay que arreglar.</p>
+      <div class="barras" id="g-atasco"></div>
+    </div>
+
+    <div class="carta">
+      <h3>Conversaciones tal cual salieron</h3>
+      <p class="nota">Muestra al azar del tráfico. Ni retocadas ni elegidas:
+        son las que tocó.</p>
+      <div id="muestra-conv"></div>
+    </div>
+
+    <details class="tabla-detalle">
+      <summary>Ver los números en tabla</summary>
+      <div class="tabla-scroll">
+        <table>
+          <thead><tr><th>Día</th><th class="num">Conversaciones</th>
+            <th class="num">Mensajes</th><th class="num">Resueltas</th>
+            <th class="num">A tu mesa</th><th class="num">ms mediana</th></tr></thead>
+          <tbody id="tabla-dias"></tbody>
+        </table>
+      </div>
+    </details>
   </section>
 
   <!-- ======================================================== cliente -->
@@ -309,6 +385,73 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
       </div>
     </div>
 
+    <div class="hito">
+      <span class="hito-num">05</span>
+      <div>
+        <h3>Al crecer, el error se muda</h3>
+        <p>
+          Con 1.000 piezas el guardarraíl se medía preguntando por combinaciones
+          <em>pieza + marca</em> que no existieran. Al pasar a 5.000 ese banco de
+          pruebas <strong>reventó con una división por cero</strong>: 37 tipos por
+          15 marcas son 555 casillas y el catálogo las llena todas. No quedaba ni
+          una ausencia que probar.
+        </p>
+        <p class="descubrimiento">
+          No era un fallo del test, era el test quedándose obsoleto por el tamaño.
+          Con más stock al cliente ya no le falta «un turbo de Kia»: le falta
+          <strong>un turbo de Kia Ceed</strong>. La ausencia se mudó del nivel de
+          marca al de modelo, y con ella aparecieron dos fugas nuevas — quien pedía
+          un <em>Clase E Coupé</em> recibía el precio de un <em>Clase A</em>, y quien
+          pedía un <em>Serie 3</em> el de un <em>Serie 1</em>. Comparten la palabra
+          «clase» y «serie».
+        </p>
+      </div>
+    </div>
+
+    <div class="hito">
+      <span class="hito-num">06</span>
+      <div>
+        <h3>Una preposición mal escrita costaba la venta</h3>
+        <p>
+          «teneis intercooler <strong>pa</strong> un peugeot 208» encontraba la pieza
+          correcta y aun así no daba el precio. El motivo: «pa» no aparece en ninguna
+          ficha, así que se llevaba el peso máximo —más que «intercooler»— y hundía la
+          puntuación de 0,82 a 0,60, por debajo del mínimo para hablar de dinero.
+        </p>
+        <p>
+          El cliente escribía bien. Fallaba el buscador, castigando a quien escribe
+          como se escribe por WhatsApp. Ahora de las palabras que no están en el
+          catálogo <strong>solo cuenta una</strong>: «aquí hay algo que no tenemos» es
+          un hecho binario y repetirlo no lo hace más cierto. Una marca que no
+          vendemos sigue hundiendo la puntuación igual que antes.
+        </p>
+      </div>
+    </div>
+
+    <div class="hito">
+      <span class="hito-num">07</span>
+      <div>
+        <h3>Catorce días seguidos, y la máquina se cansó antes que el bot</h3>
+        <p>
+          Un banco de pruebas dice si acierta. No dice qué pasa cuando le entran
+          1.863 conversaciones seguidas. Así que se pasaron catorce días de tráfico
+          —volumen por hora, sábados al 45%, domingos cerrado— por el sistema real
+          contra las 5.000 piezas. Resultado: <strong>83% resueltas sin que nadie
+          mirara</strong> y <strong>cero fugas de precio</strong> en 1.596 importes
+          que entraron en juego.
+        </p>
+        <p>
+          Lo interesante salió en la tabla por días: la mediana se mantuvo en
+          <strong>46 ms durante diez días</strong> y luego subió a 53, 77 y 87 ms
+          en los tres últimos. El catálogo no cambió y el código tampoco, así que
+          no es el buscador: es el proceso, que llevaba trece minutos vivo con el
+          modelo y la matriz en memoria. <strong>No lo tengo cerrado</strong>, y por
+          eso está escrito aquí en vez de haber redondeado el número a 46 ms.
+          El p95 del conjunto —104 ms— sigue estando donde tiene que estar.
+        </p>
+      </div>
+    </div>
+
     <h3 class="sub-titulo">Lo que dicen los números</h3>
     <p class="intro">
       El banco de pruebas genera las preguntas desde el propio catálogo, así que la
@@ -316,7 +459,7 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
     </p>
     <div class="carta plana tabla-scroll">
       <table>
-        <thead><tr><th>Tipo de pregunta</th><th class="num">Antes</th>
+        <thead><tr><th>Tipo de pregunta</th><th class="num">Solo vectorial</th>
                    <th class="num">100</th><th class="num">1.000</th>
                    <th class="num">5.000</th></tr></thead>
         <tbody id="tabla-evolucion"></tbody>
@@ -363,7 +506,10 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
       <h3>Acierto verificado</h3>
       <p class="nota">
         Contrastado contra la respuesta correcta conocida de cada mensaje, no contra lo
-        que el sistema cree haber resuelto.
+        que el sistema cree haber resuelto. Son 30 mensajes con la respuesta conocida de
+        antemano — muestra pequeña a propósito: aquí se comprueba si ACIERTA, y para eso
+        hay que saber la verdad de cada uno. El volumen de arriba mide otra cosa: qué
+        hace el sistema con miles de mensajes.
       </p>
       <div class="segmentada" id="seg-verif" role="img" aria-label="Reparto de aciertos"></div>
       <div class="leyenda" id="leyenda-verif"></div>
@@ -395,5 +541,6 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
 <script src="fondo.js"></script>
 <script src="panel.js"></script>
 <script src="chat.js"></script>
+<script src="actividad.js"></script>
 </body>
 </html>

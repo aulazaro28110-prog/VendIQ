@@ -24,6 +24,7 @@ async function api(ruta, cuerpo) {
 }
 
 let ESTADO = null;
+let ACTIVIDAD_LISTA = false;
 
 /* ------------------------------------------------------------------ hero */
 function pintarHero(d) {
@@ -431,11 +432,12 @@ async function iniciar() {
     `El acierto sale de <code>${ESTADO.calidad_medida.fuente}</code>. ` +
     `Última generación: ${ESTADO.generado.replace('T', ' ').replace('+00:00', ' UTC')}.`;
 
-  pintarHero(ESTADO);
   pintarSugerencias(ESTADO);
   pintarEvolucion(ESTADO);
-  pintarDiagrama(ESTADO);
-  pintarKPIs(ESTADO);
+  // El hero, el diagrama y los KPIs los pinta actividad.js con los datos
+  // medidos de 10_simular.py, que son miles de mensajes en vez de treinta.
+  // Si esos datos no existen todavía, actividad.js llama a estas de aquí.
+  if (!ACTIVIDAD_LISTA) { pintarHero(ESTADO); pintarDiagrama(ESTADO); pintarKPIs(ESTADO); }
   pintarVerificacion(ESTADO);
   pintarDemanda(ESTADO);
   pintarFiltros();

@@ -1,17 +1,25 @@
-# VendIQ RAG — ingesta, chunking y búsqueda (prototipo local, coste 0)
+# VendIQ — asistente de ventas para un desguace (local, coste 0)
 
-Prototipo de la capa de datos de **VendIQ**, un asistente de ventas para un desguace
-(Desguaces Madrid Norte) que responde a clientes **fundándose en los datos reales de la empresa**
-y no en lo que "cree saber". Este repo cubre la parte de RAG que se puede construir **gratis y en
-local**, sin API de pago.
+**VendIQ** contesta a los clientes de un desguace (Desguaces Madrid Norte) por WhatsApp
+**fundándose en los datos reales de la empresa** y no en lo que "cree saber". Se ejecuta
+entero en local y sin API de pago.
+
+Qué hay montado hoy: catálogo de **5.000 piezas**, búsqueda híbrida con guardarraíles,
+redactor con la voz real de la empresa, simulador de WhatsApp en un centro de control web,
+motor de ofertas, y un ciclo de aprendizaje en el que una persona contesta lo que el bot no
+supo y el sistema lo indexa al momento.
+
+Y lo que importa: **está medido**. Dos bancos de pruebas (200 conversaciones y 80 consultas)
+y catorce días de tráfico simulado pasados por el sistema real.
 
 > RAG = *Retrieval Augmented Generation* = "mira la carpeta antes de hablar": primero recupera
 > información real de la empresa, y luego genera la respuesta sobre ella.
 
 ## Qué hace, en 3 pasos
 
-1. **`01_ingesta_chunking.py`** — reúne los documentos (inventario + políticas) y los **trocea**
-   en *chunks* pequeños y buscables. Salida: `salida/chunks.jsonl` (105 chunks: 100 piezas + 5 políticas).
+1. **`01_ingesta_chunking.py`** — reúne los documentos (inventario + políticas + las FAQ que ha
+   contestado una persona) y los **trocea** en *chunks* pequeños y buscables.
+   Salida: `salida/chunks.jsonl` (5.007 chunks: 5.000 piezas + 7 políticas).
 2. **`02_embeddings.py`** — convierte cada chunk en un **embedding** (vector de significado) con un
    modelo local gratuito (`sentence-transformers`) y los guarda. Salida: `salida/embeddings.npy` + `salida/embeddings_meta.json`.
 3. **`03_buscar.py`** — dada la pregunta de un cliente, **recupera** los trozos relevantes
@@ -23,7 +31,7 @@ decide qué ofertas se aceptan solas y cuáles pasan por Álvaro.
 ## Cómo busca
 
 La búsqueda **no** es solo por significado. Buscar solo con embeddings no funciona en un catálogo
-de recambios: las 100 fichas están redactadas con la misma plantilla, sus vectores se parecen
+de recambios: las fichas están redactadas con la misma plantilla, sus vectores se parecen
 demasiado, y las palabras que de verdad distinguen una pieza (marca, modelo, tipo) se diluyen.
 Medido: solo acertaba el **20 %** de las veces, y a "¿tenéis un alternador para un BMW 320d?"
 respondía con un cinturón de seguridad.
@@ -34,9 +42,19 @@ Se combinan tres cosas:
   literalmente en la ficha, pesando más las palabras raras ("alternador" distingue; "delantero", poco).
 - **Significado** — el embedding de siempre. Es lo que permite que "cuánto tarda en llegar"
   encuentre la política de envíos sin compartir ni una palabra.
-- **Filtro por pieza y marca** — si el cliente pide un *catalizador* de *Audi*, no se le puede
-  ofrecer una *bomba de agua* de Audi por muy parecidas que sean las dos fichas. El vocabulario
-  de marcas y tipos de pieza se aprende del propio catálogo, no hay listas escritas a mano.
+- **Filtro estructural** — si el cliente pide un *catalizador* de *Audi*, no se le puede ofrecer
+  una *bomba de agua* de Audi por muy parecidas que sean las dos fichas. El vocabulario se
+  aprende del propio catálogo, no hay listas escritas a mano. Son cinco reglas, y **las cinco
+  salieron de un fallo medido**:
+  - **marca** — no se ofrece un Ford a quien pide un Seat.
+  - **modelo** — pedir un Citroën C4 y recibir un C3 es el mismo error. Un modelo solo es
+    candidato si *todas* sus palabras distintivas están en la pregunta: "Serie 1" necesita el "1".
+  - **núcleo** — en español el sustantivo va delante: «centralita motor» es una centralita,
+    no un motor.
+  - **nombre completo** — si el cliente dice todas las palabras de una pieza del catálogo, no
+    hay nada que adivinar. Separa «motor completo» de «motor de arranque», que comparten núcleo
+    y valen 3.000 € y 60 €.
+  - **lado** — quien pide el izquierdo no quiere el derecho, coincida todo lo demás.
 
 ## La regla de precios
 
@@ -148,63 +166,131 @@ y los tiempos. Si mañana la búsqueda empeora, los números del panel empeoran 
 
 ## Datos
 
-Se usa **`datos/inventario_sintetico.csv`** (100 piezas *sintéticas*, misma estructura que la web
-real) y **`datos/politicas.md`** (garantía, envío, precios, pago, identificación de pieza).
+**`datos/inventario_sintetico.csv`** — 5.000 piezas *sintéticas* con la misma estructura que la
+web real, generadas por `scripts/generar_catalogo.py`. De 14 € a 4.647 €, mediana 121 €. El
+precio sale de `base(pieza) × marca × segmento del coche × año`, con los rangos anclados a lo
+que publican los desguaces online.
+
+**`datos/politicas.md`** — garantía, envío, precios e IVA, formas de pago, pago antes del envío,
+justificantes e identificación de la pieza.
+
+**`datos/faq_aprendidas.md`** — lo que ha contestado una persona a preguntas que el bot no supo.
+Lo escribe el panel, nunca el bot.
+
 Regla del proyecto: **datos sintéticos, no reales** (privacidad).
 
 ## Cómo ejecutarlo
 
 ```bash
-# 1) Instalar dependencias (una vez). La descarga es grande la primera vez (~150 MB).
-pip install -r requirements.txt
+pip install -r requirements.txt          # una vez (~150 MB la primera vez)
 
-# 2) Los 3 pasos
-python 01_ingesta_chunking.py
-python 02_embeddings.py
-python 03_buscar.py "¿tenéis un alternador para un BMW 320d?"
+python 01_ingesta_chunking.py            # trocea
+python 02_embeddings.py                  # vectoriza (5.007 chunks, ~2 min)
+python 06_panel.py                       # centro de control en localhost:8420
+```
 
-# 3) Comprobar que la búsqueda sigue funcionando bien
-python tests/test_busqueda.py
+Y para comprobar que sigue funcionando:
+
+```bash
+python tests/test_busqueda.py            # 80 consultas + 40 piezas inexistentes
+python tests/test_conversaciones.py      # 200 conversaciones enteras
+python tests/test_ofertas.py
+python tests/test_precios.py
+python 10_simular.py --dias 14           # 14 días de tráfico por el sistema real
 ```
 
 Si te saltas un paso, el siguiente te dice cuál falta en vez de reventar con un error críptico.
 
 ## Calidad medida
 
-`tests/test_busqueda.py` genera 80 preguntas desde el propio catálogo (así la respuesta correcta
-se conoce sin escribirla a mano) y 40 piezas que **no** existen, para comprobar que el sistema
-se calla en vez de ofrecer otra cosa.
+Dos bancos, y ninguno tiene las preguntas escritas a mano: se generan desde el propio catálogo,
+así que la respuesta correcta se conoce de antemano y siguen valiendo cuando el catálogo cambia.
 
-| Tipo de pregunta | Acierto@1 | Antes |
-|---|---|---|
-| Natural ("¿tenéis un alternador para un Audi A4 2.0 TDI?") | 100 % | 24 % |
-| Datos incompletos ("busco cremallera de Audi A3") | 100 % | 7 % |
-| Mensaje sucio de WhatsApp (sin tildes ni signos) | 100 % | 13 % |
-| Por referencia OEM | 100 % | 0 % |
-| Políticas (garantía, plazos, pago) | 70 % | 70 % |
-| **Total** | **96 %** | **20 %** |
+### Recuperación — `tests/test_busqueda.py`
 
-Guardarraíl: **39 de 40** piezas inexistentes no devuelven ninguna ficha (98 %).
+80 preguntas y 40 piezas que **no** existen, contra 5.000 fichas.
+
+| Tipo de pregunta | Solo vectorial | Híbrida · 1.000 | Híbrida · 5.000 |
+|---|---|---|---|
+| Natural ("¿tenéis un alternador para un Audi A4 2.0 TDI?") | 24 % | 100 % | 96 % |
+| Datos incompletos ("busco cremallera de Audi A3") | 7 % | 67 % | 100 % |
+| Mensaje sucio de WhatsApp (sin tildes ni signos) | 13 % | 100 % | 80 % |
+| Por referencia OEM | 0 % | 100 % | 100 % |
+| Políticas (garantía, plazos, pago) | 70 % | 60 % | 70 % |
+| **Total** | **20 %** | **89 %** | **91 %** |
+
+Acierto en el top 3: **98 %**. Guardarraíl: **40 de 40** piezas inexistentes no devuelven
+ninguna ficha (**100 %**).
+
+> El salto de "datos incompletos" de 67 % a 100 % **no es que el buscador mejorara**: es que la
+> medida estaba mal. La pregunta no da motor ni año, así que tiene varias respuestas correctas,
+> y el banco exigía adivinar una concreta. Medía suerte.
+
+### Conversación — `tests/test_conversaciones.py`
+
+200 conversaciones en 17 situaciones (precio exacto, no la tenemos, regateo, quejas, mensajes
+sucios, pago sin cobrar, conversaciones de 8 turnos…). **100 % acaban como deben.**
+
+Y cinco **invariantes**, cosas que nunca pueden pasar. Ninguno roto en los 200 casos:
+
+- ni un importe publicado que la búsqueda no autorizara
+- ningún mensaje de más de 3 líneas, con emoji, ni tratando de usted
+- no vuelve a pedir un dato que el cliente ya dio
+- no repite el mismo mensaje palabra por palabra
+
+### Volumen — `10_simular.py`
+
+14 días de tráfico (150-200 conversaciones diarias, sábado a media máquina, domingo cerrado)
+pasados por el sistema real. **Los mensajes son sintéticos; los números, medidos.** Cada
+decisión, cada milisegundo y cada escalado sale de ejecutar el buscador real contra las 5.000
+piezas: aquí no hay ni una cifra estimada.
+
+| Medida | Valor |
+|---|---|
+| Conversaciones | 1.863 |
+| Mensajes | 4.532 |
+| Resueltas sin persona | 1.551 — **83 %** |
+| Escaladas a un humano | 312 |
+| Precios dados solos | 1.037 |
+| **Fugas de precio** | **0** |
+| Latencia mediana / p95 / máx | 49,3 / 104,3 / 881,1 ms |
+| Tiempo de ejecución | 778 s |
+
+Reparto de las tres únicas acciones posibles por mensaje: **RESPONDER 3.364 · ESCALAR 618 ·
+PREGUNTAR 550**. De los 1.596 importes que entraron en juego, el bot dijo 1.019 y **se calló
+577** — no porque decidiera callarse, sino porque un precio no publicable nunca llega al texto
+que redacta.
+
+Salida en `salida/actividad.json`, que es lo que pinta la sección *Actividad* del panel.
 
 ## Límites conocidos
 
-- **Políticas: 70 %.** Preguntas como "¿el precio lleva IVA?" devuelven una pieza antes que la
-  política de precios, porque todas las fichas contienen literalmente "Precio:" y "+ IVA".
-- **Piezas parecidas.** Pedir una "bomba de dirección" cuando solo hay una "bomba de agua" del
-  mismo coche sí puede colarse: el filtro distingue el tipo de pieza, no todas sus variantes.
-- **Preguntas incompletas en un catálogo grande.** Es el límite serio. Medido sobre un catálogo
-  sintético de 5.000 piezas: si el cliente da pieza + marca + modelo pero no el motor ni el año,
-  hay **5,8 fichas válidas de media** y acertar *la* correcta baja al 28 %. No es un fallo de la
-  búsqueda: la pregunta no tiene una sola respuesta. Lo que falta es que el sistema lo detecte y
-  **pida la matrícula** en vez de elegir una. Con los datos completos, el acierto se mantiene en
-  el 95 % con 5.000 piezas.
-- **Escala: no es un problema.** Medido, no estimado: con 5.000 piezas una consulta tarda 40 ms
-  (30 de ellos en vectorizar la pregunta, que es coste fijo) y el índice ocupa 7 MB. Proyectado a
-  50.000 serían ~100 ms y 73 MB. La búsqueda lineal aguanta de sobra; no hace falta un índice
-  vectorial especializado.
+- **Políticas: 70 %.** "¿El precio lleva IVA?" devuelve una pieza antes que la política, porque
+  todas las fichas contienen literalmente "Precio:" y "+ IVA". Probé dos hipótesis y **las dos
+  eran falsas**: trocear las políticas más fino lo empeoró (60 % → 50 %) y se descartó. La causa
+  real es que el modelo da 0,47 de parecido a *cualquier* ficha frente a *cualquier* pregunta en
+  español, y la política correcta saca 0,40. Se arregla enrutando la pregunta antes de buscar.
+- **Preguntas incompletas en un catálogo grande.** 5.000 piezas se agrupan en 1.399
+  combinaciones pieza+marca+modelo: **3,6 fichas por combinación de media y hasta 12**. Si el
+  cliente no da el motor ni el año, su pregunta no tiene una sola respuesta correcta. La solución
+  no es afinar el algoritmo, es **pedir la matrícula** — y eso ya lo hace.
+- **El LLM no se ha ejecutado nunca.** `08_conversar.py` está escrito y cableado, con Groq y dos
+  barreras de seguridad, pero sin `GROQ_API_KEY` no se ha llamado ni una vez. Es código sin
+  probar. Ver `docs/CONFIGURAR_GROQ.md`.
+- **La latencia se desvió al final de la tirada.** La mediana diaria se mantuvo en ~46 ms
+  durante diez días y subió a 53, 77 y 87 ms en los tres últimos. Ni el catálogo ni el código
+  cambiaron, así que no es el buscador: apunta al proceso, que llevaba trece minutos vivo con
+  el modelo y la matriz cargados. **No está cerrado.** Queda escrito en vez de publicar el
+  46 ms bonito.
+- **Escala: no es el problema.** Medido, no estimado: con 5.007 fichas la mediana es **47 ms**
+  (la mayor parte, vectorizar la pregunta, que es coste fijo) y el índice ocupa **7,7 MB**.
+  Cinco veces más catálogo no multiplicó por cinco el tiempo. La búsqueda lineal aguanta de
+  sobra; no hace falta un índice vectorial especializado.
 
 ## Estado
 
-Prototipo de la **capa de datos** (ingesta + búsqueda + guardarraíl de recuperación).
-NO incluye todavía el LLM que redacta la respuesta final ni la integración con WhatsApp; eso
-queda para cuando se decida usar API de pago.
+Funciona de punta a punta en local: catálogo → índice → búsqueda con guardarraíles → redactor
+con la voz de la empresa → centro de control con simulador de WhatsApp.
+
+**Lo que falta:** enchufar la clave de Groq (el redactor con LLM está escrito pero sin ejecutar)
+y la integración real con WhatsApp.

@@ -1,8 +1,23 @@
 /* VendIQ · Centro de control
    Oscuro minimalista: mucho aire, bordes finísimos, tarjetas modulares.
    El color solo aparece donde SIGNIFICA algo — el resto es tinta y grises.
-   Paleta validada contra el fondo real (#06080c): separación CVD 13,8,
-   visión normal 20,3, contraste de los tres estados por encima de 3:1. */
+
+   PALETA CALCULADA, NO ELEGIDA A OJO
+   ----------------------------------
+   Los cuatro colores pasan las cinco comprobaciones del validador contra el
+   fondo real (#06080c): banda de luminosidad, croma mínimo, separación para
+   daltonismo (deutan/protan/tritan), separación en visión normal y contraste.
+
+   La versión anterior era más neón (#29e0d2, #ffb020) y FALLABA la banda de
+   luminosidad: L 0,82 sobre un máximo de 0,67. En una pantalla se veía bien,
+   pero los colores pesaban más que el dato — y el rojo, a 0,69, pesaba menos
+   que los otros dos, así que el mismo gráfico daba más importancia visual a
+   unas categorías que a otras sin ningún motivo.
+
+   REGLA QUE SALIÓ DE MEDIR: el rojo y el ámbar NO pueden ir pegados. Su
+   separación es 3,8 para un deuteranope (el mínimo es 8) y 14,7 en visión
+   normal (el mínimo es 15). Son dos tonos de aviso y se parecen demasiado.
+   Donde coincidan, va el cian en medio o uno de los dos pasa a gris neutro. */
 
 :root{
   --fondo:      #06080c;
@@ -15,14 +30,16 @@
   --tinta-2:    #9aa7b8;
   --tinta-3:    #63707f;
 
-  --cian:       #29e0d2;
-  --ambar:      #ffb020;
-  --rojo:       #ff5a5a;
+  --cian:       #1aa197;   /* categórica 1 · lo que resuelve el bot */
+  --violeta:    #7a81e1;   /* categórica 2 · lo que pregunta */
+  --ambar:      #b97f14;   /* estado · necesita a una persona */
+  --rojo:       #e85151;   /* estado · error de verdad. Nunca junto al ámbar */
 
-  --cian-08:    rgba(41,224,210,.08);
-  --cian-20:    rgba(41,224,210,.20);
-  --ambar-12:   rgba(255,176,32,.12);
-  --rojo-12:    rgba(255,90,90,.12);
+  --cian-08:    rgba(26,161,151,.10);
+  --cian-20:    rgba(26,161,151,.26);
+  --violeta-12: rgba(122,129,225,.14);
+  --ambar-12:   rgba(185,127,20,.16);
+  --rojo-12:    rgba(232,81,81,.14);
 
   --ui:   system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono: ui-monospace,"Cascadia Mono",Consolas,"DejaVu Sans Mono",monospace;
@@ -252,4 +269,65 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
   .ind .cifra{font-size:28px}
   .consola-entrada{flex-wrap:wrap}
   .consola-entrada button{width:100%;padding:14px}
+}
+
+/* ===================================================== ACTIVIDAD MEDIDA */
+/* Gráficos de salida/actividad.json. Marcas finas, rejilla discreta y el
+   color solo donde distingue algo. Ver panel/actividad.js. */
+
+.declaracion{
+  border:1px solid var(--borde-vivo);border-left:3px solid var(--cian);
+  border-radius:12px;background:var(--carta);padding:20px 24px;margin-bottom:20px;
+}
+.declaracion-titulo{font-size:13px;font-weight:640;margin:0 0 8px;color:var(--tinta)}
+.declaracion-cuerpo{font-size:13.5px;color:var(--tinta-2);margin:0 0 10px;
+  max-width:82ch;line-height:1.6}
+.declaracion-pie{font-size:12px;color:var(--tinta-3);margin:0;font-family:var(--mono)}
+
+.ind.malo .cifra{color:var(--rojo)}
+
+.rejilla-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px}
+
+/* -------------------------------------------------- barras verticales */
+.g-barras-v{display:flex;align-items:flex-end;gap:6px;height:190px;padding-top:22px}
+.g-barras-v.horas{height:150px}
+.col-dia{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:flex-end;height:100%;min-width:0;position:relative}
+.pila{width:100%;max-width:38px;display:flex;flex-direction:column;gap:2px;
+  border-radius:4px 4px 0 0;overflow:hidden;transition:filter .15s}
+.pila:hover{filter:brightness(1.25)}
+.pila.cerrado{background:var(--borde-vivo);border-radius:2px}
+.seg-res{background:var(--cian);flex:1}
+.seg-esc{background:var(--ambar)}
+.pila.una{background:var(--cian);max-width:34px}
+.valor-encima{position:absolute;top:0;font-family:var(--mono);font-size:11px;
+  color:var(--tinta-2);font-variant-numeric:tabular-nums}
+.etiqueta-x{font-size:10.5px;color:var(--tinta-3);margin-top:7px;
+  font-family:var(--mono);white-space:nowrap}
+
+/* El violeta es la tercera categórica; el rojo NUNCA va pegado al ámbar. */
+.seg-pregunta{background:var(--violeta);color:#0b0d1c}
+
+/* ------------------------------------------------------ muestra real */
+.conv-muestra{border:1px solid var(--borde);border-radius:12px;
+  background:var(--carta-alta);padding:16px 18px;margin-bottom:12px}
+.conv-cab{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.conv-hora{font-family:var(--mono);font-size:11px;color:var(--tinta-3)}
+.conv-turno{border-left:2px solid var(--borde-vivo);padding-left:14px;
+  margin-bottom:12px}
+.conv-turno:last-child{margin-bottom:0}
+.conv-cliente{font-size:13px;margin:0 0 6px;color:var(--tinta-2)}
+.conv-cliente::before{content:"› ";color:var(--tinta-3)}
+.conv-bot{font-size:13px;margin:0 0 3px;color:var(--tinta)}
+.conv-meta{font-family:var(--mono);font-size:10.5px;color:var(--tinta-3)}
+
+.tabla-detalle{margin-top:8px}
+.tabla-detalle summary{font-size:13px;color:var(--tinta-2);cursor:pointer;
+  padding:12px 0;user-select:none}
+.tabla-detalle summary:hover{color:var(--tinta)}
+.tabla-detalle[open] summary{margin-bottom:10px}
+
+@media (max-width:640px){
+  .g-barras-v{gap:3px;height:150px}
+  .etiqueta-x{font-size:9px}
 }

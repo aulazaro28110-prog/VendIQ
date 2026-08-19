@@ -1,0 +1,517 @@
+{
+  "sintetico": true,
+  "aviso": "Los MENSAJES son sintéticos: los genera el mismo código que el banco de pruebas. Los NÚMEROS no: cada decisión, cada milisegundo y cada escalado sale de ejecutar el sistema real contra las 5.000 piezas del catálogo.",
+  "mezcla_declarada": "El reparto por tipo de mensaje es una ESTIMACIÓN de Álvaro sobre su propio WhatsApp, no un dato medido.",
+  "generado": "2026-08-19 00:34",
+  "parametros": {
+    "dias": 14,
+    "conversaciones_dia": "150-200 (lun-vie)",
+    "semilla": 7,
+    "domingo": "cerrado",
+    "sabado": "45% del volumen"
+  },
+  "catalogo": {
+    "piezas": 5000,
+    "fichas_indexadas": 5007
+  },
+  "resumen": {
+    "conversaciones": 1863,
+    "mensajes": 4532,
+    "escaladas": 312,
+    "resueltas_sin_persona": 1551,
+    "tasa_resolucion": 0.8325,
+    "precios_dados": 1037,
+    "ms_mediana": 49.3,
+    "ms_p95": 104.3,
+    "ms_max": 881.1,
+    "fugas_de_precio": 0
+  },
+  "por_dia": [
+    {
+      "fecha": "2026-08-06",
+      "dia": "jueves",
+      "conversaciones": 170,
+      "mensajes": 401,
+      "resueltas": 143,
+      "escaladas": 27,
+      "ms_mediana": 46.2
+    },
+    {
+      "fecha": "2026-08-07",
+      "dia": "viernes",
+      "conversaciones": 163,
+      "mensajes": 391,
+      "resueltas": 132,
+      "escaladas": 31,
+      "ms_mediana": 45.8
+    },
+    {
+      "fecha": "2026-08-08",
+      "dia": "sábado",
+      "conversaciones": 70,
+      "mensajes": 165,
+      "resueltas": 60,
+      "escaladas": 10,
+      "ms_mediana": 44.9
+    },
+    {
+      "fecha": "2026-08-09",
+      "dia": "domingo",
+      "conversaciones": 0,
+      "mensajes": 0,
+      "resueltas": 0,
+      "escaladas": 0,
+      "ms_mediana": null
+    },
+    {
+      "fecha": "2026-08-10",
+      "dia": "lunes",
+      "conversaciones": 186,
+      "mensajes": 457,
+      "resueltas": 152,
+      "escaladas": 34,
+      "ms_mediana": 46.1
+    },
+    {
+      "fecha": "2026-08-11",
+      "dia": "martes",
+      "conversaciones": 194,
+      "mensajes": 499,
+      "resueltas": 154,
+      "escaladas": 40,
+      "ms_mediana": 45.6
+    },
+    {
+      "fecha": "2026-08-12",
+      "dia": "miércoles",
+      "conversaciones": 157,
+      "mensajes": 377,
+      "resueltas": 127,
+      "escaladas": 30,
+      "ms_mediana": 47.6
+    },
+    {
+      "fecha": "2026-08-13",
+      "dia": "jueves",
+      "conversaciones": 182,
+      "mensajes": 450,
+      "resueltas": 147,
+      "escaladas": 35,
+      "ms_mediana": 46.4
+    },
+    {
+      "fecha": "2026-08-14",
+      "dia": "viernes",
+      "conversaciones": 156,
+      "mensajes": 375,
+      "resueltas": 137,
+      "escaladas": 19,
+      "ms_mediana": 45.8
+    },
+    {
+      "fecha": "2026-08-15",
+      "dia": "sábado",
+      "conversaciones": 69,
+      "mensajes": 167,
+      "resueltas": 58,
+      "escaladas": 11,
+      "ms_mediana": 48.4
+    },
+    {
+      "fecha": "2026-08-16",
+      "dia": "domingo",
+      "conversaciones": 0,
+      "mensajes": 0,
+      "resueltas": 0,
+      "escaladas": 0,
+      "ms_mediana": null
+    },
+    {
+      "fecha": "2026-08-17",
+      "dia": "lunes",
+      "conversaciones": 150,
+      "mensajes": 364,
+      "resueltas": 132,
+      "escaladas": 18,
+      "ms_mediana": 53.1
+    },
+    {
+      "fecha": "2026-08-18",
+      "dia": "martes",
+      "conversaciones": 172,
+      "mensajes": 414,
+      "resueltas": 142,
+      "escaladas": 30,
+      "ms_mediana": 76.9
+    },
+    {
+      "fecha": "2026-08-19",
+      "dia": "miércoles",
+      "conversaciones": 194,
+      "mensajes": 472,
+      "resueltas": 167,
+      "escaladas": 27,
+      "ms_mediana": 87.5
+    }
+  ],
+  "por_hora": [
+    {
+      "hora": 8,
+      "conversaciones": 65
+    },
+    {
+      "hora": 9,
+      "conversaciones": 179
+    },
+    {
+      "hora": 10,
+      "conversaciones": 264
+    },
+    {
+      "hora": 11,
+      "conversaciones": 211
+    },
+    {
+      "hora": 12,
+      "conversaciones": 226
+    },
+    {
+      "hora": 13,
+      "conversaciones": 130
+    },
+    {
+      "hora": 14,
+      "conversaciones": 57
+    },
+    {
+      "hora": 15,
+      "conversaciones": 65
+    },
+    {
+      "hora": 16,
+      "conversaciones": 185
+    },
+    {
+      "hora": 17,
+      "conversaciones": 185
+    },
+    {
+      "hora": 18,
+      "conversaciones": 153
+    },
+    {
+      "hora": 19,
+      "conversaciones": 105
+    },
+    {
+      "hora": 20,
+      "conversaciones": 38
+    }
+  ],
+  "acciones": {
+    "RESPONDER": 3364,
+    "ESCALAR": 618,
+    "PREGUNTAR": 550
+  },
+  "intenciones": {
+    "consulta": 2799,
+    "agradecimiento": 455,
+    "plazo": 308,
+    "saludo": 230,
+    "cierre": 215,
+    "estado": 168,
+    "precio otra vez": 115,
+    "regateo": 96,
+    "queja": 42,
+    "pide sin pagar": 23
+  },
+  "motivos_escalado": [
+    {
+      "motivo": "lo ve una persona: el bot no está seguro",
+      "veces": 393
+    },
+    {
+      "motivo": "lo ve una persona: es una decisión de negocio",
+      "veces": 225
+    }
+  ],
+  "precios": {
+    "publicable": 1019,
+    "sin_confirmar": 566,
+    "confianza_baja": 11
+  },
+  "no_cubierto": [
+    {
+      "consulta": "¿tenéis un turbo para un renault captur?",
+      "veces": 13
+    },
+    {
+      "consulta": "y ya que estamos, ¿tienes catalizador?",
+      "veces": 10
+    },
+    {
+      "consulta": "¿tenéis un paso de rueda trasero izquierdo para un seat ateca?",
+      "veces": 9
+    },
+    {
+      "consulta": "¿tenéis un cárter para un opel corsa?",
+      "veces": 9
+    },
+    {
+      "consulta": "¿tenéis un catalizador para un seat ateca?",
+      "veces": 9
+    },
+    {
+      "consulta": "¿tenéis un motor de arranque para un peugeot 3008?",
+      "veces": 8
+    },
+    {
+      "consulta": "¿tenéis un motor de arranque para un hyundai i30?",
+      "veces": 7
+    },
+    {
+      "consulta": "la puerta que me vendisteis no encaja, quiero devolverla",
+      "veces": 7
+    }
+  ],
+  "muestra": [
+    {
+      "situacion": "número de stock",
+      "perfil": "conocido",
+      "hora": "13:31",
+      "turnos": [
+        {
+          "cliente": "buenas, me interesa la pieza 73731 que tenéis en la web",
+          "bot": [
+            "Buenas Juan Carlos, ¿cómo vas?",
+            "Tengo el retrovisor izquierdo de un Citroen C4 1.6 VTi del 2016, comprobado y funcionando. Como todos nuestros productos, con un año de garantía.",
+            "Son 102,33 € + IVA y lo tengo aquí, si lo quieres sale mañana."
+          ],
+          "accion": "RESPONDER",
+          "ms": 48.6
+        }
+      ]
+    },
+    {
+      "situacion": "no valida justificantes",
+      "perfil": "conocido",
+      "hora": "09:02",
+      "turnos": [
+        {
+          "cliente": "ya te he pagado, mira el comprobante",
+          "bot": [
+            "Buenas Juan Carlos, ¿cómo vas?",
+            "Gracias, se lo paso a Álvaro para que compruebe el ingreso.",
+            "En cuanto lo vea en la cuenta te aviso y sale la pieza."
+          ],
+          "accion": "ESCALAR",
+          "ms": 45.9
+        },
+        {
+          "cliente": "que sí, que el banco tarda pero está hecho",
+          "bot": [
+            "Te entiendo, pero eso no lo decido yo y no me puedo saltar la norma.",
+            "Álvaro ya tiene tu mensaje; si él lo ve de otra forma, te lo dice él."
+          ],
+          "accion": "ESCALAR",
+          "ms": 44.8
+        },
+        {
+          "cliente": "entonces cuándo sale",
+          "bot": [
+            "Sigo en lo mismo, no por desconfianza: es como trabajamos con todos.",
+            "En cuanto esté el pago confirmado, sale la pieza el mismo día."
+          ],
+          "accion": "ESCALAR",
+          "ms": 100.0
+        },
+        {
+          "cliente": "¿cuánto tarda?",
+          "bot": [
+            "Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea."
+          ],
+          "accion": "ESCALAR",
+          "ms": 51.7
+        },
+        {
+          "cliente": "lo consulto con el cliente y te digo",
+          "bot": [
+            "Sigo en lo mismo, no por desconfianza: es como trabajamos con todos.",
+            "En cuanto esté el pago confirmado, sale la pieza el mismo día."
+          ],
+          "accion": "ESCALAR",
+          "ms": 68.4
+        }
+      ]
+    },
+    {
+      "situacion": "no valida justificantes",
+      "perfil": "nuevo",
+      "hora": "15:46",
+      "turnos": [
+        {
+          "cliente": "te mando el papel del banco, ¿vale así?",
+          "bot": [
+            "Buenas, soy el asistente de Desguaces Madrid Norte.",
+            "Gracias, se lo paso a Álvaro para que compruebe el ingreso.",
+            "En cuanto lo vea en la cuenta te aviso y sale la pieza."
+          ],
+          "accion": "ESCALAR",
+          "ms": 75.3
+        }
+      ]
+    },
+    {
+      "situacion": "referencia OEM",
+      "perfil": "nuevo",
+      "hora": "18:16",
+      "turnos": [
+        {
+          "cliente": "hola, busco la referencia 7100ML20E",
+          "bot": [
+            "Buenas, soy el asistente de Desguaces Madrid Norte.",
+            "Tengo el parachoques delantero de un Ford Fiesta 1.0 EcoBoost del 2013, sin comprobar todavía. Como todos nuestros productos, con un año de garantía.",
+            "Son 194,75 € + IVA y lo tengo aquí, si lo quieres sale mañana."
+          ],
+          "accion": "RESPONDER",
+          "ms": 42.7
+        },
+        {
+          "cliente": "¿y me lo mandas al taller?",
+          "bot": [
+            "Lo tengo aquí, si lo quieres sale mañana.",
+            "Te lo mando al taller o te lo dejo preparado aquí, como prefieras."
+          ],
+          "accion": "RESPONDER",
+          "ms": 210.0
+        },
+        {
+          "cliente": "lo consulto con el cliente y te digo",
+          "bot": [
+            "La pieza sale cuando el pago está confirmado, sin excepciones: no hacemos contrarreembolso."
+          ],
+          "accion": "RESPONDER",
+          "ms": 43.7
+        }
+      ]
+    },
+    {
+      "situacion": "precio exacto",
+      "perfil": "nuevo",
+      "hora": "17:55",
+      "turnos": [
+        {
+          "cliente": "¿tenéis retrovisor derecho para un Kia Ceed 1.4 CRDi?",
+          "bot": [
+            "Buenas, soy el asistente de Desguaces Madrid Norte.",
+            "Tengo el retrovisor derecho de un Kia Ceed 1.6 CRDi del 2012, desmontado de un coche hace poco. Como todos nuestros productos, con un año de garantía.",
+            "Son 132,84 € + IVA y lo tengo aquí, si lo quieres sale mañana."
+          ],
+          "accion": "RESPONDER",
+          "ms": 48.8
+        },
+        {
+          "cliente": "¿cuánto tarda?",
+          "bot": [
+            "Lo tengo aquí, si lo quieres sale mañana.",
+            "Te lo mando al taller o te lo dejo preparado aquí, como prefieras."
+          ],
+          "accion": "RESPONDER",
+          "ms": 45.8
+        }
+      ]
+    },
+    {
+      "situacion": "precio exacto",
+      "perfil": "nuevo",
+      "hora": "12:36",
+      "turnos": [
+        {
+          "cliente": "¿tenéis radiador para un Seat Ateca 2.0 TDI?",
+          "bot": [
+            "Buenas, soy el asistente de Desguaces Madrid Norte.",
+            "Tengo el radiador de un Seat Ateca 2.0 TDI del 2017, comprobado y funcionando. Como todos nuestros productos, con un año de garantía.",
+            "Son 115,95 € + IVA y lo tengo en 24-48 h."
+          ],
+          "accion": "RESPONDER",
+          "ms": 50.4
+        }
+      ]
+    },
+    {
+      "situacion": "condiciones",
+      "perfil": "nuevo",
+      "hora": "12:40",
+      "turnos": [
+        {
+          "cliente": "puedo pasar a recogerla a la tienda?",
+          "bot": [
+            "Buenas, soy el asistente de Desguaces Madrid Norte.",
+            "Enviamos a toda la península en 24-48 h, y lo que está en stock suele salir al día siguiente. También puedes recogerlo en Alcobendas."
+          ],
+          "accion": "RESPONDER",
+          "ms": 41.5
+        },
+        {
+          "cliente": "¿cuánto tarda?",
+          "bot": [
+            "Como te decía, en eso no hay problema.",
+            "¿Seguimos con la pieza?"
+          ],
+          "accion": "RESPONDER",
+          "ms": 39.4
+        },
+        {
+          "cliente": "déjame que lo mire",
+          "bot": [
+            "Pásame la matrícula del coche y qué pieza buscas, y te digo si la tengo."
+          ],
+          "accion": "ESCALAR",
+          "ms": 40.0
+        }
+      ]
+    },
+    {
+      "situacion": "ruido",
+      "perfil": "nuevo",
+      "hora": "09:55",
+      "turnos": [
+        {
+          "cliente": "?",
+          "bot": [
+            "Buenas, soy el asistente de Desguaces Madrid Norte.",
+            "Pásame la matrícula del coche y qué pieza buscas, y te digo si la tengo."
+          ],
+          "accion": "ESCALAR",
+          "ms": 30.6
+        }
+      ]
+    },
+    {
+      "situacion": "prisa",
+      "perfil": "conocido",
+      "hora": "19:25",
+      "turnos": [
+        {
+          "cliente": "urge, el cliente se me va",
+          "bot": [
+            "Buenas Juan Carlos, ¿cómo vas?",
+            "La pieza sale cuando el pago está confirmado, sin excepciones: no hacemos contrarreembolso.",
+            "Y si corre prisa, dímelo y le doy prioridad."
+          ],
+          "accion": "RESPONDER",
+          "ms": 73.5
+        },
+        {
+          "cliente": "ok, te confirmo mañana",
+          "bot": [
+            "Pásame la matrícula del coche y qué pieza buscas, y te digo si la tengo."
+          ],
+          "accion": "ESCALAR",
+          "ms": 86.3
+        }
+      ]
+    }
+  ],
+  "segundos_de_ejecucion": 777.9
+}
