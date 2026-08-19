@@ -287,7 +287,8 @@ function pintarMuestra(a) {
 async function cargarActividad() {
   let a;
   try {
-    a = await api('/api/actividad');
+    [a, MOTOR] = await Promise.all([api('/api/actividad'),
+                                   api('/api/estado')]);
   } catch {
     return;                       // sin datos aún: el resto del panel funciona
   }
@@ -304,46 +305,186 @@ async function cargarActividad() {
   pintarPrecios(a);
   pintarAtasco(a);
   pintarMuestra(a);
-  pintarDiagramaActividad(a);
+  pintarRecorrido(a, MOTOR.sistema);
 }
 
 let ACTIVIDAD = null;
+let MOTOR = null;
 
-/* El diagrama de convergencia, alimentado con el tráfico medido. */
-function pintarDiagramaActividad(a) {
-  const r = a.resumen;
-  const svg = `
-<svg class="diagrama" viewBox="0 0 720 260" role="img"
-     aria-label="${r.conversaciones} conversaciones entran; ${r.resueltas_sin_persona} las resuelve el bot y ${r.escaladas} llegan a tu mesa">
-  <defs>
-    <marker id="pa" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-      <path d="M0,0 L7,3.5 L0,7 z" fill="#63707f"/>
-    </marker>
-  </defs>
-  ${[0, 1, 2, 3, 4].map((i) => `
-    <circle cx="58" cy="${42 + i * 44}" r="13" fill="#10141c" stroke="#262e3a"/>
-    <path d="M75 ${42 + i * 44} C 150 ${42 + i * 44}, 190 130, 268 130"
-          fill="none" stroke="#262e3a" stroke-width="1.5" marker-end="url(#pa)"/>`).join('')}
-  <text x="58" y="248" text-anchor="middle" font-size="12">${miles(r.conversaciones)} conversaciones</text>
+/* ==========================================================================
+   EL RECORRIDO DE UN MENSAJE
+   --------------------------------------------------------------------------
+   Cuatro bandas: por dónde entra, dónde busca, con qué filtra y dónde acaba.
+   Ni un número escrito a mano — los umbrales salen de /api/estado (que los lee
+   de 03_buscar.py) y los volúmenes de actividad.json.
 
-  <rect x="276" y="98" width="150" height="64" rx="14" fill="#0b0e14" stroke="var(--cian)"/>
-  <text x="351" y="124" text-anchor="middle" font-size="13" class="grande">VendIQ</text>
-  <text x="351" y="143" text-anchor="middle" font-size="11">busca · decide · filtra</text>
+   CANALES NO CONECTADOS
+   Gmail, Wallapop y el resto van PUNTEADOS y en gris de texto, nunca en un
+   color de la paleta. No son una categoría más: son una ausencia. Hoy solo
+   entra WhatsApp, y pintarlos igual sería enseñar una capacidad que no existe.
+========================================================================== */
 
-  <path d="M430 118 C 500 118, 520 62, 588 62" fill="none" stroke="var(--cian)"
-        stroke-width="1.8" marker-end="url(#pa)"/>
-  <path d="M430 142 C 500 142, 520 198, 588 198" fill="none" stroke="var(--ambar)"
-        stroke-width="1.8" marker-end="url(#pa)"/>
+const SVGNS = 'http://www.w3.org/2000/svg';
+const svgEl = (tag, attrs) => {
+  const el = document.createElementNS(SVGNS, tag);
+  for (const k in (attrs || {})) el.setAttribute(k, attrs[k]);
+  return el;
+};
 
-  <rect x="596" y="36" width="104" height="52" rx="12" fill="#0b0e14" stroke="#262e3a"/>
-  <text x="648" y="58" text-anchor="middle" font-size="17" class="cifra" fill="var(--cian)">${miles(r.resueltas_sin_persona)}</text>
-  <text x="648" y="76" text-anchor="middle" font-size="11">resueltas solas</text>
+/* Una caja con título, cifra opcional y hasta dos líneas de pie. Devuelve sus
+   anclas para que las flechas no dependan de coordenadas escritas a mano. */
+function cajaSVG(padre, o) {
+  const g = svgEl('g');
+  const r = svgEl('rect', {x: o.x, y: o.y, width: o.w, height: o.h, rx: 12,
+                           fill: o.punteada ? 'none' : '#0b0e14',
+                           stroke: o.color, 'stroke-width': o.punteada ? 1.2 : 1.4});
+  if (o.punteada) r.setAttribute('stroke-dasharray', '5 4');
+  g.append(r);
 
-  <rect x="596" y="172" width="104" height="52" rx="12" fill="#0b0e14" stroke="#262e3a"/>
-  <text x="648" y="194" text-anchor="middle" font-size="17" class="cifra" fill="var(--ambar)">${miles(r.escaladas)}</text>
-  <text x="648" y="212" text-anchor="middle" font-size="11">a tu mesa</text>
-</svg>`;
-  $('#diagrama').innerHTML = svg;
+  const ty = o.y + (o.pie2 ? 26 : (o.pie ? 27 : o.h / 2 + 5));
+  const t = svgEl('text', {x: o.x + 15, y: ty, class: 'dg-titulo'});
+  t.textContent = o.titulo;
+  g.append(t);
+
+  if (o.cifra) {
+    const c = svgEl('text', {x: o.x + o.w - 15, y: ty, class: 'dg-cifra',
+                             'text-anchor': 'end', fill: o.color});
+    c.textContent = o.cifra;
+    g.append(c);
+  }
+  [o.pie, o.pie2].forEach((texto, i) => {
+    if (!texto) return;
+    const p = svgEl('text', {x: o.x + 15, y: ty + 20 + i * 16,
+                             class: o.punteada ? 'dg-pie dg-apagado' : 'dg-pie'});
+    p.textContent = texto;
+    g.append(p);
+  });
+  padre.append(g);
+  return {izq: {x: o.x, y: o.y + o.h / 2}, der: {x: o.x + o.w, y: o.y + o.h / 2},
+          x: o.x, y: o.y, w: o.w, h: o.h};
+}
+
+/* Curva de A a B. El punteado se reserva a lo que NO está conectado. */
+function flechaSVG(padre, a, b, o) {
+  o = o || {};
+  const dx = Math.max(26, (b.x - a.x) * 0.5);
+  const p = svgEl('path', {
+    d: 'M' + a.x + ' ' + a.y + ' C ' + (a.x + dx) + ' ' + a.y + ', ' +
+       (b.x - dx) + ' ' + b.y + ', ' + b.x + ' ' + b.y,
+    fill: 'none', stroke: o.color || '#2b3340',
+    'stroke-width': o.ancho || 1.4, 'marker-end': 'url(#dg-punta)'});
+  if (o.punteada) p.setAttribute('stroke-dasharray', '4 5');
+  padre.append(p);
+}
+
+/* Conector vertical recto. La curva de arriba asume flujo horizontal: con 18 px
+   de caída dibujaría un lazo en vez de una línea. */
+function bajadaSVG(padre, x, y1, y2) {
+  padre.append(svgEl('path', {d: 'M' + x + ' ' + y1 + ' L' + x + ' ' + y2,
+    stroke: DG_LINEA, 'stroke-width': 1.2, fill: 'none',
+    'marker-end': 'url(#dg-punta)'}));
+}
+
+function bandaSVG(padre, x, texto) {
+  const t = svgEl('text', {x: x, y: 22, class: 'dg-banda'});
+  t.textContent = texto;
+  padre.append(t);
+}
+
+const DG_LINEA = '#2b3340';      // estructura
+const DG_APAGADO = '#3a4250';    // borde de lo que no está conectado
+
+function pintarRecorrido(a, motor) {
+  const W = 1180, H = 440;
+  const acc = a.acciones;
+  const svg = svgEl('svg', {viewBox: '0 0 ' + W + ' ' + H, class: 'recorrido',
+    role: 'img', 'aria-label':
+      'Recorrido de un mensaje. Entra por WhatsApp; Gmail, Wallapop y otras ' +
+      'plataformas no están conectadas. Busca en ' + motor.fichas_indexadas +
+      ' fichas, filtra con cuatro cerrojos y acaba respondiendo ' + acc.RESPONDER +
+      ' veces, preguntando ' + acc.PREGUNTAR + ' y pasando a una persona ' +
+      acc.ESCALAR + '.'});
+
+  const defs = svgEl('defs');
+  const mk = svgEl('marker', {id: 'dg-punta', markerWidth: 7, markerHeight: 7,
+                              refX: 6.5, refY: 3.5, orient: 'auto'});
+  mk.append(svgEl('path', {d: 'M0,0 L7,3.5 L0,7 z', fill: '#4a5563'}));
+  defs.append(mk);
+  svg.append(defs);
+
+  /* --------------------------------------------------- 1 · por dónde entra */
+  bandaSVG(svg, 16, 'ENTRA POR');
+  const canales = [
+    ['WhatsApp', miles(a.resumen.conversaciones) + ' conv.', 'el único conectado',
+     'var(--cian)', false],
+    ['Gmail', null, 'no conectado', DG_APAGADO, true],
+    ['Wallapop', null, 'no conectado', DG_APAGADO, true],
+    ['Otras plataformas', null, 'no conectado', DG_APAGADO, true],
+  ];
+  const nodos = canales.map(function (c, i) {
+    return cajaSVG(svg, {x: 16, y: 48 + i * 76, w: 200, h: 58,
+                         titulo: c[0], cifra: c[1], pie: c[2],
+                         color: c[3], punteada: c[4]});
+  });
+
+  /* ------------------------------------------------------- 2 · dónde busca */
+  bandaSVG(svg, 292, 'BUSCA EN');
+  const busca = cajaSVG(svg, {x: 292, y: 126, w: 258, h: 132,
+    titulo: 'La base de conocimiento',
+    pie: miles(motor.fichas_indexadas) + ' fichas indexadas',
+    pie2: motor.peso_lexico + ' léxico + ' + motor.peso_semantico + ' significado',
+    color: 'var(--cian)'});
+  const nota = svgEl('text', {x: 307, y: 230, class: 'dg-pie'});
+  nota.textContent = 'una fórmula para piezas y políticas';
+  svg.append(nota);
+
+  nodos.forEach(function (n, i) {
+    flechaSVG(svg, n.der, busca.izq, {punteada: i > 0,
+      color: i === 0 ? '#1aa19788' : DG_LINEA, ancho: i === 0 ? 2 : 1.2});
+  });
+
+  /* ----------------------------------------------------- 3 · con qué filtra */
+  bandaSVG(svg, 592, 'FILTRA CON');
+  const cerrojos = [
+    ['Código exacto', 'si trae un nº de stock, ese gana'],
+    ['Compatibilidad', 'descarta marca, modelo, núcleo y lado'],
+    ['Umbral de confianza', 'pieza ≥ ' + motor.umbral_pieza + ' · política ≥ ' + motor.umbral_politica],
+    ['Cerrojo del precio', '≥ ' + motor.umbral_precio + ' y disponible, o no sale importe'],
+  ];
+  const puertas = cerrojos.map(function (c, i) {
+    return cajaSVG(svg, {x: 592, y: 48 + i * 76, w: 260, h: 58,
+                         titulo: c[0], pie: c[1], color: DG_LINEA});
+  });
+  puertas.forEach(function (p, i) {
+    if (i === 0) { flechaSVG(svg, busca.der, p.izq, {color: '#1aa19788', ancho: 2}); return; }
+    const arriba = puertas[i - 1];
+    bajadaSVG(svg, arriba.x + 30, arriba.y + arriba.h, p.y);
+  });
+
+  /* ------------------------------------------------------ 4 · dónde acaba */
+  bandaSVG(svg, 960, 'ACABA EN');
+  const total = Object.values(acc).reduce(function (x, y) { return x + y; }, 0);
+  const salidas = [
+    ['RESPONDER', 'Contesta solo', 'var(--cian)',    '#1aa197bb'],
+    ['PREGUNTAR', 'Pregunta cuál', 'var(--violeta)', '#7a81e1bb'],
+    ['ESCALAR',   'A tu mesa',     'var(--ambar)',   '#b97f14bb'],
+  ];
+  salidas.forEach(function (s, i) {
+    const n = acc[s[0]] || 0;
+    const caja = cajaSVG(svg, {x: 960, y: 52 + i * 102, w: 200, h: 76,
+      titulo: s[1], cifra: miles(n), pie: pct(n / total) + ' de los mensajes',
+      color: s[2]});
+    const centroPila = (puertas[0].y + puertas[3].y + puertas[3].h) / 2;
+    flechaSVG(svg, {x: puertas[3].x + puertas[3].w, y: centroPila}, caja.izq,
+              {color: s[3], ancho: 2});
+  });
+
+  const pie = svgEl('text', {x: 16, y: H - 12, class: 'dg-pie dg-apagado'});
+  pie.textContent = 'Umbrales leídos de 03_buscar.py; volúmenes, de los ' +
+                    a.parametros.dias + ' días medidos. Ni un número escrito a mano.';
+  svg.append(pie);
+
+  $('#diagrama').replaceChildren(svg);
 }
 
 /* El hero con las cifras medidas, no con las del snapshot de 30 mensajes. */

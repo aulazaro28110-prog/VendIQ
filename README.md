@@ -304,6 +304,9 @@ Salida en `salida/actividad.json`, que es lo que pinta la sección *Actividad* d
   combinaciones pieza+marca+modelo: **3,6 fichas por combinación de media y hasta 12**. Si el
   cliente no da el motor ni el año, su pregunta no tiene una sola respuesta correcta. La solución
   no es afinar el algoritmo, es **pedir la matrícula** — y eso ya lo hace.
+- **Un solo canal conectado.** Solo entra WhatsApp. Gmail, Wallapop y el resto de plataformas
+  aparecen en el diagrama del panel **punteados y en gris**, etiquetados *no conectado*: no hay
+  ni una línea de código detrás. Están dibujados porque es por donde crece, no porque funcionen.
 - **El LLM no se ha ejecutado nunca.** `08_conversar.py` está escrito y cableado, con Groq y dos
   barreras de seguridad, pero sin `GROQ_API_KEY` no se ha llamado ni una vez. Es código sin
   probar. Ver `docs/CONFIGURAR_GROQ.md`.
