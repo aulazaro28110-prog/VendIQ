@@ -13,7 +13,7 @@
   const ctx = lienzo.getContext('2d');
   const quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const CIAN = '41,224,210';
+  const CIAN = '26,161,151';   // #1aa197, el cian ya validado contra #06080c
   let ancho, alto, nodos = [], raf = null;
 
   function dimensionar() {
