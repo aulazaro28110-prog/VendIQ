@@ -134,6 +134,23 @@ body{
 .diagrama .grande{fill:var(--tinta);font-weight:600}
 .diagrama .cifra{font-family:var(--mono);font-weight:700}
 
+/* ----------------------------------------------- recorrido de un mensaje
+   El SVG tiene una anchura mínima: por debajo, el texto se volvería ilegible.
+   Antes que encoger la letra, la caja hace scroll horizontal ella sola — el
+   cuerpo de la página nunca se desplaza en horizontal. */
+.caja-recorrido{overflow-x:auto;overflow-y:hidden;margin:6px 0 0;
+  -webkit-overflow-scrolling:touch}
+.recorrido{display:block;width:100%;min-width:940px;height:auto}
+.recorrido text{font-family:var(--ui)}
+.recorrido .dg-banda{font-family:var(--mono);font-size:10.5px;font-weight:700;
+  letter-spacing:.16em;fill:var(--tinta-3)}
+.recorrido .dg-titulo{font-size:13.5px;font-weight:600;fill:var(--tinta)}
+.recorrido .dg-cifra{font-family:var(--mono);font-size:13px;font-weight:700}
+.recorrido .dg-pie{font-size:11.5px;fill:var(--tinta-3)}
+/* Lo no conectado no lleva color de la paleta: lleva gris de texto. No es una
+   categoría más del gráfico, es una ausencia. */
+.recorrido .dg-apagado{fill:#55606f}
+
 /* ------------------------------------------------------------- consola */
 .consola-entrada{display:flex;border:1px solid var(--borde-vivo);border-radius:12px;
   background:var(--carta-alta);overflow:hidden;margin-bottom:14px}
