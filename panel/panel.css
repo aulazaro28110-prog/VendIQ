@@ -43,12 +43,36 @@
 
   --ui:   system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono: ui-monospace,"Cascadia Mono",Consolas,"DejaVu Sans Mono",monospace;
+  /* Serif de titulares. NO se carga de Google Fonts a proposito: el panel
+     funciona sin internet y esa propiedad no se cambia por una tipografia.
+     Palatino Linotype en Windows, Iowan en macOS, Georgia de red. */
+  --serif: "Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+
+  --sombra:      0 10px 30px rgba(0,0,0,.55);
+  --sombra-alta: 0 16px 44px rgba(0,0,0,.72);
 
   --r: 14px;
 }
 
 *,*::before,*::after{box-sizing:border-box}
 html,body{margin:0}
+
+/* Halo muy tenue detras de todo. Va a z-index -3 para quedar POR DEBAJO del
+   canvas de la malla (-2), que sigue siendo el fondo protagonista. Los tres
+   tonos son los de la paleta ya validada, a alfa bajisimo: decoracion, nunca
+   codificacion — aqui el color no significa nada. */
+body::before{
+  content:'';position:fixed;inset:0;z-index:-3;pointer-events:none;
+  background:
+    radial-gradient(760px 420px at 6% -6%,  rgba(26,161,151,.13), transparent 60%),
+    radial-gradient(680px 460px at 100% 0%, rgba(122,129,225,.07), transparent 55%),
+    radial-gradient(620px 520px at 88% 104%,rgba(185,127,20,.05), transparent 60%);
+}
+
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--carta)}
+::-webkit-scrollbar-thumb{background:#23393a;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:var(--cian)}
 body{
   background:var(--fondo);color:var(--tinta);font-family:var(--ui);
   font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;
@@ -109,9 +133,18 @@ body{
 .carta{
   background:var(--carta);border:1px solid var(--borde);border-radius:var(--r);
   padding:26px 28px;margin-bottom:20px;
+  position:relative;box-shadow:var(--sombra);
+}
+/* El filete superior se redondea el solo en vez de recortar la tarjeta con
+   overflow:hidden, que recortaria tambien los tooltips de los graficos. */
+.carta::before{
+  content:'';position:absolute;inset:0 0 auto 0;height:3px;
+  border-radius:var(--r) var(--r) 0 0;
+  background:linear-gradient(90deg,var(--cian),transparent 78%);
 }
 .carta > h3{
-  font-size:14px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em;
+  font-family:var(--serif);font-size:17px;font-weight:600;
+  margin:0 0 5px;letter-spacing:-.005em;
 }
 .carta > .nota{color:var(--tinta-3);font-size:13px;margin:0 0 20px;max-width:66ch}
 .carta.plana{padding:0;overflow:hidden}
@@ -121,9 +154,31 @@ body{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;
   margin-bottom:20px;
 }
-.ind{background:var(--carta);border:1px solid var(--borde);border-radius:var(--r);padding:22px 24px}
-.ind .etiqueta{font-size:12.5px;color:var(--tinta-3);margin:0 0 12px}
-.ind .cifra{font-size:34px;font-weight:600;line-height:1;letter-spacing:-.03em;margin:0}
+.ind{
+  background:var(--carta);border:1px solid var(--borde);border-radius:var(--r);
+  padding:22px 24px;position:relative;box-shadow:var(--sombra);
+  transition:transform .18s,box-shadow .18s;
+}
+.ind:hover{transform:translateY(-2px);box-shadow:var(--sombra-alta)}
+@media (prefers-reduced-motion:reduce){.ind,.ind:hover{transition:none;transform:none}}
+/* El filete lleva el color SEMANTICO de la tarjeta, no el de su posicion en la
+   fila. Un indicador que cambiara de color al reordenarse seria un indicador en
+   el que no se puede confiar. */
+.ind::after{
+  content:'';position:absolute;inset:0 0 auto 0;height:3px;
+  border-radius:var(--r) var(--r) 0 0;
+  background:linear-gradient(90deg,var(--tinta-3),transparent 80%);
+}
+.ind.acento::after{background:linear-gradient(90deg,var(--cian),transparent 80%)}
+.ind.malo::after{background:linear-gradient(90deg,var(--rojo),transparent 80%)}
+.ind .etiqueta{
+  font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--tinta-3);margin:0 0 13px;
+}
+.ind .cifra{
+  font-family:var(--mono);font-size:30px;font-weight:700;line-height:1;
+  letter-spacing:-.01em;margin:0;
+}
 .ind .cifra .unidad{font-size:15px;font-weight:450;color:var(--tinta-2);margin-left:4px}
 .ind .nota{font-size:12.5px;color:var(--tinta-3);margin:10px 0 0;line-height:1.5}
 .ind.acento .cifra{color:var(--cian)}

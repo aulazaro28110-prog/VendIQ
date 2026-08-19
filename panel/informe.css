@@ -40,14 +40,26 @@
 /* ----------------------------------------------------------------- hero */
 .hero{padding:96px 0 76px;position:relative}
 .hero-eyebrow{
-  font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--cian);margin:0 0 20px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--cian);margin:0 0 20px;display:flex;align-items:center;gap:10px;
+}
+.hero-eyebrow::before{
+  content:'';width:30px;height:2px;border-radius:2px;flex:none;
+  background:linear-gradient(90deg,var(--cian),transparent);
 }
 .hero-titulo{
-  font-size:clamp(2.2rem,6vw,4.1rem);font-weight:600;letter-spacing:-.035em;
-  line-height:1.06;margin:0 0 22px;text-wrap:balance;
+  font-family:var(--serif);
+  font-size:clamp(2.1rem,5.6vw,3.9rem);font-weight:600;letter-spacing:-.022em;
+  line-height:1.05;margin:0 0 22px;text-wrap:balance;
 }
-.hero-titulo em{font-style:normal;color:var(--cian)}
+/* Degradado sobre el texto. El tono mas oscuro sigue siendo legible sobre el
+   fondo porque esto solo se aplica a texto grande, donde el minimo es 3:1. */
+.hero-titulo em{
+  font-style:normal;color:var(--cian);
+  background:linear-gradient(92deg,#148f86,#1aa197 42%,#6fdccf 92%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
 .hero-pie{color:var(--tinta-2);max-width:60ch;margin:0 0 32px;font-size:16.5px}
 .hero-acciones{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:56px}
 .boton.grande{padding:14px 30px;font-size:14.5px;text-decoration:none;display:inline-block}
@@ -57,22 +69,43 @@
   gap:1px;background:var(--borde);border:1px solid var(--borde);border-radius:var(--r);
   overflow:hidden;
 }
-.hero-cifras > div{background:rgba(11,14,20,.72);padding:20px 22px;backdrop-filter:blur(6px)}
-.hero-cifras .valor{
-  font-size:29px;font-weight:600;letter-spacing:-.03em;line-height:1;margin:0 0 8px;
-  color:var(--cian);
+.hero-cifras > div{
+  background:rgba(11,14,20,.72);padding:22px 22px 20px;backdrop-filter:blur(6px);
+  position:relative;
 }
-.hero-cifras .que{font-size:12.5px;color:var(--tinta-2);margin:0;line-height:1.45}
+.hero-cifras > div::before{
+  content:'';position:absolute;inset:0 0 auto 0;height:2px;
+  background:linear-gradient(90deg,var(--cian),transparent 82%);
+}
+.hero-cifras .valor{
+  font-family:var(--mono);font-size:27px;font-weight:700;letter-spacing:-.01em;
+  line-height:1;margin:0 0 9px;color:var(--cian);
+}
+.hero-cifras .que{
+  font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--tinta-3);margin:0;line-height:1.5;
+}
 
 /* -------------------------------------------------------------- bloques */
 .bloque{padding:64px 0;scroll-margin-top:70px}
 .bloque + .bloque{border-top:1px solid var(--borde)}
 .eyebrow{
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--cian);margin:0 0 12px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--cian);margin:0 0 14px;display:flex;align-items:center;gap:11px;
+}
+.eyebrow::before{
+  content:'';width:26px;height:2px;border-radius:2px;flex:none;
+  background:linear-gradient(90deg,var(--cian),transparent);
+}
+/* La linea que sale hacia la derecha: separa la seccion sin meter otra regla
+   horizontal, que es lo que hace que la pagina respire. */
+.eyebrow::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,var(--borde-vivo),transparent);
 }
 .bloque > h2{
-  font-size:clamp(1.5rem,3vw,2.1rem);font-weight:600;letter-spacing:-.028em;
+  font-family:var(--serif);
+  font-size:clamp(1.45rem,2.9vw,2rem);font-weight:600;letter-spacing:-.018em;
   margin:0 0 12px;text-wrap:balance;
 }
 .bloque > .intro{color:var(--tinta-2);margin:0 0 30px;max-width:70ch;font-size:15.5px}
@@ -84,7 +117,10 @@
   border:1px solid var(--cian-20);border-radius:10px;height:38px;
   display:grid;place-items:center;background:var(--cian-08);
 }
-.hito h3{font-size:17px;font-weight:600;margin:6px 0 10px;letter-spacing:-.015em}
+.hito h3{
+  font-family:var(--serif);font-size:19px;font-weight:600;
+  margin:5px 0 11px;letter-spacing:-.01em;
+}
 .hito p{color:var(--tinta-2);margin:0 0 12px;max-width:70ch;font-size:14.5px}
 .lista{color:var(--tinta-2);padding-left:20px;margin:0 0 12px;max-width:70ch;font-size:14.5px}
 .lista li{margin:9px 0}
@@ -106,7 +142,10 @@
 }
 .descubrimiento em{color:var(--tinta);font-style:normal;font-weight:600}
 
-.sub-titulo{font-size:19px;font-weight:600;margin:52px 0 10px;letter-spacing:-.02em}
+.sub-titulo{
+  font-family:var(--serif);font-size:21px;font-weight:600;
+  margin:52px 0 10px;letter-spacing:-.012em;
+}
 
 .aviso-escala{
   border:1px solid var(--borde-vivo);border-radius:var(--r);
