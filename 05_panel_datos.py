@@ -148,6 +148,22 @@ def construir_ofertas(filas, ofertas_mod):
 
 # --------------------------------------------------------------------------
 
+def calidad_medida():
+    """Lee lo que midio el banco de busqueda la ultima vez que se ejecuto.
+
+    Si el fichero no esta, NO se inventa una cifra ni se deja la de hace tres
+    catalogos: se devuelve None y el panel dice que hay que ejecutar el banco.
+    Un numero viejo con pinta de fresco es peor que ningun numero.
+    """
+    fichero = BASE / "salida" / "calidad.json"
+    if not fichero.exists():
+        return {"pendiente": "ejecuta python tests/test_busqueda.py",
+                "acierto_antes": 0.20, "fuente": "tests/test_busqueda.py"}
+    d = json.loads(fichero.read_text(encoding="utf-8-sig"))
+    d["acierto_antes"] = 0.20       # historico: busqueda solo vectorial
+    return d
+
+
 def main():
     buscar_mod = cargar("03_buscar.py", "buscar")
     ofertas_mod = cargar("04_ofertas.py", "ofertas")
@@ -286,14 +302,10 @@ def main():
             "nota": ("Contrastado contra la respuesta correcta conocida de cada mensaje, "
                      "no contra lo que el sistema cree haber resuelto."),
         },
-        "calidad_medida": {
-            "acierto_antes": 0.20,
-            "acierto_ahora": 0.89,
-            "guardarrail": 0.98,
-            "preguntas_banco": 80,
-            "piezas_inexistentes_probadas": 40,
-            "fuente": "tests/test_busqueda.py",
-        },
+        # El 0,20 de partida SI se queda a mano: es una medicion historica de la
+        # busqueda solo vectorial, de un sistema que ya no existe y que este
+        # script no puede volver a ejecutar. Lo demas sale medido.
+        "calidad_medida": calidad_medida(),
         # Histórico de las tres mediciones hechas con tests/test_busqueda.py.
         # Se guardan a mano porque son ejecuciones de momentos distintos (búsqueda
         # solo vectorial, híbrida con 100 piezas, híbrida con 1.000), no algo que

@@ -144,6 +144,26 @@
       </div>
     </details>
   </section>
+</div>
+
+  <aside class="lateral">
+    <div class="carta">
+      <h3>Qué hace en cada mensaje</h3>
+      <p class="nota">Las tres únicas acciones posibles por turno.</p>
+      <div class="segmentada" id="seg-acciones" role="img"
+           aria-label="Reparto de acciones"></div>
+      <div class="leyenda" id="leyenda-acciones"></div>
+      <h3 style="margin-top:24px">Por qué llega a tu mesa</h3>
+      <div class="barras" id="g-motivos"></div>
+    </div>
+
+    <div class="carta">
+      <h3>Cómo decide</h3>
+      <p class="nota">Parámetros con los que está funcionando ahora mismo.</p>
+      <div class="indicadores" id="motor" style="margin-bottom:0"></div>
+    </div>
+  </aside>
+</div>
 
   <!-- ======================================================== cliente -->
   <section class="bloque" id="cliente">
@@ -447,13 +467,27 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
           que entraron en juego.
         </p>
         <p>
-          Lo interesante salió en la tabla por días: la mediana se mantuvo en
-          <strong>46 ms durante diez días</strong> y luego subió a 53, 77 y 87 ms
-          en los tres últimos. El catálogo no cambió y el código tampoco, así que
-          no es el buscador: es el proceso, que llevaba trece minutos vivo con el
-          modelo y la matriz en memoria. <strong>No lo tengo cerrado</strong>, y por
-          eso está escrito aquí en vez de haber redondeado el número a 46 ms.
-          El p95 del conjunto —104 ms— sigue estando donde tiene que estar.
+          En la primera tirada salió algo raro en la tabla por días: la mediana
+          aguantó en <strong>46 ms diez días</strong> y luego subió a 53, 77 y 87.
+          Ni el catálogo ni el código habían cambiado. Quedó escrito aquí como
+          <em>no cerrado</em>, en vez de redondear a 46 ms y callarse.
+        </p>
+        <p>
+          Hubo que rehacer la tirada entera —había cambiado una frase de las
+          políticas y con ella el índice—, y esa repetición contestó la pregunta:
+          los catorce días salen <strong>planos entre 54 y 61 ms</strong>, el p95
+          baja de 104 a 78 ms y el máximo de 881 a 176. <strong>La deriva era la
+          máquina, no el buscador.</strong>
+        </p>
+        <p>
+          Y de regalo, una lección sobre las cifras propias: dos ejecuciones
+          idénticas del mismo trabajo dieron medianas de <strong>49,3 y 56,8 ms</strong>.
+          Eso pone el ruido de medida en torno al 15 %, así que decir «47 ms» con
+          tres cifras era precisión falsa. Lo honesto es <strong>50-60 ms</strong>.
+          Las decisiones, en cambio, salieron idénticas hasta el último número en
+          las dos tiradas: 1.863 conversaciones, 312 a tu mesa, 1.019 precios
+          dichos, cero fugas. Lo que decide el sistema es reproducible; lo que
+          tarda depende de la máquina.
         </p>
       </div>
     </div>
@@ -559,26 +593,6 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
     </div>
   </section>
 
-</div>
-
-    <aside class="lateral">
-      <div class="carta">
-        <h3>Qué hace en cada mensaje</h3>
-        <p class="nota">Las tres únicas acciones posibles por turno.</p>
-        <div class="segmentada" id="seg-acciones" role="img"
-             aria-label="Reparto de acciones"></div>
-        <div class="leyenda" id="leyenda-acciones"></div>
-        <h3 style="margin-top:24px">Por qué llega a tu mesa</h3>
-        <div class="barras" id="g-motivos"></div>
-      </div>
-
-      <div class="carta">
-        <h3>Cómo decide</h3>
-        <p class="nota">Parámetros con los que está funcionando ahora mismo.</p>
-        <div class="indicadores" id="motor" style="margin-bottom:0"></div>
-      </div>
-    </aside>
-</div>
 
   <footer class="pie">
     <p class="pie-nota" id="pie-nota"></p>

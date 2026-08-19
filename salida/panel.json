@@ -1,13 +1,13 @@
 {
-  "generado": "2026-08-18T22:07:11+00:00",
+  "generado": "2026-08-19T21:46:39+00:00",
   "aviso": "Los mensajes de cliente están simulados (es un prototipo, no hay clientes reales). Las decisiones, puntuaciones y tiempos son resultado de ejecutar el sistema de verdad.",
   "resumen": {
     "consultas": 30,
     "resueltas_sin_persona": 29,
     "tasa_resolucion": 0.9667,
     "escaladas": 1,
-    "ms_mediana": 56.7,
-    "ms_p95": 69.6,
+    "ms_mediana": 65.4,
+    "ms_p95": 82.2,
     "piezas_catalogo": 5000,
     "ofertas": 15,
     "ofertas_por_regla": 12,
@@ -23,12 +23,15 @@
     "nota": "Contrastado contra la respuesta correcta conocida de cada mensaje, no contra lo que el sistema cree haber resuelto."
   },
   "calidad_medida": {
-    "acierto_antes": 0.2,
-    "acierto_ahora": 0.89,
-    "guardarrail": 0.98,
+    "acierto_ahora": 0.9125,
+    "acierto_top3": 0.975,
+    "guardarrail": 1.0,
     "preguntas_banco": 80,
     "piezas_inexistentes_probadas": 40,
-    "fuente": "tests/test_busqueda.py"
+    "fichas_indexadas": 5007,
+    "medido": "2026-08-19 23:46",
+    "fuente": "tests/test_busqueda.py",
+    "acierto_antes": 0.2
   },
   "historico": {
     "columnas": [
@@ -92,7 +95,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 63.2,
+      "ms": 76.9,
       "resultados": [
         {
           "puntuacion": 0.816,
@@ -128,7 +131,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 69.6,
+      "ms": 76.7,
       "resultados": [
         {
           "puntuacion": 0.862,
@@ -164,7 +167,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 74.6,
+      "ms": 84.5,
       "resultados": [
         {
           "puntuacion": 0.921,
@@ -200,7 +203,7 @@
       "porque": "no hay ninguna ficha que supere el umbral de confianza: el sistema prefiere no ofrecer una pieza distinta a la pedida",
       "veredicto": "sin_respuesta",
       "existe_en_catalogo": null,
-      "ms": 49.8,
+      "ms": 64.4,
       "resultados": []
     },
     {
@@ -211,7 +214,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 43.9,
+      "ms": 60.1,
       "resultados": [
         {
           "puntuacion": 0.142,
@@ -231,7 +234,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 64.5,
+      "ms": 75.9,
       "resultados": [
         {
           "puntuacion": 0.901,
@@ -267,7 +270,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 51.9,
+      "ms": 73.7,
       "resultados": [
         {
           "puntuacion": 0.755,
@@ -295,7 +298,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 59.0,
+      "ms": 75.0,
       "resultados": [
         {
           "puntuacion": 0.876,
@@ -314,7 +317,7 @@
           "precio": "67,53 € + IVA"
         },
         {
-          "puntuacion": 0.169,
+          "puntuacion": 0.172,
           "tipo": "politica",
           "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
           "id_pieza": "",
@@ -331,7 +334,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "pieza_equivocada",
       "existe_en_catalogo": true,
-      "ms": 63.2,
+      "ms": 82.2,
       "resultados": [
         {
           "puntuacion": 0.899,
@@ -367,7 +370,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 56.1,
+      "ms": 75.7,
       "resultados": [
         {
           "puntuacion": 0.799,
@@ -403,7 +406,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 44.6,
+      "ms": 59.5,
       "resultados": [
         {
           "puntuacion": 0.145,
@@ -423,7 +426,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 58.4,
+      "ms": 72.9,
       "resultados": [
         {
           "puntuacion": 0.848,
@@ -459,7 +462,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 61.2,
+      "ms": 69.6,
       "resultados": [
         {
           "puntuacion": 0.886,
@@ -495,7 +498,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 53.4,
+      "ms": 61.5,
       "resultados": [
         {
           "puntuacion": 0.26,
@@ -531,7 +534,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 57.3,
+      "ms": 69.7,
       "resultados": [
         {
           "puntuacion": 0.803,
@@ -567,7 +570,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 62.0,
+      "ms": 61.5,
       "resultados": [
         {
           "puntuacion": 0.823,
@@ -603,7 +606,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 65.2,
+      "ms": 66.4,
       "resultados": [
         {
           "puntuacion": 0.832,
@@ -639,7 +642,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 58.9,
+      "ms": 67.9,
       "resultados": [
         {
           "puntuacion": 0.911,
@@ -675,7 +678,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 47.2,
+      "ms": 54.6,
       "resultados": [
         {
           "puntuacion": 0.423,
@@ -711,7 +714,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 52.7,
+      "ms": 55.0,
       "resultados": [
         {
           "puntuacion": 1.0,
@@ -731,7 +734,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 63.8,
+      "ms": 68.3,
       "resultados": [
         {
           "puntuacion": 0.827,
@@ -767,7 +770,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 62.4,
+      "ms": 64.3,
       "resultados": [
         {
           "puntuacion": 0.82,
@@ -803,7 +806,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "pieza_equivocada",
       "existe_en_catalogo": true,
-      "ms": 54.6,
+      "ms": 61.1,
       "resultados": [
         {
           "puntuacion": 0.894,
@@ -839,7 +842,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 53.5,
+      "ms": 53.2,
       "resultados": [
         {
           "puntuacion": 1.0,
@@ -859,7 +862,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 48.7,
+      "ms": 52.3,
       "resultados": [
         {
           "puntuacion": 0.204,
@@ -879,7 +882,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 42.2,
+      "ms": 44.4,
       "resultados": [
         {
           "puntuacion": 0.233,
@@ -898,9 +901,9 @@
           "precio": ""
         },
         {
-          "puntuacion": 0.155,
+          "puntuacion": 0.152,
           "tipo": "politica",
-          "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
+          "texto": "JUSTIFICANTES DE PAGO. Un justificante, captura o resguardo de transferencia NO es una confirmación de pago. El asistente nunca valida justificantes n",
           "id_pieza": "",
           "url": "",
           "precio": ""
@@ -915,7 +918,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 52.7,
+      "ms": 51.9,
       "resultados": [
         {
           "puntuacion": 1.0,
@@ -935,7 +938,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 48.8,
+      "ms": 53.2,
       "resultados": [
         {
           "puntuacion": 1.0,
@@ -955,10 +958,10 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 49.6,
+      "ms": 52.3,
       "resultados": [
         {
-          "puntuacion": 0.25,
+          "puntuacion": 0.214,
           "tipo": "politica",
           "texto": "COMO IDENTIFICAR LA PIEZA CORRECTA. Para asegurar la compatibilidad se pide la matrícula del vehículo o el número de bastidor (VIN). Con eso se identi",
           "id_pieza": "",
@@ -975,7 +978,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 59.6,
+      "ms": 78.1,
       "resultados": [
         {
           "puntuacion": 0.837,

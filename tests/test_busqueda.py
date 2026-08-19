@@ -21,9 +21,11 @@ Requisitos: haber ejecutado 01_ingesta_chunking.py y 02_embeddings.py.
 
 import csv
 import importlib.util
+import json
 import random
 import sys
 import unicodedata
+from datetime import datetime
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
@@ -231,6 +233,21 @@ def main():
           f"{total['r3']/total['n']:>11.0%}")
 
     callados, n_fuera, fugas = guardarrail
+
+    # El panel leia estas cifras de una constante escrita a mano y se quedaron
+    # obsoletas al pasar de 1.000 a 5.000 piezas. Ahora las escribe quien las
+    # mide, y el panel las lee de aqui.
+    (BASE / "salida").mkdir(parents=True, exist_ok=True)
+    (BASE / "salida" / "calidad.json").write_text(json.dumps({
+        "acierto_ahora": round(total["r1"] / total["n"], 4),
+        "acierto_top3": round(total["r3"] / total["n"], 4),
+        "guardarrail": round(callados / n_fuera, 4),
+        "preguntas_banco": total["n"],
+        "piezas_inexistentes_probadas": n_fuera,
+        "fichas_indexadas": len(buscador.items),
+        "medido": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "fuente": "tests/test_busqueda.py",
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
     print()
     print("=" * 72)
     print("GUARDARRAÍL — ¿se calla cuando NO tiene la pieza?")

@@ -188,9 +188,16 @@ La pestaña de precios cierra un círculo que merece la pena entender: tu trabaj
 se queda en resolver un caso, **entra en el sistema**. En cuanto guardas un precio, la
 siguiente consulta ya lo usa. El humano no es el plan B del bot: es quien lo alimenta.
 
-Los datos de actividad salen de `05_panel_datos.py`, que simula los **mensajes** (es un
-prototipo, no hay clientes reales) pero mide de verdad las decisiones, las puntuaciones
-y los tiempos. Si mañana la búsqueda empeora, los números del panel empeoran solos.
+Los datos de actividad salen de `10_simular.py`: catorce días enteros de tráfico pasados
+por el buscador y el redactor **reales**. Simula los **mensajes** (es un prototipo, no hay
+clientes reales) pero mide de verdad las decisiones, los escalados y los tiempos. Si mañana
+la búsqueda empeora, los números del panel empeoran solos. `05_panel_datos.py` sigue
+generando el registro de consultas y las cifras de ofertas del panel.
+
+El panel se lee en dos columnas: la sección de **Actividad** lleva a su derecha una columna
+fija con las dos tarjetas de resumen —qué hace en cada mensaje y con qué parámetros decide—
+para tenerlas delante mientras se miran los gráficos. El resto de secciones va a ancho
+completo, porque las tablas lo necesitan.
 
 ## Datos
 
@@ -247,6 +254,11 @@ así que la respuesta correcta se conoce de antemano y siguen valiendo cuando el
 | Políticas (garantía, plazos, pago) | 70 % | 60 % | 70 % |
 | **Total** | **20 %** | **89 %** | **91 %** |
 
+El banco deja sus resultados en `salida/calidad.json` y el panel los lee de ahí: antes
+estaban escritos a mano en `05_panel_datos.py` y se quedaron en el 89 % del catálogo de 1.000
+piezas mientras el sistema ya iba por el 91 %. Si el fichero no está, el panel dice que hay que
+ejecutar el banco en vez de enseñar una cifra vieja con pinta de fresca.
+
 Acierto en el top 3: **98 %**. Guardarraíl: **40 de 40** piezas inexistentes no devuelven
 ninguna ficha (**100 %**).
 
@@ -283,8 +295,13 @@ piezas: aquí no hay ni una cifra estimada.
 | Escaladas a un humano | 312 |
 | Precios dados solos | 1.037 |
 | **Fugas de precio** | **0** |
-| Latencia mediana / p95 / máx | 49,3 / 104,3 / 881,1 ms |
-| Tiempo de ejecución | 778 s |
+| Latencia mediana / p95 / máx | 56,8 / 77,6 / 175,6 ms |
+| Tiempo de ejecución | 767 s |
+
+La tirada se ha hecho **dos veces**, con el índice reconstruido en medio. Las
+decisiones salieron idénticas hasta el último número; las latencias, no (medianas
+de 49,3 y 56,8 ms). Lo que decide el sistema es reproducible, lo que tarda depende
+de la máquina.
 
 Reparto de las tres únicas acciones posibles por mensaje: **RESPONDER 3.364 · ESCALAR 618 ·
 PREGUNTAR 550**. De los 1.596 importes que entraron en juego, el bot dijo 1.019 y **se calló
@@ -310,15 +327,12 @@ Salida en `salida/actividad.json`, que es lo que pinta la sección *Actividad* d
 - **El LLM no se ha ejecutado nunca.** `08_conversar.py` está escrito y cableado, con Groq y dos
   barreras de seguridad, pero sin `GROQ_API_KEY` no se ha llamado ni una vez. Es código sin
   probar. Ver `docs/CONFIGURAR_GROQ.md`.
-- **La latencia se desvió al final de la tirada.** La mediana diaria se mantuvo en ~46 ms
-  durante diez días y subió a 53, 77 y 87 ms en los tres últimos. Ni el catálogo ni el código
-  cambiaron, así que no es el buscador: apunta al proceso, que llevaba trece minutos vivo con
-  el modelo y la matriz cargados. **No está cerrado.** Queda escrito en vez de publicar el
-  46 ms bonito.
-- **Escala: no es el problema.** Medido, no estimado: con 5.007 fichas la mediana es **47 ms**
-  (la mayor parte, vectorizar la pregunta, que es coste fijo) y el índice ocupa **7,7 MB**.
-  Cinco veces más catálogo no multiplicó por cinco el tiempo. La búsqueda lineal aguanta de
-  sobra; no hace falta un índice vectorial especializado.
+- **Escala: no es el problema.** Medido, no estimado: con 5.007 fichas la mediana está
+  **entre 50 y 60 ms** (la mayor parte, vectorizar la pregunta, que es coste fijo) y el índice
+  ocupa **7,7 MB**. El rango en vez de una cifra exacta es a propósito: dos ejecuciones
+  idénticas dieron 49,3 y 56,8 ms, así que el ruido de medida ronda el 15 % y publicar «47 ms»
+  sería precisión falsa. Cinco veces más catálogo no multiplicó por cinco el tiempo. La
+  búsqueda lineal aguanta de sobra; no hace falta un índice vectorial especializado.
 
 ## Estado
 

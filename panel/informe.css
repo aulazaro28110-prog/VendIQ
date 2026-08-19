@@ -74,8 +74,14 @@
 }
 
 /* ------------------------------------- rejilla principal + lateral fijo */
+/* La rejilla envuelve SOLO la seccion de Actividad. Un lateral pegajoso al lado
+   de una pagina de 10.000 px se queda clavado toda la vida y parece roto; al lado
+   de una seccion de altura parecida, acompania y luego se suelta. El resto de la
+   pagina vuelve a ancho completo, que es lo que necesitan la mesa de negociacion,
+   el chat y las tablas del informe. */
 .rejilla-principal{display:grid;grid-template-columns:1fr 342px;gap:28px;align-items:start}
 .columna-principal{min-width:0}
+.rejilla-principal + .bloque{border-top:1px solid var(--borde)}
 .lateral{
   position:sticky;top:78px;display:flex;flex-direction:column;gap:18px;
   padding-top:64px;

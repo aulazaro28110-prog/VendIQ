@@ -1,0 +1,10 @@
+{
+  "acierto_ahora": 0.9125,
+  "acierto_top3": 0.975,
+  "guardarrail": 1.0,
+  "preguntas_banco": 80,
+  "piezas_inexistentes_probadas": 40,
+  "fichas_indexadas": 5007,
+  "medido": "2026-08-19 23:46",
+  "fuente": "tests/test_busqueda.py"
+}
