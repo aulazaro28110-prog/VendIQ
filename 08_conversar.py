@@ -44,6 +44,13 @@ MODELO_POR_DEFECTO = "llama-3.3-70b-versatile"
 URL_GROQ = "https://api.groq.com/openai/v1/chat/completions"
 TIEMPO_MAXIMO = 12          # segundos; si tarda más, se responde sin LLM
 
+# Máximo de preguntas de aclaración por conversación (regla del diseño). A la
+# tercera ya no estás aclarando, estás interrogando.
+TOPE_ACLARACIONES = 2
+
+# Turnos que se le pasan al modelo tal cual. Lo anterior no se tira: se resume.
+VENTANA_TURNOS = 6
+
 
 # ---------------------------------------------------------------------------
 # CONFIGURACIÓN
@@ -124,7 +131,7 @@ def opciones_desambiguacion(busqueda, maximo=4):
 # LA ACCIÓN DEL TURNO
 # ---------------------------------------------------------------------------
 
-def elegir_accion(busqueda, respuesta, opciones):
+def elegir_accion(busqueda, respuesta, opciones, aclaraciones=0):
     """RESPONDER / PREGUNTAR / ESCALAR, y por qué.
 
     Se decide sobre lo que ya han dicho la búsqueda y el redactor. No hay ninguna
@@ -141,6 +148,12 @@ def elegir_accion(busqueda, respuesta, opciones):
     # Solo se pregunta si el precio se ha quedado retenido por falta de datos Y
     # existen opciones reales que lo desbloquean. Preguntar por preguntar, no.
     if opciones and "precio retenido" in reglas:
+        # ...y como mucho dos veces. Si dos intentos no han bastado para decidir,
+        # adivinar sale más caro que molestar a una persona.
+        if aclaraciones >= TOPE_ACLARACIONES:
+            return "ESCALAR", (f"ya se ha preguntado {aclaraciones} veces y sigue "
+                               f"sin poder decidir: lo ve una persona en vez de "
+                               f"seguir preguntando")
         return "PREGUNTAR", (f"hay {len(opciones['opciones'])} piezas que encajan "
                              f"con lo que ha dicho: se pregunta cuál en vez de "
                              f"adivinar")
@@ -174,7 +187,35 @@ LO QUE NO PUEDES HACER NUNCA:
 Te doy la ACCIÓN ya decidida y los DATOS. Escribe SOLO el mensaje al cliente."""
 
 
-def _mensajes(consulta, respuesta, accion, opciones, historial):
+def resumir(memoria, omitidos):
+    """Comprime en datos lo que ya no cabe en la ventana de turnos.
+
+    NO lo escribe el modelo. Se monta con lo que la conversación lleva guardado,
+    porque un resumen generado puede inventarse una matrícula que nadie dijo, y
+    éste no puede: cada línea o está en memoria o no aparece. Sale gratis, es
+    reproducible y no alucina.
+    """
+    if not memoria:
+        return None
+    campos = [
+        ("cliente", memoria.get("nombre") or None),
+        ("matrícula que dio", memoria.get("matricula")),
+        ("coche del que se habla", memoria.get("vehiculo")),
+        ("pieza que busca", memoria.get("pieza")),
+        ("último precio dicho", memoria.get("precio")),
+    ]
+    lineas = [f"  {etiqueta}: {valor}" for etiqueta, valor in campos if valor]
+    if memoria.get("garantia_dicha"):
+        lineas.append("  la garantía ya se le explicó: no la repitas")
+    if memoria.get("escalado"):
+        lineas.append("  ya está en manos de una persona")
+    if not lineas:
+        return None
+    return (f"LO YA HABLADO ({omitidos} mensajes anteriores, resumidos):\n"
+            + "\n".join(lineas))
+
+
+def _mensajes(consulta, respuesta, accion, opciones, historial, memoria=None):
     """Monta lo que ve el modelo. Lo que no esté aquí, para él no existe."""
     datos = [f"ACCIÓN: {accion}"]
 
@@ -218,7 +259,14 @@ def _mensajes(consulta, respuesta, accion, opciones, historial):
                  + respuesta["mensaje"])
 
     mensajes = [{"role": "system", "content": ROL}]
-    for turno in historial[-6:]:
+    # Si la conversación se ha hecho larga, lo que se sale de la ventana entra
+    # resumido en vez de desaparecer. Es la diferencia entre recortar y recordar.
+    omitidos = max(0, len(historial) - VENTANA_TURNOS)
+    if omitidos:
+        resumen = resumir(memoria, omitidos)
+        if resumen:
+            mensajes.append({"role": "system", "content": resumen})
+    for turno in historial[-VENTANA_TURNOS:]:
         mensajes.append({"role": "user", "content": turno["cliente"]})
         mensajes.append({"role": "assistant", "content": turno["bot"]})
     mensajes.append({"role": "user",
@@ -227,7 +275,8 @@ def _mensajes(consulta, respuesta, accion, opciones, historial):
     return mensajes
 
 
-def redactar_con_llm(consulta, respuesta, accion, opciones, historial, config):
+def redactar_con_llm(consulta, respuesta, accion, opciones, historial, config,
+                     memoria=None):
     """Devuelve las líneas escritas por el modelo, o None si no se puede.
 
     Cualquier fallo (sin clave, sin red, cuota agotada, respuesta rara) devuelve
@@ -240,7 +289,8 @@ def redactar_con_llm(consulta, respuesta, accion, opciones, historial, config):
 
     cuerpo = json.dumps({
         "model": config.get("GROQ_MODELO") or MODELO_POR_DEFECTO,
-        "messages": _mensajes(consulta, respuesta, accion, opciones, historial),
+        "messages": _mensajes(consulta, respuesta, accion, opciones, historial,
+                              memoria),
         "temperature": 0.4,     # algo de variedad, pero no delirios
         "max_tokens": 220,
     }).encode("utf-8")

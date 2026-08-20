@@ -398,7 +398,9 @@ class Sistema:
             for _, it in self.buscador.buscar(texto_busqueda, k=10)]}
         opciones = self.conversar.opciones_desambiguacion(candidatas)
         accion, porque_accion = self.conversar.elegir_accion(
-            busqueda, respuesta, opciones)
+            busqueda, respuesta, opciones, conv.aclaraciones)
+        if accion == "PREGUNTAR":
+            conv.aclaraciones += 1
         respuesta["accion"] = accion
         respuesta["porque_accion"] = porque_accion
         respuesta["opciones"] = opciones if accion == "PREGUNTAR" else None
@@ -407,9 +409,16 @@ class Sistema:
 
         # El LLM reescribe el mismo contenido con mejor forma. Si no hay clave o
         # falla, se queda el borrador determinista y la conversación sigue.
+        # Lo que se sabe de la conversacion viaja con la peticion: si el historial
+        # se ha hecho largo, esto es lo que sobrevive al recorte, resumido.
+        memoria_llm = {"nombre": conv.nombre, "matricula": conv.matricula,
+                       "vehiculo": conv.vehiculo, "precio": conv.ultimo_precio,
+                       "garantia_dicha": conv.garantia_dicha,
+                       "escalado": conv.escalado,
+                       "pieza": (conv.ultima_pieza or {}).get("pieza")}
         lineas_llm, nota = self.conversar.redactar_con_llm(
             busqueda, respuesta, accion, respuesta["opciones"], historial,
-            self.config_llm)
+            self.config_llm, memoria_llm)
         respuesta["redactor"] = nota
         if lineas_llm:
             respuesta["borrador"] = respuesta["lineas"]

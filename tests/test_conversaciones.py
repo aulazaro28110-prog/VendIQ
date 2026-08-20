@@ -477,6 +477,9 @@ NIEGA_TENERLA = re.compile(
 IDENTIFICA = re.compile(r"matr[íi]cula|bastidor|vin", re.I)
 
 
+conversar = None            # lo carga main(); se usa para leer TOPE_ACLARACIONES
+
+
 def invariantes(respuesta, historial, matricula_dada, decision):
     """Cosas que NUNCA pueden pasar. Devuelve la lista de las que se han roto."""
     rotos = []
@@ -531,6 +534,7 @@ def ejecutar(sistema, casos, ver=False):
     for n, (categoria, perfil, mensajes, esperado) in enumerate(casos, start=1):
         sesion = f"banco-{n}"
         historial, turnos, rotos = [], [], []
+        aclaraciones = 0
         for i, mensaje in enumerate(mensajes):
             datos = sistema.chatear(sesion, mensaje, perfil=perfil,
                                     nombre="Juan Carlos" if perfil == "conocido" else "",
@@ -540,11 +544,22 @@ def ejecutar(sistema, casos, ver=False):
             # dio en este turno, el bot ya no puede volver a pedirla en su respuesta.
             rotos += invariantes(bot, historial, datos["memoria"]["matricula"],
                                  busqueda["decision"])
+            if bot.get("accion") == "PREGUNTAR":
+                aclaraciones += 1
             historial.append(bot["mensaje"])
             turnos.append({"cliente": mensaje, "bot": bot["lineas"],
                            "decision": busqueda["decision"], "ms": busqueda["ms"],
                            "reglas": [r["regla"] for r in bot["reglas"]],
                            "precio": bot["precio_dado"]})
+        # TOPE DE ACLARACIONES. El diseno permite una o dos preguntas con botones
+        # para desbloquear un precio retenido; a la tercera ya no estas aclarando,
+        # estas interrogando, y el cliente se va. Este invariante NO cabe en
+        # invariantes(): no se ve en un mensaje suelto, hay que contar la
+        # conversacion entera.
+        if aclaraciones > conversar.TOPE_ACLARACIONES:
+            rotos.append(f"pregunta {aclaraciones} veces con botones: el tope son "
+                         f"{conversar.TOPE_ACLARACIONES}")
+
         obtenido = clasificar(bot, busqueda)
         acierto = esperado == "cualquiera" or obtenido == esperado
         resultados.append({"n": n, "categoria": categoria, "perfil": perfil,
@@ -613,7 +628,9 @@ def informe(resultados):
 
 
 def main():
+    global conversar
     panel = cargar("06_panel.py", "panel")
+    conversar = cargar("08_conversar.py", "conversar")
     sistema = panel.Sistema()
     buscar_mod = sistema.buscar_mod
 

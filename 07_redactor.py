@@ -73,9 +73,10 @@ ESCALADO_PRECIO = "Cualquier ajuste te lo tiene que decir Álvaro, se lo paso ah
 POLITICAS = {
     "GARANTIA": "Todas las piezas llevan un año de garantía, nuevas o desmontadas. "
                 "Solo hace falta guardar la factura.",
-    "ENVIO Y PLAZOS": "Enviamos a toda la península en 24-48 h, y lo que está en "
-                      "stock suele salir al día siguiente. También puedes recogerlo "
-                      "en Alcobendas.",
+    "ENVIO Y PLAZOS": "Enviamos a toda la península en 24-48 h y lo que está en "
+                      "stock sale al día siguiente. Baleares, Canarias, Ceuta y "
+                      "Melilla se consultan aparte. También puedes recogerlo en "
+                      "Alcobendas.",
     "PRECIOS Y DESCUENTOS": "Los precios que te paso son los publicados y siempre "
                             "van + IVA, sin excepción.",
     "FORMAS DE PAGO Y DEVOLUCIONES": "Puedes pagar con tarjeta, efectivo, "
@@ -319,6 +320,10 @@ class Conversacion:
         # mueve de ella aunque el cliente cambie de argumento. Ver redactar().
         self.regla_dura = None
         self.veces_dicho = {}               # cuántas veces se ha usado cada frase
+        # Cuántas veces se le ha lanzado una pregunta de aclaración con botones.
+        # El diseño pone el tope en dos: a la tercera ya no estás aclarando, estás
+        # interrogando, y el cliente se va.
+        self.aclaraciones = 0
         # Coche del que se está hablando. Lo rellena el panel al reconocerlo, y sirve
         # para que "la puerta, la de siempre" siga encontrando la pieza correcta.
         self.vehiculo = None

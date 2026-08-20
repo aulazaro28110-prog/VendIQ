@@ -210,6 +210,9 @@ class Buscador:
         self.modelos_conocidos = {}  # 'c4' -> {'C4'},  'serie' -> {'Serie 3','Serie 5'}
         self.tipos_conocidos = set()
         self.por_codigo = {}     # '69328' / '7891vt72e' -> posición en el índice
+        # Máscara por posición: True si el chunk es una política. Se usa para
+        # enrutar y se precalcula porque se consulta en cada búsqueda.
+        self.es_politica = np.array([it["tipo"] == "politica" for it in self.items])
 
         for item in self.items:
             meta = item.get("meta") or {}
@@ -420,6 +423,18 @@ class Buscador:
         v = self.modelo.encode([pregunta], normalize_embeddings=True)[0].astype("float32")
         return self.embeddings @ v
 
+    def _habla_de_pieza(self, pregunta: str) -> bool:
+        """¿Nombra la pregunta algo que identifique una pieza del catálogo?
+
+        Tipo, marca, modelo o código: cualquiera de los cuatro basta. Los cuatro
+        vocabularios salen del propio catálogo, no de una lista escrita a mano.
+        """
+        palabras = set(normalizar(pregunta))
+        return bool(palabras & self.tipos_conocidos
+                    or palabras & set(self.marcas_conocidas)
+                    or palabras & set(self.modelos_conocidos)
+                    or any(self.por_codigo.get(p) is not None for p in palabras))
+
     def buscar(self, pregunta: str, k: int = 3, aplicar_umbral: bool = True) -> list:
         """Devuelve hasta k resultados [(puntuacion, item), ...], el mejor primero.
 
@@ -436,6 +451,26 @@ class Buscador:
 
         # Las fichas incompatibles con lo que ha pedido el cliente quedan fuera de juego.
         puntuaciones = np.where(self._descartar_incompatibles(pregunta), puntuaciones, -1.0)
+
+        # ENRUTADO: ¿esta pregunta va de una PIEZA o de una CONDICIÓN?
+        #
+        # Era el punto flojo del sistema y la causa estaba medida: el modelo da
+        # ~0,47 de parecido a *cualquier* ficha frente a *cualquier* pregunta en
+        # español, y la política correcta saca 0,40. Así que "¿el precio lleva
+        # IVA?" devolvía una pieza — porque las 5.000 fichas dicen literalmente
+        # "Precio:" y "+ IVA".
+        #
+        # No se puede resolver por vocabulario: se comprobó que NO existe ni una
+        # palabra que salga en las políticas y en ninguna ficha. Lo que sí
+        # distingue es lo que la pregunta NO dice. Si no nombra tipo de pieza, ni
+        # marca, ni modelo, ni código, no está preguntando por una pieza concreta,
+        # y las fichas salen de la puja.
+        #
+        # Los cuatro vocabularios se aprenden del catálogo al indexar: esto no es
+        # una lista escrita a mano. Si mañana entran motos, crece solo.
+        solo_politicas = not self._habla_de_pieza(pregunta)
+        if solo_politicas:
+            puntuaciones = np.where(self.es_politica, puntuaciones, -1.0)
 
         # ATAJO POR CÓDIGO EXACTO. Si el cliente da el nº de stock de la web o la
         # referencia OEM, la pieza está identificada y no hay nada que puntuar: un
@@ -460,7 +495,8 @@ class Buscador:
         orden = np.argsort(puntuaciones)[::-1]
         if aplicar_umbral:
             orden = [i for i in orden
-                     if self._es_fiable(self.items[i], puntuaciones[i], significado[i])]
+                     if self._es_fiable(self.items[i], puntuaciones[i],
+                                        significado[i], solo_politicas)]
         resultados = []
         ya_hubo_pieza = False
         for i in orden[:k]:
@@ -478,10 +514,31 @@ class Buscador:
         return resultados
 
     @staticmethod
-    def _es_fiable(item, puntuacion, significado) -> bool:
-        """¿Este resultado es lo bastante bueno como para enseñárselo a un cliente?"""
+    def _es_fiable(item, puntuacion, significado, solo_politicas=False) -> bool:
+        """¿Este resultado es lo bastante bueno como para enseñárselo a un cliente?
+
+        Una política se acepta por SIGNIFICADO. Pero cuando el enrutado ya ha
+        decidido que la pregunta no va de una pieza, también vale la evidencia
+        LÉXICA: ahí las únicas candidatas son políticas, así que la puntuación
+        combinada —que pesa las palabras por IDF— es mejor información que el
+        significado a secas, y no puede perjudicar a ninguna ficha.
+
+        Salió de un fallo real: «¿enviáis a Canarias?» no encontraba nada, y la
+        política de envío dice literalmente «Baleares, Canarias, Ceuta y Melilla
+        se consulta aparte». El chunk habla sobre todo de la península y de
+        plazos, así que su embedding no se parece a la pregunta — pero la palabra
+        está ahí, y es rara, y solo está en ese chunk. Tirar esa evidencia era
+        perder una respuesta que sí teníamos.
+        """
         if item["tipo"] == "politica":
-            return significado >= UMBRAL_POLITICA
+            if significado >= UMBRAL_POLITICA:
+                return True
+            # El umbral es el de POLÍTICA, no el de pieza: aquí ya no compite con
+            # ninguna ficha, así que exigirle el listón de una pieza no protege de
+            # nada y solo tira respuestas buenas. Medido en «¿enviáis a Canarias?»:
+            # la política correcta saca 0,376 y la siguiente 0,092 — cuatro veces
+            # menos. No había ambigüedad, había un umbral mal elegido.
+            return solo_politicas and puntuacion >= UMBRAL_POLITICA
         return puntuacion >= UMBRAL_PIEZA
 
     def precio_para_cliente(self, item, puntuacion, pregunta,
