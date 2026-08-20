@@ -318,173 +318,116 @@ let MOTOR = null;
    Ni un número escrito a mano — los umbrales salen de /api/estado (que los lee
    de 03_buscar.py) y los volúmenes de actividad.json.
 
+   POR QUÉ NO ES UN SVG
+   La primera versión eran cuatro columnas en un SVG de 1.180 px. Cuatro columnas
+   con texto legible no bajan de ~950 px, así que en cuanto la ventana se
+   estrechaba había que deslizar — y un diagrama que hay que deslizar no se lee de
+   un vistazo, que es justo para lo que sirve. En bandas apiladas de HTML cada
+   fila refluye sola: cuatro tarjetas, luego dos, luego una. Nunca desliza y no
+   se pierde ni una palabra.
+
    CANALES NO CONECTADOS
-   Gmail, Wallapop y el resto van PUNTEADOS y en gris de texto, nunca en un
-   color de la paleta. No son una categoría más: son una ausencia. Hoy solo
+   Gmail, Wallapop y el resto van con borde DISCONTINUO y en gris de texto, nunca
+   en un color de la paleta. No son una categoría más: son una ausencia. Hoy solo
    entra WhatsApp, y pintarlos igual sería enseñar una capacidad que no existe.
 ========================================================================== */
 
-const SVGNS = 'http://www.w3.org/2000/svg';
-const svgEl = (tag, attrs) => {
-  const el = document.createElementNS(SVGNS, tag);
-  for (const k in (attrs || {})) el.setAttribute(k, attrs[k]);
-  return el;
-};
+/* Una tarjeta del recorrido. `tono` pinta el borde y la cifra; `apagado` la deja
+   discontinua y en gris, que es como se dibuja lo que no está conectado. */
+function nodoFlujo(o) {
+  const caja = crear('div', 'nodo' + (o.apagado ? ' apagado' : ''));
+  if (o.tono) caja.style.borderColor = o.tono;
 
-/* Una caja con título, cifra opcional y hasta dos líneas de pie. Devuelve sus
-   anclas para que las flechas no dependan de coordenadas escritas a mano. */
-function cajaSVG(padre, o) {
-  const g = svgEl('g');
-  const r = svgEl('rect', {x: o.x, y: o.y, width: o.w, height: o.h, rx: 12,
-                           fill: o.punteada ? 'none' : '#0b0e14',
-                           stroke: o.color, 'stroke-width': o.punteada ? 1.2 : 1.4});
-  if (o.punteada) r.setAttribute('stroke-dasharray', '5 4');
-  g.append(r);
-
-  const ty = o.y + (o.pie2 ? 26 : (o.pie ? 27 : o.h / 2 + 5));
-  const t = svgEl('text', {x: o.x + 15, y: ty, class: 'dg-titulo'});
-  t.textContent = o.titulo;
-  g.append(t);
-
+  const cab = crear('p', 'nodo-cab');
+  cab.append(crear('span', 'nodo-t', o.titulo));
   if (o.cifra) {
-    const c = svgEl('text', {x: o.x + o.w - 15, y: ty, class: 'dg-cifra',
-                             'text-anchor': 'end', fill: o.color});
-    c.textContent = o.cifra;
-    g.append(c);
+    const c = crear('span', 'nodo-c', o.cifra);
+    if (o.tono) c.style.color = o.tono;
+    cab.append(c);
   }
-  [o.pie, o.pie2].forEach((texto, i) => {
-    if (!texto) return;
-    const p = svgEl('text', {x: o.x + 15, y: ty + 20 + i * 16,
-                             class: o.punteada ? 'dg-pie dg-apagado' : 'dg-pie'});
-    p.textContent = texto;
-    g.append(p);
-  });
-  padre.append(g);
-  return {izq: {x: o.x, y: o.y + o.h / 2}, der: {x: o.x + o.w, y: o.y + o.h / 2},
-          x: o.x, y: o.y, w: o.w, h: o.h};
+  caja.append(cab);
+  if (o.pie) caja.append(crear('p', 'nodo-p', o.pie));
+  if (o.pie2) caja.append(crear('p', 'nodo-p', o.pie2));
+  return caja;
 }
 
-/* Curva de A a B. El punteado se reserva a lo que NO está conectado. */
-function flechaSVG(padre, a, b, o) {
-  o = o || {};
-  const dx = Math.max(26, (b.x - a.x) * 0.5);
-  const p = svgEl('path', {
-    d: 'M' + a.x + ' ' + a.y + ' C ' + (a.x + dx) + ' ' + a.y + ', ' +
-       (b.x - dx) + ' ' + b.y + ', ' + b.x + ' ' + b.y,
-    fill: 'none', stroke: o.color || '#2b3340',
-    'stroke-width': o.ancho || 1.4, 'marker-end': 'url(#dg-punta)'});
-  if (o.punteada) p.setAttribute('stroke-dasharray', '4 5');
-  padre.append(p);
+function bandaFlujo(n, titulo, ancho, nodos) {
+  const b = crear('div', 'flujo-banda');
+  b.append(crear('p', 'flujo-titulo', n + ' · ' + titulo));
+  const fila = crear('div', 'flujo-fila ' + ancho);
+  nodos.forEach(function (x) { fila.append(x); });
+  b.append(fila);
+  return b;
 }
-
-/* Conector vertical recto. La curva de arriba asume flujo horizontal: con 18 px
-   de caída dibujaría un lazo en vez de una línea. */
-function bajadaSVG(padre, x, y1, y2) {
-  padre.append(svgEl('path', {d: 'M' + x + ' ' + y1 + ' L' + x + ' ' + y2,
-    stroke: DG_LINEA, 'stroke-width': 1.2, fill: 'none',
-    'marker-end': 'url(#dg-punta)'}));
-}
-
-function bandaSVG(padre, x, texto) {
-  const t = svgEl('text', {x: x, y: 22, class: 'dg-banda'});
-  t.textContent = texto;
-  padre.append(t);
-}
-
-const DG_LINEA = '#2b3340';      // estructura
-const DG_APAGADO = '#3a4250';    // borde de lo que no está conectado
 
 function pintarRecorrido(a, motor) {
-  const W = 1180, H = 440;
   const acc = a.acciones;
-  const svg = svgEl('svg', {viewBox: '0 0 ' + W + ' ' + H, class: 'recorrido',
-    role: 'img', 'aria-label':
-      'Recorrido de un mensaje. Entra por WhatsApp; Gmail, Wallapop y otras ' +
-      'plataformas no están conectadas. Busca en ' + motor.fichas_indexadas +
-      ' fichas, filtra con cuatro cerrojos y acaba respondiendo ' + acc.RESPONDER +
-      ' veces, preguntando ' + acc.PREGUNTAR + ' y pasando a una persona ' +
-      acc.ESCALAR + '.'});
-
-  const defs = svgEl('defs');
-  const mk = svgEl('marker', {id: 'dg-punta', markerWidth: 7, markerHeight: 7,
-                              refX: 6.5, refY: 3.5, orient: 'auto'});
-  mk.append(svgEl('path', {d: 'M0,0 L7,3.5 L0,7 z', fill: '#4a5563'}));
-  defs.append(mk);
-  svg.append(defs);
+  const total = Object.values(acc).reduce(function (x, y) { return x + y; }, 0);
+  const caja = crear('div', 'flujo');
 
   /* --------------------------------------------------- 1 · por dónde entra */
-  bandaSVG(svg, 16, 'ENTRA POR');
-  const canales = [
-    ['WhatsApp', miles(a.resumen.conversaciones) + ' conv.', 'el único conectado',
-     'var(--cian)', false],
-    ['Gmail', null, 'no conectado', DG_APAGADO, true],
-    ['Wallapop', null, 'no conectado', DG_APAGADO, true],
-    ['Otras plataformas', null, 'no conectado', DG_APAGADO, true],
-  ];
-  const nodos = canales.map(function (c, i) {
-    return cajaSVG(svg, {x: 16, y: 48 + i * 76, w: 200, h: 58,
-                         titulo: c[0], cifra: c[1], pie: c[2],
-                         color: c[3], punteada: c[4]});
-  });
+  caja.append(bandaFlujo(1, 'Entra por', 'cuatro', [
+    nodoFlujo({titulo: 'WhatsApp', cifra: miles(a.resumen.conversaciones),
+               pie: 'el único conectado', tono: 'var(--cian)'}),
+    nodoFlujo({titulo: 'Gmail', pie: 'no conectado', apagado: true}),
+    nodoFlujo({titulo: 'Wallapop', pie: 'no conectado', apagado: true}),
+    nodoFlujo({titulo: 'Otras plataformas', pie: 'no conectado', apagado: true}),
+  ]));
+  caja.append(crear('div', 'flujo-baja'));
 
-  /* ------------------------------------------------------- 2 · dónde busca */
-  bandaSVG(svg, 292, 'BUSCA EN');
-  const busca = cajaSVG(svg, {x: 292, y: 126, w: 258, h: 132,
-    titulo: 'La base de conocimiento',
-    pie: miles(motor.fichas_indexadas) + ' fichas indexadas',
-    pie2: motor.peso_lexico + ' léxico + ' + motor.peso_semantico + ' significado',
-    color: 'var(--cian)'});
-  const nota = svgEl('text', {x: 307, y: 230, class: 'dg-pie'});
-  nota.textContent = 'una fórmula para piezas y políticas';
-  svg.append(nota);
+  /* -------------------------------------------------------- 2 · dónde busca */
+  caja.append(bandaFlujo(2, 'Busca en', 'dos', [
+    nodoFlujo({titulo: 'La base de conocimiento',
+               cifra: miles(motor.fichas_indexadas) + ' fichas',
+               pie: miles(motor.piezas_catalogo) + ' piezas del catálogo y las '
+                    + 'políticas de la empresa, en el mismo índice',
+               tono: 'var(--cian)'}),
+    nodoFlujo({titulo: 'Búsqueda híbrida',
+               cifra: motor.peso_lexico + ' + ' + motor.peso_semantico,
+               pie: 'palabras pesadas por IDF más significado del modelo, en una '
+                    + 'sola fórmula que ordena piezas y políticas por igual',
+               tono: 'var(--cian)'}),
+  ]));
+  caja.append(crear('div', 'flujo-baja'));
 
-  nodos.forEach(function (n, i) {
-    flechaSVG(svg, n.der, busca.izq, {punteada: i > 0,
-      color: i === 0 ? '#1aa19788' : DG_LINEA, ancho: i === 0 ? 2 : 1.2});
-  });
+  /* ------------------------------------------------------ 3 · con qué filtra */
+  caja.append(bandaFlujo(3, 'Filtra con', 'cuatro', [
+    nodoFlujo({titulo: 'Código exacto',
+               pie: 'si el mensaje trae un nº de stock, esa ficha gana y se acabó'}),
+    nodoFlujo({titulo: 'Compatibilidad',
+               pie: 'descarta la marca, el modelo, el núcleo y el lado que no son'}),
+    nodoFlujo({titulo: 'Umbral de confianza',
+               cifra: motor.umbral_pieza + ' / ' + motor.umbral_politica,
+               pie: 'por debajo no se ofrece nada: la lista sale vacía'}),
+    nodoFlujo({titulo: 'Cerrojo del precio',
+               cifra: String(motor.umbral_precio),
+               pie: 'más alto a propósito, y además la pieza tiene que estar '
+                    + 'disponible. Si no, el importe no llega al redactor'}),
+  ]));
+  caja.append(crear('div', 'flujo-baja'));
 
-  /* ----------------------------------------------------- 3 · con qué filtra */
-  bandaSVG(svg, 592, 'FILTRA CON');
-  const cerrojos = [
-    ['Código exacto', 'si trae un nº de stock, ese gana'],
-    ['Compatibilidad', 'descarta marca, modelo, núcleo y lado'],
-    ['Umbral de confianza', 'pieza ≥ ' + motor.umbral_pieza + ' · política ≥ ' + motor.umbral_politica],
-    ['Cerrojo del precio', '≥ ' + motor.umbral_precio + ' y disponible, o no sale importe'],
-  ];
-  const puertas = cerrojos.map(function (c, i) {
-    return cajaSVG(svg, {x: 592, y: 48 + i * 76, w: 260, h: 58,
-                         titulo: c[0], pie: c[1], color: DG_LINEA});
-  });
-  puertas.forEach(function (p, i) {
-    if (i === 0) { flechaSVG(svg, busca.der, p.izq, {color: '#1aa19788', ancho: 2}); return; }
-    const arriba = puertas[i - 1];
-    bajadaSVG(svg, arriba.x + 30, arriba.y + arriba.h, p.y);
-  });
-
-  /* ------------------------------------------------------ 4 · dónde acaba */
-  bandaSVG(svg, 960, 'ACABA EN');
-  const total = Object.values(acc).reduce(function (x, y) { return x + y; }, 0);
+  /* --------------------------------------------------------- 4 · dónde acaba */
   const salidas = [
-    ['RESPONDER', 'Contesta solo', 'var(--cian)',    '#1aa197bb'],
-    ['PREGUNTAR', 'Pregunta cuál', 'var(--violeta)', '#7a81e1bb'],
-    ['ESCALAR',   'A tu mesa',     'var(--ambar)',   '#b97f14bb'],
+    ['RESPONDER', 'Contesta solo', 'var(--cian)',
+     'tiene la ficha y la respuesta sale sin que nadie mire'],
+    ['PREGUNTAR', 'Pregunta cuál', 'var(--violeta)',
+     'varias piezas encajan: pregunta con botones del catálogo'],
+    ['ESCALAR', 'A tu mesa', 'var(--ambar)',
+     'no está seguro o es una decisión de negocio: la ve una persona'],
   ];
-  salidas.forEach(function (s, i) {
+  caja.append(bandaFlujo(4, 'Acaba en', 'tres', salidas.map(function (s) {
     const n = acc[s[0]] || 0;
-    const caja = cajaSVG(svg, {x: 960, y: 52 + i * 102, w: 200, h: 76,
-      titulo: s[1], cifra: miles(n), pie: pct(n / total) + ' de los mensajes',
-      color: s[2]});
-    const centroPila = (puertas[0].y + puertas[3].y + puertas[3].h) / 2;
-    flechaSVG(svg, {x: puertas[3].x + puertas[3].w, y: centroPila}, caja.izq,
-              {color: s[3], ancho: 2});
-  });
+    return nodoFlujo({titulo: s[1], cifra: miles(n) + ' · ' + pct(n / total),
+                      pie: s[3], tono: s[2]});
+  })));
 
-  const pie = svgEl('text', {x: 16, y: H - 12, class: 'dg-pie dg-apagado'});
-  pie.textContent = 'Umbrales leídos de 03_buscar.py; volúmenes, de los ' +
-                    a.parametros.dias + ' días medidos. Ni un número escrito a mano.';
-  svg.append(pie);
+  const pie = crear('p', 'flujo-pie');
+  pie.textContent = 'Los umbrales se leen del motor en marcha (03_buscar.py); los '
+    + 'volúmenes, de los ' + a.parametros.dias + ' días medidos. Ni un número '
+    + 'escrito a mano.';
+  caja.append(pie);
 
-  $('#diagrama').replaceChildren(svg);
+  $('#diagrama').replaceChildren(caja);
 }
 
 /* El hero con las cifras medidas, no con las del snapshot de 30 mensajes. */

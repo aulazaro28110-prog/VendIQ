@@ -192,28 +192,53 @@ body{
 .ind .nota{font-size:12.5px;color:var(--tinta-3);margin:10px 0 0;line-height:1.5}
 .ind.acento .cifra{color:var(--cian)}
 
-/* ------------------------------------------------------------ diagrama */
-.diagrama{width:100%;height:auto;display:block;margin:6px auto 0;max-width:720px}
-.diagrama text{font-family:var(--ui);fill:var(--tinta-2)}
-.diagrama .grande{fill:var(--tinta);font-weight:600}
-.diagrama .cifra{font-family:var(--mono);font-weight:700}
 
 /* ----------------------------------------------- recorrido de un mensaje
-   El SVG tiene una anchura mínima: por debajo, el texto se volvería ilegible.
-   Antes que encoger la letra, la caja hace scroll horizontal ella sola — el
-   cuerpo de la página nunca se desplaza en horizontal. */
-.caja-recorrido{overflow-x:auto;overflow-y:hidden;margin:6px 0 0;
-  -webkit-overflow-scrolling:touch}
-.recorrido{display:block;width:100%;min-width:940px;height:auto}
-.recorrido text{font-family:var(--ui)}
-.recorrido .dg-banda{font-family:var(--mono);font-size:10.5px;font-weight:700;
-  letter-spacing:.16em;fill:var(--tinta-3)}
-.recorrido .dg-titulo{font-size:13.5px;font-weight:600;fill:var(--tinta)}
-.recorrido .dg-cifra{font-family:var(--mono);font-size:13px;font-weight:700}
-.recorrido .dg-pie{font-size:11.5px;fill:var(--tinta-3)}
-/* Lo no conectado no lleva color de la paleta: lleva gris de texto. No es una
-   categoría más del gráfico, es una ausencia. */
-.recorrido .dg-apagado{fill:#55606f}
+   Bandas apiladas, no columnas. La primera version era un SVG de cuatro columnas
+   que pedia 940 px de ancho minimo: funcionaba mientras el diagrama ocupaba la
+   pagina entera, y dejo de funcionar en cuanto la columna principal se estrecho
+   para hacerle sitio al lateral. Cuatro columnas con texto legible no bajan de
+   ~950 px, asi que no era cuestion de encoger sino de cambiar la forma.
+
+   Asi cada banda refluye sola: cuatro tarjetas, luego dos, luego una. Nunca
+   desliza y no se pierde ni una palabra. */
+.flujo{display:flex;flex-direction:column}
+.flujo-titulo{
+  font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--tinta-3);margin:0 0 11px;
+}
+.flujo-fila{display:grid;gap:12px}
+.flujo-fila.cuatro{grid-template-columns:repeat(auto-fit,minmax(178px,1fr))}
+.flujo-fila.tres  {grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.flujo-fila.dos   {grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+
+.nodo{
+  border:1.4px solid var(--borde-vivo);border-radius:12px;padding:13px 15px;
+  background:var(--carta-alta);
+}
+/* Lo que NO esta conectado va con borde discontinuo y en gris de texto, nunca en
+   un color de la paleta: no es una categoria mas del grafico, es una ausencia. */
+.nodo.apagado{border-style:dashed;border-color:#3a4250;background:transparent}
+.nodo-cab{display:flex;align-items:baseline;gap:10px;margin:0}
+.nodo-t{font-size:13.5px;font-weight:600;color:var(--tinta)}
+.nodo-c{margin-left:auto;font-family:var(--mono);font-size:12.5px;font-weight:700;
+  white-space:nowrap}
+.nodo-p{font-size:11.5px;color:var(--tinta-3);margin:7px 0 0;line-height:1.45}
+.nodo.apagado .nodo-t{color:#7a8695}
+.nodo.apagado .nodo-p{color:#55606f}
+
+/* La flecha entre bandas: linea y punta dibujadas con bordes, sin SVG. */
+.flujo-baja{position:relative;height:30px}
+.flujo-baja::before{
+  content:'';position:absolute;left:50%;top:3px;bottom:9px;width:1.5px;
+  background:var(--borde-vivo);transform:translateX(-50%);
+}
+.flujo-baja::after{
+  content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  border-left:5px solid transparent;border-right:5px solid transparent;
+  border-top:7px solid var(--borde-vivo);
+}
+.flujo-pie{font-size:11.5px;color:var(--tinta-3);margin:20px 0 0;line-height:1.5}
 
 /* ------------------------------------------------------------- consola */
 .consola-entrada{display:flex;border:1px solid var(--borde-vivo);border-radius:12px;
@@ -378,7 +403,7 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
 
 .ind.malo .cifra{color:var(--rojo)}
 
-.rejilla-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px}
+.rejilla-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
 
 /* -------------------------------------------------- barras verticales */
 .g-barras-v{display:flex;align-items:flex-end;gap:6px;height:190px;padding-top:22px}
