@@ -97,10 +97,21 @@ def casos_de_catalogo(filas, buscar_mod, semilla=23):
         return muestra[i:i + n]
 
     # --- 25 · pide la pieza exacta y espera precio -------------------------
+    # DOS TURNOS, no uno, desde que la matrícula es el primer paso. El cliente
+    # describe la pieza y el bot no le pone precio: describir el coche no
+    # identifica la ficha. Medido sobre el catálogo, el 97% de las fichas
+    # comparten marca+modelo+pieza con alguna otra y el 81% siguen compartiéndolas
+    # aun dando el motor — que es justo lo que dicen estos mensajes. El precio
+    # sale en el segundo turno, con la matrícula encima de la mesa.
+    #
+    # La matrícula no se comprueba contra ningún registro: no existe tal registro.
+    # Lo que hace es dejar el dato con el que una persona confirma la
+    # compatibilidad, que es la condición real del negocio.
     for f in tomar(25):
         casos.append(("precio exacto", "nuevo",
                       [f"¿tenéis {f['pieza'].lower()} para un {f['marca'].title()} "
-                       f"{f['modelo']} {f['motor']}?"], "precio"))
+                       f"{f['modelo']} {f['motor']}?",
+                       "la matrícula es 4521 KBD"], "precio"))
 
     # --- 12 · por referencia OEM ------------------------------------------
     for f in tomar(12):
@@ -114,10 +125,14 @@ def casos_de_catalogo(filas, buscar_mod, semilla=23):
                       "precio"))
 
     # --- 15 · mensaje sucio de WhatsApp -----------------------------------
+    # También en dos turnos: lo que mide esta categoría es si el bot ENTIENDE un
+    # mensaje escrito a la carrera, sin tildes y con faltas, no si se salta la
+    # regla de la matrícula por venir mal escrito.
     for f in tomar(15):
         casos.append(("mensaje sucio", "nuevo",
                       [ensuciar(f"tenéis {f['pieza']} para un {f['marca']} "
-                                f"{f['modelo']} {f['motor']}")], "precio"))
+                                f"{f['modelo']} {f['motor']}"),
+                       "matricula 4521 KBD"], "precio"))
 
     # --- 18 · datos a medias ----------------------------------------------
     # El cliente nombra la pieza por su palabra principal y nada más. Si a la pieza
@@ -129,9 +144,15 @@ def casos_de_catalogo(filas, buscar_mod, semilla=23):
     for f in tomar(18):
         completa = len([x for x in buscar_mod.normalizar(f["pieza"])
                         if x not in buscar_mod.PALABRAS_VACIAS and len(x) > 2]) == 1
-        casos.append(("datos a medias", "conocido",
-                      [f"oye necesito algo para el {f['marca'].title()} {f['modelo']}",
-                       f"{cabeza(f['pieza'])}, la que te digo siempre"],
+        mensajes = [f"oye necesito algo para el {f['marca'].title()} {f['modelo']}",
+                    f"{cabeza(f['pieza'])}, la que te digo siempre"]
+        # Nombrar la pieza entera ya no basta para el precio: hace falta además la
+        # matrícula. Se la da solo cuando el nombre está completo, que es donde
+        # esta categoría espera precio; en los demás casos el bot debe seguir
+        # pidiendo cuál es, y esa es la mitad que aquí se mide.
+        if completa:
+            mensajes.append("la matrícula es 4521 KBD")
+        casos.append(("datos a medias", "conocido", mensajes,
                       "precio" if completa else "confirma"))
 
     # --- 12 · regatea después de recibir el precio ------------------------
@@ -479,7 +500,7 @@ IDENTIFICA = re.compile(r"matr[íi]cula|bastidor|vin", re.I)
 conversar = None            # lo carga main(); se usa para leer TOPE_ACLARACIONES
 
 
-def invariantes(respuesta, historial, matricula_dada, decision):
+def invariantes(respuesta, historial, matricula_dada, decision, busqueda=None):
     """Cosas que NUNCA pueden pasar. Devuelve la lista de las que se han roto."""
     rotos = []
     if not respuesta["precio_autorizado"]:
@@ -513,6 +534,25 @@ def invariantes(respuesta, historial, matricula_dada, decision):
     if roto:
         rotos.append(roto)
 
+    # LA REGLA DE LA IDENTIFICACION. Nunca se ofrece nada sin saber que es la
+    # pieza del coche del cliente: ni el precio, ni el motor, ni el anio de una
+    # ficha concreta. Tres datos la cumplen y los tres son exactos -- matricula o
+    # VIN, referencia OEM, numero de stock.
+    #
+    # Lo mide sobre el mensaje que SALE, asi que vale igual para el redactor
+    # determinista que para el modelo. La define 07_redactor.py, que es donde
+    # tambien la aplica el panel: una sola definicion.
+    if busqueda is not None:
+        fichas = [r for r in busqueda.get("resultados", [])
+                  if r.get("tipo") == "inventario"]
+        identificado = bool(matricula_dada) or any(
+            (r.get("precio_cliente") or {}).get("publicable") for r in fichas)
+        roto = redactor.rompe_la_identificacion(
+            respuesta["lineas"], fichas[0].get("meta") if fichas else None,
+            identificado)
+        if roto:
+            rotos.append(roto)
+
     # Repetir el mismo mensaje palabra por palabra es lo que delata a un bot. Dos
     # veces en una conversación puede colar; tres ya es un contestador automático.
     if historial and respuesta["mensaje"] == historial[-1]:
@@ -536,7 +576,7 @@ def ejecutar(sistema, casos, ver=False):
             # La matrícula se comprueba ANTES del mensaje del bot: si el cliente la
             # dio en este turno, el bot ya no puede volver a pedirla en su respuesta.
             rotos += invariantes(bot, historial, datos["memoria"]["matricula"],
-                                 busqueda["decision"])
+                                 busqueda["decision"], busqueda)
             if bot.get("accion") == "PREGUNTAR":
                 aclaraciones += 1
             historial.append(bot["mensaje"])
@@ -601,6 +641,7 @@ def informe(resultados):
         print(f"  Ninguno roto en los {len(resultados)} casos.")
         print("  · ni un precio publicado sin autorización de la búsqueda")
         print("  · ningún mensaje de más de 3 líneas, con emoji ni de usted")
+    print("  · nunca se ofrece una pieza sin matrícula, referencia o VIN")
     for n, cat, texto in rotos[:20]:
         print(f"  [{n:>3}] {cat}: {texto}")
 

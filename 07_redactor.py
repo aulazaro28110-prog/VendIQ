@@ -276,6 +276,87 @@ def trata_de_usted(mensaje: str) -> bool:
     return bool(USTED_DUDOSO.search(mensaje)) and not TUTEO.search(mensaje)
 
 
+# ---------------------------------------------------------------------------
+# LA REGLA DE LA IDENTIFICACIÓN
+# ---------------------------------------------------------------------------
+# NUNCA SE OFRECE NADA SIN SABER QUE ES LA PIEZA DEL COCHE DEL CLIENTE.
+#
+# Es la regla de negocio, dicha por Álvaro con estas palabras: el bot no ofrece
+# material antes de pedir matrícula, referencia o VIN. No es prudencia nuestra,
+# es que sin uno de esos tres datos la afirmación es falsa. Medido sobre el
+# catálogo de 5.000 piezas:
+#
+#   lo que el cliente escribe          fichas que encajan
+#   marca + modelo + pieza             97% comparten descripción con otra
+#   marca + modelo + MOTOR + pieza     81% siguen compartiéndola
+#   + año                               0% — única
+#   referencia OEM                      0% — única
+#   número de stock                     0% — única
+#
+# O sea que ni dar el motor identifica la pieza: hay hasta quince alternadores
+# del mismo coche según motor y año. Ofrecer uno es afirmar que encaja, y eso no
+# se sabe. El cliente lo dijo mejor que nadie en la primera prueba del chat, al
+# turno siguiente de que el bot le ofreciera uno: «¿cómo sé si es el mío?».
+#
+# TRES DATOS LA CUMPLEN, y los tres son exactos:
+#   · MATRÍCULA o VIN  — identifican el coche; los detecta detectar_matricula()
+#   · REFERENCIA OEM   — identifica la ficha; la detecta precio_para_cliente()
+#   · NÚMERO DE STOCK  — identifica la ficha; ídem
+#
+# La regla se aplica en TRES sitios, y hacen falta los tres:
+#   1. El precio no se autoriza (03_buscar.py, condición 5). El importe no llega
+#      ni al redactor ni al modelo: no puede decirse porque no está.
+#   2. El redactor no describe la ficha, pide el dato y dice cuántas hay.
+#   3. Esta función audita el mensaje FINAL, venga de quien venga. El redactor
+#      cumple por construcción; el modelo no, y hay que mirárselo.
+
+# Un importe en el mensaje. Ofrecer precio es ofrecer una ficha concreta.
+IMPORTE_EN_TEXTO = re.compile(r"\d[\d.,]*\s*(?:€|eur\b|euros\b)", re.I)
+
+# Pedir el dato que identifica. Cualquiera de los tres vale.
+PIDE_IDENTIFICADOR = re.compile(
+    r"matr[íi]cula|bastidor|\bvin\b|referencia|n[úu]mero de stock|n[ºo]\s*de\s*stock",
+    re.I)
+
+
+def rompe_la_identificacion(lineas, meta, identificado):
+    """¿Este mensaje ofrece una pieza sin saber que es la del cliente?
+
+    `meta` es la ficha que la búsqueda puso encima de la mesa (o None si no hay
+    ninguna) e `identificado` dice si la conversación tiene ya matrícula, VIN,
+    referencia OEM o número de stock.
+
+    Se miran tres cosas, y las tres son sobre el texto que va a salir:
+      · que no lleve un importe,
+      · que no cante datos de la ficha que el cliente no ha dado —el motor o el
+        año son justamente lo que distingue una hermana de otra—,
+      · y que pida el dato, porque si no la conversación se queda parada.
+    """
+    if identificado or not meta:
+        return None
+
+    mensaje = "\n".join(lineas)
+
+    if IMPORTE_EN_TEXTO.search(mensaje):
+        return ("da un precio sin saber si la pieza es la de su coche: hace falta "
+                "matrícula, referencia o VIN")
+
+    # El motor y el año son los datos que separan una ficha de su hermana. Si el
+    # mensaje los dice y el cliente no los ha dado, se está ofreciendo una ficha
+    # concreta como si fuera la suya.
+    for campo in ("motor", "anio"):
+        valor = str((meta or {}).get(campo) or "").strip()
+        if valor and valor.lower() in mensaje.lower():
+            return (f"describe la ficha por su {campo} ({valor}) sin saber si es la "
+                    f"de su coche: hace falta matrícula, referencia o VIN")
+
+    if not PIDE_IDENTIFICADOR.search(mensaje):
+        return ("no ofrece la pieza, pero tampoco pide matrícula, referencia ni "
+                "VIN: la conversación se queda sin siguiente paso")
+
+    return None
+
+
 # Afirmar que NO se tiene una pieza. Ojo: «no lo tengo apuntado en la ficha» niega
 # un DATO, no la pieza, y es una respuesta correcta. Por eso este patrón solo se
 # aplica cuando la búsqueda ya ha decidido NO DISPONIBLE, que es exactamente la
@@ -515,8 +596,50 @@ def _con_pieza(consulta, conv, reglas, salida):
     conv.ultima_pieza = meta
 
     lineas = []
+
+    # LA MATRÍCULA ES EL PRIMER PASO. Sin ella no se ofrece una ficha concreta ni
+    # se dice su precio: ofrecer «el alternador de un A4 2.0 TFSI del 2019» a
+    # alguien que solo ha dicho «un alternador para un A4» es afirmar que encaja,
+    # y eso no se sabe. En la primera prueba con el chat el cliente lo dijo él
+    # solo, al turno siguiente: «¿cómo sé si es el mío?».
+    #
+    # Lo que se dice en su lugar no es un «no»: es cuántas hay y por qué hace
+    # falta el dato. Sale del catálogo, así que es verdad y además vende — un
+    # cliente que oye «de alternador para A4 tengo tres según motor y año» sabe
+    # que hay stock y entiende para qué le piden la matrícula.
+    if precio.get("estado") == "sin_matricula":
+        conv.ultima_pieza = meta
+        n = ficha.get("variantes") or 1
+        pieza = (meta.get("pieza") or "la pieza").lower()
+        coche = f"{(meta.get('marca') or '').title()} {meta.get('modelo') or ''}".strip()
+        if n > 1:
+            lineas.append(f"De {pieza} para un {coche} tengo {n} referencias "
+                          f"distintas, según el motor y el año.")
+        else:
+            lineas.append(f"De {pieza} para un {coche} tengo una, pero tiene que "
+                          f"cuadrarte el motor y el año.")
+        lineas.append(f"Pásame la matrícula y te digo cuál es "
+                      f"{'la tuya' if g == 'f' else 'el tuyo'} y lo que vale.")
+        reglas.append(("la matrícula va primero",
+                       "sin identificar el coche no se sabe si la pieza encaja: no "
+                       "se ofrece una ficha concreta ni su precio (regla del negocio)"))
+        reglas.append(("precio retenido", precio.get("motivo", "")))
+        return lineas
+
     estado = _estado(meta)
-    lineas.append(f"Tengo {_describir(meta)}" + (f", {estado}." if estado else "."))
+    # Si acaba de dar la matrícula, se le acusa recibo EN LA MISMA LÍNEA. Que un
+    # cliente mande el dato que le has pedido y le contestes como si no lo hubieras
+    # visto es el momento en el que se va. Va pegado y no en una línea aparte
+    # porque el mensaje son tres líneas como mucho, y la que se perdería es la que
+    # empuja la venta.
+    if conv.matricula_recien_dada:
+        lineas.append(f"Con la matrícula te lo confirmo: tengo {_describir(meta)}"
+                      + (f", {estado}." if estado else "."))
+        reglas.append(("acusa recibo del dato",
+                       "ha dado la matrícula en este mismo turno: se le reconoce "
+                       "antes de nada"))
+    else:
+        lineas.append(f"Tengo {_describir(meta)}" + (f", {estado}." if estado else "."))
     reglas.append(("pieza localizada",
                    f"la ficha ID {meta.get('id', '?')} supera el umbral de confianza"))
 

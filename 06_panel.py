@@ -202,15 +202,23 @@ class Sistema:
             "cuanto tarda en llegar el pedido",
         ] if e]
 
-    def consultar(self, pregunta):
-        """Ejecuta la búsqueda REAL y explica la decisión."""
+    def consultar(self, pregunta, coche_identificado=True):
+        """Ejecuta la búsqueda REAL y explica la decisión.
+
+        `coche_identificado` es si la conversación ya tiene la matrícula. No
+        cambia lo que se encuentra, solo si se le puede poner precio: sin
+        identificar el coche, ofrecer una ficha con su importe es afirmar que
+        encaja, y eso no se sabe.
+        """
         t0 = time.perf_counter()
-        hits = self.buscador.buscar(pregunta, k=4)
+        hits = self.buscador.buscar(pregunta, k=4,
+                                    coche_identificado=coche_identificado)
         ms = (time.perf_counter() - t0) * 1000
 
         # Se piden también los candidatos SIN umbral, para poder enseñar qué se
         # descartó y por qué. Es la parte que hace entendible el guardarraíl.
-        crudos = self.buscador.buscar(pregunta, k=4, aplicar_umbral=False)
+        crudos = self.buscador.buscar(pregunta, k=4, aplicar_umbral=False,
+                                      coche_identificado=coche_identificado)
 
         piezas = [(s, it) for s, it in hits if it["tipo"] == "inventario"]
         politicas = [(s, it) for s, it in hits if it["tipo"] == "politica"]
@@ -260,6 +268,11 @@ class Sistema:
                 # La decisión de precio va con cada ficha: es lo más delicado que
                 # enseña el panel y nunca debe aparecer un importe sin su motivo.
                 "precio_cliente": it.get("precio_cliente"),
+                # Cuántas fichas hay del mismo coche y la misma pieza. Es el número
+                # con el que se justifica pedir la matrícula: «de centralita para un
+                # Qashqai tengo seis, según motor y año». Si no viaja aquí, el
+                # redactor no lo tiene y dice «tengo una» aunque haya seis.
+                "variantes": it.get("variantes"),
             } for s, it in lista]
 
         aceptados_ids = {id(it) for _, it in hits}
@@ -379,8 +392,23 @@ class Sistema:
             if pieza:
                 contexto = pieza
                 texto_busqueda = f"{mensaje} {pieza}"
+        elif conv.matricula_recien_dada and getattr(conv, "pieza_pedida", None):
+            # LA MATRÍCULA DESBLOQUEA EL PRECIO, y hay que ir a buscarlo.
+            #
+            # Una matrícula sola no habla de ninguna pieza, así que buscarla tal
+            # cual no encuentra nada y el bot contesta «anotada». Pero el turno
+            # anterior fue «necesito un alternador para un A4», al que se le
+            # retuvo el precio precisamente por no tener matrícula: ahora que la
+            # hay, toca volver a buscar esa pieza y darlo.
+            #
+            # Sin esto, pedir la matrícula es pedirle al cliente un dato a cambio
+            # de nada: lo manda y el precio no llega nunca. La regla dejaría de
+            # ser una cautela para ser un embudo roto.
+            contexto = conv.pieza_pedida
+            texto_busqueda = conv.pieza_pedida
 
-        busqueda = self.consultar(texto_busqueda)
+        busqueda = self.consultar(texto_busqueda,
+                                  coche_identificado=bool(conv.matricula))
         busqueda["pregunta"] = mensaje
         busqueda["contexto"] = contexto
         respuesta = self.redactor.redactar(busqueda, conv)
@@ -484,10 +512,21 @@ class Sistema:
         # Las dos las rompió el modelo la primera vez que se encendió, y el banco
         # las veía DESPUÉS, cuando al cliente ya le ha llegado el mensaje.
         if lineas_llm:
+            # ¿Está identificado el coche? Con matrícula o VIN, sí. Y también si la
+            # búsqueda ha autorizado el precio, porque la única forma de que lo
+            # autorice sin matrícula es que el cliente haya dado la referencia OEM
+            # o el número de stock — los dos identifican la ficha por sí solos.
+            fichas = [r for r in busqueda["resultados"]
+                      if r.get("tipo") == "inventario"]
+            identificado = bool(conv.matricula) or any(
+                (r.get("precio_cliente") or {}).get("publicable") for r in fichas)
             roto = (self.redactor.rompe_el_estilo(respuesta["lineas"])
                     or self.redactor.rompe_la_matricula(
                         respuesta["lineas"], busqueda["decision"],
-                        bool(conv.matricula), bool(respuesta.get("escala"))))
+                        bool(conv.matricula), bool(respuesta.get("escala")))
+                    or self.redactor.rompe_la_identificacion(
+                        respuesta["lineas"],
+                        fichas[0].get("meta") if fichas else None, identificado))
             if roto:
                 respuesta["lineas"] = respuesta["borrador"]
                 respuesta["mensaje"] = "\n".join(respuesta["borrador"])
