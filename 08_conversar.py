@@ -255,6 +255,31 @@ def _mensajes(consulta, respuesta, accion, opciones, historial, memoria=None):
         else:
             ficha.append("precio: NO DISPONIBLE para el cliente. Di que lo confirmas.")
         datos.append("FICHA ENCONTRADA:\n  " + "\n  ".join(ficha))
+    elif (memoria or {}).get("pieza"):
+        # SEGUIMIENTO. La búsqueda de este turno no devuelve ficha porque el
+        # cliente ya no nombra la pieza: dice «¿cuánto vale?» o «¿lleva
+        # garantía?». Pero la conversación sí la tiene, y decirle al modelo «no
+        # tenemos esa pieza» aquí es peor que no decirle nada.
+        #
+        # Salió de la primera conversación larga contra Groq. Turno 3: «tenemos
+        # el alternador, 200,77 € + IVA, ¿lo aparto?». Turno 4, «¿cuánto vale?»:
+        # «no disponemos de ese alternador». Se contradecía a sí mismo un turno
+        # después, y con toda la razón: eso era lo que le habíamos escrito.
+        #
+        # El importe que va aquí es uno que YA se dijo — `ultimo_precio` solo se
+        # rellena cuando la búsqueda autorizó publicarlo. Repetirlo cuando el
+        # cliente vuelve a preguntar no es publicar un precio nuevo, y es lo
+        # mismo que ya hacía el redactor determinista.
+        seguimiento = [f"pieza: {memoria['pieza']}"]
+        if memoria.get("vehiculo"):
+            seguimiento.append(f"vehículo: {memoria['vehiculo']}")
+        if memoria.get("precio"):
+            seguimiento.append(f"precio: {memoria['precio']} (ya se le dijo)")
+        else:
+            seguimiento.append("precio: aún no se le ha dado. Di que lo confirmas.")
+        datos.append("NO HAY FICHA NUEVA, pero la conversación ya iba de esta "
+                     "pieza. NO digas que no la tenemos:\n  "
+                     + "\n  ".join(seguimiento))
     else:
         datos.append("FICHA ENCONTRADA: ninguna. No tenemos esa pieza.")
 
