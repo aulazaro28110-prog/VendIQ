@@ -2,9 +2,9 @@
   "sintetico": true,
   "aviso": "Los MENSAJES son sintéticos: los genera el mismo código que el banco de pruebas. Los NÚMEROS no: cada decisión, cada milisegundo y cada escalado sale de ejecutar el sistema real contra las 5.000 piezas del catálogo.",
   "mezcla_declarada": "El reparto por tipo de mensaje es una ESTIMACIÓN de Álvaro sobre su propio WhatsApp, no un dato medido.",
-  "generado": "2026-08-19 23:44",
+  "generado": "2026-08-22 16:23",
   "parametros": {
-    "dias": 14,
+    "dias": 7,
     "conversaciones_dia": "150-200 (lun-vie)",
     "semilla": 7,
     "domingo": "cerrado",
@@ -12,111 +12,21 @@
   },
   "catalogo": {
     "piezas": 5000,
-    "fichas_indexadas": 5007
+    "fichas_indexadas": 5010
   },
   "resumen": {
-    "conversaciones": 1863,
-    "mensajes": 4532,
-    "escaladas": 312,
-    "resueltas_sin_persona": 1551,
-    "tasa_resolucion": 0.8325,
-    "precios_dados": 1037,
-    "ms_mediana": 56.8,
-    "ms_p95": 77.6,
-    "ms_max": 175.6,
+    "conversaciones": 930,
+    "mensajes": 2245,
+    "escaladas": 109,
+    "resueltas_sin_persona": 821,
+    "tasa_resolucion": 0.8828,
+    "precios_dados": 526,
+    "ms_mediana": 69.0,
+    "ms_p95": 104.6,
+    "ms_max": 365.5,
     "fugas_de_precio": 0
   },
   "por_dia": [
-    {
-      "fecha": "2026-08-06",
-      "dia": "jueves",
-      "conversaciones": 170,
-      "mensajes": 401,
-      "resueltas": 143,
-      "escaladas": 27,
-      "ms_mediana": 61.5
-    },
-    {
-      "fecha": "2026-08-07",
-      "dia": "viernes",
-      "conversaciones": 163,
-      "mensajes": 391,
-      "resueltas": 132,
-      "escaladas": 31,
-      "ms_mediana": 59.4
-    },
-    {
-      "fecha": "2026-08-08",
-      "dia": "sábado",
-      "conversaciones": 70,
-      "mensajes": 165,
-      "resueltas": 60,
-      "escaladas": 10,
-      "ms_mediana": 56.4
-    },
-    {
-      "fecha": "2026-08-09",
-      "dia": "domingo",
-      "conversaciones": 0,
-      "mensajes": 0,
-      "resueltas": 0,
-      "escaladas": 0,
-      "ms_mediana": null
-    },
-    {
-      "fecha": "2026-08-10",
-      "dia": "lunes",
-      "conversaciones": 186,
-      "mensajes": 457,
-      "resueltas": 152,
-      "escaladas": 34,
-      "ms_mediana": 56.7
-    },
-    {
-      "fecha": "2026-08-11",
-      "dia": "martes",
-      "conversaciones": 194,
-      "mensajes": 499,
-      "resueltas": 154,
-      "escaladas": 40,
-      "ms_mediana": 56.5
-    },
-    {
-      "fecha": "2026-08-12",
-      "dia": "miércoles",
-      "conversaciones": 157,
-      "mensajes": 377,
-      "resueltas": 127,
-      "escaladas": 30,
-      "ms_mediana": 57.1
-    },
-    {
-      "fecha": "2026-08-13",
-      "dia": "jueves",
-      "conversaciones": 182,
-      "mensajes": 450,
-      "resueltas": 147,
-      "escaladas": 35,
-      "ms_mediana": 55.9
-    },
-    {
-      "fecha": "2026-08-14",
-      "dia": "viernes",
-      "conversaciones": 156,
-      "mensajes": 375,
-      "resueltas": 137,
-      "escaladas": 19,
-      "ms_mediana": 54.5
-    },
-    {
-      "fecha": "2026-08-15",
-      "dia": "sábado",
-      "conversaciones": 69,
-      "mensajes": 167,
-      "resueltas": 58,
-      "escaladas": 11,
-      "ms_mediana": 56.8
-    },
     {
       "fecha": "2026-08-16",
       "dia": "domingo",
@@ -129,149 +39,176 @@
     {
       "fecha": "2026-08-17",
       "dia": "lunes",
-      "conversaciones": 150,
-      "mensajes": 364,
-      "resueltas": 132,
-      "escaladas": 18,
-      "ms_mediana": 55.3
+      "conversaciones": 170,
+      "mensajes": 401,
+      "resueltas": 153,
+      "escaladas": 17,
+      "ms_mediana": 67.7
     },
     {
       "fecha": "2026-08-18",
       "dia": "martes",
-      "conversaciones": 172,
-      "mensajes": 414,
-      "resueltas": 142,
-      "escaladas": 30,
-      "ms_mediana": 56.1
+      "conversaciones": 163,
+      "mensajes": 391,
+      "resueltas": 140,
+      "escaladas": 23,
+      "ms_mediana": 69.6
     },
     {
       "fecha": "2026-08-19",
       "dia": "miércoles",
-      "conversaciones": 194,
-      "mensajes": 472,
-      "resueltas": 167,
+      "conversaciones": 155,
+      "mensajes": 364,
+      "resueltas": 142,
+      "escaladas": 13,
+      "ms_mediana": 74.8
+    },
+    {
+      "fecha": "2026-08-20",
+      "dia": "jueves",
+      "conversaciones": 193,
+      "mensajes": 467,
+      "resueltas": 166,
       "escaladas": 27,
-      "ms_mediana": 56.2
+      "ms_mediana": 69.6
+    },
+    {
+      "fecha": "2026-08-21",
+      "dia": "viernes",
+      "conversaciones": 167,
+      "mensajes": 416,
+      "resueltas": 148,
+      "escaladas": 19,
+      "ms_mediana": 66.3
+    },
+    {
+      "fecha": "2026-08-22",
+      "dia": "sábado",
+      "conversaciones": 82,
+      "mensajes": 206,
+      "resueltas": 72,
+      "escaladas": 10,
+      "ms_mediana": 66.5
     }
   ],
   "por_hora": [
     {
       "hora": 8,
-      "conversaciones": 65
+      "conversaciones": 25
     },
     {
       "hora": 9,
-      "conversaciones": 179
+      "conversaciones": 92
     },
     {
       "hora": 10,
-      "conversaciones": 264
+      "conversaciones": 120
     },
     {
       "hora": 11,
-      "conversaciones": 211
+      "conversaciones": 120
     },
     {
       "hora": 12,
-      "conversaciones": 226
+      "conversaciones": 96
     },
     {
       "hora": 13,
-      "conversaciones": 130
+      "conversaciones": 63
     },
     {
       "hora": 14,
-      "conversaciones": 57
+      "conversaciones": 34
     },
     {
       "hora": 15,
-      "conversaciones": 65
+      "conversaciones": 39
     },
     {
       "hora": 16,
-      "conversaciones": 185
+      "conversaciones": 96
     },
     {
       "hora": 17,
-      "conversaciones": 185
+      "conversaciones": 109
     },
     {
       "hora": 18,
-      "conversaciones": 153
+      "conversaciones": 75
     },
     {
       "hora": 19,
-      "conversaciones": 105
+      "conversaciones": 49
     },
     {
       "hora": 20,
-      "conversaciones": 38
+      "conversaciones": 12
     }
   ],
   "acciones": {
-    "RESPONDER": 3364,
-    "ESCALAR": 618,
-    "PREGUNTAR": 550
+    "RESPONDER": 1741,
+    "PREGUNTAR": 268,
+    "ESCALAR": 236
   },
   "intenciones": {
-    "consulta": 2799,
-    "agradecimiento": 455,
-    "plazo": 308,
-    "saludo": 230,
-    "cierre": 215,
-    "estado": 168,
-    "precio otra vez": 115,
-    "regateo": 96,
-    "queja": 42,
-    "pide sin pagar": 23
+    "consulta": 1290,
+    "agradecimiento": 214,
+    "cierre": 195,
+    "plazo": 150,
+    "saludo": 114,
+    "estado": 82,
+    "precio otra vez": 67,
+    "regateo": 51,
+    "queja": 20,
+    "pide sin pagar": 15
   },
   "motivos_escalado": [
     {
-      "motivo": "lo ve una persona: el bot no está seguro",
-      "veces": 393
+      "motivo": "lo ve una persona: es una decisión de negocio",
+      "veces": 122
     },
     {
-      "motivo": "lo ve una persona: es una decisión de negocio",
-      "veces": 225
+      "motivo": "lo ve una persona: el bot no está seguro",
+      "veces": 114
     }
   ],
   "precios": {
-    "publicable": 1019,
-    "sin_confirmar": 566,
-    "confianza_baja": 11
+    "publicable": 517,
+    "sin_confirmar": 274,
+    "confianza_baja": 8
   },
   "no_cubierto": [
     {
       "consulta": "¿tenéis un turbo para un renault captur?",
-      "veces": 13
-    },
-    {
-      "consulta": "y ya que estamos, ¿tienes catalizador?",
-      "veces": 10
+      "veces": 6
     },
     {
       "consulta": "¿tenéis un paso de rueda trasero izquierdo para un seat ateca?",
-      "veces": 9
-    },
-    {
-      "consulta": "¿tenéis un cárter para un opel corsa?",
-      "veces": 9
-    },
-    {
-      "consulta": "¿tenéis un catalizador para un seat ateca?",
-      "veces": 9
+      "veces": 6
     },
     {
       "consulta": "¿tenéis un motor de arranque para un peugeot 3008?",
-      "veces": 8
+      "veces": 5
+    },
+    {
+      "consulta": "¿tenéis un cuadro de instrumentos para un renault clio?",
+      "veces": 5
+    },
+    {
+      "consulta": "¿tenéis un faro delantero derecho para un renault megane?",
+      "veces": 5
     },
     {
       "consulta": "¿tenéis un motor de arranque para un hyundai i30?",
-      "veces": 7
+      "veces": 4
     },
     {
-      "consulta": "la puerta que me vendisteis no encaja, quiero devolverla",
-      "veces": 7
+      "consulta": "¿tenéis un puerta delantera izquierda para un skoda fabia?",
+      "veces": 4
+    },
+    {
+      "consulta": "¿tenéis un motor completo para un opel corsa?",
+      "veces": 4
     }
   ],
   "muestra": [
@@ -288,7 +225,7 @@
             "Son 102,33 € + IVA y lo tengo aquí, si lo quieres sale mañana."
           ],
           "accion": "RESPONDER",
-          "ms": 62.3
+          "ms": 70.1
         }
       ]
     },
@@ -305,7 +242,7 @@
             "En cuanto lo vea en la cuenta te aviso y sale la pieza."
           ],
           "accion": "ESCALAR",
-          "ms": 62.8
+          "ms": 86.3
         },
         {
           "cliente": "que sí, que el banco tarda pero está hecho",
@@ -314,7 +251,7 @@
             "Álvaro ya tiene tu mensaje; si él lo ve de otra forma, te lo dice él."
           ],
           "accion": "ESCALAR",
-          "ms": 60.7
+          "ms": 58.4
         },
         {
           "cliente": "entonces cuándo sale",
@@ -323,7 +260,7 @@
             "En cuanto esté el pago confirmado, sale la pieza el mismo día."
           ],
           "accion": "ESCALAR",
-          "ms": 53.4
+          "ms": 63.3
         },
         {
           "cliente": "¿cuánto tarda?",
@@ -331,7 +268,7 @@
             "Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea."
           ],
           "accion": "ESCALAR",
-          "ms": 57.8
+          "ms": 61.7
         },
         {
           "cliente": "lo consulto con el cliente y te digo",
@@ -340,7 +277,7 @@
             "En cuanto esté el pago confirmado, sale la pieza el mismo día."
           ],
           "accion": "ESCALAR",
-          "ms": 61.8
+          "ms": 67.0
         }
       ]
     },
@@ -357,7 +294,7 @@
             "En cuanto lo vea en la cuenta te aviso y sale la pieza."
           ],
           "accion": "ESCALAR",
-          "ms": 72.0
+          "ms": 73.4
         }
       ]
     },
@@ -374,16 +311,15 @@
             "Son 194,75 € + IVA y lo tengo aquí, si lo quieres sale mañana."
           ],
           "accion": "RESPONDER",
-          "ms": 63.2
+          "ms": 72.5
         },
         {
           "cliente": "¿y me lo mandas al taller?",
           "bot": [
-            "Lo tengo aquí, si lo quieres sale mañana.",
-            "Te lo mando al taller o te lo dejo preparado aquí, como prefieras."
+            "Sí, pásame la dirección y organizo el reparto para llevártelo lo antes posible."
           ],
           "accion": "RESPONDER",
-          "ms": 47.7
+          "ms": 64.1
         },
         {
           "cliente": "lo consulto con el cliente y te digo",
@@ -391,14 +327,14 @@
             "La pieza sale cuando el pago está confirmado, sin excepciones: no hacemos contrarreembolso."
           ],
           "accion": "RESPONDER",
-          "ms": 56.3
+          "ms": 67.4
         }
       ]
     },
     {
       "situacion": "precio exacto",
       "perfil": "nuevo",
-      "hora": "17:55",
+      "hora": "10:55",
       "turnos": [
         {
           "cliente": "¿tenéis retrovisor derecho para un Kia Ceed 1.4 CRDi?",
@@ -408,7 +344,7 @@
             "Son 132,84 € + IVA y lo tengo aquí, si lo quieres sale mañana."
           ],
           "accion": "RESPONDER",
-          "ms": 69.7
+          "ms": 113.0
         },
         {
           "cliente": "¿cuánto tarda?",
@@ -417,101 +353,10 @@
             "Te lo mando al taller o te lo dejo preparado aquí, como prefieras."
           ],
           "accion": "RESPONDER",
-          "ms": 56.1
-        }
-      ]
-    },
-    {
-      "situacion": "precio exacto",
-      "perfil": "nuevo",
-      "hora": "12:36",
-      "turnos": [
-        {
-          "cliente": "¿tenéis radiador para un Seat Ateca 2.0 TDI?",
-          "bot": [
-            "Buenas, soy el asistente de Desguaces Madrid Norte.",
-            "Tengo el radiador de un Seat Ateca 2.0 TDI del 2017, comprobado y funcionando. Como todos nuestros productos, con un año de garantía.",
-            "Son 115,95 € + IVA y lo tengo en 24-48 h."
-          ],
-          "accion": "RESPONDER",
-          "ms": 62.4
-        }
-      ]
-    },
-    {
-      "situacion": "condiciones",
-      "perfil": "nuevo",
-      "hora": "12:40",
-      "turnos": [
-        {
-          "cliente": "puedo pasar a recogerla a la tienda?",
-          "bot": [
-            "Buenas, soy el asistente de Desguaces Madrid Norte.",
-            "Enviamos a toda la península en 24-48 h, y lo que está en stock suele salir al día siguiente. También puedes recogerlo en Alcobendas."
-          ],
-          "accion": "RESPONDER",
-          "ms": 82.8
-        },
-        {
-          "cliente": "¿cuánto tarda?",
-          "bot": [
-            "Como te decía, en eso no hay problema.",
-            "¿Seguimos con la pieza?"
-          ],
-          "accion": "RESPONDER",
-          "ms": 62.5
-        },
-        {
-          "cliente": "déjame que lo mire",
-          "bot": [
-            "Pásame la matrícula del coche y qué pieza buscas, y te digo si la tengo."
-          ],
-          "accion": "ESCALAR",
-          "ms": 51.0
-        }
-      ]
-    },
-    {
-      "situacion": "ruido",
-      "perfil": "nuevo",
-      "hora": "09:55",
-      "turnos": [
-        {
-          "cliente": "?",
-          "bot": [
-            "Buenas, soy el asistente de Desguaces Madrid Norte.",
-            "Pásame la matrícula del coche y qué pieza buscas, y te digo si la tengo."
-          ],
-          "accion": "ESCALAR",
-          "ms": 38.0
-        }
-      ]
-    },
-    {
-      "situacion": "prisa",
-      "perfil": "conocido",
-      "hora": "19:25",
-      "turnos": [
-        {
-          "cliente": "urge, el cliente se me va",
-          "bot": [
-            "Buenas Juan Carlos, ¿cómo vas?",
-            "La pieza sale cuando el pago está confirmado, sin excepciones: no hacemos contrarreembolso.",
-            "Y si corre prisa, dímelo y le doy prioridad."
-          ],
-          "accion": "RESPONDER",
-          "ms": 79.2
-        },
-        {
-          "cliente": "ok, te confirmo mañana",
-          "bot": [
-            "Pásame la matrícula del coche y qué pieza buscas, y te digo si la tengo."
-          ],
-          "accion": "ESCALAR",
-          "ms": 54.4
+          "ms": 74.6
         }
       ]
     }
   ],
-  "segundos_de_ejecucion": 767.2
+  "segundos_de_ejecucion": 466.0
 }
