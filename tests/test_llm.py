@@ -222,13 +222,39 @@ def groq_dice(texto):
 
 
 PREGUNTA = "tienes un alternador para un seat ibiza 1.9 tdi?"
+MATRICULA = "la matrícula es 4521 KBD"
 
-groq_dice("Lo tengo.\n¿Te lo aparto?")
-d = S.chatear("b0", PREGUNTA, perfil="nuevo", reiniciar=True)
+
+def conversacion(sesion, texto_del_modelo):
+    """Deja la conversación en el punto donde HAY un precio autorizado.
+
+    Hacen falta dos turnos, no uno: sin matrícula, referencia o VIN no se autoriza
+    ningún importe (regla de la identificación), así que el primer turno pide el
+    dato y el segundo es el que ofrece la pieza. Es el mismo flujo que ve un
+    cliente, y es donde tiene sentido comprobar la barrera del precio.
+    """
+    groq_dice("Lo tengo.\n¿Te lo aparto?")
+    S.chatear(sesion, PREGUNTA, perfil="nuevo", reiniciar=True)
+    groq_dice(texto_del_modelo)
+    return S.chatear(sesion, MATRICULA, perfil="nuevo")
+
+
+d = conversacion("b0", "Lo tengo.\n¿Te lo aparto?")
 autorizados = [(r.get("precio_cliente") or {}) for r in d["busqueda"]["resultados"]
                if (r.get("precio_cliente") or {}).get("publicable")]
 importe = autorizados[0]["importe"] if autorizados else None
-comprobar("la búsqueda autoriza un importe", importe is not None, str(importe))
+comprobar("con matrícula, la búsqueda autoriza un importe", importe is not None,
+          str(importe))
+
+# Y sin ella no lo autoriza: la otra mitad de la regla, que si no esto no prueba
+# nada — un importe autorizado siempre haría pasar la comprobación de arriba.
+groq_dice("Lo tengo.\n¿Te lo aparto?")
+sin = S.chatear("b0-sin", PREGUNTA, perfil="nuevo", reiniciar=True)
+comprobar("sin matrícula NO autoriza ninguno",
+          not any((r.get("precio_cliente") or {}).get("publicable")
+                  for r in sin["busqueda"]["resultados"]),
+          (sin["busqueda"]["resultados"][0].get("precio_cliente") or {}).get("motivo", "")
+          if sin["busqueda"]["resultados"] else "")
 
 INVENTADO = "Lo tengo, sí.\nSon 999 €, te sale bien.\n¿Te lo aparto?"
 for etiqueta, texto, debe_descartar in [
@@ -236,8 +262,7 @@ for etiqueta, texto, debe_descartar in [
     ("el precio autorizado pasa", f"Lo tengo, sí.\nSon {importe}.\n¿Te lo aparto?", False),
     ("sin ningún precio, pasa", "Lo tengo, sí.\n¿Te lo aparto?", False),
 ]:
-    groq_dice(texto)
-    b = S.chatear(f"b-{etiqueta}", PREGUNTA, perfil="nuevo", reiniciar=True)["bot"]
+    b = conversacion(f"b-{etiqueta}", texto)["bot"]
     comprobar(etiqueta, bool(b.get("llm_descartado")) == debe_descartar, b["redactor"])
     if debe_descartar:
         comprobar("  y al cliente le llega el borrador demostrable",
