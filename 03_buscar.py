@@ -85,6 +85,18 @@ UMBRAL_PIEZA = 0.50       # sobre la puntuación combinada
 # deja fuera preguntas que solo se parecían de lejos.
 UMBRAL_POLITICA = 0.34    # sobre la similitud de significado
 
+# Las FAQ que escribe una persona (09_aprender.py) se juzgan aparte y por la
+# puntuación COMBINADA, no por el significado. Son de una línea, y un chunk de 14
+# palabras tiene un vector difuso que se parece un poco a todo: la FAQ 18 sacaba
+# 0,36-0,40 de significado igual ante un saludo que ante la pregunta para la que
+# se escribió. Eso no es señal. Lo que la distingue es que las palabras estén:
+# cobertura 1,00 en su pregunta y 0,00 en las demás — combinada 0,74 contra 0,16.
+#
+# El listón es alto a propósito. Una FAQ que no salta manda la pregunta a una
+# persona, que es de donde salió; una FAQ que salta de más le dice al cliente una
+# condición inventada. Los dos errores no cuestan lo mismo.
+UMBRAL_FAQ = 0.50         # sobre la puntuación combinada
+
 # Peso discriminante mínimo para fiarse de la señal léxica. Equivale a una palabra
 # que aparezca en menos de un tercio de las fichas: por debajo de eso, la pregunta
 # está hecha de palabras que comparte medio catálogo y la coincidencia no significa
@@ -530,6 +542,12 @@ class Buscador:
         está ahí, y es rara, y solo está en ese chunk. Tirar esa evidencia era
         perder una respuesta que sí teníamos.
         """
+        # Una FAQ aprendida es una respuesta escrita para UNA pregunta. Si las
+        # palabras del cliente no están en ella, no es su respuesta: se exige
+        # evidencia léxica y no se acepta por parecido semántico a secas.
+        if (item.get("meta") or {}).get("aprendida"):
+            return puntuacion >= UMBRAL_FAQ
+
         if item["tipo"] == "politica":
             if significado >= UMBRAL_POLITICA:
                 return True

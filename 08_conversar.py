@@ -40,7 +40,7 @@ from pathlib import Path
 BASE = Path(__file__).parent
 ENV = BASE / ".env"
 
-MODELO_POR_DEFECTO = "llama-3.3-70b-versatile"
+MODELO_POR_DEFECTO = "openai/gpt-oss-120b"  # llama-3.3-70b lo apagó Groq el 16/08/26
 URL_GROQ = "https://api.groq.com/openai/v1/chat/completions"
 TIEMPO_MAXIMO = 12          # segundos; si tarda más, se responde sin LLM
 

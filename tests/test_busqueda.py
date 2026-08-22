@@ -28,6 +28,12 @@ import unicodedata
 from datetime import datetime
 from pathlib import Path
 
+# La consola de Windows en espanol es cp1252 y revienta con las flechas y los
+# guiones largos de los informes. No es un fallo del banco: el banco ya habia
+# medido bien y se caia al IMPRIMIR. Se fuerza UTF-8 en la salida.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 BASE = Path(__file__).resolve().parent.parent
 
 
