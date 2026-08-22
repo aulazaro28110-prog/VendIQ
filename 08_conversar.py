@@ -220,8 +220,31 @@ def resumir(memoria, omitidos):
         ("coche del que se habla", memoria.get("vehiculo")),
         ("pieza que busca", memoria.get("pieza")),
         ("último precio dicho", memoria.get("precio")),
+        # EN QUÉ PUNTO VA LA VENTA. Sin esto el modelo trata igual a alguien que
+        # acaba de escribir y a alguien que ya ha comprado.
+        ("punto de la conversación", memoria.get("estado")),
     ]
     lineas = [f"  {etiqueta}: {valor}" for etiqueta, valor in campos if valor]
+
+    # LAS OTRAS PIEZAS. Un taller pide tres cosas del mismo coche en el mismo
+    # hilo; con solo la última, las dos primeras se pierden y hay que
+    # repetírselas al cliente.
+    otras = [p for p in (memoria.get("otras_piezas") or []) if p]
+    if otras:
+        lineas.append(f"  también se habló de: {', '.join(otras)}")
+
+    # LO QUE SE LE PROMETIÓ. Es lo que hace que un «¿ya lo tienes?» tres días
+    # después tenga respuesta.
+    for pendiente in (memoria.get("promesas") or []):
+        lineas.append(f"  QUEDA PENDIENTE: {pendiente}")
+
+    # LAS CONDICIONES YA EXPLICADAS. Repetir el párrafo de envío tres veces es lo
+    # que delata a un bot, y el modelo no se acuerda de habérselo dicho.
+    temas = [t for t in (memoria.get("temas") or []) if t]
+    if temas:
+        lineas.append(f"  ya se le explicó: {', '.join(t.lower() for t in temas)}"
+                      f" — NO se lo repitas")
+
     if memoria.get("garantia_dicha"):
         lineas.append("  la garantía ya se le explicó: no la repitas")
     if memoria.get("escalado"):
