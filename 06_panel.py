@@ -392,6 +392,17 @@ class Sistema:
             if pieza:
                 contexto = pieza
                 texto_busqueda = f"{mensaje} {pieza}"
+        elif self.redactor.pieza_referida(conv, mensaje) is not None:
+            # «EL QUE TE DIJE ANTES», «LA OTRA». En una conversación de taller es
+            # constante: se piden tres cosas y luego se habla de una sin volver a
+            # nombrarla. Suelto, ese mensaje se busca a ciegas y devuelve
+            # cualquier cosa; con la ficha que ya está en el hilo, encuentra la
+            # que es. Cuál de ellas lo decide el redactor, que es quien guarda el
+            # hilo — «la otra» es la penúltima, «la primera» es la primera.
+            referida = self.redactor.pieza_referida(conv, mensaje)
+            contexto = self.redactor.texto_de_pieza(referida)
+            texto_busqueda = f"{mensaje} {contexto}".strip()
+
         elif conv.matricula_recien_dada and getattr(conv, "pieza_pedida", None):
             # LA MATRÍCULA DESBLOQUEA EL PRECIO, y hay que ir a buscarlo.
             #
@@ -443,7 +454,13 @@ class Sistema:
                        "vehiculo": conv.vehiculo, "precio": conv.ultimo_precio,
                        "garantia_dicha": conv.garantia_dicha,
                        "escalado": conv.escalado,
-                       "pieza": (conv.ultima_pieza or {}).get("pieza")}
+                       "pieza": (conv.ultima_pieza or {}).get("pieza"),
+                       # El hilo entero, para que el resumen no sea una ficha
+                       # suelta sino la conversación que se está teniendo.
+                       "estado": self.redactor.ESTADO_EN_CLARO.get(conv.estado),
+                       "otras_piezas": [p.get("pieza") for p in conv.piezas[1:]],
+                       "promesas": [p["que"] for p in conv.promesas],
+                       "temas": sorted(conv.temas_tratados)}
         # Salvo cuando la respuesta la escribió una persona. 07_redactor.py ya
         # dice que esas se sueltan tal cual, sin reformular, y el LLM se ponía
         # después y las reescribía igual. Medido en la primera tanda real:

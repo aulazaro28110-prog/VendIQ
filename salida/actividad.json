@@ -2,7 +2,7 @@
   "sintetico": true,
   "aviso": "Los MENSAJES son sintéticos: los genera el mismo código que el banco de pruebas. Los NÚMEROS no: cada decisión, cada milisegundo y cada escalado sale de ejecutar el sistema real contra las 5.000 piezas del catálogo.",
   "mezcla_declarada": "El reparto por tipo de mensaje es una ESTIMACIÓN de Álvaro sobre su propio WhatsApp, no un dato medido.",
-  "generado": "2026-08-22 16:23",
+  "generado": "2026-08-22 22:09",
   "parametros": {
     "dias": 7,
     "conversaciones_dia": "150-200 (lun-vie)",
@@ -16,14 +16,14 @@
   },
   "resumen": {
     "conversaciones": 930,
-    "mensajes": 2245,
+    "mensajes": 2558,
     "escaladas": 109,
     "resueltas_sin_persona": 821,
     "tasa_resolucion": 0.8828,
-    "precios_dados": 526,
-    "ms_mediana": 69.0,
-    "ms_p95": 104.6,
-    "ms_max": 365.5,
+    "precios_dados": 416,
+    "ms_mediana": 72.1,
+    "ms_p95": 107.3,
+    "ms_max": 289.9,
     "fugas_de_precio": 0
   },
   "por_dia": [
@@ -40,55 +40,55 @@
       "fecha": "2026-08-17",
       "dia": "lunes",
       "conversaciones": 170,
-      "mensajes": 401,
+      "mensajes": 457,
       "resueltas": 153,
       "escaladas": 17,
-      "ms_mediana": 67.7
+      "ms_mediana": 66.9
     },
     {
       "fecha": "2026-08-18",
       "dia": "martes",
       "conversaciones": 163,
-      "mensajes": 391,
+      "mensajes": 444,
       "resueltas": 140,
       "escaladas": 23,
-      "ms_mediana": 69.6
+      "ms_mediana": 67.1
     },
     {
       "fecha": "2026-08-19",
       "dia": "miércoles",
       "conversaciones": 155,
-      "mensajes": 364,
+      "mensajes": 415,
       "resueltas": 142,
       "escaladas": 13,
-      "ms_mediana": 74.8
+      "ms_mediana": 68.4
     },
     {
       "fecha": "2026-08-20",
       "dia": "jueves",
       "conversaciones": 193,
-      "mensajes": 467,
+      "mensajes": 536,
       "resueltas": 166,
       "escaladas": 27,
-      "ms_mediana": 69.6
+      "ms_mediana": 84.9
     },
     {
       "fecha": "2026-08-21",
       "dia": "viernes",
       "conversaciones": 167,
-      "mensajes": 416,
+      "mensajes": 475,
       "resueltas": 148,
       "escaladas": 19,
-      "ms_mediana": 66.3
+      "ms_mediana": 72.3
     },
     {
       "fecha": "2026-08-22",
       "dia": "sábado",
       "conversaciones": 82,
-      "mensajes": 206,
+      "mensajes": 231,
       "resueltas": 72,
       "escaladas": 10,
-      "ms_mediana": 66.5
+      "ms_mediana": 74.8
     }
   ],
   "por_hora": [
@@ -146,12 +146,12 @@
     }
   ],
   "acciones": {
-    "RESPONDER": 1741,
-    "PREGUNTAR": 268,
-    "ESCALAR": 236
+    "RESPONDER": 1656,
+    "PREGUNTAR": 660,
+    "ESCALAR": 242
   },
   "intenciones": {
-    "consulta": 1290,
+    "consulta": 1603,
     "agradecimiento": 214,
     "cierre": 195,
     "plazo": 150,
@@ -170,12 +170,17 @@
     {
       "motivo": "lo ve una persona: el bot no está seguro",
       "veces": 114
+    },
+    {
+      "motivo": "ya se ha preguntado 2 veces y sigue sin poder decidir: lo ve una persona en vez de seguir preguntando",
+      "veces": 6
     }
   ],
   "precios": {
-    "publicable": 517,
-    "sin_confirmar": 274,
-    "confianza_baja": 8
+    "sin_matricula": 696,
+    "publicable": 416,
+    "confianza_baja": 3,
+    "sin_confirmar": 3
   },
   "no_cubierto": [
     {
@@ -225,7 +230,7 @@
             "Son 102,33 € + IVA y lo tengo aquí, si lo quieres sale mañana."
           ],
           "accion": "RESPONDER",
-          "ms": 70.1
+          "ms": 62.4
         }
       ]
     },
@@ -242,7 +247,7 @@
             "En cuanto lo vea en la cuenta te aviso y sale la pieza."
           ],
           "accion": "ESCALAR",
-          "ms": 86.3
+          "ms": 60.6
         },
         {
           "cliente": "que sí, que el banco tarda pero está hecho",
@@ -251,7 +256,7 @@
             "Álvaro ya tiene tu mensaje; si él lo ve de otra forma, te lo dice él."
           ],
           "accion": "ESCALAR",
-          "ms": 58.4
+          "ms": 54.0
         },
         {
           "cliente": "entonces cuándo sale",
@@ -260,7 +265,7 @@
             "En cuanto esté el pago confirmado, sale la pieza el mismo día."
           ],
           "accion": "ESCALAR",
-          "ms": 63.3
+          "ms": 54.4
         },
         {
           "cliente": "¿cuánto tarda?",
@@ -268,7 +273,7 @@
             "Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea."
           ],
           "accion": "ESCALAR",
-          "ms": 61.7
+          "ms": 56.3
         },
         {
           "cliente": "lo consulto con el cliente y te digo",
@@ -277,7 +282,7 @@
             "En cuanto esté el pago confirmado, sale la pieza el mismo día."
           ],
           "accion": "ESCALAR",
-          "ms": 67.0
+          "ms": 62.9
         }
       ]
     },
@@ -294,7 +299,7 @@
             "En cuanto lo vea en la cuenta te aviso y sale la pieza."
           ],
           "accion": "ESCALAR",
-          "ms": 73.4
+          "ms": 66.7
         }
       ]
     },
@@ -311,7 +316,7 @@
             "Son 194,75 € + IVA y lo tengo aquí, si lo quieres sale mañana."
           ],
           "accion": "RESPONDER",
-          "ms": 72.5
+          "ms": 72.2
         },
         {
           "cliente": "¿y me lo mandas al taller?",
@@ -319,7 +324,7 @@
             "Sí, pásame la dirección y organizo el reparto para llevártelo lo antes posible."
           ],
           "accion": "RESPONDER",
-          "ms": 64.1
+          "ms": 67.1
         },
         {
           "cliente": "lo consulto con el cliente y te digo",
@@ -327,7 +332,7 @@
             "La pieza sale cuando el pago está confirmado, sin excepciones: no hacemos contrarreembolso."
           ],
           "accion": "RESPONDER",
-          "ms": 67.4
+          "ms": 65.9
         }
       ]
     },
@@ -340,11 +345,21 @@
           "cliente": "¿tenéis retrovisor derecho para un Kia Ceed 1.4 CRDi?",
           "bot": [
             "Buenas, soy el asistente de Desguaces Madrid Norte.",
-            "Tengo el retrovisor derecho de un Kia Ceed 1.6 CRDi del 2012, desmontado de un coche hace poco. Como todos nuestros productos, con un año de garantía.",
-            "Son 132,84 € + IVA y lo tengo aquí, si lo quieres sale mañana."
+            "De retrovisor derecho para un Kia Ceed tengo 5 referencias distintas, según el motor y el año.",
+            "Pásame la matrícula y te digo cuál es el tuyo y lo que vale."
+          ],
+          "accion": "PREGUNTAR",
+          "ms": 119.4
+        },
+        {
+          "cliente": "la matrícula es 4521 KBD",
+          "bot": [
+            "Con la matrícula te lo confirmo: tengo el retrovisor derecho de un Kia Ceed 1.6 CRDi del 2012, desmontado de un coche hace poco. Como todos nuestros productos, con un año de garantía.",
+            "Son 132,84 € + IVA y lo tengo aquí, si lo quieres sale mañana.",
+            "¿Te lo aparto?"
           ],
           "accion": "RESPONDER",
-          "ms": 113.0
+          "ms": 120.2
         },
         {
           "cliente": "¿cuánto tarda?",
@@ -353,10 +368,10 @@
             "Te lo mando al taller o te lo dejo preparado aquí, como prefieras."
           ],
           "accion": "RESPONDER",
-          "ms": 74.6
+          "ms": 136.7
         }
       ]
     }
   ],
-  "segundos_de_ejecucion": 466.0
+  "segundos_de_ejecucion": 550.1
 }

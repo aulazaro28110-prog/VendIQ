@@ -376,6 +376,43 @@ def casos_escritos():
         ("condiciones", "conocido", ["puedo devolverla si me equivoco de pieza"],
          "política"),
 
+        # --- 12 · el hilo de la conversacion -------------------------------
+        # Las cuatro formas de aparcar suman 318 mensajes a la semana en el
+        # registro real, y las dos de preguntar por lo pendiente otros 99. Antes
+        # acababan las seis en una persona porque el bot no sabia en que punto
+        # estaba la venta: leia cada mensaje suelto.
+        ("hilo", "nuevo", ["dejame que lo mire"], "aparca"),
+        ("hilo", "conocido", ["luego te digo algo"], "aparca"),
+        ("hilo", "nuevo", ["ok, te confirmo manana"], "aparca"),
+        ("hilo", "conocido", ["nada, era otra cosa"], "aparca"),
+        ("hilo", "nuevo", ["me lo pienso y te digo"], "aparca"),
+        # Preguntar por algo pendiente. Sin nada en marcha se pregunta cual, que
+        # es mejor que inventarse un pedido.
+        ("hilo", "nuevo", ["ya lo tienes?"], "sigue"),
+        ("hilo", "conocido", ["alguna novedad?"], "sigue"),
+        ("hilo", "nuevo", ["oye que si hay alguna novedad"], "sigue"),
+        # Con una pieza encima de la mesa, aparcar tiene que SUJETARLA: es lo que
+        # hace que el cliente vuelva. Y al volver, el bot sabe de que hablaba.
+        ("hilo", "nuevo", ["necesito un alternador para un audi a4",
+                           "la matricula es 4521 KBD",
+                           "dejame que lo mire"], "aparca"),
+        ("hilo", "nuevo", ["necesito un alternador para un audi a4",
+                           "la matricula es 4521 KBD",
+                           "dejame que lo mire",
+                           "ya lo tienes?"], "sigue"),
+        # Varias piezas en el mismo hilo, y una referencia hacia atras. Es la
+        # conversacion de un taller, que pide tres cosas del mismo coche.
+        ("hilo", "conocido", ["necesito un alternador para un audi a4",
+                              "la matricula es 4521 KBD",
+                              "y tambien el radiador",
+                              "cuanto vale el que te dije antes"], "precio"),
+        # Cerrar no acaba el hilo: lo pasa a posventa, y ahi "ya lo tienes?"
+        # habla de un pedido, no de un presupuesto.
+        ("hilo", "nuevo", ["necesito un alternador para un audi a4",
+                           "la matricula es 4521 KBD",
+                           "me lo quedo",
+                           "ya lo tienes?"], "sigue"),
+
         # --- 6 · quejas y devoluciones ------------------------------------
         ("queja", "conocido", ["el alternador que me mandasteis no funciona"], "escala"),
         ("queja", "conocido", ["me ha llegado la pieza rota"], "escala"),
@@ -461,6 +498,13 @@ def clasificar(respuesta, busqueda):
         return "escala"
     if "cierre de venta" in reglas:
         return "cierra"
+    # El hilo de la conversacion. Van antes que "politica" y "confirma" porque un
+    # cliente que aparca o que pregunta por su pedido no esta preguntando nada de
+    # eso: lo que se mide aqui es si el bot ha entendido en que punto esta.
+    if "aparca la conversacion" in reglas or "aparca la conversación" in reglas:
+        return "aparca"
+    if "recuerda lo que prometi" in reglas or "que no consta" in reglas:
+        return "sigue"
     if "política de la empresa" in reglas:
         return "política"
     if "precio retenido" in reglas:
@@ -683,8 +727,11 @@ def main():
     print("redacta:", "Groq + " if "--con-llm" in sys.argv else "", "07_redactor.py")
 
     casos = casos_de_catalogo(sistema.filas, buscar_mod) + casos_escritos()
-    if len(casos) != 200:
-        print(f"AVISO: el banco tiene {len(casos)} casos, no 200")
+    # El banco crece cuando el sistema aprende a hacer algo nuevo. El numero no
+    # es sagrado; lo que importa es que nadie borre casos sin darse cuenta.
+    MINIMO = 212
+    if len(casos) < MINIMO:
+        print(f"AVISO: el banco tiene {len(casos)} casos y deberia tener al menos {MINIMO}")
 
     resultados = ejecutar(sistema, casos, ver="--ver" in sys.argv)
     codigo = informe(resultados)

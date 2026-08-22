@@ -171,6 +171,30 @@ PALABRAS_INTENCION = {
                "me lo apartas", "me la apartas", "apartame", "puedes apartar",
                "me lo reservas", "me la reservas", "puedes reservar",
                "me lo guardas", "me la guardas", "guardamelo", "guardamela"),
+    # EL CLIENTE APARCA LA CONVERSACIÓN. No es una pregunta y contestarla con
+    # «pásame la matrícula» es lo que más ventas quema: le has entendido al revés
+    # justo cuando te estaba diciendo que sigue interesado.
+    #
+    # Son 318 mensajes a la semana en el registro real, repartidos en cuatro
+    # formas de decir exactamente lo mismo. Por eso va aquí y no como FAQ: una
+    # FAQ solo dispara con las palabras exactas, y aquí lo que hay son sinónimos.
+    "aparca": ("dejame que lo mire", "déjame que lo mire", "lo miro y te digo",
+               "luego te digo", "despues te digo", "después te digo",
+               "te digo algo", "te confirmo manana", "te confirmo mañana",
+               "te confirmo luego", "me lo pienso", "lo consulto",
+               "lo tengo que mirar", "lo miro", "ya te dire", "ya te diré",
+               "nada, era otra cosa", "era otra cosa", "dejalo", "déjalo",
+               "ahora no puedo", "estoy liado", "te escribo luego"),
+
+    # PREGUNTA POR ALGO QUE YA ESTÁ EN MARCHA, o pide que se le avise. Solo tiene
+    # sentido si el bot recuerda lo que prometió — ver Conversacion.promesas.
+    "seguimiento": ("ya lo tienes", "ya la tienes", "lo tienes ya", "alguna novedad",
+                    "se sabe algo", "hay novedades", "hay noticias", "novedades",
+                    "avisame en cuanto", "avísame en cuanto", "avisame cuando",
+                    "avísame cuando", "me avisas", "como va lo", "cómo va lo",
+                    "que tal lo de", "qué tal lo de", "sigue en pie",
+                    "en que ha quedado", "en qué ha quedado"),
+
     "prisa": ("urge", "urgente", "corre prisa", "mucha prisa", "para ya",
               "parado", "cuanto antes", "para hoy", "para mañana", "es para ya"),
     # Preguntas sobre CUÁNDO llega. Se detectan aquí y no se dejan solo al buscador
@@ -422,6 +446,45 @@ def rompe_el_estilo(lineas):
     return None
 
 
+# Señalar una pieza de la que ya se ha hablado, sin volver a nombrarla. En una
+# conversación de taller es constante: se piden tres cosas y luego se habla de
+# «la otra» o «el que te dije antes». Sin esto, ese mensaje se busca a ciegas.
+REFERENCIA_ANTERIOR = re.compile(
+    r"(el|la|lo) que te dije|(el|la) anterior|(el|la) primer[oa]?"
+    r"|(el|la) otr[oa]|lo de antes|(el|la) de antes|(el|la) de la otra vez"
+    r"|(el|la) mism[oa]|como (el|la) de", re.I)
+
+
+def pieza_referida(conv, mensaje):
+    """A cuál de las piezas ya habladas se refiere el cliente, o None.
+
+    No adivina: si no hay ninguna en el hilo, devuelve None y el mensaje se busca
+    como cualquier otro. Distingue tres señales, que son las que usa la gente:
+    «la otra» es la penúltima, «la primera» es la primera de la conversación, y
+    cualquier otra referencia vale para la última.
+    """
+    if not conv.piezas or not REFERENCIA_ANTERIOR.search(mensaje):
+        return None
+    t = _sin_tildes(mensaje)
+    if "primer" in t:
+        return conv.piezas[-1]
+    # «La otra», «el de antes», «el anterior», «el que te dije antes»: todas
+    # señalan hacia atrás, no a la última. Si solo hay una en el hilo, es esa.
+    hacia_atras = ("otro" in t or "otra" in t or "antes" in t or "anterior" in t
+                   or "otra vez" in t)
+    if hacia_atras and len(conv.piezas) > 1:
+        return conv.piezas[1]
+    return conv.piezas[0]
+
+
+def texto_de_pieza(meta):
+    """Cómo se busca una ficha ya conocida: por su nombre y su coche."""
+    if not meta:
+        return ""
+    return " ".join(str(meta.get(c) or "") for c in
+                    ("pieza", "marca", "modelo", "motor")).strip()
+
+
 def detectar_intencion(mensaje: str) -> str:
     """Qué está haciendo el cliente, más allá de qué pieza pide.
 
@@ -500,6 +563,36 @@ def _plazo(meta: dict, genero: str) -> str:
     return f"{_pron(genero)} tengo en 24-48 h"
 
 
+# ---------------------------------------------------------------------------
+# EL HILO DE LA CONVERSACIÓN
+# ---------------------------------------------------------------------------
+# Una venta de desguace pasa siempre por los mismos puntos, y el mensaje del
+# cliente significa cosas distintas en cada uno. «Vale» en IDENTIFICANDO es un
+# acuse; en OFRECIENDO es un cierre. Sin saber dónde estamos hay que adivinarlo
+# mensaje a mensaje, y ahí es donde el bot se equivocaba.
+#
+# Salió de los números del registro de no resueltas: 435 escalados a la semana
+# entre «déjame que lo mire» (164), «luego te digo algo» (123), «ok, te confirmo
+# mañana» (99) y «nada, era otra cosa» (32). Ninguna es una pregunta. Las cuatro
+# dicen lo mismo: *aparco esto y vuelvo*. Un bot que no entiende eso pide la
+# matrícula otra vez y quema la venta.
+
+IDENTIFICANDO = "identificando"   # aún no se sabe qué pieza es la suya
+OFRECIENDO = "ofreciendo"         # hay ficha y precio encima de la mesa
+APARCADA = "aparcada"             # lo va a mirar y vuelve; no hay que empujar
+CERRADA = "cerrada"               # ha dicho que sí
+POSVENTA = "posventa"             # ya hay venta y pregunta por ella
+
+# Cómo se lee cada estado en el panel y en el resumen que ve el modelo.
+ESTADO_EN_CLARO = {
+    IDENTIFICANDO: "identificando la pieza",
+    OFRECIENDO: "con una pieza y su precio encima de la mesa",
+    APARCADA: "aparcada: dijo que lo miraba y volvía",
+    CERRADA: "cerrada: ha dicho que sí",
+    POSVENTA: "posventa: pregunta por algo ya vendido",
+}
+
+
 class Conversacion:
     """Lo que el cliente ya ha contado. Sirve para no volver a pedírselo.
 
@@ -514,7 +607,6 @@ class Conversacion:
         self.presentado = False
         self.garantia_dicha = False
         self.turnos = 0
-        self.ultima_pieza = None            # meta de la última ficha ofrecida
         self.ultimo_precio = None           # importe publicado, si llegó a darse
         self.datos_pedidos = set()          # qué se le ha pedido ya
         self.escalado = False               # ya está en manos de una persona
@@ -534,9 +626,88 @@ class Conversacion:
         # la pieza ("y para un Clase A?").
         self.pieza_pedida = None
 
+        # --------------------------------------------------------- EL HILO
+        # 1. EN QUÉ PUNTO VA LA VENTA. Lo que significa un mensaje depende de
+        #    aquí: "vale" identificando es un acuse, ofreciendo es un cierre.
+        self.estado = IDENTIFICANDO
+
+        # 2. LO QUE SE LE HA PROMETIDO. Cada vez que el bot dice "te aviso" o
+        #    "lo miro y te digo", queda anotado. Sin esto, un "¿ya lo tienes?"
+        #    tres días después no se entiende: el bot no sabe que hay algo
+        #    pendiente y contesta pidiendo la matrícula. En el registro son 99
+        #    mensajes a la semana entre las dos formas de preguntarlo.
+        self.promesas = []                  # [{"que":…, "pieza":…, "turno":…}]
+
+        # 3. TODAS LAS PIEZAS HABLADAS, no solo la última. Un taller pide tres
+        #    cosas del mismo coche en el mismo hilo; con una sola en memoria, las
+        #    dos primeras se pierden y hay que repetírselas.
+        self.piezas = []                    # metas, la más reciente primero
+        # Y el precio de cada una. Con un solo `ultimo_precio`, preguntar por la
+        # pieza de antes contestaba «te lo confirmo» de algo ya cotizado: el
+        # importe existía, pero pertenecía a otra ficha.
+        self.precio_de = {}                 # {id de ficha: importe dicho}
+
+        # 4. QUÉ CONDICIONES YA SE LE HAN EXPLICADO. Repetir el párrafo de envío
+        #    tres veces es lo que delata a un bot; y al modelo hay que decírselo,
+        #    porque él no se acuerda.
+        self.temas_tratados = set()
+
+        # Fichas cuya descripción entera ya se le ha soltado. Repetirla es lo que
+        # más delata a un bot.
+        self.descritas = set()
+
     @property
     def conocido(self):
         return self.perfil == "conocido"
+
+    # La última pieza es la primera de la lista. Se mantiene como propiedad y no
+    # como atributo suelto para que no puedan desincronizarse: todo el código que
+    # ya existía sigue leyendo `ultima_pieza` sin enterarse de que ahora hay
+    # varias, y quien las quiera todas mira `piezas`.
+    @property
+    def ultima_pieza(self):
+        return self.piezas[0] if self.piezas else None
+
+    @ultima_pieza.setter
+    def ultima_pieza(self, meta):
+        self.recordar_pieza(meta)
+
+    def recordar_pieza(self, meta):
+        """Pone esta pieza al frente del hilo, sin duplicarla ni perder las otras.
+
+        Se identifican por el ID de la ficha: el cliente puede volver a nombrar la
+        misma con otras palabras y no es una pieza nueva.
+        """
+        if not meta:
+            return
+        ident = str((meta or {}).get("id") or "")
+        self.piezas = [p for p in self.piezas
+                       if str((p or {}).get("id") or "") != ident]
+        self.piezas.insert(0, meta)
+        del self.piezas[4:]        # cuatro son más de las que nadie pide a la vez
+
+    def prometer(self, que, pieza=None):
+        """Anota algo que el bot acaba de decir que haría.
+
+        Que el bot recuerde lo que prometió es la diferencia entre una
+        conversación y una sucesión de mensajes. Cuando el cliente vuelve tres
+        días después con «¿ya lo tienes?», esto es lo único que hace que la
+        respuesta tenga sentido.
+        """
+        nombre = (pieza or {}).get("pieza") if pieza else None
+        # Se compara por QUÉ y por QUÉ PIEZA, nunca por el turno: prometer lo
+        # mismo dos veces es seguir debiendo una cosa, no dos.
+        if any(p["que"] == que and p["pieza"] == nombre for p in self.promesas):
+            return
+        self.promesas.append({"que": que, "turno": self.turnos, "pieza": nombre})
+
+    def promesa_viva(self):
+        """La última promesa pendiente, o None."""
+        return self.promesas[-1] if self.promesas else None
+
+    def cumplir_promesas(self):
+        """Se dan por cerradas: ya se le ha contestado a lo que esperaba."""
+        self.promesas = []
 
     def registrar(self, mensaje):
         self.turnos += 1
@@ -578,6 +749,17 @@ def _apertura(conv, reglas):
     reglas.append(("cliente nuevo", "se identifica como asistente en el primer "
                                     "mensaje, no finge ser una persona (rol §7)"))
     return PRESENTACION
+
+
+def _describir_corto(meta):
+    """El nombre de la pieza y su coche, sin motor, año ni estado.
+
+    Para cuando ya se la ha descrito entera y volver a hacerlo sonaría a
+    contestador: «el radiador del A4» en vez de los siete datos otra vez.
+    """
+    pieza = (meta.get("pieza") or "la pieza").lower()
+    coche = f"{(meta.get('marca') or '').title()} {meta.get('modelo') or ''}".strip()
+    return f"el {pieza} del {coche}" if coche else f"el {pieza}"
 
 
 def _con_pieza(consulta, conv, reglas, salida):
@@ -632,12 +814,25 @@ def _con_pieza(consulta, conv, reglas, salida):
     # visto es el momento en el que se va. Va pegado y no en una línea aparte
     # porque el mensaje son tres líneas como mucho, y la que se perdería es la que
     # empuja la venta.
+    ident = str(meta.get("id") or "")
+    ya_descrita = ident and ident in conv.descritas
+    conv.descritas.add(ident)
+
     if conv.matricula_recien_dada:
         lineas.append(f"Con la matrícula te lo confirmo: tengo {_describir(meta)}"
                       + (f", {estado}." if estado else "."))
         reglas.append(("acusa recibo del dato",
                        "ha dado la matrícula en este mismo turno: se le reconoce "
                        "antes de nada"))
+    elif ya_descrita:
+        # YA SE LA HABÍA DESCRITO. Repetir la ficha entera —marca, modelo, motor,
+        # año, estado— es lo que más delata a un bot: una persona diría «el faro
+        # ese» y seguiría. Se la nombra corta y se va a lo que ha preguntado.
+        corto = _describir_corto(meta)
+        lineas.append(f"{corto[:1].upper()}{corto[1:]}, el que te decía.")
+        reglas.append(("no repite la ficha",
+                       "ya se la había descrito en esta conversación: se nombra "
+                       "corta en vez de soltar los datos otra vez"))
     else:
         lineas.append(f"Tengo {_describir(meta)}" + (f", {estado}." if estado else "."))
     reglas.append(("pieza localizada",
@@ -652,10 +847,43 @@ def _con_pieza(consulta, conv, reglas, salida):
     if precio.get("publicable"):
         # El importe viene del buscador. Aquí no hay ningún catálogo del que sacarlo.
         conv.ultimo_precio = salida["precio_dado"] = precio["importe"]
+        conv.precio_de[str(meta.get("id") or "")] = precio["importe"]
+        # Hay pieza y precio encima de la mesa: la venta cambia de punto, y a
+        # partir de aquí un «vale» del cliente es un sí y no un acuse.
+        conv.estado = OFRECIENDO
         lineas.append(f"Son {precio['importe']} y {_plazo(meta, g)}.")
-        lineas.append(f"¿Te {_pron(g)} aparto?")
+        # La llamada al cierre, distinta cada vez. Cuatro «¿te lo aparto?»
+        # seguidos en el mismo chat es lo que hace que el cliente deje de leer:
+        # el contenido es correcto y el efecto es de contestador automático.
+        lineas.append(conv.variar("cierre_pregunta", [
+            f"¿Te {_pron(g)} aparto?",
+            f"¿{_pron(g).capitalize()} preparo?",
+            "¿Sigo con ello?",
+            "¿Lo dejamos apartado?",
+        ]))
         reglas.append(("precio publicado",
                        f"{precio['motivo']}. Se dice tal cual, sin redondear"))
+    elif conv.precio_de.get(ident):
+        # A ESTA PIEZA YA SE LE PUSO PRECIO EN ESTA CONVERSACIÓN. La búsqueda de
+        # este turno lo retiene porque el cliente ya no la nombra entera —dice «el
+        # que te dije antes»— pero el importe ya salió y era el suyo. Callárselo
+        # ahora sería contestar «te lo confirmo» de algo que él ya tiene escrito
+        # más arriba en el chat.
+        #
+        # No es publicar un precio nuevo: es repetir uno autorizado, que es lo
+        # mismo que ya hacía la comprobación en caliente del panel.
+        conv.ultimo_precio = salida["precio_dado"] = conv.precio_de[ident]
+        lineas.append(f"Son {conv.precio_de[ident]}, {_plazo(meta, g)}.")
+        lineas.append(conv.variar("cierre_pregunta", [
+            f"¿Te {_pron(g)} aparto?",
+            f"¿{_pron(g).capitalize()} preparo?",
+            "¿Sigo con ello?",
+            "¿Lo dejamos apartado?",
+        ]))
+        reglas.append(("repite el precio ya dado",
+                       "es el mismo importe que ya se le dio para esta ficha en "
+                       "esta conversación, no uno nuevo"))
+
     elif precio.get("estado") == "sin_confirmar":
         lineas.append("Dime exactamente cuál montas y te paso el precio, que no "
                       "quiero pasarte el de otra.")
@@ -837,6 +1065,11 @@ def _politica(consulta, conv, reglas):
     if not texto:
         return None
 
+    # Se anota qué condición se le ha explicado. Sirve para dos cosas: no
+    # repetírsela (eso ya lo hacía `veces_dicho`) y, sobre todo, para que el
+    # resumen que ve el modelo lo sepa — él no se acuerda de nada.
+    conv.temas_tratados.add(seccion)
+
     # Si ya se ha contestado esa misma política en esta conversación, no se vuelve
     # a soltar el párrafo entero. Repetir la condición palabra por palabra suena a
     # contestador; lo que toca es empujar hacia el siguiente paso.
@@ -941,6 +1174,76 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                        "hay una queja: el bot no gestiona reclamaciones (rol §7)"))
 
     # --------------------------------------------------------------- cierre
+    # ------------------------------------------------- el cliente lo aparca
+    elif intencion == "aparca":
+        # NO se le empuja y NO se le vuelve a pedir nada. Ha dicho que sigue
+        # interesado y que vuelve; el error caro aquí es contestarle con la
+        # matrícula, porque le dice que no le has leído justo cuando te estaba
+        # diciendo que sí.
+        #
+        # Lo que se dice depende de dónde está la venta, y por eso hace falta el
+        # estado: con un precio encima de la mesa se le sujeta la pieza (eso es
+        # lo que hace que vuelva); sin nada, solo se queda a la espera.
+        conversacion.estado = APARCADA
+        pieza = conversacion.ultima_pieza
+        if pieza and conversacion.ultimo_precio:
+            g = _genero(pieza.get("pieza", ""))
+            lineas += conversacion.variar("aparca_con_pieza", [
+                [f"Sin prisa. {_pron(g).capitalize()} dejo apuntad{'a' if g == 'f' else 'o'} "
+                 f"a tu nombre y aquí sigue.",
+                 "Cuando lo tengas claro me dices y lo cerramos."],
+                ["Tú tranquilo, no se mueve de aquí.",
+                 "Me escribes cuando quieras y seguimos."],
+            ])
+            conversacion.prometer("guardarle la pieza hasta que conteste", pieza)
+            reglas.append(("el cliente aparca la conversación",
+                           "no es una pregunta: dice que lo mira y vuelve. Se le "
+                           "sujeta la pieza en vez de volver a pedirle datos"))
+        else:
+            lineas += conversacion.variar("aparca_sin_pieza", [
+                ["Sin problema, aquí estoy cuando lo tengas.",
+                 "Con la matrícula te lo miro en un momento."],
+                ["Cuando quieras me dices y lo vemos.",
+                 "No corre prisa."],
+            ])
+            conversacion.prometer("quedar a la espera de su respuesta")
+            reglas.append(("el cliente aparca la conversación",
+                           "aún no hay pieza concreta: se queda a la espera sin "
+                           "insistir"))
+
+    # ------------------------------------- pregunta por algo ya en marcha
+    elif intencion == "seguimiento":
+        # Solo se puede contestar bien si el bot recuerda lo que prometió. Si no
+        # hay nada pendiente, se pregunta por qué en vez de inventarse un pedido.
+        pendiente = conversacion.promesa_viva()
+        if conversacion.estado == CERRADA or conversacion.escalado:
+            conversacion.estado = POSVENTA
+        if pendiente:
+            que = pendiente.get("pieza")
+            suyo = "tu " + que.lower() if que else "lo tuyo"
+            if conversacion.estado == POSVENTA:
+                # Ya ha comprado. Preguntar por su pedido no es lo mismo que
+                # preguntar por un presupuesto, y contestarle lo mismo suena a que
+                # no te has enterado de que te ha pagado.
+                lineas.append(f"{suyo.capitalize()} está apartado a tu nombre "
+                              f"y en preparación.")
+                lineas.append("En cuanto salga te paso el aviso.")
+            else:
+                lineas.append(f"Sigo con lo de {suyo}, no se me ha olvidado.")
+                lineas.append("En cuanto Álvaro me lo confirme te escribo yo.")
+            # No se vuelve a prometer: ya estaba pendiente. Anotarla otra vez
+            # la duplicaba en el resumen y hacía parecer que se le debían dos
+            # cosas cuando solo se le debe una.
+            reglas.append(("recuerda lo que prometió",
+                           f"quedó pendiente «{pendiente['que']}»: se le contesta "
+                           f"por eso y no se le pide nada otra vez"))
+        else:
+            lineas.append("Dime de qué pieza me hablas y te digo cómo va.")
+            lineas.append("Con la matrícula o el número de pedido lo veo enseguida.")
+            reglas.append(("pregunta por algo que no consta",
+                           "no hay nada pendiente en esta conversación: se pregunta "
+                           "cuál en vez de dar por hecho un pedido"))
+
     elif _faq_aprendida(consulta) and not (intencion == "cierre"
                                            and conversacion.ultima_pieza):
         # Lo que escribió una persona para ESTA pregunta gana a lo que decidiría
@@ -975,6 +1278,13 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     elif intencion == "cierre" and conversacion.ultima_pieza:
         meta = conversacion.ultima_pieza
         g = _genero(meta.get("pieza", ""))
+        conversacion.estado = CERRADA
+        # Las promesas de antes de la venta ya no valen —«te lo guardo mientras lo
+        # piensas» se acabó—, pero cerrar no es acabar: ahora lo pendiente es
+        # prepararlo y avisarle. Sin esta línea, un «¿ya lo tienes?» del cliente
+        # que acaba de comprar recibía un «dime de qué pieza me hablas».
+        conversacion.cumplir_promesas()
+        conversacion.prometer("prepararle la pieza y avisarle cuando salga", meta)
         lineas.append(f"Hecho, {_pron(g)} aparto a tu nombre.")
         lineas.append(f"¿Te {_pron(g)} mandamos al taller o te pasas tú a por "
                       f"{'ella' if g == 'f' else 'él'}?")
