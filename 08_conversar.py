@@ -33,6 +33,7 @@ no lo que se puede decir.
 
 import json
 import os
+import re
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -204,6 +205,29 @@ LO QUE NO PUEDES HACER NUNCA:
 Te doy la ACCIÓN ya decidida y los DATOS. Escribe SOLO el mensaje al cliente."""
 
 
+# Matrícula española (moderna y antigua) y bastidor. Es la misma detección que
+# hace 07_redactor.py; aquí se usa para lo contrario: para quitarla.
+_MATRICULA = re.compile(
+    r"\b\d{4}\s?[BCDFGHJKLMNPRSTVWXYZ]{3}\b"
+    r"|\b[A-Z]{1,2}[\s-]?\d{4}[\s-]?[A-Z]{2}\b"
+    r"|\b[A-HJ-NPR-Z0-9]{17}\b", re.I)
+
+
+def sin_matricula(texto):
+    """El mismo texto con la matrícula o el VIN sustituidos por una marca.
+
+    MINIMIZACIÓN. El modelo no necesita el dato para escribir el mensaje: le basta
+    con saber que el cliente ya lo dio, que es justo lo que dice la marca. El dato
+    entero se queda en esta máquina, en la memoria de la conversación, y solo sale
+    si el redactor determinista ha decidido decirlo — y eso solo pasa cuando el
+    cliente pide que se lo repitan.
+
+    Sin esto, la matrícula viajaba a Groq (EE. UU.) tres veces por petición: en el
+    resumen, en los turnos literales del historial y en el mensaje del cliente.
+    """
+    return _MATRICULA.sub("[MATRÍCULA YA DADA]", texto or "")
+
+
 def resumir(memoria, omitidos):
     """Comprime en datos lo que ya no cabe en la ventana de turnos.
 
@@ -216,7 +240,9 @@ def resumir(memoria, omitidos):
         return None
     campos = [
         ("cliente", memoria.get("nombre") or None),
-        ("matrícula que dio", memoria.get("matricula")),
+        # La matrícula NO viaja: solo el hecho de que la dio. Ver sin_matricula().
+        ("matrícula", "sí, ya la dio — no se la vuelvas a pedir"
+         if memoria.get("matricula") else None),
         ("coche del que se habla", memoria.get("vehiculo")),
         ("pieza que busca", memoria.get("pieza")),
         ("último precio dicho", memoria.get("precio")),
@@ -341,11 +367,17 @@ def _mensajes(consulta, respuesta, accion, opciones, historial, memoria=None):
         resumen = resumir(memoria, omitidos)
         if resumen:
             mensajes.append({"role": "system", "content": resumen})
+    # Los turnos anteriores van enmascarados: lo que el modelo necesita del
+    # historial es el hilo de la conversación, no los datos del coche.
     for turno in historial[-VENTANA_TURNOS:]:
-        mensajes.append({"role": "user", "content": turno["cliente"]})
-        mensajes.append({"role": "assistant", "content": turno["bot"]})
+        mensajes.append({"role": "user", "content": sin_matricula(turno["cliente"])})
+        mensajes.append({"role": "assistant", "content": sin_matricula(turno["bot"])})
+    # El mensaje de este turno también. El BORRADOR no se toca: si el redactor ha
+    # decidido decir la matrícula —porque el cliente ha pedido que se la repitan—
+    # entonces sí hace falta, y es el único caso en que sale de aquí.
     mensajes.append({"role": "user",
-                     "content": f"MENSAJE DEL CLIENTE: {consulta.get('pregunta', '')}\n\n"
+                     "content": f"MENSAJE DEL CLIENTE: "
+                                f"{sin_matricula(consulta.get('pregunta', ''))}\n\n"
                                 + "\n\n".join(datos)})
     return mensajes
 
