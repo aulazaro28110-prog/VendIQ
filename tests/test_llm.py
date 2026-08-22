@@ -157,7 +157,13 @@ turnos = [m for m in msgs if m["role"] != "system"]
 comprobar("hay un segundo system con el resumen", len(systems) == 2)
 comprobar("dice cuantos mensajes resume", "4 mensajes anteriores" in systems[1],
           systems[1].splitlines()[0] if len(systems) > 1 else "")
-comprobar("lleva la matricula que se dijo", "1234 ABC" in systems[1])
+# MINIMIZACIÓN. El resumen dice que la matrícula se dio, pero NO la dice: el
+# modelo no la necesita para escribir el mensaje y Groq está en EE. UU. Esta
+# comprobación estaba escrita al revés y era correcta cuando se escribió.
+comprobar("NO manda la matrícula, solo que se dio",
+          "1234 ABC" not in systems[1] and "ya la dio" in systems[1])
+todo = json.dumps(msgs, ensure_ascii=False)
+comprobar("  ni en ningún otro mensaje de la petición", "1234 ABC" not in todo)
 comprobar("solo van los ultimos 6 turnos", len(turnos) == conv.VENTANA_TURNOS * 2 + 1,
           f"{len(turnos)} mensajes")
 comprobar("el resumen NO lo escribe el modelo",
