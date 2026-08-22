@@ -192,6 +192,50 @@ l, n = conv.redactar_con_llm(CONSULTA_CON_PRECIO, RESPUESTA, "RESPONDER", None, 
                              {"GROQ_API_KEY": ""})
 comprobar("sin clave -> redacta el determinista", l is None, n)
 
+
+print()
+print("=" * 74)
+print("5. LA SEGUNDA BARRERA: ¿y si el modelo se inventa un precio?")
+print("=" * 74)
+# La primera barrera es de construcción: al modelo no se le pasa el importe si la
+# búsqueda no lo ha autorizado (punto 2). Ésta es la de por si acaso: se leen los
+# importes del mensaje que SALE y se contrastan con los autorizados. Nunca se
+# había disparado, porque hasta ahora no había ningún modelo redactando.
+#
+# Esto carga el sistema entero —índice y modelo de embeddings—, así que tarda unos
+# segundos más que el resto del fichero. Vale la pena: es la comprobación que de
+# verdad importa antes de apuntar a un modelo de fuera.
+panel = cargar("06_panel.py", "panel")
+S = panel.Sistema()
+S.config_llm = {"GROQ_API_KEY": "clave-de-mentira", "GROQ_MODELO": "modelo-falso"}
+
+
+def groq_dice(texto):
+    urllib.request.urlopen = lambda peticion, timeout=None: RespuestaFalsa(texto)
+
+
+PREGUNTA = "tienes un alternador para un seat ibiza 1.9 tdi?"
+
+groq_dice("Lo tengo.\n¿Te lo aparto?")
+d = S.chatear("b0", PREGUNTA, perfil="nuevo", reiniciar=True)
+autorizados = [(r.get("precio_cliente") or {}) for r in d["busqueda"]["resultados"]
+               if (r.get("precio_cliente") or {}).get("publicable")]
+importe = autorizados[0]["importe"] if autorizados else None
+comprobar("la búsqueda autoriza un importe", importe is not None, str(importe))
+
+INVENTADO = "Lo tengo, sí.\nSon 999 €, te sale bien.\n¿Te lo aparto?"
+for etiqueta, texto, debe_descartar in [
+    ("un precio inventado se descarta entero", INVENTADO, True),
+    ("el precio autorizado pasa", f"Lo tengo, sí.\nSon {importe}.\n¿Te lo aparto?", False),
+    ("sin ningún precio, pasa", "Lo tengo, sí.\n¿Te lo aparto?", False),
+]:
+    groq_dice(texto)
+    b = S.chatear(f"b-{etiqueta}", PREGUNTA, perfil="nuevo", reiniciar=True)["bot"]
+    comprobar(etiqueta, bool(b.get("llm_descartado")) == debe_descartar, b["redactor"])
+    if debe_descartar:
+        comprobar("  y al cliente le llega el borrador demostrable",
+                  "999" not in b["mensaje"], b["lineas"][-1][:60])
+
 print()
 print("=" * 74)
 print(("TODO EN VERDE: solo falta la clave." if not fallos

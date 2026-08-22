@@ -20,11 +20,16 @@ Crea un fichero llamado **`.env`** en la carpeta del proyecto (junto a
 GROQ_API_KEY=gsk_lo_que_te_haya_dado_groq
 ```
 
-Y si quieres cambiar de modelo, una línea más (opcional):
+Y el modelo, una línea más (opcional — si falta se usa el de por defecto):
 
 ```
-GROQ_MODELO=llama-3.3-70b-versatile
+GROQ_MODELO=openai/gpt-oss-120b
 ```
+
+Groq retira modelos con cierta frecuencia: `llama-3.3-70b-versatile`, que era el
+de por defecto, lo apagaron el 16/08/2026. Si un día la API contesta 404, es eso:
+mira los modelos vivos en console.groq.com y cambia esta línea. El bot no se cae
+—sigue redactando `07_redactor.py`— pero el panel lo dirá.
 
 En PowerShell, desde la carpeta del proyecto:
 
@@ -41,7 +46,7 @@ python 06_panel.py
 Al arrancar dice cuál de los dos está redactando:
 
 ```
-Redacta: Groq (llama-3.3-70b-versatile)
+Redacta: Groq (openai/gpt-oss-120b)
 ```
 
 o bien
