@@ -15,6 +15,14 @@ y catorce días de tráfico simulado pasados por el sistema real.
 > RAG = *Retrieval Augmented Generation* = "mira la carpeta antes de hablar": primero recupera
 > información real de la empresa, y luego genera la respuesta sobre ella.
 
+## Los tres documentos
+
+| | |
+|---|---|
+| **Este fichero** | cómo está construido: la búsqueda, los umbrales, las medidas |
+| [`docs/NEGOCIO.md`](docs/NEGOCIO.md) | qué resuelve y qué datos toca, sin código |
+| [`docs/GDPR.md`](docs/GDPR.md) | protección de datos, punto por punto y ejecutable |
+
 ## Qué hace, en 3 pasos
 
 1. **`01_ingesta_chunking.py`** — reúne los documentos (inventario + políticas + las FAQ que ha
