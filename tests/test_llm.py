@@ -1,0 +1,200 @@
+# -*- coding: utf-8 -*-
+"""
+tests/test_llm.py
+=================
+LA LLAMADA A GROQ, PROBADA SIN CLAVE Y SIN RED.
+
+08_conversar.py era el único módulo del proyecto sin una sola ejecución, y es
+el que habla con una API de fuera. Esta prueba cubre todo lo que NO depende de
+la red, que es casi todo: cómo sale la petición, qué ve el modelo, y qué pasa
+cuando la API falla.
+
+LO QUE DE VERDAD SE COMPRUEBA AQUÍ
+----------------------------------
+El guardarraíl del precio. No se comprueba que el modelo "no diga" un importe
+no autorizado —eso solo se puede medir por estadística—, se comprueba que el
+importe NO ESTÁ en ninguno de los mensajes que se le mandan. No puede decirlo
+porque no lo tiene. Es la diferencia entre una promesa y una propiedad.
+
+Y que un desguace no se queda sin contestar porque una API esté caída: 401, 429,
+404, sin red, timeout y respuesta vacía caen todos de pie en 07_redactor.py.
+
+Se sustituye urllib.request.urlopen por un doble que guarda lo que se le manda.
+No sale ni un byte a internet, así que esto corre en cualquier sitio y no gasta
+cuota.
+"""
+import importlib.util
+import json
+import sys
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+BASE = Path(__file__).resolve().parent.parent
+
+# La consola de Windows en español es cp1252 y revienta con los guiones largos.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+
+def cargar(f, alias):
+    spec = importlib.util.spec_from_file_location(alias, BASE / f)
+    m = importlib.util.module_from_spec(spec); sys.modules[alias] = m
+    spec.loader.exec_module(m); return m
+
+
+conv = cargar('08_conversar.py', 'conv')
+
+fallos = []
+
+
+def comprobar(que, condicion, detalle=""):
+    print(f"   {'OK  ' if condicion else 'FALLA'}  {que}" + (f"  · {detalle}" if detalle else ""))
+    if not condicion:
+        fallos.append(que)
+
+
+# --------------------------------------------------------------- el doble
+class RespuestaFalsa:
+    def __init__(self, texto):
+        self._cuerpo = json.dumps({
+            "choices": [{"message": {"content": texto}}]
+        }).encode("utf-8")
+
+    def read(self):
+        return self._cuerpo
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+
+capturado = {}
+
+
+def urlopen_falso(peticion, timeout=None):
+    capturado["url"] = peticion.full_url
+    capturado["cabeceras"] = dict(peticion.headers)
+    capturado["cuerpo"] = json.loads(peticion.data.decode("utf-8"))
+    capturado["timeout"] = timeout
+    return RespuestaFalsa("Lo tengo, sí.\nSon 240 €.\n¿Te lo aparto?")
+
+
+# ------------------------------------------------------- datos de entrada
+CONFIG = {"GROQ_API_KEY": "clave-de-mentira", "GROQ_MODELO": "openai/gpt-oss-120b"}
+
+CONSULTA_CON_PRECIO = {
+    "pregunta": "¿tenéis un alternador para un Seat Ibiza 1.9 TDI?",
+    "resultados": [{
+        "tipo": "inventario",
+        "texto": "Alternador Seat Ibiza",
+        "meta": {"pieza": "Alternador", "marca": "Seat", "modelo": "Ibiza",
+                 "motor": "1.9 TDI", "anio": "2008", "estado": "Usado",
+                 "disponibilidad": "En stock", "garantia": "1 año", "id": "42"},
+        "precio_cliente": {"publicable": True, "importe": "240 €"},
+    }],
+}
+CONSULTA_SIN_PRECIO = json.loads(json.dumps(CONSULTA_CON_PRECIO))
+CONSULTA_SIN_PRECIO["resultados"][0]["precio_cliente"] = {
+    "publicable": False, "importe": "240 €", "motivo": "confianza baja"}
+
+RESPUESTA = {"mensaje": "Lo tengo. ¿Te lo aparto?", "reglas": [], "escala": False}
+
+print("=" * 74)
+print("1. LA PETICION QUE SALE HACIA GROQ")
+print("=" * 74)
+urllib.request.urlopen = urlopen_falso
+lineas, nota = conv.redactar_con_llm(CONSULTA_CON_PRECIO, RESPUESTA, "RESPONDER",
+                                     None, [], CONFIG)
+comprobar("va a la URL de Groq", capturado["url"] == conv.URL_GROQ, capturado["url"])
+comprobar("manda el Bearer", capturado["cabeceras"].get("Authorization") == "Bearer clave-de-mentira")
+comprobar("Content-Type json", capturado["cabeceras"].get("Content-type") == "application/json")
+comprobar("respeta el tiempo maximo", capturado["timeout"] == conv.TIEMPO_MAXIMO,
+          f"{capturado['timeout']}s")
+c = capturado["cuerpo"]
+comprobar("modelo el del .env", c["model"] == "openai/gpt-oss-120b", c["model"])
+comprobar("temperatura y tope", c["temperature"] == 0.4 and c["max_tokens"] == 220)
+comprobar("primer mensaje = rol system", c["messages"][0]["role"] == "system")
+comprobar("corta a 3 lineas como mucho", len(lineas) <= 3, f"{len(lineas)} lineas")
+print(f"   nota: {nota}")
+
+print()
+print("=" * 74)
+print("2. EL GUARDARRAIL: ¿puede el modelo decir un precio no autorizado?")
+print("=" * 74)
+conv.redactar_con_llm(CONSULTA_CON_PRECIO, RESPUESTA, "RESPONDER", None, [], CONFIG)
+contexto_con = json.dumps(capturado["cuerpo"]["messages"], ensure_ascii=False)
+comprobar("con precio publicable, el importe SI entra", "240" in contexto_con)
+
+conv.redactar_con_llm(CONSULTA_SIN_PRECIO, RESPUESTA, "RESPONDER", None, [], CONFIG)
+contexto_sin = json.dumps(capturado["cuerpo"]["messages"], ensure_ascii=False)
+comprobar("con precio retenido, el importe NO entra en NINGUN mensaje",
+          "240" not in contexto_sin)
+comprobar("y se le dice que no lo tiene", "NO DISPONIBLE" in contexto_sin)
+print("   -> no es que se le pida que calle: no lo tiene.")
+
+print()
+print("=" * 74)
+print("3. EL RESUMEN: ¿entra cuando la conversacion se alarga?")
+print("=" * 74)
+historial = [{"cliente": f"mensaje {i}", "bot": f"respuesta {i}"} for i in range(10)]
+memoria = {"nombre": "Juan", "matricula": "1234 ABC", "pieza": "alternador",
+           "precio": "240 €", "garantia_dicha": True}
+conv.redactar_con_llm(CONSULTA_CON_PRECIO, RESPUESTA, "RESPONDER", None,
+                      historial, CONFIG, memoria)
+msgs = capturado["cuerpo"]["messages"]
+systems = [m["content"] for m in msgs if m["role"] == "system"]
+turnos = [m for m in msgs if m["role"] != "system"]
+comprobar("hay un segundo system con el resumen", len(systems) == 2)
+comprobar("dice cuantos mensajes resume", "4 mensajes anteriores" in systems[1],
+          systems[1].splitlines()[0] if len(systems) > 1 else "")
+comprobar("lleva la matricula que se dijo", "1234 ABC" in systems[1])
+comprobar("solo van los ultimos 6 turnos", len(turnos) == conv.VENTANA_TURNOS * 2 + 1,
+          f"{len(turnos)} mensajes")
+comprobar("el resumen NO lo escribe el modelo",
+          conv.resumir(memoria, 4) == systems[1])
+
+print()
+print("=" * 74)
+print("4. CUANDO GROQ FALLA, ¿se queda el desguace sin contestar?")
+print("=" * 74)
+
+
+def falla_con(excepcion):
+    def _f(peticion, timeout=None):
+        raise excepcion
+    urllib.request.urlopen = _f
+    return conv.redactar_con_llm(CONSULTA_CON_PRECIO, RESPUESTA, "RESPONDER",
+                                 None, [], CONFIG)
+
+
+for etiqueta, exc in [
+    ("clave invalida (401)", urllib.error.HTTPError(conv.URL_GROQ, 401, "no", {}, None)),
+    ("cuota agotada (429)", urllib.error.HTTPError(conv.URL_GROQ, 429, "no", {}, None)),
+    ("modelo retirado (404)", urllib.error.HTTPError(conv.URL_GROQ, 404, "no", {}, None)),
+    ("sin red", urllib.error.URLError("sin red")),
+    ("se corta a medias", TimeoutError("agotado")),
+]:
+    l, n = falla_con(exc)
+    comprobar(etiqueta + " -> no rompe", l is None, n)
+
+urllib.request.urlopen = lambda p, timeout=None: RespuestaFalsa("   \n  \n")
+l, n = conv.redactar_con_llm(CONSULTA_CON_PRECIO, RESPUESTA, "RESPONDER", None, [], CONFIG)
+comprobar("respuesta vacia -> no rompe", l is None, n)
+
+urllib.request.urlopen = lambda p, timeout=None: RespuestaFalsa("una\ndos\ntres\nCUATRO")
+l, n = conv.redactar_con_llm(CONSULTA_CON_PRECIO, RESPUESTA, "RESPONDER", None, [], CONFIG)
+comprobar("mas de 3 lineas -> se recorta", l == ["una", "dos", "tres"], str(l))
+
+l, n = conv.redactar_con_llm(CONSULTA_CON_PRECIO, RESPUESTA, "RESPONDER", None, [],
+                             {"GROQ_API_KEY": ""})
+comprobar("sin clave -> redacta el determinista", l is None, n)
+
+print()
+print("=" * 74)
+print(("TODO EN VERDE: solo falta la clave." if not fallos
+       else f"FALLAN {len(fallos)}: " + " · ".join(fallos)))
+print("=" * 74)
+sys.exit(1 if fallos else 0)
