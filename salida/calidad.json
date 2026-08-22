@@ -5,6 +5,6 @@
   "preguntas_banco": 80,
   "piezas_inexistentes_probadas": 40,
   "fichas_indexadas": 5010,
-  "medido": "2026-08-22 22:28",
+  "medido": "2026-08-22 22:47",
   "fuente": "tests/test_busqueda.py"
 }
