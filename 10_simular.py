@@ -275,11 +275,22 @@ def main():
     ap = argparse.ArgumentParser(description="Simula tráfico real por el sistema")
     ap.add_argument("--dias", type=int, default=14)
     ap.add_argument("--semilla", type=int, default=7)
+    ap.add_argument("--con-llm", action="store_true",
+                    help="redacta con Groq. Lento y sujeto a su límite por "
+                         "minuto: 7 días son ~2.245 mensajes.")
     args = ap.parse_args()
 
     panel = cargar("06_panel.py", "panel")
     banco = cargar("tests/test_conversaciones.py", "banco")
     sistema = panel.Sistema()
+
+    # SIN LLM salvo que se pida. Lo que mide este fichero son las DECISIONES del
+    # sistema —qué encuentra, qué escala, cuánto tarda, si se le escapa un
+    # precio—, y ésas no cambian porque el modelo escriba más bonito. Encenderlo
+    # aquí solo añadiría 2.245 llamadas, el límite por minuto de Groq de por
+    # medio, y unos números que dependerían de cuántos 429 tocaran ese día.
+    if not args.con_llm:
+        sistema.config_llm = dict(sistema.config_llm or {}, GROQ_API_KEY="")
 
     print(f"\nConstruyendo el repertorio de conversaciones...")
     repertorio = construir_repertorio(sistema, banco, semillas=[23, 41, 59, 77, 95])
