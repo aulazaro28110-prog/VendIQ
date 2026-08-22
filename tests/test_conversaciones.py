@@ -454,8 +454,7 @@ def clasificar(respuesta, busqueda):
     return "otra cosa"
 
 
-PROHIBIDO_TRATO = re.compile(r"\busted\b|\bpáse|\bdíga|\bsuya\b|\ble paso a\b", re.I)
-EMOJI = re.compile("[\U0001F300-\U0001FAFF☀-➿]")
+redactor = None             # lo carga main(); de ahí salen las reglas de la voz
 
 
 PIDE_MATRICULA = re.compile(r"pásame la matrícula|me la pasas", re.I)
@@ -485,14 +484,13 @@ def invariantes(respuesta, historial, matricula_dada, decision):
     rotos = []
     if not respuesta["precio_autorizado"]:
         rotos.append(f"FUGA DE PRECIO: publicó {respuesta['precio_dado']} sin permiso")
-    if len(respuesta["lineas"]) > 3:
-        rotos.append(f"formato: {len(respuesta['lineas'])} líneas (máximo 3)")
-    if EMOJI.search(respuesta["mensaje"]):
-        rotos.append("lleva emoji y el rol lo prohíbe")
-    if PROHIBIDO_TRATO.search(respuesta["mensaje"]):
-        rotos.append("trata de usted: sus ejemplos reales tutean siempre")
-    if not respuesta["mensaje"].strip():
-        rotos.append("mensaje vacío")
+    # Las reglas de la voz se preguntan a 07_redactor.py, que es donde se define.
+    # Antes había aquí una copia y las dos se separaron: la de aquí marcaba de
+    # usted un «le paso a Álvaro […] te aviso», donde ese «le» es Álvaro y el
+    # mensaje tutea. Una sola definición, y la usan el banco y el panel.
+    roto = redactor.rompe_el_estilo(respuesta["lineas"])
+    if roto:
+        rotos.append(f"estilo: {roto}")
 
     # Regla §8.1: nunca vuelvas a pedir un dato que el cliente YA TE DIO. Ojo a la
     # diferencia — insistir en un dato que aún no ha dado es legítimo; pedirle otra
@@ -506,19 +504,14 @@ def invariantes(respuesta, historial, matricula_dada, decision):
     # pieza monta ese coche, decir «no la tengo» es adivinar, y adivinar en contra
     # pierde una venta que quizá estaba en el almacén con otro nombre.
     #
-    # Con matrícula sí puede decirlo, y entonces es una respuesta, no una excusa.
-    # La excepción: cuando el bot ESCALA no se le exige pedir la matrícula. Una queja
-    # («el alternador que me mandasteis no funciona») también cae en NO DISPONIBLE,
-    # porque el cliente nombra una pieza y ninguna ficha encaja — pero ahí no está
-    # preguntando si la tenemos. Pedirle la matrícula sería sordo. La regla es «no
-    # digas que no sin matrícula», no «pide siempre la matrícula».
-    if decision == "NO DISPONIBLE" and not matricula_dada and not respuesta.get("escala"):
-        if NIEGA_TENERLA.search(respuesta["mensaje"]):
-            rotos.append("dice que NO la tiene sin matrícula: sin identificar la "
-                         "pieza no puede saberlo")
-        if not IDENTIFICA.search(respuesta["mensaje"]):
-            rotos.append("no tiene la pieza y no pide la matrícula: se queda en "
-                         "un «no» sin salida")
+    # La regla la define 07_redactor.py y la aplica también el panel al texto del
+    # LLM. Aquí solo se comprueba: si el banco tuviera su propia copia, las dos se
+    # separarían — que es justo lo que le pasó a la regla del tuteo.
+    roto = redactor.rompe_la_matricula(respuesta["lineas"], decision,
+                                       matricula_dada,
+                                       bool(respuesta.get("escala")))
+    if roto:
+        rotos.append(roto)
 
     # Repetir el mismo mensaje palabra por palabra es lo que delata a un bot. Dos
     # veces en una conversación puede colar; tres ya es un contestador automático.
@@ -628,11 +621,25 @@ def informe(resultados):
 
 
 def main():
-    global conversar
+    global conversar, redactor
     panel = cargar("06_panel.py", "panel")
     conversar = cargar("08_conversar.py", "conversar")
     sistema = panel.Sistema()
+    redactor = sistema.redactor
     buscar_mod = sistema.buscar_mod
+
+    # EL BANCO NO LLAMA A GROQ SALVO QUE SE LE PIDA. Un banco cuyo resultado
+    # depende del límite de peticiones de una API ajena no mide nada: la primera
+    # vez que se corrió con la clave puesta, 13 de 36 llamadas se comieron un 429
+    # y el redactor que contestó fue otro. Y hay una razón de fondo: aquí se
+    # miden las DECISIONES del sistema, que son deterministas y no cambian
+    # porque el modelo escriba mejor.
+    #
+    # Con --con-llm se enciende a propósito, para mirar lo que el modelo hace con
+    # el estilo. Ahí el número puede bailar entre ejecuciones, y es esperable.
+    if "--con-llm" not in sys.argv:
+        sistema.config_llm = dict(sistema.config_llm or {}, GROQ_API_KEY="")
+    print("redacta:", "Groq + " if "--con-llm" in sys.argv else "", "07_redactor.py")
 
     casos = casos_de_catalogo(sistema.filas, buscar_mod) + casos_escritos()
     if len(casos) != 200:

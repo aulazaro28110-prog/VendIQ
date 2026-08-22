@@ -416,9 +416,28 @@ class Sistema:
                        "garantia_dicha": conv.garantia_dicha,
                        "escalado": conv.escalado,
                        "pieza": (conv.ultima_pieza or {}).get("pieza")}
-        lineas_llm, nota = self.conversar.redactar_con_llm(
-            busqueda, respuesta, accion, respuesta["opciones"], historial,
-            self.config_llm, memoria_llm)
+        # Salvo cuando la respuesta la escribió una persona. 07_redactor.py ya
+        # dice que esas se sueltan tal cual, sin reformular, y el LLM se ponía
+        # después y las reescribía igual. Medido en la primera tanda real:
+        #
+        #   escrito por Álvaro: «Si , la reserva se queda hecha 24 horas»
+        #   dicho al cliente  : «Sí, te lo apartamos 24 horas, ¿te confirmo la
+        #                        reserva ahora?»
+        #
+        # Suena mejor y por eso es peor: «te confirmo la reserva ahora» es un
+        # compromiso que Álvaro no escribió. En la otra FAQ, «nuestro horario está
+        # en internet» se convirtió en «¿te paso el enlace?», un enlace que no
+        # existe. Cuando la respuesta son las palabras de una persona no hay nada
+        # que mejorar de forma: ésas ya son las palabras.
+        de_una_persona = any(r["regla"] == "respuesta escrita por una persona"
+                             for r in respuesta["reglas"])
+        if de_una_persona:
+            lineas_llm, nota = None, ("lo escribió una persona: se dice literal, "
+                                      "sin pasar por el modelo")
+        else:
+            lineas_llm, nota = self.conversar.redactar_con_llm(
+                busqueda, respuesta, accion, respuesta["opciones"], historial,
+                self.config_llm, memoria_llm)
         respuesta["redactor"] = nota
         if lineas_llm:
             respuesta["borrador"] = respuesta["lineas"]
@@ -456,6 +475,26 @@ class Sistema:
         # le ha dado. Se leen todos los importes del mensaje y se contrastan con
         # los autorizados; si aparece uno que no lo está, se descarta la redacción
         # del modelo entera y sale el borrador, que sí es demostrable.
+        # AUDITORÍA DE LA VOZ Y DE LAS REGLAS. Lo mismo que con el precio, pero
+        # con lo demás: el redactor determinista las cumple por construcción y el
+        # modelo no. Si escribe de usted, mete un emoji, se pasa de tres líneas o
+        # —lo más grave— dice que no tenemos la pieza sin haber pedido la
+        # matrícula, se tira su redacción y sale el borrador, que sí las cumple.
+        #
+        # Las dos las rompió el modelo la primera vez que se encendió, y el banco
+        # las veía DESPUÉS, cuando al cliente ya le ha llegado el mensaje.
+        if lineas_llm:
+            roto = (self.redactor.rompe_el_estilo(respuesta["lineas"])
+                    or self.redactor.rompe_la_matricula(
+                        respuesta["lineas"], busqueda["decision"],
+                        bool(conv.matricula), bool(respuesta.get("escala"))))
+            if roto:
+                respuesta["lineas"] = respuesta["borrador"]
+                respuesta["mensaje"] = "\n".join(respuesta["borrador"])
+                respuesta["redactor"] = (f"descartada la redacción del modelo: "
+                                         f"{roto}")
+                respuesta["llm_descartado"] = True
+
         cifras = self.conversar_cifras(respuesta["mensaje"])
         permitidas = {self.conversar_cifras(p) and self.conversar_cifras(p)[0]
                       for p in (autorizados | conv.precios_autorizados) if p}
