@@ -252,6 +252,16 @@ def _mensajes(consulta, respuesta, accion, opciones, historial, memoria=None):
         # no puede decirlo — no es que se le pida que no lo diga.
         if precio.get("publicable"):
             ficha.append(f"precio: {precio['importe']} (autorizado a decirlo)")
+        elif precio.get("estado") == "sin_matricula":
+            # No es lo mismo «no puedo darte el precio» que «necesito la matrícula
+            # para saber cuál es el tuyo». Si al modelo se le dice solo lo primero,
+            # escribe que lo confirmará y no pide el dato — y la conversación se
+            # queda parada esperando a nadie.
+            n = piezas[0].get("variantes") or 1
+            ficha.append(f"precio: NO SE DA todavía. De esta pieza para ese coche "
+                         f"hay {n} referencias según motor y año, así que aún no se "
+                         f"sabe cuál es la suya. NO ofrezcas esta ficha concreta ni "
+                         f"su precio: PIDE LA MATRÍCULA, que es el primer paso.")
         else:
             ficha.append("precio: NO DISPONIBLE para el cliente. Di que lo confirmas.")
         datos.append("FICHA ENCONTRADA:\n  " + "\n  ".join(ficha))

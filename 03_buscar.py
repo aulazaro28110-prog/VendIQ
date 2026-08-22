@@ -447,11 +447,17 @@ class Buscador:
                     or palabras & set(self.modelos_conocidos)
                     or any(self.por_codigo.get(p) is not None for p in palabras))
 
-    def buscar(self, pregunta: str, k: int = 3, aplicar_umbral: bool = True) -> list:
+    def buscar(self, pregunta: str, k: int = 3, aplicar_umbral: bool = True,
+               coche_identificado: bool = True) -> list:
         """Devuelve hasta k resultados [(puntuacion, item), ...], el mejor primero.
 
         Devuelve [] si nada supera el umbral: eso significa "no lo tengo en la carpeta",
         y es la señal para que el asistente pregunte o escale en vez de inventarse algo.
+
+        `coche_identificado` dice si la conversación ya tiene la matrícula. Solo
+        afecta al precio, nunca a lo que se encuentra: la búsqueda es la misma, lo
+        que cambia es si se puede poner precio a lo encontrado. Viene de fuera
+        porque el buscador no sabe de conversaciones — sabe de fichas.
         """
         if not pregunta or not pregunta.strip():
             return []
@@ -521,7 +527,14 @@ class Buscador:
             # le llega junto al dato, no en una llamada aparte que se pueda saltar.
             enriquecido = dict(item)
             enriquecido["precio_cliente"] = self.precio_para_cliente(
-                item, float(puntuaciones[i]), pregunta, es_mejor_candidata=es_mejor)
+                item, float(puntuaciones[i]), pregunta, es_mejor_candidata=es_mejor,
+                coche_identificado=coche_identificado)
+            if item["tipo"] == "inventario":
+                # Cuántas fichas hay del mismo coche y la misma pieza. Viaja pegada
+                # al resultado, como el precio, para que el redactor pueda decir
+                # «de alternador para A4 tengo tres, según motor y año» en vez de
+                # un genérico «varios» — y sin tener que consultar el índice.
+                enriquecido["variantes"] = self._variantes_de(i)
             resultados.append((float(puntuaciones[i]), enriquecido))
         return resultados
 
@@ -615,18 +628,22 @@ class Buscador:
                 ". Si esto no saltara, la búsqueda leería los datos de otra ficha.")
 
     def precio_para_cliente(self, item, puntuacion, pregunta,
-                            es_mejor_candidata=True) -> dict:
+                            es_mejor_candidata=True,
+                            coche_identificado=True) -> dict:
         """¿Se le puede decir el precio de esta pieza al cliente? Y si no, por qué no.
 
         Devuelve siempre el motivo, no solo un sí/no: el asistente tiene que poder
         explicárselo al cliente ("esa la tengo pero sin precio publicado, te confirmo")
         y Álvaro tiene que poder ver en el panel por qué no salió el precio.
 
-        CUATRO condiciones, y hacen falta las cuatro:
+        CINCO condiciones, y hacen falta las cinco:
           1. Que sea la mejor candidata. Las demás son, por definición, otras piezas.
           2. Que la pieza esté disponible. Si no la tenemos, no hay precio que dar.
           3. Que tenga precio publicado. "Consultar por WhatsApp" no es un precio.
           4. Que estemos SEGUROS de que es la pieza que pidió, no una parecida.
+          5. Que el COCHE esté identificado: matrícula, referencia OEM o número de
+             stock. Sin eso no se sabe si la pieza es la suya, y ponerle precio es
+             afirmar que encaja.
 
         La condición 1 sale de un fallo real detectado en las pruebas: un cliente pedía
         la puerta TRASERA izquierda de un Skoda (sin precio publicado) y el sistema le
@@ -680,6 +697,29 @@ class Buscador:
                     "motivo": f"identificada por referencia exacta y "
                               f"{disponibilidad.lower()}"}
 
+        # Condición 5: SIN MATRÍCULA NO HAY PRECIO. Es la regla del negocio y no
+        # una cautela nuestra: identificar el coche es el primer paso, siempre.
+        #
+        # No es una manía. Medido sobre el catálogo, así de poco identifica una
+        # pieza lo que el cliente suele escribir:
+        #
+        #   marca + modelo + pieza            97% de las fichas comparten descripción
+        #   marca + modelo + MOTOR + pieza    81% siguen compartiéndola
+        #   + año                              0% — única
+        #
+        # O sea que ni siquiera dar el motor identifica la pieza: hay cuatro
+        # alternadores de A4 2.0 TFSI de años distintos. Ofrecer uno y ponerle
+        # precio es afirmar que encaja, y eso no se puede saber sin la matrícula.
+        # El cliente lo dijo mejor que nadie en la primera prueba: «¿cómo sé si es
+        # el mío?».
+        #
+        # Se comprueba DESPUÉS del código exacto porque una referencia OEM o un
+        # número de stock sí identifican la ficha —0% de ambigüedad medida— y ahí
+        # pedir la matrícula sería hacerse el sordo con un dato que ya han dado.
+        if not coche_identificado:
+            return no("sin matrícula no se sabe si esta pieza es la de su coche: "
+                      "el primer paso es identificar el vehículo", "sin_matricula")
+
         nombre_ficha = [p for p in normalizar(meta.get("pieza", ""))
                         if p not in PALABRAS_VACIAS and len(p) > 2]
         if not nombre_ficha or not set(nombre_ficha).issubset(palabras):
@@ -695,6 +735,31 @@ class Buscador:
         return {"publicable": True, "importe": texto_precio, "estado": "publicable",
                 "motivo": f"pieza identificada con confianza {puntuacion:.2f} y "
                           f"{disponibilidad.lower()}"}
+
+    def _variantes_de(self, posicion):
+        """Cuántas fichas hay del mismo coche y la misma pieza que la de `posicion`.
+
+        Es el número que justifica pedir la matrícula. Medido sobre el catálogo,
+        el 97% de las fichas comparten marca+modelo+pieza con alguna otra y el 81%
+        siguen compartiéndolas aun dando el motor: decirle a un cliente «tengo tres
+        alternadores de A4 según el motor y el año» es más honesto y vende más que
+        ofrecerle uno al azar.
+
+        Se cuenta una sola vez por combinación y se guarda: son 5.000 fichas y esto
+        se llama en cada búsqueda.
+        """
+        clave = (self.marca_de[posicion], self.modelo_de[posicion],
+                 self.tipo_pieza_de[posicion])
+        if None in clave:
+            return 1
+        if not hasattr(self, "_cuenta_variantes"):
+            cuenta = {}
+            for j in range(len(self.items)):
+                k = (self.marca_de[j], self.modelo_de[j], self.tipo_pieza_de[j])
+                if None not in k:
+                    cuenta[k] = cuenta.get(k, 0) + 1
+            self._cuenta_variantes = cuenta
+        return self._cuenta_variantes.get(clave, 1)
 
     def _indice_de(self, item):
         """Posición del item en el índice (para consultar sus datos derivados)."""
