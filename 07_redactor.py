@@ -178,6 +178,21 @@ PALABRAS_INTENCION = {
     # Son 318 mensajes a la semana en el registro real, repartidos en cuatro
     # formas de decir exactamente lo mismo. Por eso va aquí y no como FAQ: una
     # FAQ solo dispara con las palabras exactas, y aquí lo que hay son sinónimos.
+    # EL CLIENTE PIDE UN DATO SUYO. "¿Cuál era la matrícula que te di?" es, en
+    # pequeño, un derecho de acceso: pide que se le devuelva lo que él dio. El bot
+    # lo tiene en memoria y se lo dice; nunca hay que hacerse el sordo con esto.
+    #
+    # Además hacía falta por otra razón. Desde que la matrícula deja de viajar al
+    # modelo (minimización), él ya no puede leerla del historial: si no hay una
+    # rama que la diga, el bot deja de saber contestar algo que sabe.
+    "recuerda mi dato": ("cual era la matricula", "cuál era la matrícula",
+                         "que matricula te di", "qué matrícula te di",
+                         "que matricula te pase", "qué matrícula te pasé",
+                         "cual te di", "cuál te di", "te di la matricula",
+                         "que coche te dije", "qué coche te dije",
+                         "cual era mi matricula", "cuál era mi matrícula",
+                         "me repites la matricula", "que bastidor te di"),
+
     "aparca": ("dejame que lo mire", "déjame que lo mire", "lo miro y te digo",
                "luego te digo", "despues te digo", "después te digo",
                "te digo algo", "te confirmo manana", "te confirmo mañana",
@@ -1174,6 +1189,27 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                        "hay una queja: el bot no gestiona reclamaciones (rol §7)"))
 
     # --------------------------------------------------------------- cierre
+    # --------------------------------------- le devuelve un dato que él dio
+    elif intencion == "recuerda mi dato":
+        if conversacion.matricula:
+            lineas.append(f"Me pasaste la {conversacion.matricula}.")
+            pieza = conversacion.ultima_pieza
+            # Sin repetir el coche: acaba de decirlo él y ya está en la matrícula.
+            if pieza:
+                nombre = (pieza.get("pieza") or "").lower()
+                art = "la" if _genero(pieza.get("pieza", "")) == "f" else "el"
+                lineas.append(f"¿Seguimos con {art} {nombre}?")
+            else:
+                lineas.append("¿Seguimos con lo tuyo?")
+            reglas.append(("le devuelve un dato suyo",
+                           "pide el dato que él mismo dio: se le dice, que está en "
+                           "la memoria de la conversación"))
+        else:
+            lineas.append("Todavía no me has pasado ninguna.")
+            lineas.append("Mándamela y te digo qué pieza monta tu coche.")
+            reglas.append(("no consta ese dato",
+                           "no se inventa una matrícula que nadie dio"))
+
     # ------------------------------------------------- el cliente lo aparca
     elif intencion == "aparca":
         # NO se le empuja y NO se le vuelve a pedir nada. Ha dicho que sigue
