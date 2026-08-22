@@ -115,7 +115,18 @@ PALABRAS_INTENCION = {
                        "fiate de mi", "fiate", "de confianza", "pago luego",
                        "pago despues", "me lo envias ya y",
                        "a cuenta", "fin de mes", "lo cuadramos", "ya te lo abono",
-                       "apuntamelo", "a deber", "cuando pueda te pago"),
+                       "apuntamelo", "a deber", "cuando pueda te pago",
+                       # Añadidas midiendo el registro de no resueltas. El cliente
+                       # no dice "sin pagar": dice cuándo va a pagar. Lo que delata
+                       # la petición es el tiempo verbal —el envío ahora, el pago
+                       # después—, y sin estas formas «mándamela y te hago la
+                       # transferencia mañana» se colaba por «cierre» y el bot
+                       # contestaba «claro, ¿cuál te aparto?».
+                       "y te hago la transferencia", "te hago la transferencia manana",
+                       "te hago el bizum manana", "te pago manana", "te lo pago manana",
+                       "lo pago manana", "pago al recibir", "pagando al recibir",
+                       "cuando la reciba te pago", "cuando llegue te pago",
+                       "a 30 dias", "a 60 dias"),
     "justificante": ("justificante", "resguardo", "comprobante", "pantallazo",
                      "captura de la transferencia", "captura del pago",
                      "ya te he hecho la transferencia", "ya te he pagado",
@@ -153,7 +164,13 @@ PALABRAS_INTENCION = {
     "cierre": ("me lo quedo", "me la quedo", "lo quiero", "la quiero", "me lo llevo",
                "me la llevo", "apartamelo", "apartamela", "resérvamelo", "reservamelo",
                "reservamela", "adelante", "tramitalo", "mandamelo", "mandamela",
-               "lo compro", "la compro", "de acuerdo"),
+               "lo compro", "la compro", "de acuerdo",
+               # Formas interrogativas/coloquiales que faltaban: el cliente pregunta
+               # "¿me lo apartas?" en vez del imperativo "apártamelo". Era el fallo
+               # nº1 del registro (150x): un cierre que se escapaba a un humano.
+               "me lo apartas", "me la apartas", "apartame", "puedes apartar",
+               "me lo reservas", "me la reservas", "puedes reservar",
+               "me lo guardas", "me la guardas", "guardamelo", "guardamela"),
     "prisa": ("urge", "urgente", "corre prisa", "mucha prisa", "para ya",
               "parado", "cuanto antes", "para hoy", "para mañana", "es para ya"),
     # Preguntas sobre CUÁNDO llega. Se detectan aquí y no se dejan solo al buscador
@@ -685,6 +702,19 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                        "hay una queja: el bot no gestiona reclamaciones (rol §7)"))
 
     # --------------------------------------------------------------- cierre
+    elif (intencion == "cierre" and not conversacion.ultima_pieza
+          and not conversacion.regla_dura):
+        # GUARDARRAÍL: si hay una regla dura viva (pago sin confirmar), NO entra
+        # aquí — lo coge más abajo la rama que mantiene la condición. Si no,
+        # quiere cerrar pero no se ha hablado de ninguna pieza concreta (p.ej.
+        # "me lo quedo" de entrada). En vez de gastar a una persona, el bot pide
+        # cuál: mantiene la venta viva y la resuelve él si el cliente responde.
+        lineas.append("Claro, ¿cuál te aparto?")
+        lineas.append("Pásame la pieza o la matrícula y te lo confirmo.")
+        reglas.append(("cierre sin pieza identificada",
+                       "el cliente quiere cerrar pero aún no hay una pieza concreta "
+                       "sobre la mesa: se pregunta cuál en vez de escalar"))
+
     elif intencion == "cierre" and conversacion.ultima_pieza:
         meta = conversacion.ultima_pieza
         g = _genero(meta.get("pieza", ""))
