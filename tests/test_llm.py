@@ -115,7 +115,14 @@ comprobar("respeta el tiempo maximo", capturado["timeout"] == conv.TIEMPO_MAXIMO
           f"{capturado['timeout']}s")
 c = capturado["cuerpo"]
 comprobar("modelo el del .env", c["model"] == "openai/gpt-oss-120b", c["model"])
-comprobar("temperatura y tope", c["temperature"] == 0.4 and c["max_tokens"] == 220)
+comprobar("temperatura y tope",
+          c["temperature"] == 0.4 and c["max_tokens"] == conv.TOPE_RESPUESTA,
+          f"max_tokens={c['max_tokens']}")
+# El tope es 600 y no 220 por una razon medida: los modelos que razonan cuentan
+# los tokens de pensar contra el mismo presupuesto. Con 220 gastaban 218
+# pensando y devolvian el mensaje vacio. Ver la cabecera de TOPE_RESPUESTA.
+comprobar("pide poco razonamiento a un modelo que razona",
+          c.get("reasoning_effort") == conv.ESFUERZO, str(c.get("reasoning_effort")))
 comprobar("primer mensaje = rol system", c["messages"][0]["role"] == "system")
 comprobar("corta a 3 lineas como mucho", len(lineas) <= 3, f"{len(lineas)} lineas")
 print(f"   nota: {nota}")

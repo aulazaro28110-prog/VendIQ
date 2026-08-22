@@ -44,6 +44,23 @@ MODELO_POR_DEFECTO = "openai/gpt-oss-120b"  # llama-3.3-70b lo apagó Groq el 16
 URL_GROQ = "https://api.groq.com/openai/v1/chat/completions"
 TIEMPO_MAXIMO = 12          # segundos; si tarda más, se responde sin LLM
 
+# Cómo se presenta VendIQ ante la API. Ver el comentario de la petición: no es
+# cortesía, es que sin esto Cloudflare devuelve 403.
+AGENTE = "VendIQ/1.0 (+https://github.com/)"
+
+# Presupuesto de la respuesta. Parece mucho para un mensaje de dos líneas, y lo
+# es: la mayor parte no se gasta en el mensaje. Los modelos que razonan cuentan
+# los tokens de pensar contra este mismo tope, y con 220 —el número que venía de
+# llama-3.3-70b, que no razona— se gastaban 218 pensando y devolvían el mensaje
+# vacío. Las diez primeras conversaciones reales salieron todas del redactor
+# determinista sin que nada fallara aparentemente.
+TOPE_RESPUESTA = 600
+
+# Y sobre todo: que piense poco. Aquí no hay nada que razonar — la acción ya está
+# decidida, los datos vienen dados y el modelo solo pone la forma. Medido sobre
+# cinco preguntas: 45 tokens de pensar en vez de 228, y 528 ms en vez de 1290.
+ESFUERZO = "low"
+
 # Máximo de preguntas de aclaración por conversación (regla del diseño). A la
 # tercera ya no estás aclarando, estás interrogando.
 TOPE_ACLARACIONES = 2
@@ -287,22 +304,38 @@ def redactar_con_llm(consulta, respuesta, accion, opciones, historial, config,
     if not clave:
         return None, "sin clave de API: redacta el redactor determinista"
 
-    cuerpo = json.dumps({
-        "model": config.get("GROQ_MODELO") or MODELO_POR_DEFECTO,
+    modelo = config.get("GROQ_MODELO") or MODELO_POR_DEFECTO
+    peticion_json = {
+        "model": modelo,
         "messages": _mensajes(consulta, respuesta, accion, opciones, historial,
                               memoria),
         "temperature": 0.4,     # algo de variedad, pero no delirios
-        "max_tokens": 220,
-    }).encode("utf-8")
+        "max_tokens": TOPE_RESPUESTA,
+    }
+    # Solo los modelos que razonan entienden este parámetro; a los demás les
+    # sobra, y mandárselo puede costar un 400. Se pregunta por el nombre porque
+    # es lo único que se sabe del modelo antes de llamarlo.
+    if "gpt-oss" in modelo or "qwen3" in modelo:
+        peticion_json["reasoning_effort"] = ESFUERZO
+    cuerpo = json.dumps(peticion_json).encode("utf-8")
 
     peticion = urllib.request.Request(
         URL_GROQ, data=cuerpo,
         headers={"Authorization": f"Bearer {clave}",
-                 "Content-Type": "application/json"})
+                 "Content-Type": "application/json",
+                 # Sin esto, 403. Groq está detrás de Cloudflare y Cloudflare
+                 # rechaza el User-Agent por defecto de Python
+                 # («Python-urllib/3.x») con su error 1010. Medido en la primera
+                 # llamada de verdad: sin cabecera 403, con cabecera 200. No lo
+                 # cazó ninguna prueba porque todas sustituyen urlopen y nunca
+                 # llega a salir un paquete a la red.
+                 "User-Agent": AGENTE})
     try:
         with urllib.request.urlopen(peticion, timeout=TIEMPO_MAXIMO) as r:
             datos = json.loads(r.read().decode("utf-8"))
-        texto = datos["choices"][0]["message"]["content"].strip()
+        eleccion = datos["choices"][0]
+        texto = (eleccion["message"].get("content") or "").strip()
+        motivo = eleccion.get("finish_reason")
     except urllib.error.HTTPError as e:
         return None, f"la API respondió {e.code}: sigue el redactor determinista"
     except Exception as e:
@@ -310,5 +343,13 @@ def redactar_con_llm(consulta, respuesta, accion, opciones, historial, config,
 
     lineas = [l.strip() for l in texto.splitlines() if l.strip()][:3]
     if not lineas:
+        # Se distingue el vacío del quedarse sin presupuesto porque no son el
+        # mismo problema y no se arreglan igual. «Vacío» a secas escondió durante
+        # diez conversaciones que el modelo se estaba gastando el tope entero
+        # pensando: el panel decía que el LLM no había contestado, cuando lo que
+        # pasaba es que no le habíamos dejado sitio para hacerlo.
+        if motivo == "length":
+            return None, (f"{modelo} agotó los {TOPE_RESPUESTA} tokens antes de "
+                          f"escribir nada: sube TOPE_RESPUESTA o baja ESFUERZO")
         return None, "el modelo devolvió un mensaje vacío"
     return lineas, f"redactado por {config.get('GROQ_MODELO') or MODELO_POR_DEFECTO}"
