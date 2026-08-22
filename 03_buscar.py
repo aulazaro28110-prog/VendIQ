@@ -559,6 +559,61 @@ class Buscador:
             return solo_politicas and puntuacion >= UMBRAL_POLITICA
         return puntuacion >= UMBRAL_PIEZA
 
+    def indexar(self, item, vector):
+        """Mete una ficha nueva en el índice ya cargado, sin reconstruirlo entero.
+
+        TODO lo que va POR POSICIÓN crece aquí, junto y en un solo sitio. Vive en
+        esta clase y no en quien la llama porque la otra manera ya falló: cuando
+        09_aprender.py mantenía su propia copia de esta lista, se añadió
+        `es_politica` al enrutar las políticas y allí nadie la actualizó. La
+        primera FAQ que se aprendió después dejó el índice descuadrado y la
+        búsqueda reventó. Reventó de milagro: `es_politica` es un array de numpy
+        y no se dejó multiplicar. Las otras cinco son listas y habrían leído los
+        datos de la ficha de al lado sin decir ni una palabra.
+
+        Devuelve cuántas fichas hay ahora.
+        """
+        palabras = set(normalizar(item["texto"]))
+        self.items.append(item)
+        self.embeddings = np.vstack([self.embeddings, vector])
+        self.palabras_por_chunk.append(palabras)
+        self.marca_de.append(None)
+        self.modelo_de.append(None)
+        self.tipo_pieza_de.append(None)
+        self.lados_de.append(set())
+        self.es_politica = np.append(self.es_politica, item["tipo"] == "politica")
+
+        # El IDF también cambia: hay una ficha más y palabras nuevas.
+        self._apariciones.update(palabras)
+        self._n = len(self.items)
+        if hasattr(self, "_posiciones"):
+            self._posiciones[item["id"]] = len(self.items) - 1
+
+        self._comprobar_cuadre()
+        return len(self.items)
+
+    def _comprobar_cuadre(self):
+        """El invariante del índice, escrito para que falle en voz alta.
+
+        Un índice descuadrado no da error: da la respuesta de otra ficha. Esto
+        cuesta seis `len()` y convierte el fallo más feo posible en una excepción.
+        """
+        n = len(self.items)
+        cortas = {nombre: len(lista) for nombre, lista in (
+            ("embeddings", self.embeddings),
+            ("palabras_por_chunk", self.palabras_por_chunk),
+            ("marca_de", self.marca_de),
+            ("modelo_de", self.modelo_de),
+            ("tipo_pieza_de", self.tipo_pieza_de),
+            ("lados_de", self.lados_de),
+            ("es_politica", self.es_politica),
+        ) if len(lista) != n}
+        if cortas:
+            raise RuntimeError(
+                f"índice descuadrado: hay {n} fichas pero " +
+                ", ".join(f"{k} tiene {v}" for k, v in cortas.items()) +
+                ". Si esto no saltara, la búsqueda leería los datos de otra ficha.")
+
     def precio_para_cliente(self, item, puntuacion, pregunta,
                             es_mejor_candidata=True) -> dict:
         """¿Se le puede decir el precio de esta pieza al cliente? Y si no, por qué no.

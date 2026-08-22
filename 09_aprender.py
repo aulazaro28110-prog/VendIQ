@@ -154,7 +154,7 @@ def indexar_al_vuelo(titulo, pregunta, respuesta, buscador):
             # condición, el bot no la reescribe con otras palabras.
             "meta": {"seccion": titulo, "aprendida": True, "respuesta": respuesta}}
 
-    # De dónde salen `normalizar` y demás: de los globales de la propia clase del
+    # De dónde salen los globales del módulo de búsqueda: de la propia clase del
     # buscador. Podría buscarse en sys.modules por el nombre del módulo, pero
     # 03_buscar.py se carga con importlib desde varios sitios (panel, pruebas,
     # línea de órdenes) y no siempre está registrado con el mismo alias. Los
@@ -162,27 +162,15 @@ def indexar_al_vuelo(titulo, pregunta, respuesta, buscador):
     globales = type(buscador).__init__.__globals__
 
     vector = buscador.modelo.encode([texto], normalize_embeddings=True).astype("float32")
-    buscador.embeddings = np.vstack([buscador.embeddings, vector])
-    buscador.items.append(item)
 
-    # Todo lo que va POR POSICIÓN tiene que crecer a la vez. Si una de estas listas
-    # se queda corta, los índices dejan de corresponderse y el filtro estructural
-    # empieza a mirar los datos de otra ficha — un fallo silencioso y muy feo.
-    palabras = set(globales["normalizar"](texto))
-    buscador.palabras_por_chunk.append(palabras)
-    buscador.marca_de.append(None)
-    buscador.modelo_de.append(None)
-    buscador.tipo_pieza_de.append(None)
-    buscador.lados_de.append(set())
-
-    # El IDF también cambia: hay una ficha más y palabras nuevas.
-    buscador._apariciones.update(palabras)
-    buscador._n = len(buscador.items)
-    if hasattr(buscador, "_posiciones"):
-        buscador._posiciones[item["id"]] = len(buscador.items) - 1
+    # Crecer el índice lo hace el BUSCADOR, no este fichero. Aquí se mantenía una
+    # copia de "todo lo que va por posición" y se quedó corta en cuanto el
+    # buscador aprendió a distinguir políticas: el índice se descuadró y la
+    # búsqueda reventó. La lista de lo que crece vive donde se define.
+    total = buscador.indexar(item, vector)
 
     _persistir(buscador, globales)
-    return f"indexada al momento: {len(buscador.items)} fichas en el índice"
+    return f"indexada al momento: {total} fichas en el índice"
 
 
 def _persistir(buscador, globales):

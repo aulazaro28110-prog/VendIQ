@@ -7,3 +7,13 @@
 Pregunta del cliente: ¿me lo apartas?
 Si , la reserva se queda hecha 24 horas
 <!-- respondida por Álvaro el 2026-08-20 21:11 -->
+
+## FAQ 10
+Pregunta del cliente: donde estais exactamente
+Estamos en Alcobendas, Madrid. Nuestro horario está en internet.
+<!-- respondida por Álvaro el 2026-08-22 16:04 -->
+
+## FAQ 23
+Pregunta del cliente: ¿y me lo mandas al taller?
+Sí, pásame la dirección y organizo el reparto para llevártelo lo antes posible.
+<!-- respondida por Álvaro el 2026-08-22 16:04 -->

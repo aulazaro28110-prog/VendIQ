@@ -576,6 +576,17 @@ def _seguimiento(intencion, conv, reglas, salida):
     ])]
 
 
+def _faq_aprendida(consulta):
+    """La primera política encontrada, si resulta que la escribió una persona."""
+    for r in (consulta.get("resultados") or []):
+        if r.get("tipo") == "politica":
+            meta = r.get("meta") or {}
+            if meta.get("aprendida") and meta.get("respuesta"):
+                return meta
+            return None
+    return None
+
+
 def _politica(consulta, conv, reglas):
     politicas = [r for r in (consulta.get("resultados") or [])
                  if r.get("tipo") == "politica"]
@@ -702,6 +713,24 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                        "hay una queja: el bot no gestiona reclamaciones (rol §7)"))
 
     # --------------------------------------------------------------- cierre
+    elif _faq_aprendida(consulta) and not (intencion == "cierre"
+                                           and conversacion.ultima_pieza):
+        # Lo que escribió una persona para ESTA pregunta gana a lo que decidiría
+        # el bot. Para eso se escribió: si la respuesta está en la base y el bot
+        # contesta otra cosa, el ciclo de aprender no sirve de nada.
+        #
+        # Va aquí y no más arriba a propósito. Por encima quedan las reglas duras
+        # y las quejas: una FAQ no puede ablandar una condición de la empresa ni
+        # quedarse una reclamación que tiene que ver una persona. Y por encima
+        # queda también cerrar una venta que ya tiene una pieza concreta encima
+        # de la mesa, que es el objetivo de todo esto. Medido: «me lo llevo,
+        # mándamelo al taller» contestaba lo del taller y se dejaba el cierre.
+        #
+        # Salió de un fallo real: Álvaro contestó «¿me lo apartas?» y el cliente
+        # seguía oyendo «claro, ¿cuál te aparto?». La búsqueda la encontraba la
+        # primera; la intención «cierre» miraba antes y la pisaba.
+        lineas += _politica(consulta, conversacion, reglas) or []
+
     elif (intencion == "cierre" and not conversacion.ultima_pieza
           and not conversacion.regla_dura):
         # GUARDARRAÍL: si hay una regla dura viva (pago sin confirmar), NO entra
