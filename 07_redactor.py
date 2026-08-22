@@ -236,6 +236,111 @@ HIPOTETICO = ("que pasa si", "y si ", "en caso de", "si sale", "si me sale",
               "puedo devolverla", "puedo devolverlo", "se puede devolver")
 
 
+# ---------------------------------------------------------------------------
+# LAS REGLAS DE ESTILO, EN UN SOLO SITIO
+# ---------------------------------------------------------------------------
+# Viven aquí, junto a la voz que definen, y las usan tanto el panel —para auditar
+# lo que escribe el LLM— como el banco de pruebas. Una sola definición: dos que
+# se separen es peor que ninguna.
+
+EMOJI = re.compile("[\U0001F300-\U0001FAFF\u2600-\u27BF]")
+
+# Usted sin discusión: la palabra, o un imperativo de usted.
+USTED_SEGURO = re.compile(r"\busted(es)?\b|\bpáse|\bdíga|\bhága|\bténga|\bvéa\b",
+                          re.I)
+
+# Usted probable, pero NO seguro. En español «le» es dativo de tercera persona y
+# sirve igual para usted que para él: «le paso a Álvaro» no trata de usted a
+# nadie. Por eso estos marcadores solo cuentan si en el mismo mensaje no hay
+# tuteo — quien escribe «te aviso» no está tratando de usted.
+USTED_DUDOSO = re.compile(r"\ble\s+(paso|aviso|confirmo|mando|envío|envio|digo)\b"
+                          r"|\bsuya\b|\bsu\s+coche\b|\bsu\s+vehículo\b", re.I)
+
+# «tu» sin tilde es el posesivo, y también es tuteo. Faltaba, y por eso se marcaba
+# como usted un «le paso ahora mismo tu mensaje» que tutea perfectamente.
+TUTEO = re.compile(r"\bt[eúu]\b|\btus\b|\bti\b|\btuyo?\b|\btuya\b|\btienes\b"
+                   r"|\bdime\b|\bpásame\b|\bmándame\b|\bquieres\b", re.I)
+
+MAXIMO_LINEAS = 3
+
+
+def trata_de_usted(mensaje: str) -> bool:
+    """¿Este mensaje trata de usted al cliente?
+
+    Salió de un falso positivo con el LLM encendido: «le paso a Álvaro […] te
+    aviso» se marcaba como usted, y ese «le» era Álvaro. La señal buena no es el
+    marcador suelto, es el marcador SIN tuteo alrededor.
+    """
+    if USTED_SEGURO.search(mensaje):
+        return True
+    return bool(USTED_DUDOSO.search(mensaje)) and not TUTEO.search(mensaje)
+
+
+# Afirmar que NO se tiene una pieza. Ojo: «no lo tengo apuntado en la ficha» niega
+# un DATO, no la pieza, y es una respuesta correcta. Por eso este patrón solo se
+# aplica cuando la búsqueda ya ha decidido NO DISPONIBLE, que es exactamente la
+# situación en la que manda la regla de la matrícula.
+NIEGA_TENERLA = re.compile(
+    r"no (?:la|lo|las|los) tengo"
+    r"|no (?:la|lo|me) consta"
+    r"|no (?:la|lo|las|los) tenemos"
+    r"|no (?:la|lo|las|los) hay"
+    r"|no (?:me |nos )?queda[nr]?"
+    r"|no est[áa] en (?:el )?(?:cat[áa]logo|almac[ée]n|stock)", re.I)
+
+# Pedir el dato que identifica la pieza. Vale la matrícula o el bastidor: son las
+# dos formas que acepta la política COMO IDENTIFICAR LA PIEZA CORRECTA.
+IDENTIFICA = re.compile(r"matr[íi]cula|bastidor|vin", re.I)
+
+
+def rompe_la_matricula(lineas, decision, matricula_dada, escala):
+    """La regla de la matrícula: sin ella el bot NUNCA dice «no la tengo».
+
+    Sin identificar la pieza no puede saberlo, y un «no» falso pierde una venta
+    que quizá estaba en el almacén con otro nombre. Con matrícula sí puede
+    decirlo, y entonces es una respuesta y no una excusa.
+
+    La excepción es escalar. Una queja («el alternador que me mandasteis no
+    funciona») también cae en NO DISPONIBLE, porque el cliente nombra una pieza y
+    ninguna ficha encaja, pero ahí no está preguntando si la tenemos: pedirle la
+    matrícula sería sordo. La regla es «no digas que no sin matrícula», no «pide
+    siempre la matrícula».
+
+    Vive aquí y no solo en el banco porque el LLM la rompe. Con el modelo
+    encendido, un caso de 200 salió diciendo que no la teníamos sin haber pedido
+    nada — la regla que más se cuidó al escribirla, saltada por la capa que solo
+    debía mejorar la forma.
+    """
+    if decision != "NO DISPONIBLE" or matricula_dada or escala:
+        return None
+    mensaje = "\n".join(lineas)
+    if NIEGA_TENERLA.search(mensaje):
+        return ("dice que NO la tiene sin matrícula: sin identificar la pieza no "
+                "puede saberlo")
+    if not IDENTIFICA.search(mensaje):
+        return "no tiene la pieza y no pide la matrícula: un «no» sin salida"
+    return None
+
+
+def rompe_el_estilo(lineas):
+    """Qué regla de la voz rompe un mensaje, o None si no rompe ninguna.
+
+    Se usa para auditar lo que escribe el LLM antes de que salga. El redactor
+    determinista cumple estas reglas por construcción; el modelo, no — así que
+    hay que mirárselo, igual que se le miran los precios.
+    """
+    mensaje = "\n".join(lineas)
+    if not mensaje.strip():
+        return "mensaje vacío"
+    if len(lineas) > MAXIMO_LINEAS:
+        return f"{len(lineas)} líneas, el máximo son {MAXIMO_LINEAS}"
+    if EMOJI.search(mensaje):
+        return "lleva emoji"
+    if trata_de_usted(mensaje):
+        return "trata de usted al cliente"
+    return None
+
+
 def detectar_intencion(mensaje: str) -> str:
     """Qué está haciendo el cliente, más allá de qué pieza pide.
 
