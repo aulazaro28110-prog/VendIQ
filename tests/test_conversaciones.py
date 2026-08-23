@@ -413,6 +413,31 @@ def casos_escritos():
                            "me lo quedo",
                            "ya lo tienes?"], "sigue"),
 
+        # --- 6 · decir que si ---------------------------------------------
+        # "Si" no significa nada por si solo: significa que si a lo ULTIMO que
+        # preguntó el bot. Se vio fallar en el peor turno posible -- "¿Te lo
+        # aparto?" / "Si, ¿me lo puedes enviar?" -- y el bot contestando "sin
+        # prisa, lo dejo apuntado por si acaso", que es tratar una venta hecha
+        # como una duda.
+        ("dice que si", "nuevo", ["necesito un alternador para un audi a4",
+                                  "la matricula es 4521 KBD",
+                                  "Si , me lo puedes enviar?"], "cierra"),
+        ("dice que si", "nuevo", ["necesito un alternador para un audi a4",
+                                  "la matricula es 4521 KBD", "vale"], "cierra"),
+        ("dice que si", "conocido", ["necesito un alternador para un audi a4",
+                                     "la matricula es 4521 KBD", "dale"], "cierra"),
+        ("dice que si", "nuevo", ["necesito un alternador para un audi a4",
+                                  "la matricula es 4521 KBD", "venga, perfecto"],
+         "cierra"),
+        # Y lo que NO es un si: el condicional empieza igual y es una pregunta
+        # sobre la politica de devoluciones.
+        ("dice que si", "nuevo", ["necesito un alternador para un audi a4",
+                                  "la matricula es 4521 KBD",
+                                  "si no me vale la puedo devolver"], "política"),
+        # Un "si" sin nada encima de la mesa no cierra nada: no hay que
+        # inventarse una venta porque el cliente escriba "vale".
+        ("dice que si", "nuevo", ["vale"], "cualquiera"),
+
         # --- 6 · quejas y devoluciones ------------------------------------
         ("queja", "conocido", ["el alternador que me mandasteis no funciona"], "escala"),
         ("queja", "conocido", ["me ha llegado la pieza rota"], "escala"),
@@ -729,7 +754,7 @@ def main():
     casos = casos_de_catalogo(sistema.filas, buscar_mod) + casos_escritos()
     # El banco crece cuando el sistema aprende a hacer algo nuevo. El numero no
     # es sagrado; lo que importa es que nadie borre casos sin darse cuenta.
-    MINIMO = 212
+    MINIMO = 218
     if len(casos) < MINIMO:
         print(f"AVISO: el banco tiene {len(casos)} casos y deberia tener al menos {MINIMO}")
 
