@@ -612,29 +612,51 @@ CORRIGE = re.compile(
 # literal. La primera version buscaba "ruido metalico al frenar" y el cliente
 # escribio "cuando freno hace un ruido metalico": mismo sintoma, otro orden, y no
 # casaba. La gente no escribe frases hechas.
+# LAS PIEZAS QUE SE SUGIEREN TIENEN QUE EXISTIR EN EL CATALOGO. Las rellena el
+# panel al arrancar, leyendolas del inventario. Si esto se queda vacio, no se
+# sugiere nada: es preferible no contestar el sintoma a inventarse una pieza.
+#
+# Salio de un fallo propio y feo: la primera tabla mandaba "pastillas de freno o
+# discos de freno" y este desguace NO LLEVA frenos. El bot estaba ofreciendo algo
+# que no existe, que es exactamente lo que el sistema entero se dedica a impedir.
+TIPOS_EN_CATALOGO = set()
+
+# Cada entrada son GRUPOS de palabras que tienen que aparecer todos, no una frase
+# literal. La primera version buscaba "ruido metalico al frenar" y el cliente
+# escribio "cuando freno hace un ruido metalico": mismo sintoma, otro orden, y no
+# casaba. La gente no escribe frases hechas.
 SINTOMAS = [
-    ((("ruido", "chirri", "chilla", "pita", "raspa", "rechina"), ("fren",)),
-     ("pastillas de freno", "discos de freno")),
-    ((("vibra", "tiembla", "trepida", "baila"), ("fren",)), ("discos de freno",)),
-    ((("no arranca", "no me arranca", "cuesta arrancar", "no da al arrancar",
-       "se queda sin bateria"),), ("batería", "motor de arranque", "alternador")),
+    ((("ruido", "chirri", "chilla", "pita", "raspa", "rechina", "vibra",
+       "tiembla"), ("fren",)), ("pastillas de freno", "discos de freno")),
+    ((("no arranca", "no me arranca", "cuesta arrancar", "no da al arrancar"),),
+     ("motor de arranque", "alternador")),
     ((("calienta", "temperatura", "hierve", "recalienta"),),
-     ("radiador", "termostato", "bomba de agua")),
-    ((("humo",),), ("turbo", "inyectores")),
+     ("radiador", "bomba de agua")),
+    ((("humo",),), ("turbo", "catalizador")),
     ((("pierde fuerza", "tirones", "no tira", "se ahoga", "va flojo"),),
-     ("filtro de combustible", "inyectores", "turbo")),
-    ((("baches", "botes", "rebota", "badenes", "salta"),), ("amortiguadores",)),
+     ("turbo", "colector de admisión", "intercooler")),
+    ((("baches", "botes", "rebota", "badenes", "salta"),),
+     ("amortiguador delantero",)),
     ((("no da luz", "no alumbra", "fundida", "no enciende", "sin luz"),),
-     ("faro", "piloto")),
+     ("faro delantero izquierdo", "piloto trasero izquierdo")),
     ((("ventanilla", "cristal"), ("sube", "baja", "atascad", "no va", "no funciona")),
-     ("elevalunas",)),
-    ((("puerta",), ("cierra", "abre", "bloquea", "atascad")), ("cerradura puerta",)),
-    ((("aceite",), ("pierde", "gotea", "mancha", "fuga")), ("cárter", "juntas")),
+     ("elevalunas delantero izquierdo",)),
+    ((("puerta",), ("cierra", "abre", "bloquea", "atascad")),
+     ("cerradura puerta delantera",)),
+    ((("aceite",), ("pierde", "gotea", "mancha", "fuga")), ("cárter",)),
     ((("volante", "girar", "direccion"), ("duro", "ruido", "cuesta")),
-     ("bomba de dirección",)),
+     ("bomba de dirección", "cremallera de dirección")),
     ((("aire",), ("no enfria", "no va", "no funciona")),
-     ("compresor de aire acondicionado",)),
+     ("compresor aire acondicionado",)),
 ]
+
+
+def _en_catalogo(nombre):
+    """¿Existe esta pieza en el inventario? Se compara por su palabra principal."""
+    if not TIPOS_EN_CATALOGO:
+        return False
+    cabeza = _sin_tildes(nombre).split()[0]
+    return any(cabeza in _sin_tildes(t) for t in TIPOS_EN_CATALOGO)
 
 
 def pieza_por_sintoma(mensaje):
@@ -643,7 +665,11 @@ def pieza_por_sintoma(mensaje):
     for grupos, piezas in SINTOMAS:
         # Todos los grupos tienen que aparecer, y de cada grupo basta una palabra.
         if all(any(_sin_tildes(p) in t for p in grupo) for grupo in grupos):
-            return piezas
+            # Solo las que este desguace lleva de verdad. La lista de arriba dice
+            # qué causa cada síntoma; el catálogo dice qué se vende. Sugerir algo
+            # que no está sería inventarse una pieza.
+            hay = tuple(p for p in piezas if _en_catalogo(p))
+            return hay or ("__no_llevamos__",) + piezas
     return None
 
 
@@ -1607,13 +1633,28 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         # es lo que prohíbe §21 del prompt, y con razón — quien decide es el
         # taller. Aquí solo se le da un punto de partida para poder buscar.
         posibles = pieza_por_sintoma(mensaje_cliente)
-        lista = " o ".join(posibles[:2])
-        lineas.append(f"Eso suele venir de {lista}.")
-        lineas.append(f"Si me pasas la matrícula te digo cuál monta tu coche y "
-                      f"lo que vale.")
-        reglas.append(("traduce el síntoma a una pieza",
-                       f"describe el problema y no la pieza: se le apunta a "
-                       f"{lista}, sin asegurar el diagnóstico"))
+        if posibles[0] == "__no_llevamos__":
+            # Se sabe qué le pasa al coche y este desguace no vende esa pieza.
+            # Decirlo es más útil que callarse: le ahorra el viaje y le deja el
+            # nombre de lo que tiene que buscar en otro sitio.
+            lista = " o ".join(posibles[1:3])
+            lineas.append(f"Eso suele venir de {lista}, y de eso no llevamos.")
+            lineas.append("Si te hace falta otra cosa del coche, dímelo y te la miro.")
+            reglas.append(("sabe el síntoma pero no lleva la pieza",
+                           f"el síntoma apunta a {lista}, que no está en el "
+                           f"catálogo: se dice en vez de ofrecerle otra cosa"))
+        else:
+            lista = " o ".join(posibles[:2])
+            # SE APUNTA EN EL HILO. Sin esto, el turno siguiente —"es para un Audi
+            # A4"— buscaba arrastrando el mensaje del síntoma, que no nombra
+            # ninguna pieza, y devolvía cualquier cosa.
+            conversacion.pieza_pedida = posibles[0]
+            lineas.append(f"Eso suele venir de {lista}.")
+            lineas.append("Si me pasas la matrícula te digo cuál monta tu coche y "
+                          "lo que vale.")
+            reglas.append(("traduce el síntoma a una pieza",
+                           f"describe el problema y no la pieza: se le apunta a "
+                           f"{lista}, sin asegurar el diagnóstico"))
 
     # ------------------------------------------------ §24 · el enlace real
     elif intencion == "enlace":
