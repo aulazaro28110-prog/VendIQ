@@ -31,6 +31,7 @@ WEB = BASE / "panel"
 PANEL_JSON = BASE / "salida" / "panel.json"
 ACTIVIDAD_JSON = BASE / "salida" / "actividad.json"
 PRECIOS_FIJADOS = BASE / "salida" / "precios_fijados.json"
+RESERVAS = BASE / "salida" / "reservas.json"
 PUERTO = 8420
 
 
@@ -119,6 +120,43 @@ class Sistema:
         pendientes.sort(key=lambda p: (p["precio_fijado"] is not None,
                                        -p["veces_preguntada"]))
         return pendientes
+
+    def anotar_reserva(self, sesion, conv):
+        """Deja constancia de una venta cerrada. Lo que hace cierta la frase.
+
+        No es un sistema de stock: no descuenta la pieza del catálogo, porque en
+        un desguace la retirada la hace una persona en el almacén. Lo que hace es
+        dejar escrito, con hora, qué se ha comprometido y a quién — que es lo que
+        el bot estaba afirmando sin respaldo.
+
+        Se escribe entera cada vez y no se anexa una línea: son pocas y así el
+        fichero es legible a ojo, que es como Álvaro lo va a mirar.
+        """
+        pieza = conv.ultima_pieza or {}
+        entrada = {
+            "sesion": sesion,
+            "cuando": time.strftime("%Y-%m-%d %H:%M"),
+            "matricula": conv.matricula,
+            "vehiculo": conv.vehiculo,
+            "pieza": pieza.get("pieza"),
+            "id_pieza": pieza.get("id"),
+            "precio_dicho": conv.precio_de.get(str(pieza.get("id") or "")),
+            "estado": "pendiente de preparar",
+        }
+        try:
+            texto = RESERVAS.read_text(encoding="utf-8-sig").strip() if RESERVAS.exists() else ""
+            reservas = json.loads(texto) if texto else []
+        except (json.JSONDecodeError, OSError):
+            reservas = []
+        # Una por conversación y pieza: confirmar dos veces no son dos reservas.
+        reservas = [r for r in reservas
+                    if not (r.get("sesion") == sesion
+                            and r.get("id_pieza") == entrada["id_pieza"])]
+        reservas.append(entrada)
+        RESERVAS.parent.mkdir(parents=True, exist_ok=True)
+        RESERVAS.write_text(json.dumps(reservas, ensure_ascii=False, indent=2),
+                            encoding="utf-8")
+        return entrada
 
     def fijar_precio(self, id_pieza, importe):
         """Guarda un precio puesto a mano. El buscador lo usa desde el instante siguiente."""
@@ -304,12 +342,23 @@ class Sistema:
                     for token in self.buscar_mod.normalizar(f[campo]):
                         if len(token) > 1:
                             self._vocab_vehiculo[token] = f[campo]
+        return " ".join(self._vehiculos_en(texto))
+
+    def _vehiculos_en(self, texto):
+        """Los trozos de coche que nombra el mensaje, en orden: ['AUDI', 'A4'].
+
+        Hace falta la lista y no solo la cadena para poder corregir: en "no es un
+        A4, es un A3" hay dos modelos y el bueno es el segundo. Juntándolos salía
+        "A4 A3", que no es ningún coche.
+        """
+        if not hasattr(self, "_vocab_vehiculo"):
+            self._vehiculo_en("")
         vistos = []
         for token in self.buscar_mod.normalizar(texto):
             canonico = self._vocab_vehiculo.get(token)
             if canonico and canonico not in vistos:
                 vistos.append(canonico)
-        return " ".join(vistos)
+        return vistos
 
     @staticmethod
     def conversar_cifras(texto):
@@ -375,12 +424,56 @@ class Sistema:
         # mensaje se busca a ciegas y devuelve cualquier cosa de ese coche.
         if habla_de_pieza:
             conv.pieza_pedida = mensaje
-        if vehiculo:
+
+        # §18 y §4 del prompt — EL CLIENTE CORRIGE EL COCHE. "Perdona, no es un
+        # A4, es un A3". Hasta ahora el coche nuevo se guardaba encima del viejo y
+        # ya esta: las piezas que se habian encontrado para el A4 se quedaban en
+        # el hilo, y sus precios tambien. El bot seguia hablando de un coche que
+        # el cliente acababa de decir que no era el suyo.
+        #
+        # Al corregir se tira lo que pertenecia al coche anterior. Es lo unico
+        # honesto: esas fichas eran de otro vehiculo.
+        conv.corregido = None
+        if conv.vehiculo and self.redactor.CORRIGE.search(mensaje):
+            # "No es un A4, es un A3" nombra los DOS. El que se niega es el que ya
+            # estaba en memoria; el bueno es el otro. Se sustituye la parte que
+            # cambia y se conserva el resto — la marca sigue siendo Audi.
+            antes = conv.vehiculo.split()
+            dichos = self._vehiculos_en(mensaje)
+            nuevos = [v for v in dichos if v not in antes]
+            viejos = [v for v in dichos if v in antes]
+            if nuevos:
+                cambiado = [v for v in antes if v not in viejos] + nuevos
+                conv.corregido = (conv.vehiculo, " ".join(cambiado))
+                conv.vehiculo = " ".join(cambiado)
+                # Lo encontrado antes era de otro coche: no puede quedarse.
+                conv.piezas = []
+                conv.precio_de = {}
+                conv.descritas = set()
+        if vehiculo and not conv.corregido:
             conv.vehiculo = vehiculo
 
         contexto = None
         texto_busqueda = mensaje
-        if habla_de_pieza and not vehiculo and conv.vehiculo:
+        if getattr(conv, "corregido", None) and conv.pieza_pedida:
+            # LA PRIMERA de todas. Corregido el coche hay que volver a buscar la
+            # misma pieza para el nuevo, y este mensaje no nombra ninguna pieza:
+            # "perdona, no es un A4, es un A3" solo habla de coches.
+            #
+            # Va delante porque las otras ramas la pisaban. Esa de ahí abajo ve un
+            # vehículo y ninguna pieza y arrastra solo la palabra de la pieza,
+            # perdiendo el coche nuevo — que es justo el dato que acaba de cambiar.
+            # Solo las palabras de la PIEZA, no la frase original: "necesito un
+            # alternador para un audi a4" lleva el coche viejo dentro, y buscar
+            # con ella devolvia otra vez el A4 justo despues de que el cliente
+            # dijera que su coche no es ese.
+            solo_pieza = " ".join(
+                t for t in self.buscar_mod.normalizar(conv.pieza_pedida)
+                if t in self.buscador.tipos_conocidos or t in self.buscar_mod.LADOS)
+            contexto = " ".join(x for x in (solo_pieza, conv.vehiculo) if x)
+            texto_busqueda = contexto or mensaje
+
+        elif habla_de_pieza and not vehiculo and conv.vehiculo:
             contexto = conv.vehiculo
             texto_busqueda = f"{mensaje} {conv.vehiculo}"
         elif vehiculo and not habla_de_pieza and getattr(conv, "pieza_pedida", None):
@@ -493,6 +586,16 @@ class Sistema:
             respuesta["borrador"] = respuesta["lineas"]
             respuesta["lineas"] = lineas_llm
             respuesta["mensaje"] = "\n".join(lineas_llm)
+
+        # §23 DEL PROMPT — NO SIMULAR ACCIONES. El bot decía «lo aparto a tu
+        # nombre» y no apartaba nada: no había ninguna reserva en ningún sitio.
+        # Era la única frase del sistema que afirmaba un hecho falso.
+        #
+        # Se podía arreglar suavizando la frase. Se ha arreglado al revés: ahora la
+        # reserva se escribe de verdad, con su pieza, su matrícula y su hora, y
+        # Álvaro la ve. La frase pasa a ser cierta, que es mejor que ser prudente.
+        if any(r["regla"] == "cierre de venta" for r in respuesta["reglas"]):
+            self.anotar_reserva(sesion, conv)
 
         historial.append({"cliente": mensaje, "bot": respuesta["mensaje"]})
         del historial[:-12]        # el historial largo se corta, no crece sin fin
