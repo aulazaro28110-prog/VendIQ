@@ -716,6 +716,22 @@ class Buscador:
         # Se comprueba DESPUÉS del código exacto porque una referencia OEM o un
         # número de stock sí identifican la ficha —0% de ambigüedad medida— y ahí
         # pedir la matrícula sería hacerse el sordo con un dato que ya han dado.
+        # REGLA DURA: el COCHE de la ficha tiene que estar en lo que el cliente ha
+        # dicho (marca y modelo). Tener matrícula NO basta: el sistema no la
+        # resuelve, así que "motor completo" + matrícula no dice que sea un Camry.
+        # Sin coche reconocido no se pone precio ni se ofrece la ficha: se pregunta.
+        marca_ficha = meta.get("marca")
+        marcas_dichas = {self.marcas_conocidas[t] for t in palabras
+                         if t in self.marcas_conocidas}
+        distintivas_modelo = self.modelos_conocidos.get(meta.get("modelo"), frozenset())
+        coche_reconocido = (marca_ficha in marcas_dichas
+                            and (not distintivas_modelo
+                                 or distintivas_modelo <= palabras))
+        if not coche_reconocido:
+            return no("el cliente no ha dicho de qué coche es esta pieza (marca y "
+                      "modelo); la matrícula no dice qué coche es: se confirma antes "
+                      "de ofrecer o dar precio", "sin_coche")
+
         if not coche_identificado:
             return no("sin matrícula no se sabe si esta pieza es la de su coche: "
                       "el primer paso es identificar el vehículo", "sin_matricula")

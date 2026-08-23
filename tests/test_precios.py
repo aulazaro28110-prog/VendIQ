@@ -127,6 +127,14 @@ fugas_vagas = [q for q in vagas if precio_ofrecido(q)[0] is not None]
 comprobar("consulta sin nombrar la pieza -> se confirma antes de dar precio",
           not fugas_vagas, str(fugas_vagas))
 
+# Regresion (bug real, ago-2026): con matricula pero sin decir el coche, el bot
+# ofrecia "motor completo" -> un Camry, a quien no habia dicho su coche. Nunca mas:
+# sin marca/modelo reconocidos, no hay precio ni ficha ofrecida.
+genericas = ["motor completo", "un alternador", "quiero un faro"]
+fugas_gen = [q for q in genericas if precio_ofrecido(q)[0] is not None]
+comprobar("pieza generica sin coche (matricula no basta) -> nunca precio",
+          not fugas_gen, str(fugas_gen))
+
 print()
 print("=" * 76)
 print("C) DISPONIBILIDAD")
@@ -146,7 +154,8 @@ for estado_disp in ("En stock", "Bajo pedido 24-48h"):
     pieza = fabricada2["pieza"].lower()
     item2 = {"id": f"pieza-{fabricada2['id']}", "tipo": "inventario",
              "texto": "x", "meta": fabricada2}
-    r2 = buscador.precio_para_cliente(item2, 0.99, f"cuanto vale el {pieza}")
+    r2 = buscador.precio_para_cliente(item2, 0.99,
+        f"cuanto vale el {pieza} para un {fabricada2['marca']} {fabricada2['modelo']}")
     comprobar(f"'{estado_disp}' sí permite dar precio", r2["publicable"], str(r2))
 
 print()
