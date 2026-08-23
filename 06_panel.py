@@ -75,6 +75,11 @@ class Sistema:
             # Excel puede llevar un BOM invisible delante, y json.loads revienta.
             texto = PRECIOS_FIJADOS.read_text(encoding="utf-8-sig").strip()
             self.buscador.precios_fijados = json.loads(texto) if texto else {}
+        # Que piezas lleva de verdad este desguace. El redactor las necesita para
+        # no sugerir, ante un sintoma, algo que no esta en el catalogo: la primera
+        # version mandaba "pastillas o discos de freno" y aqui no se venden frenos.
+        self.redactor.TIPOS_EN_CATALOGO = {f["pieza"] for f in self.filas}
+
         self.buscador.buscar("calentamiento")      # deja el modelo caliente
         print(f"Listo en {time.time() - t0:.1f}s · {len(self.buscador.items)} fichas indexadas")
 
