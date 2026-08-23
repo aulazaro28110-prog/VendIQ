@@ -415,8 +415,13 @@ class Sistema:
             # Sin esto, pedir la matrícula es pedirle al cliente un dato a cambio
             # de nada: lo manda y el precio no llega nunca. La regla dejaría de
             # ser una cautela para ser un embudo roto.
-            contexto = conv.pieza_pedida
-            texto_busqueda = conv.pieza_pedida
+            # Con el coche pegado, no solo la pieza. El cliente reparte la
+            # informacion entre mensajes —«necesito un alternador» / «es para un
+            # audi a4»— y `pieza_pedida` solo guarda el primero. Buscar solo con
+            # eso devolvia el alternador que mas puntuaba de todo el catalogo, que
+            # era de un Passat, y se lo ofrecia a alguien con un A4.
+            contexto = " ".join(x for x in (conv.pieza_pedida, conv.vehiculo) if x)
+            texto_busqueda = contexto
 
         busqueda = self.consultar(texto_busqueda,
                                   coche_identificado=bool(conv.matricula))
