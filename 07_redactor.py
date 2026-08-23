@@ -254,13 +254,35 @@ PALABRAS_INTENCION = {
     "precio otra vez": ("cuanto me costaria", "cuanto cuesta", "cuanto vale",
                         "que precio", "mandame el precio", "pasame el precio",
                         "dime el precio", "cuanto seria", "cuanto me dices",
-                        "en cuanto se queda", "cuanto me lo dejas"),
+                        "en cuanto se queda", "cuanto me lo dejas",
+                        # §19 del prompt: el cliente impaciente escribe una
+                        # palabra. "precio" a secas contestaba "sin prisa, lo dejo
+                        # apuntado por si acaso", que es no haberle leído. Van sin
+                        # más contexto porque con una pieza encima de la mesa no
+                        # hay otra lectura posible.
+                        "precio", "cuanto", "cuánto", "cuanto es", "que vale",
+                        "qué vale", "cuanto sale", "cuánto sale"),
+
+    # §24 — el enlace. La ficha del catálogo trae su URL y el bot nunca la daba.
+    "enlace": ("pasame el link", "pásame el link", "mandame el link",
+               "pasame el enlace", "pásame el enlace", "el enlace",
+               "tienes link", "un link", "la url", "enlace de la pieza",
+               "pasame la url", "mandame el enlace", "el link de"),
     "compatibilidad": ("encaja", "vale para", "sirve para", "es compatible",
                        "seguro que", "equivocarme", "que sea la buena", "que monta",
                        "me vale a mi", "es la mia"),
     "alternativa": ("la otra", "tienes mas", "tienes otra", "alguna otra",
                     "otra opcion", "la que tengas", "da igual", "cual mas"),
     "agradecimiento": ("gracias", "genial", "perfecto", "estupendo", "vale ok"),
+    # §30 — recapitular. En una conversación larga el cliente pierde el hilo y
+    # pregunta "a ver, ¿qué teníamos?". Es una petición legítima y el bot tiene
+    # todos los datos: decírselos ordenados vale más que cualquier otra respuesta.
+    "recapitula": ("que teniamos", "qué teníamos", "en que quedamos",
+                   "en qué quedamos", "que llevamos", "qué llevamos",
+                   "resumeme", "resúmeme", "un resumen", "recuerdame lo que",
+                   "que habiamos dicho", "qué habíamos dicho", "por donde ibamos",
+                   "por dónde íbamos", "que era lo que", "hazme un resumen"),
+
     "saludo": ("hola", "buenas", "buenos dias", "buenas tardes", "que tal", "qué tal"),
 }
 
@@ -565,6 +587,66 @@ DIRECCION = re.compile(
     r"|\b\d{5}\b", re.I)
 
 
+# §18 y §4 del prompt — EL CLIENTE CORRIGE UN DATO. Pasa constantemente y hasta
+# ahora se ignoraba: «no, es gasolina» seguía buscando el diésel. Lo que hay que
+# detectar no es el dato nuevo, es la SEÑAL de que lo anterior estaba mal.
+CORRIGE = re.compile(
+    r"^\W*(no|nop|que no|qué no)\b(?!\s*(s[eé]|lo s[eé]|tengo ni idea))"
+    r"|\bme (he )?equivoc|\bme equivoc|\bfallo m[ií]o|\bperd[oó]n|\bperdona\b"
+    r"|\bquer[ií]a decir\b|\ben realidad\b|\bmejor dicho\b"
+    r"|\bes.{0,18}\bno\s+(el|la|un|una)\b", re.I)
+
+# §20 — EL CLIENTE NO SABE CÓMO SE LLAMA LA PIEZA. Describe lo que le pasa al
+# coche. Es la conversación más frecuente de un desguace y el bot no la entendía:
+# «cuando freno hace un ruido metálico» acababa contestando la política de
+# garantía.
+#
+# Esta tabla es lo que un mecánico tiene en la cabeza y NO está en ningún
+# catálogo: el catálogo dice qué piezas hay, no qué síntoma produce cada avería.
+# Es la segunda —y última— lista escrita a mano del sistema, junto a las palabras
+# vacías, y por el mismo motivo: no se puede aprender de los datos que hay.
+#
+# Cada entrada dice «suele», nunca «es». Diagnosticar con certeza sin ver el coche
+# es justo lo que §21 prohíbe, y con razón: quien decide es el taller.
+# Cada entrada son GRUPOS de palabras que tienen que aparecer todos, no una frase
+# literal. La primera version buscaba "ruido metalico al frenar" y el cliente
+# escribio "cuando freno hace un ruido metalico": mismo sintoma, otro orden, y no
+# casaba. La gente no escribe frases hechas.
+SINTOMAS = [
+    ((("ruido", "chirri", "chilla", "pita", "raspa", "rechina"), ("fren",)),
+     ("pastillas de freno", "discos de freno")),
+    ((("vibra", "tiembla", "trepida", "baila"), ("fren",)), ("discos de freno",)),
+    ((("no arranca", "no me arranca", "cuesta arrancar", "no da al arrancar",
+       "se queda sin bateria"),), ("batería", "motor de arranque", "alternador")),
+    ((("calienta", "temperatura", "hierve", "recalienta"),),
+     ("radiador", "termostato", "bomba de agua")),
+    ((("humo",),), ("turbo", "inyectores")),
+    ((("pierde fuerza", "tirones", "no tira", "se ahoga", "va flojo"),),
+     ("filtro de combustible", "inyectores", "turbo")),
+    ((("baches", "botes", "rebota", "badenes", "salta"),), ("amortiguadores",)),
+    ((("no da luz", "no alumbra", "fundida", "no enciende", "sin luz"),),
+     ("faro", "piloto")),
+    ((("ventanilla", "cristal"), ("sube", "baja", "atascad", "no va", "no funciona")),
+     ("elevalunas",)),
+    ((("puerta",), ("cierra", "abre", "bloquea", "atascad")), ("cerradura puerta",)),
+    ((("aceite",), ("pierde", "gotea", "mancha", "fuga")), ("cárter", "juntas")),
+    ((("volante", "girar", "direccion"), ("duro", "ruido", "cuesta")),
+     ("bomba de dirección",)),
+    ((("aire",), ("no enfria", "no va", "no funciona")),
+     ("compresor de aire acondicionado",)),
+]
+
+
+def pieza_por_sintoma(mensaje):
+    """Qué piezas suelen dar ese síntoma, o None si no se reconoce ninguno."""
+    t = _sin_tildes(mensaje)
+    for grupos, piezas in SINTOMAS:
+        # Todos los grupos tienen que aparecer, y de cada grupo basta una palabra.
+        if all(any(_sin_tildes(p) in t for p in grupo) for grupo in grupos):
+            return piezas
+    return None
+
+
 def detectar_intencion(mensaje: str) -> str:
     """Qué está haciendo el cliente, más allá de qué pieza pide.
 
@@ -742,6 +824,10 @@ class Conversacion:
         # Fichas cuya descripción entera ya se le ha soltado. Repetirla es lo que
         # más delata a un bot.
         self.descritas = set()
+
+        # Si el cliente ha corregido el coche en este mensaje: (lo que había, lo
+        # que hay). Lo rellena el panel, que es quien reconoce los vehículos.
+        self.corregido = None
 
         # ¿El bot acaba de preguntar si lo aparta? Es lo que convierte un «sí» en
         # una venta. Sin esto, «sí» no significa nada: no es una intención, es la
@@ -1470,6 +1556,116 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         reglas.append(("toma la dirección de entrega",
                        "la venta está cerrada y el mensaje trae una dirección: es "
                        "dónde quiere la pieza, no una consulta"))
+
+    # ---------------------- §18 · corrige algo que no es el coche entero
+    elif (CORRIGE.search(mensaje_cliente or "")
+          and not getattr(conversacion, "corregido", None)
+          and conversacion.ultima_pieza):
+        # Corrige un detalle —«no, es gasolina, no diésel», «el 320d no, el 318d»—
+        # sin cambiar de coche. El bot no puede saber cuál de las quince fichas
+        # pasa a ser la buena con ese dato suelto, y adivinar aquí es exactamente
+        # lo que la regla de la identificación prohíbe.
+        #
+        # Lo que sí puede hacer, y es lo que pide §18, es NO seguir como si nada:
+        # reconocerlo y llevarlo al dato que lo resuelve del todo.
+        conversacion.piezas = []
+        conversacion.precio_de = {}
+        conversacion.descritas = set()
+        lineas.append("Vale, tomo nota — entonces lo que te dije no te vale.")
+        lineas.append("Pásame la matrícula y te digo exactamente cuál monta el tuyo.")
+        reglas.append(("el cliente corrige un detalle",
+                       "cambia un dato del coche sin cambiar de coche: se reconoce "
+                       "y se descarta lo ofrecido, que era para el dato anterior"))
+
+    # ------------------------------------------- §18 · corrige un dato
+    elif getattr(conversacion, "corregido", None):
+        # Reconocerlo en voz alta. Un cliente que corrige y ve que el bot sigue
+        # con lo anterior deja de fiarse, y con razón: le acaba de decir que se
+        # estaba equivocando y no ha servido de nada.
+        antes, ahora = conversacion.corregido
+        lineas.append(f"Vale, {str(ahora).title()} entonces, no {str(antes).title()}.")
+        piezas_ok = [r for r in (consulta.get("resultados") or [])
+                     if r.get("tipo") == "inventario"]
+        if piezas_ok:
+            lineas += _con_pieza(consulta, conversacion, reglas, salida)[:2]
+        else:
+            lineas.append("Con la matrícula te digo qué monta ese y lo que vale.")
+        reglas.append(("el cliente corrige un dato",
+                       f"cambia {antes} por {ahora}: se reconoce y se rehace la "
+                       f"búsqueda; lo que se había encontrado era de otro coche"))
+
+    # ---------------------------------- §20 · describe el sintoma, no la pieza
+    elif (not hay_pieza and pieza_por_sintoma(mensaje_cliente or "")):
+        # Lo que manda es que no se haya encontrado ninguna PIEZA. Antes se exigía
+        # que no hubiera ningún resultado, y «ruido metálico al frenar» encuentra
+        # la política de garantía por el parecido de las palabras: el bot acababa
+        # explicando la garantía a alguien que le estaba contando una avería.
+        # El cliente no tiene por qué saber cómo se llama la pieza. Traducir su
+        # problema a una posible pieza es el trabajo, no un extra.
+        #
+        # Y se dice «suele», nunca «es»: diagnosticar con certeza sin ver el coche
+        # es lo que prohíbe §21 del prompt, y con razón — quien decide es el
+        # taller. Aquí solo se le da un punto de partida para poder buscar.
+        posibles = pieza_por_sintoma(mensaje_cliente)
+        lista = " o ".join(posibles[:2])
+        lineas.append(f"Eso suele venir de {lista}.")
+        lineas.append(f"Si me pasas la matrícula te digo cuál monta tu coche y "
+                      f"lo que vale.")
+        reglas.append(("traduce el síntoma a una pieza",
+                       f"describe el problema y no la pieza: se le apunta a "
+                       f"{lista}, sin asegurar el diagnóstico"))
+
+    # ------------------------------------------------ §24 · el enlace real
+    elif intencion == "enlace":
+        # La URL está en la ficha del catálogo y el bot nunca la daba. No se
+        # inventa ninguna: si la ficha no la trae, se dice que no la hay.
+        meta = conversacion.ultima_pieza or {}
+        url = (meta.get("url") or "").strip()
+        if url:
+            lineas.append(f"Aquí la tienes: {url}")
+            lineas.append("Si la ves y te encaja, me dices y te la aparto.")
+            reglas.append(("da el enlace de la ficha",
+                           "la URL sale del catálogo, no se inventa ninguna"))
+        elif meta:
+            lineas.append("De esa no tengo enlace en la web.")
+            lineas.append("Te la puedo mandar por aquí con foto si te sirve.")
+            reglas.append(("no inventa el enlace",
+                           "la ficha no trae URL: se dice, no se fabrica una"))
+        else:
+            lineas.append("Dime primero qué pieza quieres y te paso el enlace.")
+            reglas.append(("aún no hay pieza",
+                           "no hay ficha sobre la mesa de la que dar enlace"))
+
+    # -------------------------------------------- §30 · recapitular el hilo
+    elif intencion == "recapitula":
+        # Todo lo que se dice aquí está en la memoria de la conversación. No hay
+        # ni un dato nuevo: es lo mismo, ordenado, porque el cliente ha perdido
+        # el hilo y ordenárselo es lo que más le sirve en ese momento.
+        piezas = [p.get("pieza") for p in conversacion.piezas if p.get("pieza")]
+        coche = conversacion.vehiculo or (conversacion.ultima_pieza or {}).get("marca")
+        partes = []
+        if coche:
+            partes.append(f"tu {str(coche).title()}")
+        if conversacion.matricula:
+            partes.append(f"matrícula {conversacion.matricula}")
+        if piezas:
+            partes.append(", ".join(p.lower() for p in piezas))
+        if partes:
+            lineas.append("Vamos con " + " · ".join(partes) + ".")
+            precios = [f"{p.get('pieza','').lower()} {conversacion.precio_de[str(p.get('id') or '')]}"
+                       for p in conversacion.piezas
+                       if conversacion.precio_de.get(str(p.get("id") or ""))]
+            if precios:
+                lineas.append("Precios que te he dado: " + "; ".join(precios) + ".")
+            lineas.append("¿Seguimos por ahí?")
+            reglas.append(("recapitula lo hablado",
+                           "el cliente ha perdido el hilo: se le ordena lo que ya "
+                           "hay en memoria, sin añadir ni un dato nuevo"))
+        else:
+            lineas.append("Todavía no hemos concretado nada.")
+            lineas.append("Dime qué pieza buscas y la matrícula y arrancamos.")
+            reglas.append(("no hay nada que recapitular",
+                           "no se inventa un histórico que no existe"))
 
     # --------------------------------------- le devuelve un dato que él dio
     elif intencion == "recuerda mi dato":

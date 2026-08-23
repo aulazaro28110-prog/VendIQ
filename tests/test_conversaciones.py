@@ -553,17 +553,6 @@ PIDE_MATRICULA = re.compile(r"pásame la matrícula|me la pasas", re.I)
 # un DATO, no la pieza, y es una respuesta correcta. Por eso este patrón NO se aplica
 # a cualquier mensaje: solo cuando la búsqueda ya ha decidido NO DISPONIBLE, que es
 # exactamente la situación en la que la regla de la matrícula manda.
-NIEGA_TENERLA = re.compile(
-    r"no (?:la|lo|las|los) tengo"
-    r"|no (?:la|lo|me) consta"
-    r"|no (?:la|lo|las|los) tenemos"
-    r"|no (?:la|lo|las|los) hay"
-    r"|no (?:me |nos )?queda[nr]?"
-    r"|no est[áa] en (?:el )?(?:cat[áa]logo|almac[ée]n|stock)", re.I)
-
-# Pedir el dato que identifica la pieza. Vale la matrícula o el bastidor: son las dos
-# formas que la política acepta.
-IDENTIFICA = re.compile(r"matr[íi]cula|bastidor|vin", re.I)
 
 
 conversar = None            # lo carga main(); se usa para leer TOPE_ACLARACIONES
