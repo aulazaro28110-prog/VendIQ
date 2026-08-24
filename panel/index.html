@@ -22,7 +22,7 @@
       <a href="#dia">Actividad</a>
       <a href="#cliente">El chat</a>
       <a href="#mesa">Ofertas</a>
-      <a href="#dudas">Dudas</a>
+      <a href="#tumesa">Tu mesa</a>
       <a href="#informe">El informe</a>
       <a href="#letra">La letra pequeña</a>
     </div>
@@ -296,21 +296,33 @@
     </div>
   </section>
 
-  <!-- ========================================================== dudas -->
-  <section class="bloque" id="dudas">
+  <!-- ======================================================== tu mesa -->
+  <section class="bloque" id="tumesa">
     <p class="eyebrow">Solo tú puedes</p>
-    <h2>Lo que no supo contestar</h2>
+    <h2>Tu mesa</h2>
     <p class="intro">
-      Cuando el bot no sabe algo <strong>no se lo inventa</strong>: lo dice, avisa
-      y apunta la pregunta aquí. Tú escribes la respuesta una vez y pasa a la base
-      de conocimiento — desde el mensaje siguiente, el bot ya la usa. Ordenadas por
-      cuántas veces te la han hecho.
+      Todo lo que el bot no resolvió solo acaba aquí, <strong>agrupado por lo que
+      hay que decidir</strong>: un cobro duplicado y un plazo a Canarias no se
+      contestan con la misma cabeza. Cuando el bot no sabe algo no se lo inventa —
+      lo dice, avisa y lo apunta. Tú escribes la respuesta una vez y pasa a la base
+      de conocimiento: desde el mensaje siguiente ya la usa.
     </p>
     <p class="intro nota-dura">
       El bot nunca escribe estas respuestas. No hay ningún botón que las genere
-      solo: si nadie la contesta, se queda pendiente.
+      solo. Y <strong>descartar no es enseñar</strong>: quitar algo de la mesa no
+      escribe nada en la base de conocimiento.
     </p>
-    <div class="carta plana" id="caja-dudas"></div>
+
+    <div class="indicadores" id="mesa-kpis"></div>
+    <p class="nota" id="mesa-pie"></p>
+
+    <div class="filtros">
+      <button class="chip" id="mesa-ver-resueltas" aria-pressed="false">
+        Ver también las que ya resuelve solo
+      </button>
+    </div>
+
+    <div id="mesa-grupos"></div>
   </section>
 
   <!-- ========================================================= faltan -->
@@ -606,5 +618,6 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
 <script src="panel.js"></script>
 <script src="chat.js"></script>
 <script src="actividad.js"></script>
+<script src="mesa.js"></script>
 </body>
 </html>

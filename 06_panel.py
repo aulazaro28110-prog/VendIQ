@@ -19,6 +19,7 @@ del panel tardan milisegundos y no segundos.
 import importlib.util
 import json
 import mimetypes
+import socket
 import threading
 import time
 import webbrowser
@@ -84,6 +85,12 @@ class Sistema:
         print(f"Listo en {time.time() - t0:.1f}s · {len(self.buscador.items)} fichas indexadas")
 
         self.consultas_sesion = []                 # lo que se pregunta desde el panel
+        # Veredicto de la mesa por pregunta: "¿el bot de hoy seguiria escalando
+        # esto?". Son 33 preguntas por dos busquedas cada una, cuatro segundos, y
+        # la mesa se repinta cada vez que contestas o descartas algo. Solo cambia
+        # cuando cambia el indice, o sea cuando alguien ENSEÑA algo: se vacia ahi
+        # y en ningun otro sitio.
+        self.veredicto_mesa = {}
         self.chats = {}                            # conversaciones abiertas del simulador
         self.historiales = {}                      # turnos previos, para el LLM
         print("Redacta: " + ("Groq (" + (self.config_llm.get("GROQ_MODELO")
@@ -91,6 +98,80 @@ class Sistema:
               else "redactor determinista — sin GROQ_API_KEY en .env"))
 
     # ------------------------------------------------------------- precios
+    def mesa(self):
+        """La cola de una persona, agrupada por lo que hay que decidir.
+
+        Además de agrupar, hace una cosa que la lista plana no hacía: le pasa
+        cada pregunta pendiente al bot DE AHORA y mira si seguiría escalándola.
+        Sin eso la mesa miente, porque el registro se llenó con un bot anterior
+        y arrastra preguntas que hoy ya se resuelven solas — al medirlo salieron
+        14 de 33, entre ellas «me lo quedo», que llevaba 105 clientes esperando
+        a que alguien le dijera que sí.
+
+        Se usa `consultar()` y no `chatear()` a propósito: hace falta la decisión
+        de la búsqueda, no un mensaje redactado. Así no se llama al LLM 33 veces
+        para pintar un panel.
+        """
+        t0 = time.perf_counter()
+        pendientes, grupos = [], {}
+        for e in self.aprender.leer_registro():
+            if e.get("estado") != "pendiente":
+                continue
+            clave, titulo, nota = self.aprender.clasificar(e["pregunta"])
+            # Sin matrícula, que es como llega el mensaje que acabó escalando.
+            if e["pregunta"] not in self.veredicto_mesa:
+                self.veredicto_mesa[e["pregunta"]] = self.consultar(
+                    e["pregunta"], coche_identificado=False, registrar=False)
+            d = self.veredicto_mesa[e["pregunta"]]
+            fila = {
+                "n": e["n"], "pregunta": e["pregunta"], "veces": e["veces"],
+                "motivo": e["motivo"], "primera": e.get("primera", ""),
+                "ultima": e.get("ultima", ""),
+                "grupo": clave,
+                # Ojo con lo que significa: es la decision de la BUSQUEDA, que no
+                # sabe nada del hilo. Por eso los grupos que el redactor resuelve
+                # con rama propia —aparcar, cerrar, el ruido— no cuentan aunque la
+                # busqueda diga ESCALA. Medirlo de verdad obligaria a pasar por
+                # `chatear()`, y eso ESCRIBE: apunta en el registro y crea
+                # reservas. Un panel no puede tener ese precio.
+                "sigue_escalando": (d["decision"] == "ESCALA"
+                                    and clave not in ("ruido", "conversacion")),
+                "decision_ahora": d["decision"],
+                "porque_ahora": d["porque"],
+            }
+            pendientes.append(fila)
+            g = grupos.setdefault(clave, {"clave": clave, "titulo": titulo,
+                                          "nota": nota, "filas": [],
+                                          "clientes": 0})
+            g["filas"].append(fila)
+            g["clientes"] += e["veces"]
+
+        # Orden de los grupos: primero lo que más gente tiene esperando, y el
+        # ruido SIEMPRE al final aunque sea el más numeroso — que lo sea es
+        # justamente el motivo de haberlo separado.
+        orden = sorted(grupos.values(),
+                       key=lambda g: (g["clave"] in ("conversacion", "ruido"),
+                                      g["clave"] == "ruido", -g["clientes"]))
+        for g in orden:
+            g["filas"].sort(key=lambda f: -f["veces"])
+
+        registro = self.aprender.leer_registro()
+        return {
+            "grupos": orden,
+            "resumen": {
+                "pendientes": len(pendientes),
+                "clientes_esperando": sum(f["veces"] for f in pendientes),
+                "te_necesitan": sum(1 for f in pendientes if f["sigue_escalando"]),
+                "ya_resueltas_solas": sum(1 for f in pendientes
+                                          if not f["sigue_escalando"]),
+                "ruido": sum(1 for f in pendientes if f["grupo"] == "ruido"),
+                "aprendidas": sum(1 for e in registro if e.get("estado") == "resuelta"),
+                "descartadas": sum(1 for e in registro if e.get("estado") == "descartada"),
+                "ms": round((time.perf_counter() - t0) * 1000, 1),
+            },
+            "redactor": self.conversar.hay_llm(),
+        }
+
     def precios_pendientes(self):
         """Piezas sin precio, ordenadas por cuántas veces las han preguntado.
 
@@ -137,6 +218,14 @@ class Sistema:
         Se escribe entera cada vez y no se anexa una línea: son pocas y así el
         fichero es legible a ojo, que es como Álvaro lo va a mirar.
         """
+        # El simulador pasa 930 conversaciones por aqui para medir, y unas cuantas
+        # acaban en venta. Esas reservas NO son compromisos con nadie: si se
+        # escriben, el fichero donde miras lo que hay que preparar manana se llena
+        # de pedidos que no existen. Paso exactamente eso —202 falsas contra 30
+        # reales— y por eso las sesiones del simulador no dejan rastro aqui.
+        if str(sesion).startswith("sim-"):
+            return None
+
         pieza = conv.ultima_pieza or {}
         entrada = {
             "sesion": sesion,
@@ -245,7 +334,7 @@ class Sistema:
             "cuanto tarda en llegar el pedido",
         ] if e]
 
-    def consultar(self, pregunta, coche_identificado=True):
+    def consultar(self, pregunta, coche_identificado=True, registrar=True):
         """Ejecuta la búsqueda REAL y explica la decisión.
 
         `coche_identificado` es si la conversación ya tiene la matrícula. No
@@ -329,8 +418,13 @@ class Sistema:
                             if not any(a["texto"] == r["texto"] for a in empaquetar(hits, True))],
             "hora": time.strftime("%H:%M:%S"),
         }
-        self.consultas_sesion.append({k: resultado[k] for k in
-                                      ("pregunta", "decision", "ms", "hora", "porque")})
+        # `registrar=False` lo usa la mesa: pasa las preguntas viejas por la
+        # busqueda para saber si el bot de hoy seguiria escalandolas, y eso es una
+        # comprobacion interna, no consultas que hayas hecho tu. Sin este
+        # interruptor, abrir la mesa llenaba el registro de sesion de ruido.
+        if registrar:
+            self.consultas_sesion.append({k: resultado[k] for k in
+                                          ("pregunta", "decision", "ms", "hora", "porque")})
         return resultado
 
     # ----------------------------------------------------------- simulador
@@ -830,6 +924,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json({"error": "ejecuta antes: python 10_simular.py"}, 404)
             return self._json(json.loads(
                 ACTIVIDAD_JSON.read_text(encoding="utf-8-sig")))
+        if ruta == "/api/mesa":
+            return self._json(SISTEMA.mesa())
         if ruta == "/api/no-resueltas":
             return self._json({"pendientes": SISTEMA.aprender.leer_registro(),
                                "redactor": SISTEMA.conversar.hay_llm()})
@@ -884,9 +980,21 @@ class Handler(BaseHTTPRequestHandler):
                 texto = (cuerpo.get("respuesta") or "").strip()
                 if not texto:
                     return self._json({"error": "escribe la respuesta"}, 400)
-                return self._json(SISTEMA.aprender.aprender(
+                res = SISTEMA.aprender.aprender(
                     cuerpo["n"], texto, cuerpo.get("quien") or "Álvaro",
-                    buscador=SISTEMA.buscador))
+                    buscador=SISTEMA.buscador)
+                # El indice acaba de cambiar: los veredictos guardados pueden haber
+                # dejado de ser ciertos. Justamente lo que se busca es que una
+                # respuesta nueva haga que otras preguntas dejen de necesitarte.
+                SISTEMA.veredicto_mesa.clear()
+                return self._json(res)
+
+            if ruta == "/api/descartar":
+                # Sacar algo de la mesa NO es ensenarselo al bot: descartar no
+                # escribe en la base de conocimiento ni toca el indice. Por eso
+                # es una ruta aparte de /api/aprender y no un parametro suyo.
+                return self._json({"entrada": SISTEMA.aprender.descartar(
+                    cuerpo["n"], motivo=cuerpo.get("motivo") or "no es una pregunta")})
 
             if ruta == "/api/oferta":
                 return self._json(SISTEMA.ofertar(cuerpo["id_pieza"],
@@ -915,6 +1023,19 @@ def main():
     if not PANEL_JSON.exists():
         raise SystemExit("ERROR: falta salida/panel.json.\n"
                          "       Ejecuta antes:  python 05_panel_datos.py")
+
+    # En Windows, dos procesos pueden quedarse escuchando el MISMO puerto sin
+    # que el segundo bind falle: SO_REUSEADDR lo permite. El efecto es que
+    # arrancas el panel con el codigo nuevo, te contesta el viejo, y te vuelves
+    # loco buscando por que no ves tus cambios. Se comprueba ANTES de cargar el
+    # modelo, que tarda diez segundos.
+    with socket.socket() as sonda:
+        sonda.settimeout(0.4)
+        if sonda.connect_ex(("127.0.0.1", PUERTO)) == 0:
+            raise SystemExit(
+                f"ERROR: ya hay algo escuchando en el puerto {PUERTO}. Sera otro\n"
+                f"       panel abierto: cierralo con Ctrl+C en su ventana, o mira\n"
+                f"       quien es con:  netstat -ano | findstr {PUERTO}")
 
     SISTEMA = Sistema()
     servidor = ThreadingHTTPServer(("127.0.0.1", PUERTO), Handler)

@@ -448,3 +448,35 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
   .g-barras-v{gap:3px;height:150px}
   .etiqueta-x{font-size:9px}
 }
+
+/* ------------------------------------------------------------- tu mesa
+   Trabajo pendiente va en ÁMBAR, no en rojo. El rojo de esta hoja está
+   reservado para errores de verdad —una fuga de precio— y si se gasta en
+   «tienes cosas que contestar» deja de querer decir nada. */
+.ind.aviso::after{background:linear-gradient(90deg,var(--ambar),transparent 80%)}
+
+.grupo-mesa{padding:0;margin-bottom:18px}
+.grupo-cab{
+  display:flex;align-items:center;gap:11px;flex-wrap:wrap;
+  padding:18px 24px 0;
+}
+.grupo-cab h3{margin:0;flex:1}
+.grupo-icono{
+  display:grid;place-items:center;width:26px;height:26px;flex:none;
+  border:1px solid var(--borde-vivo);border-radius:8px;
+  font-family:var(--mono);font-size:13px;color:var(--tinta-2);
+}
+.grupo-mesa > .nota{padding:6px 24px 4px;margin:0}
+.grupo-mesa .duda:first-of-type{border-top:1px solid var(--borde);margin-top:14px}
+
+/* Lo que el bot ya resuelve sigue visible, pero no compite por la atención:
+   está para que veas que no se ha perdido nada, no para que lo leas. */
+.duda-resuelta{opacity:.62}
+.duda-resuelta:hover{opacity:1}
+
+.grupo-mesa details{padding:0 24px 20px}
+.grupo-mesa details summary{
+  font-size:13px;color:var(--tinta-2);cursor:pointer;padding:10px 0;
+}
+.grupo-mesa details summary:hover{color:var(--tinta)}
+.grupo-mesa details .duda{padding-left:0;padding-right:0}
