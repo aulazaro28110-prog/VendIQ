@@ -29,6 +29,7 @@ reiniciar el panel.
 """
 
 import json
+import re
 import time
 from pathlib import Path
 
@@ -185,6 +186,153 @@ def _persistir(buscador, globales):
         "items": [{"id": i["id"], "tipo": i["tipo"], "texto": i["texto"],
                    "meta": i.get("meta", {})} for i in buscador.items],
     }, ensure_ascii=False), encoding="utf-8")
+
+
+# ===========================================================================
+# LA MESA DE ÁLVARO
+# ===========================================================================
+# El registro de arriba es una lista plana ordenada por veces. Sirve mientras
+# hay ocho preguntas; con treinta y tres deja de servir, porque las que de
+# verdad necesitan a una persona se hunden debajo del ruido. En la cola real
+# medida, las cuatro primeras por frecuencia eran «déjame que lo mire» (192),
+# «luego te digo algo» (145), «ok, te confirmo mañana» (119) y «me lo quedo»
+# (105) — ninguna necesita a nadie, y entre todas tapaban «¿enviáis a
+# Canarias?», que es la única que llevaba 56 clientes esperando.
+#
+# Así que la mesa hace dos cosas que la lista no hacía:
+#
+#   AGRUPA   por lo que hay que decidir, no por cuántas veces se preguntó.
+#            Un cobro duplicado y un plazo a Canarias se contestan con
+#            cabezas distintas.
+#
+#   SEPARA   lo que no es una pregunta. Un «👍», un «asdfgh» o un «vale» no
+#            se contestan: se descartan. Y descartar NO escribe nada en la
+#            base de conocimiento — ver `descartar()`.
+
+import unicodedata
+
+
+def _sin_tildes(t):
+    t = unicodedata.normalize("NFD", (t or "").lower())
+    return "".join(c for c in t if unicodedata.category(c) != "Mn")
+
+
+# El orden IMPORTA: gana el primero que casa. Va de lo concreto a lo genérico,
+# porque «me habéis cobrado dos veces» lleva la palabra «cobrado» y también
+# sería «pago»: lo que toca es tratarlo como la incidencia que es.
+GRUPOS = [
+    ("posventa", "Algo ha ido mal",
+     "Pedidos ya enviados. Esto no lo contesta una FAQ: hay que mirar el pedido.",
+     r"cobrad[oa] dos veces|me hab[ei]is cobrado|cobro duplicado|"
+     r"de otro modelo|no es la que|no vale|no encaja|no me sirve|"
+     r"defectuos|(viene|vino|lleg\w*) rot[oa]|averiad|no funciona|"
+     r"reclamacion|reclamar|me hab[ei]is mandado"),
+
+    ("pago", "Pago y comprobantes",
+     "Formas de pago y justificantes. El bot nunca da por bueno un comprobante.",
+     r"transferencia|bizum|justificante|comprobante|resguardo|captura|"
+     r"pagar|pago|abonar|efectivo|contrarreembolso|tarjeta|"
+     r"a cuenta|fin de mes|credito|adelanto|se[nñ]al|paypal|"
+     r"ya est[aá] pagad|te lo acabo de mandar"),
+
+    ("envio", "Plazos y envíos",
+     "Cuándo llega y hasta dónde se manda. Fuera de península el porte se consulta.",
+     r"canarias|baleares|ceuta|melilla|portugal|francia|italia|alemania|"
+     r"extranjero|internacional|peninsula|fuera de espa[nñ]a|aduana|"
+     r"envi[aoáé]|env[ií]|mandar|manda|transporte|porte|agencia|"
+     r"correos?|mrw|seur|gls|dhl|tipsa|prisa|mensajer|"
+     r"plazo|cuando llega|cuanto tarda|urgente|para hoy|para ma[nñ]ana|"
+     r"recoger|recogida|a domicilio"),
+
+    ("politica", "Condiciones de la casa",
+     "Garantía, devoluciones, facturación, horario y dónde estáis.",
+     r"garantia|devol|cambiar la pieza|factura|iva|"
+     r"donde est[aá]is|donde os|direccion|horario|abr[ií]s|cerr[aá]is|"
+     r"condicion|politica|legal|datos personales|rgpd"),
+
+    ("conversacion", "El bot ya sabe llevar esto",
+     "Aparcar, confirmar, preguntar por un pedido. Tiene rama propia para esto: "
+     "están aquí porque el registro se llenó con un bot anterior.",
+     r"dejame que lo (mire|vea|consulte)|lo consulto|lo miro y te digo|"
+     r"luego te (digo|cuento)|ya te (digo|cuento|confirmo)|te confirmo|"
+     r"te digo algo|te lo confirmo|"
+     r"me lo quedo|lo quiero|me la quedo|la quiero|"
+     r"ya lo tienes|ha salido|avisame|"
+     r"nada,? (era otra cosa|dejalo)|dejalo|era otra cosa|"
+     r"hay alguien|estas ahi"),
+
+    ("pieza", "Piezas que no encontró",
+     "Preguntan por material concreto y la búsqueda no lo resolvió sola.",
+     r".*"),        # cae aquí lo que quede y sí es una pregunta de verdad
+]
+
+# Acuses, saludos y tecleos. No son preguntas: no tienen respuesta que enseñar.
+_RELLENO = {
+    "vale", "si", "ok", "oki", "okey", "bueno", "ya", "ah", "aha", "ajam",
+    "hola", "buenas", "hey", "gracias", "nada", "eso", "claro", "perfecto",
+    "correcto", "entendido", "genial", "guay", "hecho",
+}
+
+
+def es_ruido(pregunta):
+    """¿Esto ni siquiera es una pregunta?
+
+    Cuatro casos, y todos salen de la cola medida:
+
+        sin una sola letra    '👍', '?', '...'      (78 + 71 veces)
+        dos caracteres o menos
+        cinco consonantes seguidas  'asdfgh'        (77 veces)
+        puro acuse o saludo   'vale', 'hoolaa'      (12 + 10 veces)
+
+    Lo de las cinco consonantes es una regla del español: la palabra real más
+    apretada («instrucción») llega a cuatro. Cinco seguidas es un teclado.
+    """
+    t = _sin_tildes(pregunta).strip()
+    if not re.search(r"[a-z]", t):
+        return True
+    if len(t) <= 2:
+        return True
+    if re.search(r"[bcdfghjklmnpqrstvwxyz]{5}", t):
+        return True
+    nucleo = re.sub(r"[^a-z ]", "", t).strip()
+    if nucleo in _RELLENO:
+        return True
+    if re.fullmatch(r"h+o+l+a+|b+u+e+n+a+s+|h+e+y+", nucleo):
+        return True
+    return False
+
+
+def clasificar(pregunta):
+    """Devuelve (clave, título, explicación) del grupo al que va esta pregunta."""
+    if es_ruido(pregunta):
+        return ("ruido", "No hace falta que contestes",
+                "Acuses, saludos y tecleos. Descártalos: no hay nada que enseñar.")
+    t = _sin_tildes(pregunta)
+    for clave, titulo, nota, patron in GRUPOS:
+        if re.search(patron, t):
+            return (clave, titulo, nota)
+    return GRUPOS[-1][:3]
+
+
+def descartar(n, quien="Álvaro", motivo="no es una pregunta"):
+    """Saca una entrada de la mesa SIN enseñarle nada al bot.
+
+    Es la diferencia con `aprender()`, y es a propósito: descartar no escribe en
+    `datos/faq_aprendidas.md` ni toca el índice. Un «👍» no puede convertirse en
+    conocimiento de la empresa por el hecho de que alguien pulse un botón para
+    quitárselo de encima.
+    """
+    registro = leer_registro()
+    entrada = next((e for e in registro if e["n"] == int(n)), None)
+    if entrada is None:
+        raise SystemExit(f"no existe la pregunta nº {n}")
+    if entrada["estado"] != "pendiente":
+        raise SystemExit(f"la nº {n} ya está {entrada['estado']}")
+    entrada.update({"estado": "descartada", "motivo_descarte": motivo,
+                    "respondida_por": quien,
+                    "resuelta_el": time.strftime("%Y-%m-%d %H:%M")})
+    _escribir(REGISTRO, registro)
+    return entrada
 
 
 # ---------------------------------------------------------------------------

@@ -2,7 +2,7 @@
   "sintetico": true,
   "aviso": "Los MENSAJES son sintéticos: los genera el mismo código que el banco de pruebas. Los NÚMEROS no: cada decisión, cada milisegundo y cada escalado sale de ejecutar el sistema real contra las 5.000 piezas del catálogo.",
   "mezcla_declarada": "El reparto por tipo de mensaje es una ESTIMACIÓN de Álvaro sobre su propio WhatsApp, no un dato medido.",
-  "generado": "2026-08-22 22:41",
+  "generado": "2026-08-23 23:43",
   "parametros": {
     "dias": 7,
     "conversaciones_dia": "150-200 (lun-vie)",
@@ -17,25 +17,16 @@
   "resumen": {
     "conversaciones": 930,
     "mensajes": 2558,
-    "escaladas": 52,
-    "resueltas_sin_persona": 878,
-    "tasa_resolucion": 0.9441,
-    "precios_dados": 416,
-    "ms_mediana": 73.8,
-    "ms_p95": 106.5,
-    "ms_max": 401.4,
+    "escaladas": 55,
+    "resueltas_sin_persona": 875,
+    "tasa_resolucion": 0.9409,
+    "precios_dados": 408,
+    "ms_mediana": 81.9,
+    "ms_p95": 202.5,
+    "ms_max": 1238.6,
     "fugas_de_precio": 0
   },
   "por_dia": [
-    {
-      "fecha": "2026-08-16",
-      "dia": "domingo",
-      "conversaciones": 0,
-      "mensajes": 0,
-      "resueltas": 0,
-      "escaladas": 0,
-      "ms_mediana": null
-    },
     {
       "fecha": "2026-08-17",
       "dia": "lunes",
@@ -43,16 +34,16 @@
       "mensajes": 457,
       "resueltas": 159,
       "escaladas": 11,
-      "ms_mediana": 71.9
+      "ms_mediana": 95.3
     },
     {
       "fecha": "2026-08-18",
       "dia": "martes",
       "conversaciones": 163,
       "mensajes": 444,
-      "resueltas": 152,
-      "escaladas": 11,
-      "ms_mediana": 75.2
+      "resueltas": 151,
+      "escaladas": 12,
+      "ms_mediana": 81.2
     },
     {
       "fecha": "2026-08-19",
@@ -61,16 +52,16 @@
       "mensajes": 415,
       "resueltas": 148,
       "escaladas": 7,
-      "ms_mediana": 76.9
+      "ms_mediana": 86.0
     },
     {
       "fecha": "2026-08-20",
       "dia": "jueves",
       "conversaciones": 193,
       "mensajes": 536,
-      "resueltas": 181,
-      "escaladas": 12,
-      "ms_mediana": 78.5
+      "resueltas": 179,
+      "escaladas": 14,
+      "ms_mediana": 93.0
     },
     {
       "fecha": "2026-08-21",
@@ -79,7 +70,7 @@
       "mensajes": 475,
       "resueltas": 158,
       "escaladas": 9,
-      "ms_mediana": 70.1
+      "ms_mediana": 68.9
     },
     {
       "fecha": "2026-08-22",
@@ -88,7 +79,16 @@
       "mensajes": 231,
       "resueltas": 80,
       "escaladas": 2,
-      "ms_mediana": 67.0
+      "ms_mediana": 62.9
+    },
+    {
+      "fecha": "2026-08-23",
+      "dia": "domingo",
+      "conversaciones": 0,
+      "mensajes": 0,
+      "resueltas": 0,
+      "escaladas": 0,
+      "ms_mediana": null
     }
   ],
   "por_hora": [
@@ -146,19 +146,19 @@
     }
   ],
   "acciones": {
-    "RESPONDER": 1731,
-    "PREGUNTAR": 664,
-    "ESCALAR": 163
+    "RESPONDER": 1721,
+    "PREGUNTAR": 660,
+    "ESCALAR": 177
   },
   "intenciones": {
-    "consulta": 1299,
-    "aparca": 292,
-    "agradecimiento": 214,
-    "cierre": 195,
+    "consulta": 1277,
+    "aparca": 295,
+    "cierre": 268,
     "plazo": 150,
+    "agradecimiento": 141,
     "saludo": 114,
+    "precio otra vez": 86,
     "estado": 82,
-    "precio otra vez": 67,
     "regateo": 51,
     "queja": 20
   },
@@ -169,7 +169,7 @@
     },
     {
       "motivo": "lo ve una persona: el bot no está seguro",
-      "veces": 43
+      "veces": 57
     },
     {
       "motivo": "ya se ha preguntado 2 veces y sigue sin poder decidir: lo ve una persona en vez de seguir preguntando",
@@ -177,10 +177,10 @@
     }
   ],
   "precios": {
-    "sin_matricula": 700,
-    "publicable": 416,
-    "confianza_baja": 3,
-    "sin_confirmar": 3
+    "sin_matricula": 687,
+    "publicable": 408,
+    "sin_coche": 24,
+    "confianza_baja": 3
   },
   "no_cubierto": [
     {
@@ -230,7 +230,7 @@
             "Son 102,33 € + IVA y lo tengo aquí, si lo quieres sale mañana."
           ],
           "accion": "RESPONDER",
-          "ms": 80.4
+          "ms": 77.6
         }
       ]
     },
@@ -247,7 +247,7 @@
             "En cuanto lo vea en la cuenta te aviso y sale la pieza."
           ],
           "accion": "ESCALAR",
-          "ms": 66.0
+          "ms": 89.5
         },
         {
           "cliente": "que sí, que el banco tarda pero está hecho",
@@ -256,7 +256,7 @@
             "Álvaro ya tiene tu mensaje; si él lo ve de otra forma, te lo dice él."
           ],
           "accion": "ESCALAR",
-          "ms": 68.9
+          "ms": 91.8
         },
         {
           "cliente": "entonces cuándo sale",
@@ -265,7 +265,7 @@
             "En cuanto esté el pago confirmado, sale la pieza el mismo día."
           ],
           "accion": "ESCALAR",
-          "ms": 66.2
+          "ms": 66.5
         },
         {
           "cliente": "¿cuánto tarda?",
@@ -273,15 +273,15 @@
             "Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea."
           ],
           "accion": "ESCALAR",
-          "ms": 66.7
+          "ms": 70.7
         },
         {
           "cliente": "lo consulto con el cliente y te digo",
           "bot": [
-            "Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea."
+            "Lo dicho, en eso no me puedo mover."
           ],
           "accion": "ESCALAR",
-          "ms": 68.0
+          "ms": 75.8
         }
       ]
     },
@@ -298,7 +298,7 @@
             "En cuanto lo vea en la cuenta te aviso y sale la pieza."
           ],
           "accion": "ESCALAR",
-          "ms": 73.1
+          "ms": 73.3
         }
       ]
     },
@@ -315,7 +315,7 @@
             "Son 194,75 € + IVA y lo tengo aquí, si lo quieres sale mañana."
           ],
           "accion": "RESPONDER",
-          "ms": 72.8
+          "ms": 67.8
         },
         {
           "cliente": "¿y me lo mandas al taller?",
@@ -323,7 +323,7 @@
             "Sí, pásame la dirección y organizo el reparto para llevártelo lo antes posible."
           ],
           "accion": "RESPONDER",
-          "ms": 65.0
+          "ms": 112.8
         },
         {
           "cliente": "lo consulto con el cliente y te digo",
@@ -332,7 +332,7 @@
             "Cuando lo tengas claro me dices y lo cerramos."
           ],
           "accion": "RESPONDER",
-          "ms": 64.2
+          "ms": 65.9
         }
       ]
     },
@@ -349,7 +349,7 @@
             "Pásame la matrícula y te digo cuál es el tuyo y lo que vale."
           ],
           "accion": "PREGUNTAR",
-          "ms": 90.9
+          "ms": 89.6
         },
         {
           "cliente": "la matrícula es 4521 KBD",
@@ -359,7 +359,7 @@
             "¿Te lo aparto?"
           ],
           "accion": "RESPONDER",
-          "ms": 82.0
+          "ms": 90.2
         },
         {
           "cliente": "¿cuánto tarda?",
@@ -368,10 +368,10 @@
             "Te lo mando al taller o te lo dejo preparado aquí, como prefieras."
           ],
           "accion": "RESPONDER",
-          "ms": 70.6
+          "ms": 65.1
         }
       ]
     }
   ],
-  "segundos_de_ejecucion": 559.6
+  "segundos_de_ejecucion": 746.8
 }

@@ -222,60 +222,9 @@ async function cargarGuiones() {
 }
 
 /* ---------------------------------------------------------------- dudas */
-async function cargarDudas() {
-  let datos;
-  try {
-    datos = await api('/api/no-resueltas');
-  } catch { return; }
-
-  const pendientes = (datos.pendientes || [])
-    .filter((d) => d.estado === 'pendiente')
-    .sort((a, b) => b.veces - a.veces);
-  const resueltas = (datos.pendientes || []).filter((d) => d.estado === 'resuelta');
-
-  if (!pendientes.length) {
-    $('#caja-dudas').replaceChildren(Object.assign(crear('div', 'estado-vacio'), {
-      innerHTML: '<strong>Nada pendiente.</strong> El bot ha sabido contestar a todo ' +
-        'lo que le ha llegado.<br>Cuando alguien pregunte algo que no está en los ' +
-        'documentos, aparecerá aquí con su respuesta en blanco esperándote.' +
-        (resueltas.length ? `<br><br>Ya has contestado ${resueltas.length} y están ` +
-          'en la base de conocimiento.' : ''),
-    }));
-    return;
-  }
-
-  $('#caja-dudas').replaceChildren(...pendientes.map((d) => {
-    const fila = crear('div', 'duda');
-    const cab = crear('div', 'duda-cab');
-    cab.append(crear('span', 'pastilla p-ambar', `x${d.veces}`),
-               crear('strong', null, `«${d.pregunta}»`));
-    const meta = crear('p', 'duda-meta', `${d.motivo} · primera vez ${d.primera}`);
-
-    const caja = crear('div', 'duda-responder');
-    const campo = crear('textarea');
-    campo.rows = 2;
-    campo.placeholder = 'Escribe TÚ la respuesta. El bot la usará tal cual.';
-    campo.setAttribute('aria-label', `Respuesta a: ${d.pregunta}`);
-    const bt = crear('button', 'boton mini', 'Guardar y enseñársela');
-    bt.onclick = async () => {
-      const texto = campo.value.trim();
-      if (!texto) { campo.focus(); return; }
-      bt.disabled = true;
-      try {
-        const r = await api('/api/aprender', {n: d.n, respuesta: texto});
-        fila.replaceChildren(Object.assign(crear('div', 'duda-ok'), {
-          textContent: `Aprendida. ${r.indexado}`,
-        }));
-      } catch (e) {
-        bt.disabled = false;
-        alert(`No se pudo guardar: ${e.message}`);
-      }
-    };
-    caja.append(campo, bt);
-    fila.append(cab, meta, caja);
-    return fila;
-  }));
-}
+/* La cola de lo no resuelto vive ahora en mesa.js, agrupada por lo que hay que
+   decidir. Aquí solo estaba la lista plana, y ordenada por frecuencia enterraba
+   lo que de verdad necesitaba a una persona debajo de los acuses de recibo. */
 
 function ponerPerfil(perfil) {
   PERFIL = perfil;
@@ -298,4 +247,3 @@ $('#form-chat').addEventListener('submit', (e) => {
 
 limpiarHilo();
 cargarGuiones();
-cargarDudas();
