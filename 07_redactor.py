@@ -128,6 +128,12 @@ PALABRAS_INTENCION = {
                        "cuando la reciba te pago", "cuando llegue te pago",
                        "a 30 dias", "a 60 dias"),
     "justificante": ("justificante", "resguardo", "comprobante", "pantallazo",
+                     # "captura" a secas hacia falta: "te paso captura" no casaba
+                     # con ninguno de los de arriba, y como "paso" es un tipo de
+                     # pieza del catalogo ("paso de rueda"), la busqueda contestaba
+                     # con un paso de rueda trasero izquierdo a alguien que estaba
+                     # ensenando el resguardo de una transferencia que no existia.
+                     "captura", "screenshot", "pantallazo del pago",
                      "captura de la transferencia", "captura del pago",
                      "ya te he hecho la transferencia", "ya te he pagado",
                      "ya esta pagado", "te mando el papel", "adjunto el pago"),
@@ -985,9 +991,16 @@ def _OTRA_MANERA_DE_DECIRLO(conv):
     cosas distintas según lo que haya encima de la mesa.
     """
     if conv.regla_dura:
+        # Seis, no tres: el que insiste con una condición insiste MUCHO. En el
+        # corpus de Wallapop hay quien lo intenta seis veces seguidas con seis
+        # argumentos distintos, y las seis la respuesta correcta es la misma
+        # condición dicha de otra manera.
         return ["Lo dicho, en eso no me puedo mover.",
                 "Sigo en lo mismo, y no es cosa mía.",
-                "Es la condición de la casa, no la decido yo."]
+                "Es la condición de la casa, no la decido yo.",
+                "No cambia, lo siento: es igual para todos los clientes.",
+                "Ahí no puedo ayudarte, lo tiene que ver Álvaro.",
+                "Sigue siendo que no, y no es por ti: es como trabajamos."]
     if conv.estado in (CERRADA, POSVENTA):
         return ["Todo sigue igual por aquí, tranquilo.",
                 "Sin novedad todavía; en cuanto la haya te escribo.",
@@ -1054,7 +1067,16 @@ def _sin_repetir(lineas, conv, reglas):
         # manden sin pagar lo intenta cuatro veces con cuatro argumentos
         # distintos, y las cuatro veces la respuesta correcta es la misma
         # condición — pero no las mismas palabras.
-        limpias = [conv.variar("en_vez_de_repetir", _OTRA_MANERA_DE_DECIRLO(conv))]
+        # Y aquí NO vale rotar: `variar` cicla, así que a la cuarta insistencia
+        # vuelve a la primera frase y se repite igual. Lo que hace falta es
+        # elegir la que todavía no se haya dicho, que es lo que hay apuntado dos
+        # líneas más abajo. Salió con el de Wallapop que insiste seis veces en
+        # que le manden la pieza sin pagar: tres variantes no le bastaban.
+        opciones = _OTRA_MANERA_DE_DECIRLO(conv)
+        nuevas = [o for o in opciones
+                  if " ".join(o.lower().split()) not in conv.lineas_dichas]
+        limpias = [nuevas[0] if nuevas
+                   else conv.variar("en_vez_de_repetir", opciones)]
         quitadas = len(lineas)
 
     if quitadas:
