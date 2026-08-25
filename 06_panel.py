@@ -62,6 +62,7 @@ class Sistema:
         self.redactor = cargar("07_redactor.py", "redactor")
         self.conversar = cargar("08_conversar.py", "conversar")
         self.aprender = cargar("09_aprender.py", "aprender")
+        self.canales = cargar("11_canales.py", "canales")
         self.config_llm = self.conversar.leer_env()
 
         print("Cargando el índice y el modelo (una sola vez)...")
@@ -988,6 +989,31 @@ class Handler(BaseHTTPRequestHandler):
                 # respuesta nueva haga que otras preguntas dejen de necesitarte.
                 SISTEMA.veredicto_mesa.clear()
                 return self._json(res)
+
+            if ruta == "/api/correo":
+                # Un correo entero de respuesta. La busqueda es la MISMA que la
+                # del chat y el guardarrail de precio tambien: lo unico que
+                # cambia es la forma, que la pone 11_canales.py.
+                correo = {"asunto": (cuerpo.get("asunto") or "").strip(),
+                          "cuerpo": (cuerpo.get("cuerpo") or "").strip(),
+                          "quien": cuerpo.get("quien") or "",
+                          "empresa": cuerpo.get("empresa") or ""}
+                if not correo["cuerpo"]:
+                    return self._json({"error": "pega el correo del cliente"}, 400)
+                texto = SISTEMA.canales.texto_de_busqueda(
+                    correo, SISTEMA.buscador, SISTEMA.buscar_mod.normalizar)
+                # Un correo trae siempre matricula o bastidor, asi que el coche
+                # SI esta identificado. Es la diferencia con el primer WhatsApp.
+                identificado = bool(SISTEMA.redactor.detectar_matricula(
+                    correo["asunto"] + " " + correo["cuerpo"]))
+                d = SISTEMA.consultar(texto, coche_identificado=identificado,
+                                      registrar=False)
+                salida = SISTEMA.canales.componer_email(d, correo)
+                salida["busqueda"] = {"consulta_destilada": texto,
+                                      "decision": d["decision"],
+                                      "porque": d["porque"],
+                                      "identificado": identificado}
+                return self._json(salida)
 
             if ruta == "/api/descartar":
                 # Sacar algo de la mesa NO es ensenarselo al bot: descartar no

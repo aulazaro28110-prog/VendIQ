@@ -23,6 +23,7 @@
       <a href="#cliente">El chat</a>
       <a href="#mesa">Ofertas</a>
       <a href="#tumesa">Tu mesa</a>
+      <a href="#canales">Canales</a>
       <a href="#informe">El informe</a>
       <a href="#letra">La letra pequeña</a>
     </div>
@@ -325,6 +326,56 @@
     <div id="mesa-grupos"></div>
   </section>
 
+  <!-- ======================================================== canales -->
+  <section class="bloque" id="canales">
+    <p class="eyebrow">Tres sitios, un solo bot</p>
+    <h2>Gmail y Wallapop</h2>
+    <p class="intro">
+      Un desguace no vende solo por WhatsApp. Lo que cambia de un canal a otro es
+      la <strong>forma</strong>, y solo la forma: un WhatsApp son tres lineas y un
+      tuteo, un correo es una carta con todo dentro. Lo que no cambia es el fondo
+      — el precio sigue necesitando saber de que coche es la pieza, venga la
+      pregunta por donde venga.
+    </p>
+    <p class="intro nota-dura">
+      Wallapop no tiene redactor propio a proposito: tiene la misma forma que
+      WhatsApp y lo que cambia es <strong>quien escribe</strong>. Se comprueba con
+      20 conversaciones incomodas —el que regatea seis veces, el que ensena la
+      captura de una transferencia que no existe— y lo que se mide alli no es si
+      acierta, es si aguanta.
+    </p>
+
+    <div class="carta">
+      <h3>Pega un correo y mira la respuesta</h3>
+      <p class="nota">La busqueda que corre por debajo es la misma que la del
+        chat. Debajo sale la consulta destilada: lo que queda del correo cuando
+        se le quitan las ochenta palabras de cortesia que hunden la busqueda.</p>
+
+      <div class="correo-form">
+        <label>Asunto
+          <input type="text" id="correo-asunto" placeholder="Consulta disponibilidad">
+        </label>
+        <div class="rejilla-2">
+          <label>Quien escribe
+            <input type="text" id="correo-quien" placeholder="Javier Ruiz">
+          </label>
+          <label>Empresa (vacio si es un particular)
+            <input type="text" id="correo-empresa" placeholder="Talleres Motor Sur">
+          </label>
+        </div>
+        <label>Cuerpo del correo
+          <textarea id="correo-cuerpo" rows="9"></textarea>
+        </label>
+        <div class="pie-acciones">
+          <button class="boton" id="btn-correo">Redactar la respuesta</button>
+          <button class="boton sutil" id="btn-correo-ejemplo">Poner un ejemplo</button>
+        </div>
+      </div>
+
+      <div id="correo-salida"></div>
+    </div>
+  </section>
+
   <!-- ========================================================= faltan -->
   <section class="bloque" id="faltan">
     <p class="eyebrow">Inteligencia de compra</p>
@@ -619,5 +670,6 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
 <script src="chat.js"></script>
 <script src="actividad.js"></script>
 <script src="mesa.js"></script>
+<script src="canales.js"></script>
 </body>
 </html>

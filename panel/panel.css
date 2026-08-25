@@ -480,3 +480,28 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
 }
 .grupo-mesa details summary:hover{color:var(--tinta)}
 .grupo-mesa details .duda{padding-left:0;padding-right:0}
+
+/* ------------------------------------------------------------- canales */
+.correo-form{display:flex;flex-direction:column;gap:14px;margin:18px 0 22px}
+.correo-form label{display:flex;flex-direction:column;gap:6px;
+  font-size:12px;color:var(--tinta-2);letter-spacing:.02em}
+.correo-form input,.correo-form textarea{
+  background:var(--carta-alta);border:1px solid var(--borde-vivo);
+  border-radius:10px;padding:10px 12px;color:var(--tinta);
+  font:14px/1.55 var(--ui);resize:vertical}
+.correo-form textarea{font-family:var(--mono);font-size:12.5px}
+.correo-form input:focus-visible,.correo-form textarea:focus-visible{
+  outline:2px solid var(--cian);outline-offset:-1px}
+
+.correo-cab{display:flex;align-items:center;gap:11px;flex-wrap:wrap;
+  padding-bottom:12px;border-bottom:1px solid var(--borde)}
+/* El correo se lee como un correo: monoespaciado y con sus saltos de linea.
+   Reflowearlo como parrafo HTML lo haria parecer otra cosa. */
+.correo-cuerpo{white-space:pre-wrap;font:13px/1.7 var(--ui);color:var(--tinta);
+  margin:16px 0 0;padding:0;background:none;overflow-x:auto}
+.correo-traza{margin-top:22px;padding-top:16px;border-top:1px solid var(--borde)}
+.correo-traza h4{margin:0 0 10px;font-size:12px;color:var(--tinta-2);
+  text-transform:uppercase;letter-spacing:.08em}
+.correo-traza .regla{display:flex;gap:10px;align-items:baseline;
+  margin-bottom:7px;flex-wrap:wrap}
+.correo-traza .regla-porque{font-size:12.5px;color:var(--tinta-3);flex:1;min-width:220px}

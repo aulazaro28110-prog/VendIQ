@@ -322,7 +322,18 @@ class Buscador:
         # "cerradura puerta delantera" es una cerradura, no una puerta.
         # Sin esta regla el buscador contestaba con un MOTOR DE ARRANQUE a quien
         # pedía una CENTRALITA MOTOR, porque la palabra 'motor' está en los dos.
-        nucleo = next((p for p in secuencia if p in self.tipos_conocidos), None)
+        # Y no vale cualquier aparición: si la palabra reconocida va detrás de un
+        # "de", es COMPLEMENTO de otra cosa, no el núcleo. "Aceite de motor" no
+        # es un motor — pero como "aceite" no está en el catálogo y "motor" sí,
+        # la versión anterior lo daba por un motor y ofrecía un MOTOR DE ARRANQUE
+        # a quien pedía aceite 5W30. Lo mismo con "filtro de aire".
+        #
+        # Es la misma gramática que ya usa la regla de arriba, aplicada al revés:
+        # allí el núcleo va delante y manda; aquí, si delante hay una palabra que
+        # no conocemos, lo que manda es esa — y no la tenemos.
+        nucleo = next((p for i, p in enumerate(secuencia)
+                       if p in self.tipos_conocidos
+                       and not (i > 0 and secuencia[i - 1] == "de")), None)
 
         # EL NOMBRE COMPLETO manda sobre el núcleo. "Motor completo" y "Motor de
         # arranque" comparten núcleo ('motor') y son piezas que no se parecen en
@@ -345,6 +356,32 @@ class Buscador:
 
         candidatas = np.ones(len(self.items), dtype=bool)
         if not (marcas_pedidas or tipos_pedidos or modelos_pedidos or nombre_pedido):
+            return candidatas
+
+        # NOMBRA EL COCHE PERO NINGUNA PIEZA QUE LLEVEMOS: fuera todas las fichas.
+        #
+        # Sin esta regla, "pastillas de freno de SEAT Ibiza" devolvía un MÓDULO
+        # ELECTRÓNICO de SEAT Ibiza con 0,561, por encima del umbral de 0,50: la
+        # marca y el modelo solos empujaban la puntuación, y como "pastillas" no
+        # está en el vocabulario del catálogo, no filtraba nada. Medido sobre los
+        # ocho correos que piden cosas que no vendemos, cuatro recibían otra pieza
+        # del coche correcto — que es exactamente el error que este sistema
+        # existe para no cometer.
+        #
+        # La versión anterior no filtraba a propósito, para rescatar al cliente
+        # que escribe "generador" en vez de "alternador". Se midió si se podía
+        # distinguir un sinónimo de una pieza que no vendemos, y NO se puede: el
+        # peor sinónimo saca 0,575 contra el catálogo y el mejor no-vendemos saca
+        # 0,733. Se solapan. Y la regla del negocio la zanja: el cliente da
+        # siempre el nombre concreto de la pieza, así que si no reconocemos
+        # ninguno, no es que lo haya dicho de otra manera — es que no lo tenemos.
+        #
+        # Vale igual para el que no nombra pieza ninguna ("¿tienes algo para un
+        # Golf?"). Ahí tampoco hay nada que ofrecer: hay que preguntar cuál.
+        if (marcas_pedidas or modelos_pedidos) and not (nucleo or nombre_pedido):
+            for i, item in enumerate(self.items):
+                if item["tipo"] == "inventario":
+                    candidatas[i] = False
             return candidatas
 
         for i, item in enumerate(self.items):
