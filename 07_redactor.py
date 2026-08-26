@@ -507,6 +507,84 @@ def rompe_el_estilo(lineas):
     return None
 
 
+# Palabras que el bot NO puede decir por su cuenta. Rebajar es una decisión de
+# negocio de Álvaro (política PRECIOS Y DESCUENTOS): el redactor determinista
+# nunca las escribe, así que si aparecen es que las ha puesto el modelo.
+DICE_DESCUENTO = re.compile(r"descuent|rebaj|oferta especial|precio especial", re.I)
+
+# Preguntarle al CLIENTE a quién hay que pasarle su caso. Es la pregunta que
+# nunca se hace: escalar es una decisión del sistema, y el cliente no tiene por
+# qué saber quién trabaja aquí.
+PREGUNTA_A_QUIEN = re.compile(
+    r"a qui[ée]n\b|remitir|remito|derivar|derivo|con qui[ée]n\b", re.I)
+
+# Cómo se nombra una VARIANTE de coche: la motorización ('2.0 TDI', '1.6 HDi') y
+# el año. Son justo los dos datos que distinguen una ficha de su hermana, y por
+# eso son los que no puede introducir quien solo debía cambiar la forma.
+VARIANTE_COCHE = re.compile(
+    r"\b\d[.,]\d\s*[a-z]{2,5}\b|\b(?:19|20)\d{2}\b", re.I)
+
+
+def rompe_el_guion(lineas_llm, borrador, conv, dicho_cliente="", marcas=()):
+    """Qué ha INTRODUCIDO el modelo que no estaba en el borrador, o None.
+
+    Las otras guardas (`rompe_el_estilo`, `rompe_la_matricula`,
+    `rompe_la_identificacion`) miran el texto final contra las reglas. Ésta mira
+    otra cosa: la DIFERENCIA entre lo que el código decidió decir y lo que el
+    modelo escribió. La regla es una sola y es fácil de defender:
+
+        el modelo puede REFORMULAR el borrador, pero no INTRODUCIR nada.
+
+    Por eso todas las comprobaciones son «aparece en el LLM y NO en el borrador».
+    Reformular no dispara nada; añadir, sí. Se hace aquí y no pidiéndoselo por
+    favor en el prompt porque pedirlo ya se intenta y no basta: son cuatro cosas
+    medidas de verdad sobre las conversaciones, no un miedo teórico.
+
+    `dicho_cliente` es lo que el cliente ha escrito en el hilo, y `marcas` el
+    vocabulario de marcas del catálogo. Los dos entran por parámetro para que
+    este módulo siga sin depender del buscador.
+    """
+    if not lineas_llm:
+        return None
+    llm = "\n".join(lineas_llm)
+    base = "\n".join(borrador or [])
+    suyo = (base + "\n" + (dicho_cliente or ""))     # lo ya dicho por alguien
+
+    # 1. REBAJAR NO LO DECIDE EL BOT. Medido: el modelo ofrecía «descuento» en
+    #    una respuesta cuyo borrador cedía el transporte, que es la jugada real.
+    if DICE_DESCUENTO.search(llm) and not DICE_DESCUENTO.search(base):
+        return ("dice descuento/rebaja y el borrador no: rebajar lo decide "
+                "Álvaro, no el redactor")
+
+    # 2. NO SE PIDE DOS VECES EL MISMO DATO. Si ya tenemos la matrícula y el
+    #    borrador no la pedía, volver a pedirla es decirle al cliente que no se
+    #    le ha leído — y ése es el turno en el que deja de escribir.
+    if conv is not None and getattr(conv, "matricula", None):
+        if IDENTIFICA.search(llm) and not IDENTIFICA.search(base):
+            return (f"vuelve a pedir la matrícula y ya la tenemos "
+                    f"({conv.matricula}); el borrador no la pedía")
+
+    # 3. NO SE INVENTA EL COCHE. Ofrecer un «A4 3.0 TDI» a quien tiene un 2.0 es
+    #    afirmar que encaja algo que nadie ha comprobado. Vale cualquier variante
+    #    que ya estuviera en el borrador o que haya dicho el cliente; lo que no
+    #    vale es que aparezca aquí por primera vez.
+    for trozo in VARIANTE_COCHE.findall(llm):
+        if trozo.lower() not in suyo.lower():
+            return (f"nombra una variante de coche que no estaba ni en el "
+                    f"borrador ni en lo que dijo el cliente ({trozo.strip()})")
+    for marca in marcas or ():
+        if re.search(rf"\b{re.escape(marca)}\b", llm, re.I) \
+                and not re.search(rf"\b{re.escape(marca)}\b", suyo, re.I):
+            return (f"nombra una marca que nadie ha dicho ({marca})")
+
+    # 4. A QUIÉN SE ESCALA NO SE LE PREGUNTA AL CLIENTE. Medido: «¿a quién debo
+    #    remitirlo?». El código ya sabe a quién; el cliente no tiene por qué.
+    if PREGUNTA_A_QUIEN.search(llm) and not PREGUNTA_A_QUIEN.search(base):
+        return "le pregunta al cliente a quién escalar: eso lo decide el sistema"
+
+    return None
+
+
 # Señalar una pieza de la que ya se ha hablado, sin volver a nombrarla. En una
 # conversación de taller es constante: se piden tres cosas y luego se habla de
 # «la otra» o «el que te dije antes». Sin esto, ese mensaje se busca a ciegas.
@@ -872,6 +950,13 @@ class Conversacion:
         # Fichas cuya descripción entera ya se le ha soltado. Repetirla es lo que
         # más delata a un bot.
         self.descritas = set()
+
+        # Fichas identificadas SIN duda: el cliente dio la referencia OEM o el
+        # número de stock exactos. Es la única identificación inequívoca que hay
+        # —la matrícula no se resuelve y el nombre de la pieza no distingue una
+        # hermana de otra—, y por eso decide si el cierre puede darse por bueno o
+        # tiene que comprobar antes que la pieza encaja.
+        self.identificadas_por_referencia = set()
 
         # Si el cliente ha corregido el coche en este mensaje: (lo que había, lo
         # que hay). Lo rellena el panel, que es quien reconoce los vehículos.
@@ -1311,10 +1396,47 @@ def _con_pieza(consulta, conv, reglas, salida):
     return lineas
 
 
-def _sin_pieza(conv, reglas):
+def _frase_equivalente(equivalentes, pedir_referencia=True):
+    """«…pero sí un compresor de A4 de otra motorización», o None si no hay.
+
+    `pedir_referencia` se apaga cuando la línea siguiente ya va a pedir la
+    matrícula: pedir los dos datos en el mismo mensaje rompe «un dato por
+    mensaje» (rol §8.3), y el que hace falta primero manda.
+
+    Lo que NO dice es tan importante como lo que dice. No lleva motor ni año —los
+    dos datos que distinguen una ficha de su hermana— ni precio, y no afirma que
+    encaje: ofrece MIRAR si encaja, que es otra cosa. Decirlo con el motor puesto
+    sería ofrecer esa ficha concreta como si fuera la del cliente, que es
+    exactamente lo que el guardarraíl impide en la ruta normal.
+    """
+    if not equivalentes:
+        return None
+    meta = equivalentes[0]
+    pieza = (meta.get("pieza") or "").strip().lower()
+    coche = " ".join(x for x in (meta.get("marca"), meta.get("modelo")) if x)
+    if not pieza or not coche:
+        return None
+    g = _genero(pieza)
+    cuantas = ("otra motorización" if len(equivalentes) == 1
+               else "otras motorizaciones")
+    frase = (f"No tengo {_art(g)} {pieza} exact{_o(g)} de tu {coche}, pero sí "
+             f"{'una' if g == 'f' else 'uno'} de {cuantas}.")
+    if pedir_referencia:
+        frase += " Si me pasas la referencia de la pieza, miro si te encaja."
+    return frase
+
+
+def _sin_pieza(conv, reglas, equivalentes=()):
     """Sin matrícula NO se dice 'no la tengo': no se puede saber. Regla de negocio:
     primero se identifica la pieza con la matrícula; solo con ella se afirma que
-    no la hay."""
+    no la hay.
+
+    `equivalentes` son casi-encajes sin confirmar (misma pieza, mismo coche, otra
+    variante). Si los hay, el «no» los menciona en la misma frase en vez de
+    soltar un no seco y guardárselos para cuando el cliente insista.
+    """
+    casi = _frase_equivalente(equivalentes)
+
     # CASO 1: ya tenemos la matrícula -> la pieza está identificada y aun así no
     # aparece. Ahí sí es legítimo decir que no la tenemos y ofrecer buscarla.
     if conv.matricula:
@@ -1325,6 +1447,21 @@ def _sin_pieza(conv, reglas):
         reglas.append(("no se ofrece una parecida",
                        "ninguna ficha supera el umbral: antes que colar una pieza "
                        "hermana, se dice que no"))
+        if casi:
+            # Sustituye a la línea de «te la busco» en vez de sumarse: tres líneas
+            # son el máximo, y de las dos ésta es la que da un paso hoy. Sigue sin
+            # afirmar que la equivalente encaje.
+            lineas = [casi]
+            reglas.append(("el «no» enseña lo que sí hay",
+                           "hay la misma pieza del mismo modelo en otra variante: se "
+                           "menciona sin afirmar que encaje y sin precio, y se pide "
+                           "la referencia para comprobarlo"))
+            lineas.append(f"Y con la matrícula que me pasaste ({conv.matricula}) "
+                          f"sigo buscándote la tuya.")
+            reglas.append(("memoria de conversación",
+                           f"ya dio la matrícula ({conv.matricula}): no se le vuelve "
+                           f"a pedir"))
+            return lineas
         lineas.append(f"Con la matrícula que me pasaste ({conv.matricula}) te la "
                       f"busco; si la localizo, en 24-48 h la tienes.")
         reglas.append(("memoria de conversación",
@@ -1334,6 +1471,17 @@ def _sin_pieza(conv, reglas):
 
     # CASO 2: NO hay matrícula -> NO se afirma que no la haya. Sin identificar la
     # pieza exacta no se puede saber. SIEMPRE se pide la matrícula primero.
+    #
+    # El casi-encaje sí se puede mencionar aunque no haya matrícula: decir que
+    # existe la misma pieza del mismo modelo en otra variante no afirma nada sobre
+    # el coche del cliente. Va delante, y la petición del dato queda detrás.
+    casi_sin_pedir = _frase_equivalente(equivalentes, pedir_referencia=False)
+    cabecera = [casi_sin_pedir] if casi_sin_pedir else []
+    if cabecera:
+        reglas.append(("el «no» enseña lo que sí hay",
+                       "hay la misma pieza del mismo modelo en otra variante: se "
+                       "menciona sin afirmar que encaje y sin precio"))
+
     if "matricula" in conv.datos_pedidos:
         # Ya se la pedí y no la ha dado. No se repite la misma frase (delata al bot):
         # se insiste de otra forma y se ofrece la alternativa de la referencia vieja.
@@ -1346,7 +1494,7 @@ def _sin_pieza(conv, reglas):
         reglas.append(("no repite la misma frase",
                        "es la segunda vez que hace falta el mismo dato: se insiste "
                        "de otra forma y se ofrece una alternativa"))
-        return lineas
+        return cabecera + lineas
 
     lineas = ["Para decirte si la tengo necesito la matrícula: con eso identifico la "
               "pieza exacta que monta tu coche y no te mando la que no es."]
@@ -1356,7 +1504,7 @@ def _sin_pieza(conv, reglas):
                    "primero (política CÓMO IDENTIFICAR LA PIEZA / rol §7)"))
     reglas.append(("un dato por mensaje",
                    "se pide la matrícula y ningún otro dato (rol §8.3)"))
-    return lineas
+    return cabecera + lineas
 
 
 SEGUIMIENTO = ("estado", "kilometros", "precio otra vez", "compatibilidad",
@@ -1519,6 +1667,16 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     mensaje_cliente = consulta.get("pregunta", "")
     intencion = detectar_intencion(mensaje_cliente)
 
+    # Qué fichas han quedado identificadas SIN duda en este turno. Lo dice el
+    # buscador en el motivo del precio: una referencia OEM o un número de stock
+    # exactos no se parecen a nada, o coinciden o no. Se acumula en la
+    # conversación porque el cierre llega turnos después, cuando el mensaje ya no
+    # lleva el código («sí, me lo quedo»), y ahí sigue haciendo falta saberlo.
+    for _r in (consulta.get("resultados") or []):
+        if "referencia exacta" in ((_r.get("precio_cliente") or {}).get("motivo") or ""):
+            conversacion.identificadas_por_referencia.add(
+                str((_r.get("meta") or {}).get("id") or ""))
+
     # UN «SÍ» ES UNA VENTA, pero solo si el bot acaba de preguntar. «Sí» no
     # significa nada por sí solo: significa que sí a lo último que se preguntó, y
     # en «si no me vale la puedo devolver» ni siquiera es un sí.
@@ -1658,7 +1816,13 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     # ---------------------- §18 · corrige algo que no es el coche entero
     elif (CORRIGE.search(mensaje_cliente or "")
           and not getattr(conversacion, "corregido", None)
-          and conversacion.ultima_pieza):
+          and conversacion.ultima_pieza
+          # …y la venta no está cerrada. Corregir un detalle es algo que se hace
+          # MIENTRAS se identifica la pieza. Después de comprar, un «no hace
+          # falta, gracias» empieza por «no» y no corrige nada: es una coletilla.
+          # Sin esta línea, esa despedida borraba la pieza vendida y contestaba
+          # «pásame la matrícula» a alguien que ya tenía su compra hecha.
+          and conversacion.estado not in (CERRADA, POSVENTA)):
         # Corrige un detalle —«no, es gasolina, no diésel», «el 320d no, el 318d»—
         # sin cambiar de coche. El bot no puede saber cuál de las quince fichas
         # pasa a ser la buena con ese dato suelto, y adivinar aquí es exactamente
@@ -1937,11 +2101,28 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         # que acaba de comprar recibía un «dime de qué pieza me hablas».
         conversacion.cumplir_promesas()
         conversacion.prometer("prepararle la pieza y avisarle cuando salga", meta)
+
+        # COMPROBAR LA COMPATIBILIDAD ANTES DE CERRAR. Solo una referencia OEM o
+        # un número de stock exactos identifican la pieza sin duda; si se ha
+        # llegado hasta aquí por el nombre y la matrícula, que encaje sigue sin
+        # estar comprobado. Cerrar callándoselo es vender a ciegas, así que el
+        # paso se dice en voz alta y va pegado a la frase de entrega para no
+        # gastar una línea de las tres.
+        inequivoca = (str(meta.get("id") or "")
+                      in conversacion.identificadas_por_referencia)
+        compat = ("" if inequivoca
+                  else "Antes de que salga comprobamos que encaja con tu coche. ")
+        if not inequivoca:
+            reglas.append(("compatibilidad antes de cerrar",
+                           "la pieza no se identificó por referencia exacta: el "
+                           "cierre incluye comprobar que encaja, no se da por hecho"))
+
         if ya_estaba:
             lineas.append(f"Sí, {_pron(g)} tengo apartad{'a' if g == 'f' else 'o'} "
                           f"a tu nombre desde antes.")
-            lineas.append("Dime dónde la quieres y la preparo."
-                          if g == "f" else "Dime dónde lo quieres y lo preparo.")
+            lineas.append(compat + ("Dime dónde la quieres y la preparo."
+                                    if g == "f" else
+                                    "Dime dónde lo quieres y lo preparo."))
             reglas.append(("la venta ya estaba cerrada",
                            "vuelve a confirmar algo que ya estaba hecho: se le "
                            "reconoce en vez de repetirle el mismo mensaje"))
@@ -1950,14 +2131,15 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
             # lo mando o te pasas tú?» es no haberle leído. Se le confirma el envío
             # y se le pide lo único que falta de verdad: dónde.
             lineas.append(f"Hecho, {_pron(g)} aparto a tu nombre.")
-            lineas.append("Te lo preparo para envío, ¿a qué dirección te lo mando?")
+            lineas.append(compat + "Te lo preparo para envío, ¿a qué dirección "
+                                   "te lo mando?")
             reglas.append(("ya ha dicho cómo lo quiere",
                            "pide el envío en el mismo mensaje: no se le vuelve a "
                            "preguntar, se le pide la dirección"))
         else:
             lineas.append(f"Hecho, {_pron(g)} aparto a tu nombre.")
-            lineas.append(f"¿Te {_pron(g)} mandamos al taller o te pasas tú a por "
-                          f"{'ella' if g == 'f' else 'él'}?")
+            lineas.append(compat + f"¿Te {_pron(g)} mandamos al taller o te pasas "
+                                   f"tú a por {'ella' if g == 'f' else 'él'}?")
         reglas.append(("cierre de venta",
                        "el cliente acepta: se reserva y se ofrece la entrega, que es "
                        "el siguiente paso real (así lo escribe Álvaro)"))
@@ -2067,10 +2249,21 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         lineas += _con_pieza(consulta, conversacion, reglas, salida)
 
     elif decision == "NO DISPONIBLE":
-        lineas += _sin_pieza(conversacion, reglas)
+        # Las equivalentes vienen de la búsqueda como campo aparte y solo en este
+        # caso: son casi-encajes sin confirmar, no fichas ofrecibles.
+        lineas += _sin_pieza(conversacion, reglas,
+                             consulta.get("equivalentes") or ())
 
     # -------------------------------------------------------------- política
-    elif decision == "RESPONDE":
+    # Un SALUDO A SECAS no es una consulta de condiciones. «Buenos días» se
+    # parece lo justo a la política de envíos para superar su umbral, y la rama
+    # de política iba antes que la de saludo: el cliente decía «buenos días» y
+    # recibía el párrafo de plazos de Canarias sin haber preguntado nada.
+    # No se arregla subiendo el umbral —el umbral está calibrado y esto no es un
+    # problema de búsqueda— sino aquí, que es donde se elige qué contestar.
+    elif decision == "RESPONDE" and not (
+            intencion in ("saludo", "agradecimiento")
+            and conversacion.turnos <= 1 and not hay_pieza):
         respuesta = _politica(consulta, conversacion, reglas)
         if respuesta:
             lineas += respuesta

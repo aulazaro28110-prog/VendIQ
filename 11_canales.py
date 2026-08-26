@@ -40,6 +40,7 @@ comprobar que el redactor que ya existe aguanta sin ceder y sin perder los
 modales. Inventar un redactor por canal habría sido código de adorno.
 """
 
+import os
 import re
 from pathlib import Path
 
@@ -230,6 +231,25 @@ def _describir_ficha(meta):
     return " ".join(trozos)
 
 
+def enlace_de_stock(id_stock):
+    """La URL de la ficha de una pieza, o None si no hay número de stock.
+
+    Apunta SIEMPRE a una ficha real del catálogo, por su número: no se construye
+    un enlace «probable». Si no hay id, no hay enlace.
+
+    La base sale de VENDIQ_BASE_URL y por defecto es el panel local. En local el
+    enlace abre de verdad, pero solo desde esta máquina —es un enlace de demo—;
+    se vuelve un enlace que el taller puede abrir cuando VendIQ esté desplegado y
+    se arranque con esa variable apuntando al dominio público. Es la misma
+    variable que usa 06_panel.py, para que el día del despliegue no haya dos
+    sitios que tocar.
+    """
+    if not id_stock and id_stock != 0:
+        return None
+    base = os.environ.get("VENDIQ_BASE_URL", "http://localhost:8420").rstrip("/")
+    return base + "/stock/" + str(id_stock)
+
+
 def componer_email(consulta, correo, politicas=None):
     """Un correo entero de respuesta, a partir de lo que ya decidió la búsqueda.
 
@@ -275,6 +295,22 @@ def componer_email(consulta, correo, politicas=None):
             reglas.append(("precio autorizado",
                            "la búsqueda lo dio por publicable: " +
                            str(veredicto.get("motivo", ""))))
+
+            # -------------------------------------------------- el enlace
+            # SOLO con identificación inequívoca. Un enlace es más fuerte que una
+            # frase: quien lo abre ve UNA ficha con su precio y da por hecho que
+            # es la suya. Si al correo no llegó una referencia OEM o un número de
+            # stock exactos, no sabemos que lo sea, y entonces no hay enlace: se
+            # le pide la referencia, que es lo que desbloquea todo lo demás.
+            if "referencia exacta" in str(veredicto.get("motivo", "")):
+                enlace = enlace_de_stock(meta.get("id"))
+                if enlace:
+                    cuerpo.append("Puede ver la ficha con la disponibilidad y el "
+                                  "precio aquí: " + enlace)
+                    reglas.append(("enlace a la ficha de stock",
+                                   "la pieza está identificada por referencia "
+                                   "exacta: el enlace apunta a esa ficha del "
+                                   "catálogo y a ninguna otra"))
         else:
             # Aquí está la parte que importa: el correo NO se inventa un importe
             # ni se lo salta en silencio. Dice por qué no lo lleva, que es lo

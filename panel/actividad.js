@@ -366,10 +366,18 @@ function pintarRecorrido(a, motor) {
   const caja = crear('div', 'flujo');
 
   /* --------------------------------------------------- 1 · por dónde entra */
+  /* Gmail está al mismo nivel que WhatsApp y por eso se pinta igual: la pestaña
+     de correo pasa el mensaje por la MISMA búsqueda y el MISMO cerrojo del
+     precio, y devuelve la respuesta entera. Pintarlo en gris decía que el canal
+     no existe, y existe.
+     Lo que ninguno de los dos es: una integración externa en vivo. No hay
+     bandeja de Gmail ni IMAP; son canales del panel sobre el mismo motor, y
+     'conectado' describe eso. Por eso el pie dice 'en el panel'. */
   caja.append(bandaFlujo(1, 'Entra por', 'cuatro', [
     nodoFlujo({titulo: 'WhatsApp', cifra: miles(a.resumen.conversaciones),
-               pie: 'el único conectado', tono: 'var(--cian)'}),
-    nodoFlujo({titulo: 'Gmail', pie: 'no conectado', apagado: true}),
+               pie: 'conectado en el panel', tono: 'var(--cian)'}),
+    nodoFlujo({titulo: 'Gmail', pie: 'correo, conectado en el panel',
+               tono: 'var(--cian)'}),
     nodoFlujo({titulo: 'Wallapop', pie: 'no conectado', apagado: true}),
     nodoFlujo({titulo: 'Otras plataformas', pie: 'no conectado', apagado: true}),
   ]));
