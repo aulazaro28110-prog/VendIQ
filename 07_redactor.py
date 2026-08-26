@@ -56,7 +56,7 @@ import unicodedata
 #      taller". Ceder transporte en vez de dinero.
 #   5. CADA MENSAJE TERMINA MOVIENDO LA VENTA: una pregunta, nunca un punto final.
 
-PRESENTACION = "Buenas, soy el asistente de Desguaces Madrid Norte."
+PRESENTACION = "¡Hola! Soy el asistente de Desguaces Madrid Norte, encantado de ayudarte."
 SALUDOS_CONOCIDO = ("Buenas {nombre}, ¿qué tal?", "Buenas {nombre}, ¿cómo vas?")
 
 GARANTIA = "Como todos nuestros productos, con un año de garantía."
@@ -625,6 +625,22 @@ CORRIGE = re.compile(
 # Salio de un fallo propio y feo: la primera tabla mandaba "pastillas de freno o
 # discos de freno" y este desguace NO LLEVA frenos. El bot estaba ofreciendo algo
 # que no existe, que es exactamente lo que el sistema entero se dedica a impedir.
+# DIAGNOSTICO POR SINTOMAS: APAGADO POR DECISION DE NEGOCIO
+# ---------------------------------------------------------
+# Un desguace vende UNA cosa: repuestos usados desmontados de vehiculo. Quien
+# decide que hay que cambiar en un coche es el taller del cliente, que lo tiene
+# delante y en un elevador — no un asistente leyendo "hace un ruido raro".
+#
+# La tabla se queda escrita a proposito, y no por nostalgia: 11 de sus 12 filas
+# apuntan a piezas que este desguace SI vende (radiador, turbo, alternador,
+# elevalunas, carter...), asi que si algun dia se decide volver a traducir
+# averias a piezas, el trabajo esta hecho y medido. Encender esto es cambiar
+# False por True, y nada mas.
+#
+# La que estaba mal era la primera fila: ruido al frenar -> pastillas y discos,
+# que son consumibles de mecanica rapida y aqui no se venden ni se van a vender.
+DIAGNOSTICAR = False
+
 TIPOS_EN_CATALOGO = set()
 
 # Cada entrada son GRUPOS de palabras que tienen que aparecer todos, no una frase
@@ -982,6 +998,27 @@ def _describir_corto(meta):
 # una matrícula, una referencia— sí puede repetirse: si el cliente vuelve a
 # preguntar cuánto vale, la respuesta correcta es el precio otra vez.
 LLEVA_UN_DATO = re.compile(r"\d")
+
+# Muletillas, acuses y ruido: mensajes SIN contenido que no deben ir a una persona.
+_CORTESIA = {"vale","ok","okey","oka","okok","aja","dale","ya","ah","aham","sip","nop",
+             "👍","👌","🙏","gracias","genial","perfecto"}
+def _es_cortesia(mensaje):
+    """True si el mensaje es un saludo/muletilla/ruido sin pieza ni pregunta real.
+
+    Un bot que escala un "👍", un "vale" o un "¿hay alguien?" a una persona parece
+    roto. Aquí se detectan para responder y reconducir, nunca para escalar.
+    """
+    t = _sin_tildes((mensaje or "").strip().lower())
+    tt = t.replace("?","").replace("!","").replace(".","").replace(",","").strip()
+    if not tt:              # solo signos, emojis o espacios
+        return True
+    if len(tt) <= 2:        # "ok", "ya", "👍", "??"
+        return True
+    if tt in _CORTESIA:
+        return True
+    if any(k in t for k in ("hay alguien","sigues ahi","estas ahi","me lees","holaa")):
+        return True
+    return False
 
 
 def _OTRA_MANERA_DE_DECIRLO(conv):
@@ -1537,14 +1574,27 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     # Las reglas duras se saltan este atajo a propósito: si el cliente insiste en
     # que le mandes la pieza sin pagar, la respuesta correcta es repetirle la
     # condición, no un "ya se lo he pasado a Álvaro" que suena a que cede.
+    _cierre_con_pieza = intencion == "cierre" and conversacion.ultima_pieza
     if (conversacion.escalado
-            and intencion not in ("cierre", "consulta", "pide sin pagar",
-                                  "justificante")):
+            and intencion not in ("pide sin pagar", "justificante")
+            and not _cierre_con_pieza
+            and decision != "RESPONDE"):
+        # YA ESTÁ CON ÁLVARO Y EL CLIENTE SOLO ACUSA ("sí", "gracias", "vale",
+        # "otra vez"): no se reabre la conversación ni se le vuelve a pedir la
+        # pieza. Antes esto se colaba hasta el final de la cadena y el bot
+        # respondía "dime qué pieza necesitas" a alguien que ya esperaba a Álvaro,
+        # y ahí es donde el cliente deja de escribir. Un cierre con pieza sobre la
+        # mesa (querer comprar) y una pieza o política nuevas (decision RESPONDE)
+        # sí siguen adelante; el resto se acusa corto y se calla.
         escala = True
-        lineas.append("Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea.")
+        lineas += conversacion.variar("sigue_escalado", [
+            ["Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea."],
+            ["Sigue con Álvaro; en cuanto lo mire te escribe él mismo. 👍"],
+            ["Lo tiene Álvaro, cualquier cosa te contesta él directamente."],
+        ])
         reglas.append(("sigue escalado",
-                       "la conversación ya está con una persona: el bot no se "
-                       "vuelve a poner por delante"))
+                       "la conversación ya está con una persona: el bot acusa corto "
+                       "y no se vuelve a poner por delante ni reabre"))
 
     # ------------------------------------------------------- reglas duras
     # Ninguna de las dos las decide el bot. Repite la condición, no la discute, y
@@ -1654,29 +1704,49 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         # Y se dice «suele», nunca «es»: diagnosticar con certeza sin ver el coche
         # es lo que prohíbe §21 del prompt, y con razón — quien decide es el
         # taller. Aquí solo se le da un punto de partida para poder buscar.
-        posibles = pieza_por_sintoma(mensaje_cliente)
-        if posibles[0] == "__no_llevamos__":
-            # Se sabe qué le pasa al coche y este desguace no vende esa pieza.
-            # Decirlo es más útil que callarse: le ahorra el viaje y le deja el
-            # nombre de lo que tiene que buscar en otro sitio.
-            lista = " o ".join(posibles[1:3])
-            lineas.append(f"Eso suele venir de {lista}, y de eso no llevamos.")
-            lineas.append("Si te hace falta otra cosa del coche, dímelo y te la miro.")
-            reglas.append(("sabe el síntoma pero no lleva la pieza",
-                           f"el síntoma apunta a {lista}, que no está en el "
-                           f"catálogo: se dice en vez de ofrecerle otra cosa"))
+        # CON EL DIAGNOSTICO APAGADO la tabla sigue sirviendo, pero para otra
+        # cosa: para SABER que esto es una averia y no una pregunta. No se
+        # nombra ninguna pieza — solo se pregunta cual, que es lo que hay que
+        # preguntar. Sin esta rama, "cuando freno hace un ruido metalico" se
+        # lleva la POLITICA DE GARANTIA por parecido de palabras, y el bot le
+        # explica la garantia a alguien que le esta contando una averia. Se vio
+        # en cuanto se apago el interruptor.
+        if not DIAGNOSTICAR:
+            lineas.append(conversacion.variar("sintoma_sin_diagnostico", [
+                "Eso lo tiene que ver tu taller, que es quien lo tiene delante.",
+                "Para saber qué pieza es, mejor que lo mire tu mecánico.",
+                "Habría que verlo en el coche, y eso lo dice mejor tu taller.",
+            ]))
+            lineas.append("Cuando sepas qué pieza necesitas, dímela con la "
+                          "matrícula y te digo si la tengo y lo que vale.")
+            reglas.append(("no diagnostica averías",
+                           "el cliente describe un síntoma: un desguace vende "
+                           "pieza usada, no diagnostica. Se pregunta qué pieza "
+                           "en vez de contestarle con una política"))
         else:
-            lista = " o ".join(posibles[:2])
-            # SE APUNTA EN EL HILO. Sin esto, el turno siguiente —"es para un Audi
-            # A4"— buscaba arrastrando el mensaje del síntoma, que no nombra
-            # ninguna pieza, y devolvía cualquier cosa.
-            conversacion.pieza_pedida = posibles[0]
-            lineas.append(f"Eso suele venir de {lista}.")
-            lineas.append("Si me pasas la matrícula te digo cuál monta tu coche y "
-                          "lo que vale.")
-            reglas.append(("traduce el síntoma a una pieza",
-                           f"describe el problema y no la pieza: se le apunta a "
-                           f"{lista}, sin asegurar el diagnóstico"))
+            posibles = pieza_por_sintoma(mensaje_cliente)
+            if posibles[0] == "__no_llevamos__":
+                # Se sabe qué le pasa al coche y este desguace no vende esa pieza.
+                # Decirlo es más útil que callarse: le ahorra el viaje y le deja el
+                # nombre de lo que tiene que buscar en otro sitio.
+                lista = " o ".join(posibles[1:3])
+                lineas.append(f"Eso suele venir de {lista}, y de eso no llevamos.")
+                lineas.append("Si te hace falta otra cosa del coche, dímelo y te la miro.")
+                reglas.append(("sabe el síntoma pero no lleva la pieza",
+                               f"el síntoma apunta a {lista}, que no está en el "
+                               f"catálogo: se dice en vez de ofrecerle otra cosa"))
+            else:
+                lista = " o ".join(posibles[:2])
+                # SE APUNTA EN EL HILO. Sin esto, el turno siguiente —"es para un Audi
+                # A4"— buscaba arrastrando el mensaje del síntoma, que no nombra
+                # ninguna pieza, y devolvía cualquier cosa.
+                conversacion.pieza_pedida = posibles[0]
+                lineas.append(f"Eso suele venir de {lista}.")
+                lineas.append("Si me pasas la matrícula te digo cuál monta tu coche y "
+                              "lo que vale.")
+                reglas.append(("traduce el síntoma a una pieza",
+                               f"describe el problema y no la pieza: se le apunta a "
+                               f"{lista}, sin asegurar el diagnóstico"))
 
     # ------------------------------------------------ §24 · el enlace real
     elif intencion == "enlace":
@@ -1970,6 +2040,28 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                        f"por {meta.get('pieza', 'la pieza').lower()}, de la que se "
                        f"venía hablando"))
 
+    # ------------------------------------------------- venta ya cerrada
+    elif (conversacion.estado in (CERRADA, POSVENTA)
+          and not _otra_pieza
+          and (decision != "RESPONDE" or hay_pieza)):
+        # LA VENTA YA ESTÁ HECHA y el mensaje no pide una pieza nueva. Todo lo que
+        # tenía respuesta propia —seguimiento, plazo, dirección, recordar un dato,
+        # una política— ya lo han cogido las ramas de arriba. Si hemos llegado
+        # hasta aquí es un "vale", "genial", "no hace falta" o una coletilla: NO se
+        # reabre la identificación ni se re-ofrece lo vendido. Antes, el arrastre
+        # de contexto volvía a poner la pieza vendida sobre la mesa y el bot pedía
+        # otra vez la matrícula "para confirmar que encaja" de algo ya comprado.
+        # (decision != "RESPONDE" o hay_pieza) deja pasar una política de posventa
+        # —RESPONDE sin pieza— que sí hay que contestar, y frena el re-ofrecer.
+        lineas += conversacion.variar("cerrada_corto", [
+            ["¡Perfecto! Cualquier cosa me dices. 👍"],
+            ["Genial, queda todo apuntado por aquí."],
+            ["Hecho. Si te surge algo, aquí estoy."],
+        ])
+        reglas.append(("venta cerrada: no reabrir",
+                       "la venta ya está cerrada y el mensaje no trae una pieza "
+                       "nueva: se acusa corto y no se reidentifica ni se re-ofrece"))
+
     # ---------------------------------------------------------------- pieza
     elif decision == "RESPONDE" and hay_pieza:
         lineas += _con_pieza(consulta, conversacion, reglas, salida)
@@ -1998,6 +2090,11 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         lineas.append("A ti. Cualquier cosa me dices.")
         reglas.append(("cierre cordial", "no hay nada que buscar: no se fuerza venta"))
 
+    elif intencion == "saludo":
+        lineas.append("¡Aquí estoy! ¿Qué pieza necesitas y para qué coche?")
+        reglas.append(("saludo",
+                       "responde al saludo y reconduce a la pieza; un saludo nunca se escala"))
+
     # Ya se estaba hablando de una pieza y el mensaje no encaja en nada. No es un
     # cliente perdido: es uno que se lo está pensando. Volver a pedirle la matrícula
     # aquí es el error clásico del bot, y suena a que no te ha escuchado.
@@ -2017,8 +2114,19 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                        "no se entiende el mensaje pero había una pieza sobre la "
                        "mesa: se retoma sin volver a pedir datos ya dados"))
 
+    # Muletilla, acuse o "¿hay alguien?": se responde y se reconduce, NUNCA se
+    # escala. Un bot que manda a una persona un "👍" o un "vale" parece roto.
+    elif _es_cortesia(consulta.get("pregunta", "")):
+        lineas += conversacion.variar("cortesia", [
+            ["Aquí estoy 👍 Dime qué pieza buscas y para qué coche."],
+            ["Sin problema. ¿Qué pieza necesitas y para qué coche?"],
+            ["Cuando quieras. Dime la pieza y el coche y lo miro."],
+        ])
+        reglas.append(("mensaje de cortesía",
+                       "saludo/muletilla/ruido sin contenido real: se responde y se "
+                       "reconduce a la pieza, nunca se escala a una persona"))
+
     else:
-        escala = True
         if conversacion.matricula:
             lineas.append("Dime qué pieza necesitas y te digo si la tengo.")
             reglas.append(("memoria de conversación",
@@ -2031,9 +2139,9 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                 ["Dime la pieza y la matrícula y te lo confirmo en un momento."],
             ])
             conversacion.datos_pedidos.add("matricula")
-            reglas.append(("no se reconoce la consulta",
-                           "no hay pieza ni política clara: se piden los datos "
-                           "mínimos y lo mira una persona"))
+            reglas.append(("faltan datos para buscar",
+                           "no hay pieza clara todavía: se piden los datos mínimos "
+                           "y la conversación sigue con el asistente, sin escalar"))
 
     # -------------------------------------------------------------- urgencia
     if intencion == "prisa" and len(lineas) < 3:
