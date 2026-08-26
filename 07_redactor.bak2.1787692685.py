@@ -2040,28 +2040,6 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                        f"por {meta.get('pieza', 'la pieza').lower()}, de la que se "
                        f"venía hablando"))
 
-    # ------------------------------------------------- venta ya cerrada
-    elif (conversacion.estado in (CERRADA, POSVENTA)
-          and not _otra_pieza
-          and (decision != "RESPONDE" or hay_pieza)):
-        # LA VENTA YA ESTÁ HECHA y el mensaje no pide una pieza nueva. Todo lo que
-        # tenía respuesta propia —seguimiento, plazo, dirección, recordar un dato,
-        # una política— ya lo han cogido las ramas de arriba. Si hemos llegado
-        # hasta aquí es un "vale", "genial", "no hace falta" o una coletilla: NO se
-        # reabre la identificación ni se re-ofrece lo vendido. Antes, el arrastre
-        # de contexto volvía a poner la pieza vendida sobre la mesa y el bot pedía
-        # otra vez la matrícula "para confirmar que encaja" de algo ya comprado.
-        # (decision != "RESPONDE" o hay_pieza) deja pasar una política de posventa
-        # —RESPONDE sin pieza— que sí hay que contestar, y frena el re-ofrecer.
-        lineas += conversacion.variar("cerrada_corto", [
-            ["¡Perfecto! Cualquier cosa me dices. 👍"],
-            ["Genial, queda todo apuntado por aquí."],
-            ["Hecho. Si te surge algo, aquí estoy."],
-        ])
-        reglas.append(("venta cerrada: no reabrir",
-                       "la venta ya está cerrada y el mensaje no trae una pieza "
-                       "nueva: se acusa corto y no se reidentifica ni se re-ofrece"))
-
     # ---------------------------------------------------------------- pieza
     elif decision == "RESPONDE" and hay_pieza:
         lineas += _con_pieza(consulta, conversacion, reglas, salida)

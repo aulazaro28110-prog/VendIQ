@@ -311,14 +311,20 @@ def componer_email(consulta, correo, politicas=None):
         # pide pastillas de freno a un desguace no vuelve si le contestas con un
         # "no" seco, y a lo mejor mañana necesita un faro.
         pedido = (correo.get("espera") or {}).get("pieza") or "esa pieza"
-        cuerpo.append("De " + str(pedido).lower() + " no llevamos: somos un "
-                      "desguace y trabajamos con piezas desmontadas de vehículo, "
-                      "no con recambio nuevo ni consumibles.")
-        cuerpo.append("Si necesita cualquier otra pieza del vehículo, dígamelo "
-                      "con la matrícula y se lo miro en el momento.")
+        # El motivo importa. La primera versión decía «no trabajamos con recambio
+        # nuevo ni consumibles», y era contestar a otra pregunta: quien escribe a
+        # un desguace ya sabe que la pieza es usada. El «no» de verdad aquí es
+        # que ESA pieza no está ahora mismo, y eso deja la puerta abierta —
+        # mañana entra un coche de ese modelo al desguace.
+        cuerpo.append("De " + str(pedido).lower() + " no llevamos ninguna ahora "
+                      "mismo. Trabajamos con pieza usada desmontada de vehículo, "
+                      "y de ese despiece no tenemos nada disponible.")
+        cuerpo.append("Si me deja la matrícula se la apunto y le aviso en cuanto "
+                      "entre un vehículo que la lleve. Y si necesita cualquier "
+                      "otra pieza del coche, dígamelo y se la miro en el momento.")
         reglas.append(("no está en catálogo",
                        "la búsqueda no devolvió ficha: se dice que no en vez de "
-                       "ofrecer algo parecido"))
+                       "ofrecer algo parecido, y se ofrece avisar"))
         escala = True
 
     # ------------------------------------------------------- pago y envío

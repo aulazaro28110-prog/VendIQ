@@ -153,15 +153,32 @@ CUERPOS_PARTICULAR = [
 # Ocho de los cincuenta piden algo que NO está en catálogo. Sin ellos el corpus
 # solo mide el camino fácil, y el correo difícil de escribir no es el que dice
 # «sí, la tengo»: es el que tiene que decir que no y aun así servir para algo.
+#
+# LOS OCHO SON REPUESTOS USADOS, no consumibles. La primera versión de esta
+# lista pedía pastillas, aceite, filtros y neumáticos, y estaba mal planteada:
+# un desguace no vende eso ni lo va a vender nunca, así que medir cómo dice que
+# no a un bote de 5W30 no mide nada del negocio. El «no» que este desguace da
+# de verdad es otro — «esa pieza sí la desguazamos, pero ahora mismo no la
+# tengo» — y ese es el que hay que saber escribir.
+#
+# Las ocho son peticiones que a Desguaces Madrid Norte le entran cualquier día;
+# simplemente no están entre los 37 tipos del catálogo actual. Dos van con
+# segunda intención:
+#
+#   «bomba de inyección»  — "bomba" SÍ es vocabulario del catálogo (bomba de
+#                           agua, bomba de dirección). Mide que no le encasquete
+#                           una bomba cualquiera a quien pide otra.
+#   «palanca de cambios»  — "cambios" SÍ lo es (caja de cambios), y va detrás de
+#                           un "de". Mide la regla del núcleo.
 NO_LLEVAMOS = [
-    ("pastillas de freno", "SEAT", "Ibiza", "1.6 TDI", "2015"),
-    ("discos de freno delanteros", "Renault", "Mégane", "1.5 dCi", "2014"),
-    ("juego de neumáticos", "Ford", "Focus", "1.0 EcoBoost", "2018"),
-    ("batería nueva", "Opel", "Corsa", "1.2", "2016"),
-    ("aceite de motor 5W30", "Peugeot", "308", "1.6 HDi", "2013"),
-    ("filtro de aire", "Citroën", "C4", "1.6 HDi", "2012"),
-    ("kit de embrague nuevo", "Volkswagen", "Golf", "2.0 TDI", "2017"),
-    ("escobillas limpiaparabrisas", "Toyota", "Auris", "1.8 HSD", "2015"),
+    ("salpicadero completo", "SEAT", "Ibiza", "1.6 TDI", "2015"),
+    ("asiento delantero derecho", "Renault", "Mégane", "1.5 dCi", "2014"),
+    ("culata", "Ford", "Focus", "1.0 EcoBoost", "2018"),
+    ("depósito de combustible", "Opel", "Corsa", "1.2", "2016"),
+    ("luna trasera", "Peugeot", "308", "1.6 HDi", "2013"),
+    ("árbol de transmisión", "Citroën", "C4", "1.6 HDi", "2012"),
+    ("bomba de inyección", "Volkswagen", "Golf", "2.0 TDI", "2017"),
+    ("palanca de cambios", "Toyota", "Auris", "1.8 HSD", "2015"),
 ]
 
 
