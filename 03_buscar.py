@@ -814,6 +814,80 @@ class Buscador:
             self._cuenta_variantes = cuenta
         return self._cuenta_variantes.get(clave, 1)
 
+    def equivalentes_no_confirmadas(self, pregunta, tope=3):
+        """Fichas de la MISMA pieza y el MISMO coche, pero de otra variante.
+
+        Es para el «no» que no esconde nada. Cuando no hay la pieza exacta de la
+        versión del cliente, callarse que existe la misma pieza del mismo modelo
+        con otra motorización es lo peor que se puede hacer desde el mostrador:
+        primero un no seco y después, si el cliente insiste, una sorpresa.
+
+        NO CONFIRMADAS es la parte que importa y por eso está en el nombre. Que
+        una ficha comparta marca, modelo y tipo de pieza no dice que encaje —el
+        catálogo mide justo lo contrario: el 81% de las fichas siguen compartiendo
+        descripción aun dando el motor—. Esto sirve para MENCIONARLAS y ofrecer
+        mirarlo, nunca para ofrecerlas ni para ponerles precio. Quien las use
+        tiene que tratarlas como lo que son: un quizá.
+
+        Va aparte de `buscar()` a propósito. La ruta normal decide con umbrales y
+        no debe cambiar porque exista esta consulta: aquí no hay puntuación ni
+        umbral, es una vuelta al índice por marca+modelo+tipo.
+        """
+        secuencia = normalizar(pregunta)
+        palabras = set(secuencia)
+
+        marcas_pedidas = {self.marcas_conocidas[p] for p in palabras
+                          if p in self.marcas_conocidas}
+        candidatos = {m: t for m, t in self.modelos_conocidos.items()
+                      if t <= palabras}
+        modelos_pedidos = set()
+        if candidatos:
+            mejor = max(len(t) for t in candidatos.values())
+            modelos_pedidos = {m for m, t in candidatos.items() if len(t) == mejor}
+        # El mismo núcleo que usa `buscar()`: manda el primer tipo de pieza que no
+        # vaya detrás de un "de" ("aceite de motor" no es un motor).
+        nucleo = next((p for i, p in enumerate(secuencia)
+                       if p in self.tipos_conocidos
+                       and not (i > 0 and secuencia[i - 1] == "de")), None)
+
+        # Sin las tres cosas no hay «misma pieza del mismo coche» que buscar, y
+        # media coincidencia aquí sería peor que nada: mencionar un compresor de
+        # otra marca no es un casi-encaje, es otra pieza.
+        if not (marcas_pedidas and modelos_pedidos and nucleo):
+            return []
+
+        # EL LADO NO ES UNA VARIANTE. `tipo_pieza_de` guarda solo el núcleo
+        # ('puerta'), así que sin este filtro se cuela una puerta DELANTERA
+        # IZQUIERDA como casi-encaje de una TRASERA DERECHA — y ésas no son la
+        # misma pieza de otra motorización: son otra pieza. Es la misma regla que
+        # ya aplica `buscar()`, y aquí hace más falta todavía, porque esto se
+        # menciona en un «no» donde el cliente entiende «tengo algo parecido».
+        lados_pedidos = _lados(palabras)
+
+        fuera = []
+        for i, it in enumerate(self.items):
+            if it["tipo"] != "inventario":
+                continue
+            if (self.marca_de[i] not in marcas_pedidas
+                    or self.modelo_de[i] not in modelos_pedidos
+                    or self.tipo_pieza_de[i] != nucleo):
+                continue
+            meta = it.get("meta") or {}
+            if (meta.get("disponibilidad") or "").strip().lower() \
+                    not in DISPONIBILIDAD_VALIDA:
+                continue
+            lados_ficha = _lados(normalizar(meta.get("pieza", "")))
+            if any(OPUESTO.get(l) in lados_ficha for l in lados_pedidos):
+                continue
+            # Y si el cliente ha nombrado un eje que la ficha no nombra (pide
+            # «trasera» y la ficha no dice si lo es), tampoco vale: no se sabe.
+            if lados_pedidos - lados_ficha:
+                continue
+            fuera.append(meta)
+            if len(fuera) >= tope:
+                break
+        return fuera
+
     def _indice_de(self, item):
         """Posición del item en el índice (para consultar sus datos derivados)."""
         if not hasattr(self, "_posiciones"):

@@ -19,10 +19,12 @@ del panel tardan milisegundos y no segundos.
 import importlib.util
 import json
 import mimetypes
+import os
 import socket
 import threading
 import time
 import webbrowser
+from html import escape
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
@@ -34,6 +36,15 @@ ACTIVIDAD_JSON = BASE / "salida" / "actividad.json"
 PRECIOS_FIJADOS = BASE / "salida" / "precios_fijados.json"
 RESERVAS = BASE / "salida" / "reservas.json"
 PUERTO = 8420
+
+# De dónde cuelgan los enlaces a las fichas de stock que salen en los correos.
+# En local es el propio panel, así que el enlace funciona pero solo para quien
+# esté en esta máquina: es un enlace de DEMO. Se vuelve un enlace de verdad
+# —clicable por el taller que recibe el correo— cuando VendIQ esté desplegado en
+# un dominio público y se arranque con VENDIQ_BASE_URL apuntando ahí. La variable
+# existe para que el mismo código sirva en los dos casos y no haya que tocar el
+# redactor de correos el día del despliegue.
+BASE_URL = os.environ.get("VENDIQ_BASE_URL", f"http://localhost:{PUERTO}").rstrip("/")
 
 
 def cargar(fichero, alias):
@@ -419,6 +430,13 @@ class Sistema:
                             if not any(a["texto"] == r["texto"] for a in empaquetar(hits, True))],
             "hora": time.strftime("%H:%M:%S"),
         }
+        # Campo aparte y solo cuando NO hay pieza: son casi-encajes sin confirmar
+        # (misma pieza, mismo coche, otra variante) y no pueden entrar en
+        # `resultados`, donde todo lo que hay está autorizado a ofrecerse. Aquí
+        # sirven para que el «no» mencione lo que sí hay, sin afirmar que encaja.
+        resultado["equivalentes"] = (
+            self.buscador.equivalentes_no_confirmadas(pregunta)
+            if decision == "NO DISPONIBLE" else [])
         # `registrar=False` lo usa la mesa: pasa las preguntas viejas por la
         # busqueda para saber si el bot de hoy seguiria escalandolas, y eso es una
         # comprobacion interna, no consultas que hayas hecho tu. Sin este
@@ -745,13 +763,23 @@ class Sistema:
                       if r.get("tipo") == "inventario"]
             identificado = bool(conv.matricula) or any(
                 (r.get("precio_cliente") or {}).get("publicable") for r in fichas)
+            # Lo que el cliente ha escrito en el hilo. Es la otra mitad de la
+            # comparación de `rompe_el_guion`: un coche que él nombró no lo ha
+            # introducido el modelo, aunque no esté en el borrador de este turno.
+            dicho_cliente = "\n".join([h.get("cliente", "") for h in historial]
+                                      + [mensaje])
             roto = (self.redactor.rompe_el_estilo(respuesta["lineas"])
                     or self.redactor.rompe_la_matricula(
                         respuesta["lineas"], busqueda["decision"],
                         bool(conv.matricula), bool(respuesta.get("escala")))
                     or self.redactor.rompe_la_identificacion(
                         respuesta["lineas"],
-                        fichas[0].get("meta") if fichas else None, identificado))
+                        fichas[0].get("meta") if fichas else None, identificado)
+                    # Red de seguridad sobre lo que el modelo AÑADE. Va la última
+                    # porque es la más cara: recorre el vocabulario de marcas.
+                    or self.redactor.rompe_el_guion(
+                        respuesta["lineas"], respuesta.get("borrador"), conv,
+                        dicho_cliente, set(self.buscador.marcas_conocidas.values())))
             if roto:
                 respuesta["lineas"] = respuesta["borrador"]
                 respuesta["mensaje"] = "\n".join(respuesta["borrador"])
@@ -862,6 +890,32 @@ class Sistema:
                           "pues vaya faena, lo tengo el coche parado"]},
         ]
 
+    def ficha_stock(self, id_stock):
+        """La ficha de UNA pieza por su número de stock, o None si no existe.
+
+        Es lo que hay detrás del enlace que sale en los correos. Aquí sí se
+        publica el precio, y no rompe el guardarraíl: el cerrojo impide afirmar
+        que una pieza encaja con el coche de un cliente, y esta página no dice
+        nada de ningún cliente. Es la ficha del almacén, identificada por su
+        número exacto — la misma información que si Álvaro mirase la estantería.
+
+        El precio sale de `precio_para_cliente` y no del CSV para que sea el
+        MISMO que ve el bot, incluido el que Álvaro haya fijado a mano desde el
+        centro de control. Si esa función dice que no se puede publicar, la
+        página lo dice en vez de inventarse un importe.
+        """
+        clave = self.buscar_mod.normalizar(str(id_stock))
+        posicion = self.buscador.por_codigo.get(clave[0]) if clave else None
+        if posicion is None:
+            return None
+        item = self.buscador.items[posicion]
+        if item.get("tipo") != "inventario":
+            return None
+        veredicto = self.buscador.precio_para_cliente(
+            item, 1.0, str(id_stock), es_mejor_candidata=True,
+            coche_identificado=True)
+        return {"meta": item.get("meta") or {}, "precio": veredicto}
+
     def ofertar(self, id_pieza, importe, cliente):
         oferta = self.ofertas_mod.registrar(self.inventario, id_pieza, importe, cliente)
         return oferta
@@ -907,6 +961,78 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(cuerpo)
 
+    def _ficha_stock(self, id_stock):
+        """Página de UNA pieza del catálogo: qué es, de qué coche y a cuánto.
+
+        Sin plantillas ni JS: la abre quien recibe un correo, muchas veces desde
+        el móvil y a veces desde un cliente de correo que no ejecuta nada. Lo que
+        tiene que hacer es cargar y decir la verdad.
+        """
+        ficha = SISTEMA.ficha_stock(id_stock) if id_stock else None
+        if not ficha:
+            # 404 con texto, no la página de error del servidor: quien llega aquí
+            # viene de un enlace de un correo y merece saber qué ha pasado.
+            cuerpo = ("<h1>Esa referencia no está en el catálogo</h1>"
+                      "<p>El número de stock <b>" + escape(str(id_stock)) +
+                      "</b> no corresponde a ninguna pieza. "
+                      "Contesta al correo y lo miramos.</p>")
+            return self._html(cuerpo, 404)
+
+        meta, precio = ficha["meta"], ficha["precio"]
+        coche = " ".join(str(x) for x in (meta.get("marca"), meta.get("modelo"),
+                                          meta.get("motor")) if x)
+        disponibilidad = str(meta.get("disponibilidad") or "sin dato")
+        if precio.get("publicable"):
+            linea_precio = ("<p class='precio'>" + escape(str(precio["importe"]))
+                            + "</p>")
+        else:
+            # El mismo criterio que en el correo y en el chat: sin importe
+            # publicable no se enseña un número, se enseña por qué no lo hay.
+            linea_precio = ("<p class='pendiente'>Precio pendiente de confirmar: "
+                            + escape(str(precio.get("motivo", ""))) + "</p>")
+
+        filas = [("Referencia interna", str(meta.get("id", ""))),
+                 ("Referencia OEM", str(meta.get("referencia_oem") or "—")),
+                 ("Coche", coche or "—"),
+                 ("Año", str(meta.get("anio") or "—")),
+                 ("Estado", str(meta.get("estado") or "desmontada de vehículo")),
+                 ("Disponibilidad", disponibilidad)]
+        tabla = "".join("<tr><th>" + escape(k) + "</th><td>" + escape(v)
+                        + "</td></tr>" for k, v in filas)
+        cuerpo = ("<h1>" + escape(str(meta.get("pieza") or "Pieza")) + "</h1>"
+                  "<p class='coche'>" + escape(coche) + "</p>"
+                  + linea_precio +
+                  "<table>" + tabla + "</table>"
+                  "<p class='pie'>Ficha del almacén de Desguaces Madrid Norte. "
+                  "Los datos del catálogo son sintéticos: esto es un prototipo.</p>")
+        return self._html(cuerpo)
+
+    def _html(self, cuerpo, codigo=200):
+        """Envuelve un trozo de HTML en una página entera y la manda."""
+        pagina = ("<!doctype html><html lang='es'><head><meta charset='utf-8'>"
+                  "<meta name='viewport' content='width=device-width,"
+                  "initial-scale=1'><title>Ficha de stock · VendIQ</title><style>"
+                  "body{font:16px/1.5 system-ui,sans-serif;margin:0;padding:2rem;"
+                  "background:#0d1117;color:#e6edf3}"
+                  "main{max-width:34rem;margin:0 auto}"
+                  "h1{font-size:1.5rem;margin:0 0 .25rem}"
+                  ".coche{color:#9da7b3;margin:0 0 1.5rem}"
+                  ".precio{font-size:2rem;font-weight:700;color:#3fb950;margin:0 0 1.5rem}"
+                  ".pendiente{color:#d29922;margin:0 0 1.5rem}"
+                  "table{border-collapse:collapse;width:100%}"
+                  "th,td{text-align:left;padding:.5rem 0;border-bottom:1px solid #30363d;"
+                  "vertical-align:top}"
+                  "th{color:#9da7b3;font-weight:400;width:11rem}"
+                  ".pie{color:#9da7b3;font-size:.85rem;margin-top:2rem}"
+                  "</style></head><body><main>" + cuerpo + "</main></body></html>")
+        datos = pagina.encode("utf-8")
+        self.send_response(codigo)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(datos)))
+        self.send_header("Cache-Control", "no-store, must-revalidate")
+        self.end_headers()
+        self.wfile.write(datos)
+
     def do_GET(self):
         ruta = urlparse(self.path).path
         if ruta == "/api/estado":
@@ -930,6 +1056,11 @@ class Handler(BaseHTTPRequestHandler):
         if ruta == "/api/no-resueltas":
             return self._json({"pendientes": SISTEMA.aprender.leer_registro(),
                                "redactor": SISTEMA.conversar.hay_llm()})
+
+        # La ficha de stock que se enlaza desde los correos. Va antes del servidor
+        # de ficheros porque /stock/<id> no es un fichero del panel.
+        if ruta.startswith("/stock/"):
+            return self._ficha_stock(ruta[len("/stock/"):].strip("/"))
 
         fichero = "index.html" if ruta == "/" else ruta.lstrip("/")
         destino = (WEB / fichero).resolve()
