@@ -37,3 +37,9 @@ _to_delete/
 
 # Reservas de conversaciones: datos de trabajo, no codigo.
 salida/reservas.json
+
+# Copias de seguridad del redactor: el original ya esta en git.
+*.bak.*.py
+
+# Transcripcion de tests/test_frio.py: se regenera en cada tirada.
+salida/frio.txt
