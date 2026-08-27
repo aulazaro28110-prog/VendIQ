@@ -39,7 +39,7 @@ _to_delete/
 salida/reservas.json
 
 # Copias de seguridad del redactor: el original ya esta en git.
-*.bak.*.py
+*.bak*.py
 
 # Transcripcion de tests/test_frio.py: se regenera en cada tirada.
 salida/frio.txt

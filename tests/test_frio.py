@@ -101,6 +101,14 @@ PIDE_MATRI = re.compile(
     r"(p[áa]sa(me)?|d[ae]me|dime|necesito|m[áa]ndame|env[íi]ame|me pasas|"
     r"puedes pasarme|hace falta|falta)[^.?!\n]{0,40}"
     r"(matr[íi]cula|bastidor|\bvin\b)", re.I)
+# El bot SALUDA al abrir. `_apertura()` mete la línea una vez por conversación,
+# pero el LLM reescribe encima y podría comérsela, así que se comprueba lo que
+# de verdad sale, no lo que el borrador trae.
+SALUDA = re.compile(r"hola|buenas|buenos d[íi]as|encantado|asistente|qu[ée] tal", re.I)
+# Que el CLIENTE se está despidiendo. Un adiós no se contesta pidiendo un dato:
+# es lo que más delata a un bot, porque una persona no lo hace jamás.
+SE_DESPIDE = re.compile(r"^\W*(adi[óo]s|hasta luego|hasta otra|hasta pronto|"
+                        r"nos vemos|chao|un saludo)\W*$", re.I)
 
 FALLOS = []          # trampas que no se comportan
 INVARIANTES = []     # cosas que no pueden pasar nunca
@@ -379,6 +387,13 @@ for n, (etiqueta, mensajes, esperado) in enumerate(CASOS, 1):
         # ------------------------------------------------ INVARIANTES
         if not b.get("precio_autorizado", True):
             rompe("FUGA DE PRECIO: un importe que la búsqueda no autorizó")
+
+        # Las dos puntas de la conversación, que es lo que este banco mide y los
+        # otros no: se abre saludando y no se despide a nadie pidiéndole un dato.
+        if i == 0 and not SALUDA.search(texto):
+            rompe("abre sin saludar")
+        if SE_DESPIDE.search(mensaje) and PIDE_MATRI.search(texto):
+            rompe("le pide la matrícula a quien se está despidiendo")
 
         # El emoji va aparte: el redactor determinista lleva emoji fijos y
         # `rompe_el_estilo` solo audita lo que escribe el LLM. Es un fallo real

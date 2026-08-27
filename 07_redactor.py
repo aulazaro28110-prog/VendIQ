@@ -289,6 +289,19 @@ PALABRAS_INTENCION = {
                    "que habiamos dicho", "qué habíamos dicho", "por donde ibamos",
                    "por dónde íbamos", "que era lo que", "hazme un resumen"),
 
+    # IRSE ES UNA INTENCIÓN. No la había, y un «adiós» caía hasta el último
+    # `else`, que pide la matrícula: se le pedía el dato a quien acaba de
+    # marcharse. Va al final a propósito —el diccionario se recorre en orden y
+    # manda el primero que casa—, para que cualquier intención más concreta gane:
+    # «esto es una estafa, adiós» es una QUEJA, y «hasta luego, ¿me lo apartas?»
+    # es un CIERRE. Aquí solo cae el que de verdad no dice nada más.
+    # Ojo con lo que NO está: "buenas noches" es una despedida en media España y
+    # un saludo en la otra, y a las nueve de la noche abre conversaciones. Ante
+    # la duda se queda en el saludo, que es la lectura que no pierde una venta.
+    "despedida": ("adios", "adiós", "hasta luego", "hasta otra", "hasta pronto",
+                  "nos vemos", "un saludo", "chao", "que vaya bien", "cuidate",
+                  "cuídate"),
+
     "saludo": ("hola", "buenas", "buenos dias", "buenas tardes", "que tal", "qué tal"),
 }
 
@@ -452,7 +465,21 @@ NIEGA_TENERLA = re.compile(
     r"|no (?:la|lo|las|los) tenemos"
     r"|no (?:la|lo|las|los) hay"
     r"|no (?:me |nos )?queda[nr]?"
-    r"|no est[áa] en (?:el )?(?:cat[áa]logo|almac[ée]n|stock)", re.I)
+    r"|no est[áa] en (?:el )?(?:cat[áa]logo|almac[ée]n|stock)"
+    # Las formas IMPERSONALES, que son las que escribe el modelo. Las de arriba
+    # llevan todas un pronombre («no LA tengo») porque salieron de leer al
+    # redactor determinista, que habla así. El LLM no: dice «no disponemos de esa
+    # pieza», y como esta regex es la que dispara `rompe_la_matricula`, la guarda
+    # no saltaba y el bot afirmaba no tener una pieza SIN haberla identificado
+    # —justo lo que la regla existe para impedir—. Cuatro veces en 171 turnos del
+    # banco en frío, una de ellas contestando a un «Buenas!».
+    r"|no dispon(?:emos|go|e)\b"
+    r"|no contamos con\b"
+    r"|no trabajamos\b"
+    r"|no (?:lo |la )?tenemos disponible"
+    r"|no (?:est[áa]|se encuentra) disponible"
+    r"|sin stock\b"
+    r"|fuera de (?:stock|cat[áa]logo)", re.I)
 
 # Pedir el dato que identifica la pieza. Vale la matrícula o el bastidor: son las
 # dos formas que acepta la política COMO IDENTIFICAR LA PIEZA CORRECTA.
@@ -961,6 +988,13 @@ class Conversacion:
         # Si el cliente ha corregido el coche en este mensaje: (lo que había, lo
         # que hay). Lo rellena el panel, que es quien reconoce los vehículos.
         self.corregido = None
+
+        # Y el caso feo del mismo asunto: niega el coche que teníamos y el suyo
+        # no está en el catálogo, así que hay algo que sabemos FALSO y nada que
+        # poner en su sitio. Se guarda aparte de `corregido` porque no es una
+        # corrección resuelta: es una que hay que reconocer y llevar a la
+        # matrícula.
+        self.corrige_sin_resolver = False
 
         # ¿El bot acaba de preguntar si lo aparta? Es lo que convierte un «sí» en
         # una venta. Sin esto, «sí» no significa nada: no es una intención, es la
@@ -1798,6 +1832,51 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         reglas.append(("escalado a persona",
                        "hay una queja: el bot no gestiona reclamaciones (rol §7)"))
 
+    # ------------------------------------------------------------ despedida
+    # EL CLIENTE SE VA. Sin esta rama, «adiós» no encajaba en ninguna y caía
+    # hasta el último `else`, que contesta «Pásame la matrícula del coche y qué
+    # pieza buscas»: pedirle un dato a quien acaba de despedirse. Salió en 3 de
+    # los 4 fallos del banco en frío, y es de las cosas que más delatan a un bot,
+    # porque una persona no hace eso jamás.
+    #
+    # Va aquí, detrás de las reglas duras: quien se despeja con «esto es una
+    # estafa, adiós» está poniendo una queja, y eso manda. Y va DELANTE de todo
+    # lo demás porque ninguna de las ramas de abajo debe ganarle a un adiós: la
+    # de política le soltaría los plazos de Canarias y la de «acaba de dar la
+    # matrícula» volvería a preguntar.
+    #
+    # Lo único que se hace aquí es cerrar y dejar la puerta abierta. NO se pide
+    # ningún dato y NO se fuerza la venta: quien se va, se va.
+    elif intencion == "despedida":
+        if conversacion.estado in (CERRADA, POSVENTA):
+            lineas += conversacion.variar("despedida_venta", [
+                ["A mandar. Cualquier cosa me dices."],
+                ["Hasta luego. Si surge algo con la pieza, me escribes."],
+            ])
+            reglas.append(("despedida con la venta hecha",
+                           "se cierra sin repetir el pedido ni pedir ningún dato"))
+        elif conversacion.ultima_pieza:
+            meta = conversacion.ultima_pieza
+            g = _genero(meta.get("pieza", ""))
+            nombre = meta.get("pieza", "pieza").lower()
+            lineas += conversacion.variar("despedida_pieza", [
+                [f"Hasta luego. Te dejo apuntad{_o(g)} {_art(g)} {nombre} por si "
+                 f"{_pron(g)} quieres más adelante."],
+                [f"Un saludo. Aquí sigue {_art(g)} {nombre} cuando "
+                 f"{_pron(g)} necesites."],
+            ])
+            reglas.append(("despedida con una pieza sobre la mesa",
+                           "se cierra dejando la pieza apuntada, sin presionar y "
+                           "sin volver a pedir datos ya dados"))
+        else:
+            lineas += conversacion.variar("despedida", [
+                ["Hasta luego, aquí estamos cuando lo necesites."],
+                ["Un saludo. Cuando tengas la pieza y el coche, me dices."],
+            ])
+            reglas.append(("despedida",
+                           "el cliente se va: se cierra y no se le pide ningún "
+                           "dato más (rol §8.3)"))
+
     # --------------------------------------------------------------- cierre
     # ------------------------------------- ha dicho dónde quiere la pieza
     elif (conversacion.estado in (CERRADA, POSVENTA)
@@ -1816,7 +1895,15 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     # ---------------------- §18 · corrige algo que no es el coche entero
     elif (CORRIGE.search(mensaje_cliente or "")
           and not getattr(conversacion, "corregido", None)
-          and conversacion.ultima_pieza
+          # `corrige_sin_resolver` lo pone el panel cuando el cliente niega el
+          # coche que teníamos y el que dice que es no está en el catálogo. Vale
+          # igual que tener una pieza sobre la mesa: en los dos casos hay algo
+          # dicho que ha dejado de ser verdad. Sin esto, negar un coche del que
+          # solo se habían enseñado CANDIDATAS —sin llegar a una ficha única—
+          # no entraba por ninguna rama y se le seguían ofreciendo piezas del
+          # coche que acababa de descartar.
+          and (conversacion.ultima_pieza
+               or getattr(conversacion, "corrige_sin_resolver", False))
           # …y la venta no está cerrada. Corregir un detalle es algo que se hace
           # MIENTRAS se identifica la pieza. Después de comprar, un «no hace
           # falta, gracias» empieza por «no» y no corrige nada: es una coletilla.
