@@ -453,13 +453,6 @@ class Sistema:
         Igual que las marcas y los tipos de pieza, los modelos se aprenden de los
         datos: no hay ninguna lista escrita a mano que haya que mantener.
         """
-        if not hasattr(self, "_vocab_vehiculo"):
-            self._vocab_vehiculo = {}
-            for f in self.filas:
-                for campo in ("marca", "modelo"):
-                    for token in self.buscar_mod.normalizar(f[campo]):
-                        if len(token) > 1:
-                            self._vocab_vehiculo[token] = f[campo]
         return " ".join(self._vehiculos_en(texto))
 
     def _vehiculos_en(self, texto):
@@ -468,14 +461,46 @@ class Sistema:
         Hace falta la lista y no solo la cadena para poder corregir: en "no es un
         A4, es un A3" hay dos modelos y el bueno es el segundo. Juntándolos salía
         "A4 A3", que no es ningún coche.
+
+        UN MODELO SE RECONOCE ENTERO O NO SE RECONOCE. Esto era un mapa de token
+        suelto a modelo, y tenía dos agujeros que se tapaban el uno al otro: los
+        tokens de una sola letra o cifra no entraban —el «3» de "Serie 3" es
+        justo lo que lo distingue— y un token compartido por varios modelos —el
+        «serie» de "Serie 1", "Serie 3", "Serie 5"— se quedaba con uno
+        cualquiera, el último que hubiera pasado por el catálogo. Se veía en la
+        corrección: «no es un Serie 3, es un Serie 5» contestaba «Vale, Bmw Serie
+        3 Serie 1 entonces».
+
+        Se aplica la MISMA regla que ya usa `buscar()`, en vez de una peor al
+        lado: un modelo es candidato solo si TODAS sus palabras distintivas están
+        en el mensaje, y entre dos candidatos donde uno es parte del otro manda
+        el largo ("Clase E Coupé" sobre "Clase E"). Lo que no se puede es quedarse
+        solo con el más largo, como hace la búsqueda: aquí «no es un Clase A, es
+        un Clase E Coupé» necesita los DOS para saber cuál se retira.
         """
-        if not hasattr(self, "_vocab_vehiculo"):
-            self._vehiculo_en("")
+        tokens = self.buscar_mod.normalizar(texto)
+        palabras = set(tokens)
+        primera = {}
+        for i, t in enumerate(tokens):
+            primera.setdefault(t, i)
+
+        candidatos = {m: d for m, d in self.buscador.modelos_conocidos.items()
+                      if d <= palabras}
+        modelos = [m for m, d in candidatos.items()
+                   if not any(d < otra for otra in candidatos.values())]
+
+        # Por orden de aparición, que es lo que permite corregir: el coche bueno
+        # es el que se nombra DESPUÉS. Un modelo aparece donde se completa, o sea
+        # en la última de sus palabras distintivas.
+        apariciones = (
+            [(self.buscador.marcas_conocidas[t], primera[t])
+             for t in palabras if t in self.buscador.marcas_conocidas]
+            + [(m, max(primera[t] for t in candidatos[m])) for m in modelos])
+
         vistos = []
-        for token in self.buscar_mod.normalizar(texto):
-            canonico = self._vocab_vehiculo.get(token)
-            if canonico and canonico not in vistos:
-                vistos.append(canonico)
+        for nombre, _ in sorted(apariciones, key=lambda x: x[1]):
+            if nombre not in vistos:
+                vistos.append(nombre)
         return vistos
 
     @staticmethod
@@ -552,23 +577,62 @@ class Sistema:
         # Al corregir se tira lo que pertenecia al coche anterior. Es lo unico
         # honesto: esas fichas eran de otro vehiculo.
         conv.corregido = None
+        conv.corrige_sin_resolver = False
         if conv.vehiculo and self.redactor.CORRIGE.search(mensaje):
             # "No es un A4, es un A3" nombra los DOS. El que se niega es el que ya
-            # estaba en memoria; el bueno es el otro. Se sustituye la parte que
-            # cambia y se conserva el resto — la marca sigue siendo Audi.
-            antes = conv.vehiculo.split()
+            # estaba en memoria; el bueno es el otro.
+            # Se vuelve a leer con la MISMA función, no con .split(): un modelo
+            # canónico de dos palabras ("Serie 3") nunca está dentro de la lista
+            # de palabras sueltas ["BMW","Serie","3"], así que el viejo no se
+            # retiraba nunca — se le pegaba el nuevo detrás y quedaba el
+            # imposible "Serie 3 Serie 5".
+            antes = self._vehiculos_en(conv.vehiculo)
             dichos = self._vehiculos_en(mensaje)
             nuevos = [v for v in dichos if v not in antes]
             viejos = [v for v in dichos if v in antes]
             if nuevos:
-                cambiado = [v for v in antes if v not in viejos] + nuevos
+                # UN COCHE TIENE UNA MARCA Y UN MODELO. Lo nuevo sustituye a lo
+                # viejo DE SU MISMA CLASE, en vez de intentar deducir cuál se
+                # está negando por si aparece nombrado. Hace falta porque el que
+                # se niega no siempre se puede leer: "no es un Clase A, es un
+                # Clase E Coupé" solo deja ver el largo —"Clase A" no aporta
+                # ninguna palabra que "Clase E Coupé" no tenga—, y buscando el
+                # negado en el mensaje quedaba "Clase A Clase E Coupé".
+                marcas = set(self.buscador.marcas_conocidas.values())
+                def _clase(v):
+                    return "marca" if v in marcas else "modelo"
+                clases_nuevas = {_clase(v) for v in nuevos}
+                if "marca" in clases_nuevas:
+                    # Otra marca es otro coche entero: un A4 no es un BMW, así que
+                    # el modelo viejo no puede sobrevivir al cambio de marca.
+                    cambiado = nuevos
+                else:
+                    cambiado = [v for v in antes
+                                if _clase(v) not in clases_nuevas] + nuevos
                 conv.corregido = (conv.vehiculo, " ".join(cambiado))
                 conv.vehiculo = " ".join(cambiado)
                 # Lo encontrado antes era de otro coche: no puede quedarse.
                 conv.piezas = []
                 conv.precio_de = {}
                 conv.descritas = set()
-        if vehiculo and not conv.corregido:
+            elif viejos:
+                # NIEGA EL COCHE QUE TENÍAMOS Y EL SUYO NO ESTÁ EN EL CATÁLOGO.
+                # "No es un Serie 3, es un Serie 5" y aquí no hay ningún Serie 5.
+                # Antes esto acababa peor que en no saber nada: al no resolver el
+                # nuevo se dejaba el viejo puesto y se le seguían ofreciendo
+                # piezas del coche que acababa de descartar.
+                # Lo único honesto es SOLTARLO. Lo que se ofreció era de ese
+                # coche y se va con él; el redactor lo reconoce y pide la
+                # matrícula, que es el dato que lo resuelve del todo.
+                conv.vehiculo = ""
+                conv.piezas = []
+                conv.precio_de = {}
+                conv.descritas = set()
+                conv.corrige_sin_resolver = True
+        # `corrige_sin_resolver` también manda aquí: el mensaje que niega el coche
+        # lo NOMBRA ("no es un Serie 3"), así que sin esta condición se volvería a
+        # guardar el coche que se acaba de soltar dos líneas más arriba.
+        if vehiculo and not conv.corregido and not conv.corrige_sin_resolver:
             conv.vehiculo = vehiculo
 
         contexto = None
