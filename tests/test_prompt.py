@@ -87,10 +87,19 @@ probar("18", "el cliente corrige un dato",
        "reconoce la correccion y rehace",
        lambda m, c: re.search(r"gasolina|entonces|cambia", m, re.I) is not None)
 
+# DIAGNOSTICAR = False (07_redactor.py). Esta comprobacion pedia que el bot
+# contestara "pastillas" o "discos" a un ruido al frenar, y eso es exactamente lo
+# que la decision de negocio marco como el error a corregir: son consumibles de
+# mecanica rapida y este desguace no los vende ni los va a vender. El test se
+# habia quedado anclado al rol viejo y suspendia al codigo por hacer lo correcto.
+# Lo que se mide ahora es la decision de verdad: quien decide que hay que cambiar
+# en un coche es el taller, que lo tiene en un elevador, no un asistente leyendo
+# "hace un ruido raro". El bot lo dice y reconduce al dato que si puede usar.
 probar("20", "describe un sintoma, no sabe la pieza",
        ["cuando freno hace un ruido metalico"],
-       "traduce el sintoma a una pieza posible y pregunta",
-       lambda m, c: re.search(r"pastilla|disco|freno", m, re.I) is not None)
+       "no diagnostica: lo manda al taller y pide la pieza",
+       lambda m, c: (re.search(r"taller|qu[eé] pieza|matr[ií]cula", m, re.I)
+                     and not re.search(r"pastilla|disco", m, re.I)))
 
 import json as _json
 probar("23", "lo que dice que hace, lo hace",
