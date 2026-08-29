@@ -43,3 +43,6 @@ salida/reservas.json
 
 # Transcripcion de tests/test_frio.py: se regenera en cada tirada.
 salida/frio.txt
+
+# Transcripciones de tiradas de los bancos: se regeneran en cada ejecucion.
+salida/*.txt

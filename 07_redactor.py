@@ -266,7 +266,16 @@ PALABRAS_INTENCION = {
                         # apuntado por si acaso", que es no haberle leído. Van sin
                         # más contexto porque con una pieza encima de la mesa no
                         # hay otra lectura posible.
-                        "precio", "cuanto", "cuánto", "cuanto es", "que vale",
+                        # OJO: "cuanto" a secas ESTUVO aquí y hacía estropicio.
+                        # El emparejamiento es por subcadena, así que casaba
+                        # dentro de "¿CUÁNTOs días tengo?" y de "¿y CUÁNTO cuesta
+                        # el envío?", y el bot contestaba el precio de la pieza a
+                        # una pregunta de devolución y a otra de portes. En una
+                        # conversación de veinte mensajes eso pasaba cuatro
+                        # veces. El caso impaciente de §19 —el que escribe una
+                        # palabra sola— se atiende abajo, mirando que el mensaje
+                        # ENTERO sea eso y nada más.
+                        "precio", "cuanto es", "que vale",
                         "qué vale", "cuanto sale", "cuánto sale"),
 
     # §24 — el enlace. La ficha del catálogo trae su URL y el bot nunca la daba.
@@ -521,6 +530,15 @@ def rompe_el_estilo(lineas):
     Se usa para auditar lo que escribe el LLM antes de que salga. El redactor
     determinista cumple estas reglas por construcción; el modelo, no — así que
     hay que mirárselo, igual que se le miran los precios.
+
+    «POR CONSTRUCCIÓN» HAY QUE COMPROBARLO, y esta frase llevaba tiempo siendo
+    mentira. El panel solo llama aquí cuando ha redactado el modelo, así que el
+    borrador no pasaba por ningún sitio: tres frases de `variar()` llevaban un
+    emoji escrito a mano y salían al cliente tan tranquilas, mientras el mismo
+    carácter escrito por el LLM se descartaba. Salía en tres bancos a la vez —
+    11 de los 12 fallos que quedaban— y nadie lo miraba porque el que audita no
+    veía esa mitad. Ahora el banco en frío pasa también el BORRADOR por aquí,
+    que es la única forma de que «por construcción» signifique algo.
     """
     mensaje = "\n".join(lineas)
     if not mensaje.strip():
@@ -534,6 +552,38 @@ def rompe_el_estilo(lineas):
     return None
 
 
+# Cómo se abre una conversación: saludo o presentación. Es lo que `_apertura()`
+# pone como PRIMERA línea del borrador, y solo una vez por conversación.
+ABRE = re.compile(r"\bhola\b|buenas|buenos d[íi]as|encantado|asistente|"
+                  r"qu[ée] tal", re.I)
+
+
+def rompe_la_apertura(lineas_llm, borrador):
+    """El modelo se ha comido la presentación del primer mensaje, o None.
+
+    Todas las demás guardas miran lo que el modelo AÑADE. Ésta mira lo que
+    QUITA, que es el otro modo de romper el guion y no lo vigilaba nadie.
+
+    Se vio en el banco en frío y de casualidad, que es lo que la hace valer: la
+    misma conversación saludó en una tirada y en la siguiente contestó «¿Me
+    puedes indicar la matrícula y la pieza que buscas?» a un cliente que acababa
+    de escribir por primera vez. Sin saludo y sin decir con quién habla — y §7
+    del rol dice que el bot se identifica como asistente en el primer mensaje,
+    justamente para no fingir que es una persona.
+
+    Solo se aplica al turno que abre, y se reconoce en que la PRIMERA línea del
+    borrador es el saludo. Así una conversación por la mitad, donde puede haber
+    un «buenas» suelto en cualquier sitio, no dispara nada.
+    """
+    if not lineas_llm or not borrador:
+        return None
+    if not ABRE.search(borrador[0]):
+        return None                      # este turno no abría nada
+    if ABRE.search("\n".join(lineas_llm)):
+        return None                      # lo dice de otra forma, y vale
+    return "se come la presentación del primer mensaje"
+
+
 # Palabras que el bot NO puede decir por su cuenta. Rebajar es una decisión de
 # negocio de Álvaro (política PRECIOS Y DESCUENTOS): el redactor determinista
 # nunca las escribe, así que si aparecen es que las ha puesto el modelo.
@@ -544,6 +594,24 @@ DICE_DESCUENTO = re.compile(r"descuent|rebaj|oferta especial|precio especial", r
 # qué saber quién trabaja aquí.
 PREGUNTA_A_QUIEN = re.compile(
     r"a qui[ée]n\b|remitir|remito|derivar|derivo|con qui[ée]n\b", re.I)
+
+# DAR UN PAGO POR RECIBIDO. El bot no ve la cuenta del banco: nadie que hable por
+# WhatsApp puede saber si un bizum ha entrado. El redactor determinista nunca lo
+# afirma —dice que se lo pasa a Álvaro para que lo compruebe—, así que si sale un
+# «confirmado» es que lo ha puesto el modelo.
+CONFIRMA_PAGO = re.compile(
+    r"(?:pago|bizum|transferencia|ingreso|abono)[^.\n]{0,30}"
+    r"(?:confirmad|recibid|verificad|comprobad|llegad|correcto)"
+    r"|(?:confirmad|recibid|verificad|comprobad)[^.\n]{0,20}"
+    r"(?:el|tu|la)\s+(?:pago|bizum|transferencia|ingreso|abono)"
+    r"|he (?:visto|recibido) (?:el|tu) (?:pago|bizum|transferencia)", re.I)
+
+# «En cuanto esté el pago confirmado, sale la pieza» lleva dentro «pago
+# confirmado» y es EXACTAMENTE lo contrario de darlo por bueno: es la condición,
+# dicha como condición, y es la frase correcta. Se quita lo condicional antes de
+# mirar, o la guarda castigaría precisamente al que cumple la política.
+CONDICION = re.compile(r"\b(?:cuando|en cuanto|una vez|si|hasta que|mientras)\b"
+                       r"[^.;\n]*", re.I)
 
 # Cómo se nombra una VARIANTE de coche: la motorización ('2.0 TDI', '1.6 HDi') y
 # el año. Son justo los dos datos que distinguen una ficha de su hermana, y por
@@ -608,6 +676,45 @@ def rompe_el_guion(lineas_llm, borrador, conv, dicho_cliente="", marcas=()):
     #    remitirlo?». El código ya sabe a quién; el cliente no tiene por qué.
     if PREGUNTA_A_QUIEN.search(llm) and not PREGUNTA_A_QUIEN.search(base):
         return "le pregunta al cliente a quién escalar: eso lo decide el sistema"
+
+    # 6. A QUIEN SE DESPIDE NO SE LE VENDE. El borrador cierra corto y sin
+    #    preguntar nada —quien se va, se va— y el modelo lo reescribia en una
+    #    pregunta: «¿Te confirmo el precio del faro delantero derecho?» a un
+    #    «adiós», o «¿Necesitas algo más antes de cerrar?» a quien ya habia
+    #    comprado. Tres veces en el banco largo, y es de las que peor sientan:
+    #    el cliente ha cerrado la puerta y el bot vuelve a abrirla para vender.
+    #    Introducir una pregunta donde el borrador no la tenia es INTRODUCIR.
+    if conv is not None and getattr(conv, "ultima_intencion", None) == "despedida":
+        if re.search(r"[?¿]", llm) and not re.search(r"[?¿]", base):
+            return ("le pregunta algo a quien se está despidiendo y el borrador "
+                    "cerraba sin preguntar nada")
+
+    # 7. EL «NO» NO SE INVENTA. Si el borrador no dice que no tenemos la pieza
+    #    y el modelo si, se esta inventando una falta de stock que no ha
+    #    comprobado nadie. Medido: a un «que tal va eso» —un saludo, sin pieza
+    #    ninguna encima de la mesa— el modelo contesto «No disponemos de esa
+    #    pieza». `rompe_la_matricula` no lo coge porque solo actua cuando la
+    #    busqueda ya decidio NO DISPONIBLE, y aqui no habia decidido nada.
+    #    Un «no» falso es el error mas caro del mostrador y el que menos se
+    #    nota: el cliente se va y nadie se entera de por que.
+    if NIEGA_TENERLA.search(llm) and not NIEGA_TENERLA.search(base):
+        return "dice que no tenemos la pieza y el borrador no lo decía"
+
+    # 5. UN PAGO NO SE DA POR BUENO. La más grave de las cinco, y la única que
+    #    cuesta dinero de verdad. Medido: al «ya te he hecho el bizum, mándalo»
+    #    —que es la estafa clásica y por eso está en el banco— el borrador
+    #    contestaba «se lo paso a Álvaro para que compruebe el ingreso» y el
+    #    modelo lo reescribió como «Confirmado el bizum, preparo el envío para
+    #    mañana». Nadie había visto ningún bizum. El bot no tiene acceso a la
+    #    cuenta y no puede saberlo, así que afirmarlo no es un desliz de estilo:
+    #    es saltarse la política de PAGO ANTES DEL ENVIO con la pieza ya en el
+    #    camión. Va detrás de las otras cuatro porque no es más cara, sino
+    #    porque llegó después: la encontró el banco en frío de casualidad, en
+    #    una tirada en la que el modelo decidió redactarlo así.
+    if (CONFIRMA_PAGO.search(CONDICION.sub("", llm))
+            and not CONFIRMA_PAGO.search(CONDICION.sub("", base))):
+        return ("da un pago por recibido y el borrador no: el bot no ve la "
+                "cuenta, eso lo confirma Álvaro")
 
     return None
 
@@ -800,6 +907,21 @@ def pieza_por_sintoma(mensaje):
     return None
 
 
+# Asuntos que NO son la pieza: son condiciones de la empresa y se contestan con
+# la política. Comparten la forma de las preguntas de seguimiento —«¿cuánto
+# cuesta el envío?» y «¿cuánto cuesta la puerta?» se escriben igual— y lo único
+# que las distingue es de qué hablan.
+OTRO_ASUNTO = re.compile(
+    r"\benv[ií]o?s?\b|\bportes?\b|\btransporte\b|\bmensajer[ií]a\b"
+    r"|\bgarant[ií]a\b|\bdevoluc|\bdevolver\b|\bfactura\b|\biva\b"
+    r"|\bcanarias\b|\bbaleares\b|\bpen[ií]nsula\b", re.I)
+
+# Las intenciones que hablan de LA PIEZA que ya está sobre la mesa. Son las que
+# el veto de arriba puede apagar; el resto (queja, pide sin pagar, cierre…)
+# mandan siempre, aunque el mensaje nombre la devolución o el pago.
+SEGUIMIENTO_PIEZA = ("precio otra vez", "estado", "kilometros")
+
+
 def detectar_intencion(mensaje: str) -> str:
     """Qué está haciendo el cliente, más allá de qué pieza pide.
 
@@ -808,6 +930,26 @@ def detectar_intencion(mensaje: str) -> str:
     """
     t = _sin_tildes(mensaje)
     hipotetico = any(h in t for h in HIPOTETICO)
+
+    # §19 — EL IMPACIENTE ESCRIBE UNA PALABRA. "precio", "cuánto", "y cuánto?".
+    # Se mira que el mensaje ENTERO sea eso, no que lo contenga: es la diferencia
+    # entre «¿cuánto?» y «¿cuánto cuesta el envío?», que no preguntan lo mismo.
+    suelto = [p for p in t.replace("?", " ").replace("¿", " ").split()
+              if p not in ("y", "el", "la", "eso", "pues", "oye", "bueno")]
+    # UNA palabra, no dos: «¿cuánto tarda?» son dos y es un PLAZO, no un precio.
+    # Las formas de dos palabras que sí son precio («cuanto es», «cuanto vale»)
+    # están escritas en la tabla y las coge el bucle de abajo.
+    if len(suelto) == 1 and suelto[0] in ("cuanto", "precio", "cuantos"):
+        return "precio otra vez"
+
+    # LO QUE SE PREGUNTA MANDA SOBRE CÓMO SE PREGUNTA. Las de seguimiento van
+    # sobre LA PIEZA que está encima de la mesa y contestan con sus datos sin
+    # volver a buscar; «¿cuánto cuesta el envío?» comparte la forma y no el
+    # asunto: es una condición de la empresa. Sin esto, en una conversación larga
+    # el bot contestaba «Son 409,70 € + IVA» a los portes y a la devolución.
+    # El veto es SOLO para esas: una queja y un «pide sin pagar» nombran la
+    # devolución y el pago, y esas dos mandan siempre.
+    otro_asunto = bool(OTRO_ASUNTO.search(t))
     # "Perfecto", "genial" y "vale" son acuses… salvo cuando van delante de una
     # pregunta. «Perfecto, ¿y si no me vale?» se clasificaba como agradecimiento
     # por la primera palabra y la pregunta se perdía entera: el bot contestaba
@@ -818,6 +960,8 @@ def detectar_intencion(mensaje: str) -> str:
             continue        # es una pregunta sobre la política, no una reclamación
         if intencion == "agradecimiento" and pregunta:
             continue        # da las gracias y además pregunta: lo que manda es la pregunta
+        if otro_asunto and intencion in SEGUIMIENTO_PIEZA:
+            continue        # pregunta por los portes, no por la pieza
         if any(_sin_tildes(m) in t for m in marcas):
             return intencion
     return "consulta"
@@ -1157,20 +1301,60 @@ def _OTRA_MANERA_DE_DECIRLO(conv):
                 "No cambia, lo siento: es igual para todos los clientes.",
                 "Ahí no puedo ayudarte, lo tiene que ver Álvaro.",
                 "Sigue siendo que no, y no es por ti: es como trabajamos."]
+    # SEIS TAMBIÉN AQUÍ, y por lo mismo que arriba. Tres alcanzaban cuando las
+    # conversaciones del banco tenían cinco mensajes; con veinte se agotan y
+    # vuelven a empezar, y entonces esta red —que existe justo para no repetir—
+    # es la que repite. Se vio en el banco largo: cuatro líneas repetidas en dos
+    # conversaciones, las cuatro salidas de aquí.
+    # VUELVE A COMPRAR LO QUE YA ESTA APARTADO. «Vale, me la quedo» dicho dos
+    # veces no es ruido: es alguien que no esta seguro de que le hayan cogido el
+    # pedido. Lo que quiere oir es que si. Sin esta rama le salia «Sin novedad
+    # todavia; en cuanto la haya te escribo», que es lo que se le dice a quien
+    # ESPERA, no a quien acaba de comprar — y encima no cerraba la venta.
+    if (getattr(conv, "ultima_intencion", None) == "cierre"
+            and conv.estado in (CERRADA, POSVENTA)):
+        return ["Ya lo tienes apartado a tu nombre, tranquilo.",
+                "Sigue apartado a tu nombre, no hace falta nada más.",
+                "Está apartado y esperándote.",
+                "Lo tienes reservado, sin prisa.",
+                "Apartado queda; cuando quieras sale.",
+                "Ya está guardado a tu nombre."]
+
+    # ESCALADO ANTES QUE NADA. Si el caso ya esta con una persona, «sigo en lo
+    # mismo» significa eso y no otra cosa. Sin esta rama, a un «el alternador que
+    # me mandasteis no funciona» —con la conversacion ya escalada por otro
+    # motivo— le salia «Dime y lo miro», que suena a que nadie le esta llevando
+    # el caso justo cuando si se lo llevan.
+    if conv.escalado:
+        return ["Sigue con Álvaro, que lo está mirando él.",
+                "Lo tiene Álvaro y te contesta en cuanto lo vea.",
+                "Está en sus manos; en cuanto lo mire te escribe.",
+                "Álvaro lo lleva directamente, no hace falta que hagas nada.",
+                "Sigue con él, te contesta él mismo.",
+                "Lo suyo lo ve Álvaro, te avisa en cuanto lo tenga."]
     if conv.estado in (CERRADA, POSVENTA):
         return ["Todo sigue igual por aquí, tranquilo.",
                 "Sin novedad todavía; en cuanto la haya te escribo.",
-                "Sigue en marcha, no hace falta que hagas nada."]
+                "Sigue en marcha, no hace falta que hagas nada.",
+                "De momento nada nuevo; en cuanto lo haya te lo digo.",
+                "Lo tuyo está en marcha, tú tranquilo.",
+                "Sin cambios por ahora, te aviso yo en cuanto los haya."]
     if conv.ultima_pieza:
         return ["Ahí sigue, cuando quieras.",
                 "Sin prisa, me dices y seguimos.",
-                "Aquí estoy para lo que necesites."]
+                "Aquí estoy para lo que necesites.",
+                "Cuando lo tengas claro, me escribes.",
+                "No corre prisa, sigue apuntado.",
+                "Lo dejo ahí y me dices tú."]
     return ["Dime y lo miro.",
             "Cuéntame y te digo.",
-            "Tú dirás."]
+            "Tú dirás.",
+            "Lo que necesites, aquí estoy.",
+            "Dispara, que lo miro.",
+            "Cuando quieras me lo cuentas."]
 
 
-def _sin_repetir(lineas, conv, reglas):
+def _sin_repetir(lineas, conv, reglas, es_despedida=False, contesta_pregunta=False):
     """Quita lo que ya se había dicho igual. Es la red, no el plan.
 
     El plan es `variar()`: quien escribe una frase le pone alternativas. El
@@ -1186,6 +1370,15 @@ def _sin_repetir(lineas, conv, reglas):
         return lineas
     if not hasattr(conv, "lineas_dichas"):
         conv.lineas_dichas = set()
+
+    # UNA DESPEDIDA SE DEJA EN PAZ. Aunque se repita, «hasta luego» dicho dos
+    # veces es lo normal y lo que hace cualquiera; cambiarlo por otra cosa no.
+    # Sin esto, al «adiós» del turno 22 se le quitaba la despedida por repetida
+    # y `_OTRA_MANERA_DE_DECIRLO` metía en su sitio «Sigue en marcha, no hace
+    # falta que hagas nada», que le dice a quien se está yendo que espere.
+    if es_despedida:
+        return lineas
+
 
     limpias, quitadas = [], 0
     for l in lineas:
@@ -1228,12 +1421,31 @@ def _sin_repetir(lineas, conv, reglas):
         # elegir la que todavía no se haya dicho, que es lo que hay apuntado dos
         # líneas más abajo. Salió con el de Wallapop que insiste seis veces en
         # que le manden la pieza sin pagar: tres variantes no le bastaban.
-        opciones = _OTRA_MANERA_DE_DECIRLO(conv)
-        nuevas = [o for o in opciones
-                  if " ".join(o.lower().split()) not in conv.lineas_dichas]
-        limpias = [nuevas[0] if nuevas
-                   else conv.variar("en_vez_de_repetir", opciones)]
-        quitadas = len(lineas)
+        # PERO SI HA PREGUNTADO ALGO, LA RESPUESTA ES LA RESPUESTA. Volver a
+        # preguntar por la garantia no convierte la garantia en relleno: lo que
+        # hace una persona es decir lo mismo con otras palabras —«como te decia,
+        # un año»—, no cambiar de tema. Aqui se hacia lo segundo, y salia caro:
+        # «que garantia tienen las piezas?» recibia «Todo sigue igual por aqui,
+        # tranquilo», que no contesta nada. Tres veces en el banco largo.
+        #
+        # El prefijo tambien VARIA, y no por adorno: sin eso, preguntarlo tres
+        # veces devolvia tres «como te decia» identicos y la repeticion volvia
+        # por la puerta de al lado.
+        if contesta_pregunta and lineas:
+            primera = lineas[0]
+            prefijo = conv.variar("ya_lo_dije", [
+                "Como te decía, ", "Te lo confirmo: ",
+                "Lo mismo que antes: ", "Sigue igual: ",
+            ])
+            limpias = [prefijo + primera[0].lower() + primera[1:]]
+            quitadas = len(lineas)
+        else:
+            opciones = _OTRA_MANERA_DE_DECIRLO(conv)
+            nuevas = [o for o in opciones
+                      if " ".join(o.lower().split()) not in conv.lineas_dichas]
+            limpias = [nuevas[0] if nuevas
+                       else conv.variar("en_vez_de_repetir", opciones)]
+            quitadas = len(lineas)
 
     if quitadas:
         reglas.append(("no repite lo ya dicho",
@@ -1670,17 +1882,42 @@ def _politica(consulta, conv, reglas):
     # Si ya se ha contestado esa misma política en esta conversación, no se vuelve
     # a soltar el párrafo entero. Repetir la condición palabra por palabra suena a
     # contestador; lo que toca es empujar hacia el siguiente paso.
-    if conv.veces_dicho.get(f"pol-{seccion}"):
-        reglas.append(("no repite la política",
-                       f"«{seccion}» ya se explicó en esta conversación: se avanza "
-                       f"en vez de repetirla"))
-        return conv.variar(f"pol2-{seccion}", [
-            ["Como te decía, en eso no hay problema.",
-             "¿Seguimos con la pieza?"],
-            ["Eso lo tienes cubierto.",
-             "Dime qué necesitas y lo cerramos."],
-        ])
+    # PREGUNTAR OTRA COSA DE LO MISMO NO ES REPETIRSE. Una sección cubre varias
+    # preguntas: «¿mandáis a Canarias?» y «¿cuánto cuesta el envío?» caen las dos
+    # en ENVÍOS, y la segunda no es el mismo cliente insistiendo, es otra
+    # pregunta. Antes bastaba con que la sección ya se hubiera tocado para
+    # contestar «Como te decía, en eso no hay problema», y en una conversación
+    # larga eso dejaba sin respuesta la mitad de lo que se preguntaba: los días
+    # de devolución, el precio del porte, qué pasa si falla a los dos meses.
+    #
+    # Así que se compara con la pregunta que la sacó la primera vez. Si trae
+    # palabras nuevas, es otra pregunta y se contesta. Solo se esquiva a quien
+    # vuelve a preguntar LO MISMO, que era el caso que esto vino a resolver.
+    palabras = {p for p in _sin_tildes(consulta.get("pregunta", "")).split()
+                if len(p) > 3}
+    if not hasattr(conv, "preguntas_de_politica"):
+        conv.preguntas_de_politica = {}
+    antes = conv.preguntas_de_politica.get(seccion)
 
+    if conv.veces_dicho.get(f"pol-{seccion}") and antes is not None:
+        nuevas = palabras - antes
+        if not nuevas:
+            reglas.append(("no repite la política",
+                           f"«{seccion}» ya se explicó y vuelve a preguntar lo "
+                           f"mismo: se avanza en vez de repetirla"))
+            return conv.variar(f"pol2-{seccion}", [
+                ["Como te decía, en eso no hay problema.",
+                 "¿Seguimos con la pieza?"],
+                ["Eso lo tienes cubierto.",
+                 "Dime qué necesitas y lo cerramos."],
+            ])
+        reglas.append(("misma condición, otra pregunta",
+                       f"«{seccion}» ya se tocó, pero esto no es lo mismo que "
+                       f"preguntó antes: se le contesta"))
+        conv.preguntas_de_politica[seccion] = antes | palabras
+        return [texto]
+
+    conv.preguntas_de_politica[seccion] = palabras
     conv.veces_dicho[f"pol-{seccion}"] = 1
     reglas.append(("responde con la política de la empresa",
                    f"sección «{seccion}» del documento de condiciones"))
@@ -1748,6 +1985,13 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     # La pregunta ya está contestada, sea lo que sea lo que haya respondido.
     conversacion.esperando_si = False
 
+    # La intencion QUE SE HA LEIDO EN ESTE TURNO, para que las guardas la
+    # tengan. `rompe_el_guion` compara el borrador con lo que escribio el
+    # modelo, y hay reglas que solo valen segun lo que estuviera haciendo el
+    # cliente: preguntarle algo es normal casi siempre y es un error cuando
+    # acaba de despedirse. Sin esto la guarda no puede distinguirlo.
+    conversacion.ultima_intencion = intencion
+
     escala = False
     salida = {"precio_dado": None}
 
@@ -1769,6 +2013,11 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     _cierre_con_pieza = intencion == "cierre" and conversacion.ultima_pieza
     if (conversacion.escalado
             and intencion not in ("pide sin pagar", "justificante")
+            # Y tampoco una DESPEDIDA. Estar esperando a Álvaro no quita que el
+            # cliente se esté yendo: contestarle «ya se lo he pasado» a un adiós
+            # es no haberle leído, y la rama de despedida sí sabe decir las dos
+            # cosas a la vez.
+            and intencion != "despedida"
             and not _cierre_con_pieza
             and decision != "RESPONDE"):
         # YA ESTÁ CON ÁLVARO Y EL CLIENTE SOLO ACUSA ("sí", "gracias", "vale",
@@ -1781,7 +2030,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         escala = True
         lineas += conversacion.variar("sigue_escalado", [
             ["Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea."],
-            ["Sigue con Álvaro; en cuanto lo mire te escribe él mismo. 👍"],
+            ["Sigue con Álvaro; en cuanto lo mire te escribe él mismo."],
             ["Lo tiene Álvaro, cualquier cosa te contesta él directamente."],
         ])
         reglas.append(("sigue escalado",
@@ -1848,10 +2097,29 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     # Lo único que se hace aquí es cerrar y dejar la puerta abierta. NO se pide
     # ningún dato y NO se fuerza la venta: quien se va, se va.
     elif intencion == "despedida":
-        if conversacion.estado in (CERRADA, POSVENTA):
+        if conversacion.escalado:
+            # Se va, pero su caso sigue con una persona. Las dos cosas importan y
+            # caben en una línea: se le despide y se le recuerda quién le
+            # contesta, sin volver a explicarle el escalado entero.
+            lineas += conversacion.variar("despedida_escalado", [
+                ["Hasta luego. Lo tiene Álvaro y te escribe él en cuanto lo vea."],
+                ["Un saludo. Sigues con Álvaro, cualquier cosa te contesta él."],
+                ["Nos vemos. Álvaro te escribe en cuanto lo mire."],
+                ["Hasta otra. Tu caso lo lleva él y te contesta directamente."],
+            ])
+            reglas.append(("despedida con el caso escalado",
+                           "se va mientras espera a una persona: se cierra y se "
+                           "le recuerda quién le contesta, sin reabrir nada"))
+        elif conversacion.estado in (CERRADA, POSVENTA):
+            # CUATRO, NO DOS. El que se despide y sigue escribiendo dice
+            # adiós cuatro y cinco veces en la misma conversación, y con dos
+            # frases la red de no repetir —que a las despedidas las deja pasar a
+            # propósito— dejaba salir la misma dos veces seguidas.
             lineas += conversacion.variar("despedida_venta", [
                 ["A mandar. Cualquier cosa me dices."],
                 ["Hasta luego. Si surge algo con la pieza, me escribes."],
+                ["Nos vemos. Queda todo apuntado por aquí."],
+                ["Un saludo. Ya sabes dónde estamos."],
             ])
             reglas.append(("despedida con la venta hecha",
                            "se cierra sin repetir el pedido ni pedir ningún dato"))
@@ -1864,6 +2132,8 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                  f"{_pron(g)} quieres más adelante."],
                 [f"Un saludo. Aquí sigue {_art(g)} {nombre} cuando "
                  f"{_pron(g)} necesites."],
+                [f"Nos vemos. {_art(g).title()} {nombre} queda apuntad{_o(g)}."],
+                [f"Hasta otra. Si {_pron(g)} quieres, me dices y seguimos."],
             ])
             reglas.append(("despedida con una pieza sobre la mesa",
                            "se cierra dejando la pieza apuntada, sin presionar y "
@@ -1872,6 +2142,8 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
             lineas += conversacion.variar("despedida", [
                 ["Hasta luego, aquí estamos cuando lo necesites."],
                 ["Un saludo. Cuando tengas la pieza y el coche, me dices."],
+                ["Nos vemos. Aquí seguimos para cuando haga falta."],
+                ["Hasta otra. Me escribes y lo miramos."],
             ])
             reglas.append(("despedida",
                            "el cliente se va: se cierra y no se le pide ningún "
@@ -2256,8 +2528,18 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     # lee como un cierre y no lo es: es la misma petición de antes con otra ropa.
     # Un cierre de verdad —con una pieza concreta encima de la mesa— ya lo ha
     # cogido la rama de arriba, así que esto solo pilla los que no tienen pieza.
-    elif conversacion.regla_dura and not hay_pieza and intencion in (
-            "consulta", "prisa", "alternativa", "cierre"):
+    #
+    # PERO PREGUNTAR OTRA COSA NO ES INSISTIR. Esta rama se quedaba pegada: al
+    # que había intentado pagar contra reembolso se le contestaba «la condición
+    # no cambia» a la garantía, a los portes y al IVA durante el resto de la
+    # conversación. En el banco largo salía entero — nueve turnos seguidos sin
+    # contestar nada de lo que se preguntaba. Quien se dedica a eso no está
+    # negociando el pago, está comprando; y ahí es donde se pierde la venta.
+    # Se usa el mismo criterio que en `detectar_intencion`: manda el ASUNTO. Lo
+    # que siga hablando de pagar sí se queda aquí, que para eso está.
+    elif (conversacion.regla_dura and not hay_pieza
+            and not OTRO_ASUNTO.search(_sin_tildes(mensaje_cliente or ""))
+            and intencion in ("consulta", "prisa", "alternativa", "cierre")):
         escala = True
         lineas += conversacion.variar("insiste", [
             ["Te entiendo, pero eso no lo decido yo y no me puedo saltar la norma.",
@@ -2323,7 +2605,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         # (decision != "RESPONDE" o hay_pieza) deja pasar una política de posventa
         # —RESPONDE sin pieza— que sí hay que contestar, y frena el re-ofrecer.
         lineas += conversacion.variar("cerrada_corto", [
-            ["¡Perfecto! Cualquier cosa me dices. 👍"],
+            ["¡Perfecto! Cualquier cosa me dices."],
             ["Genial, queda todo apuntado por aquí."],
             ["Hecho. Si te surge algo, aquí estoy."],
         ])
@@ -2398,7 +2680,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     # escala. Un bot que manda a una persona un "👍" o un "vale" parece roto.
     elif _es_cortesia(consulta.get("pregunta", "")):
         lineas += conversacion.variar("cortesia", [
-            ["Aquí estoy 👍 Dime qué pieza buscas y para qué coche."],
+            ["Aquí estoy. Dime qué pieza buscas y para qué coche."],
             ["Sin problema. ¿Qué pieza necesitas y para qué coche?"],
             ["Cuando quieras. Dime la pieza y el coche y lo miro."],
         ])
@@ -2434,7 +2716,11 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         lineas = lineas[:3]
         reglas.append(("formato WhatsApp", "recortado a 3 líneas (rol §8.2)"))
 
-    lineas = _sin_repetir(lineas, conversacion, reglas)
+    lineas = _sin_repetir(
+        lineas, conversacion, reglas,
+        es_despedida=(intencion == "despedida"),
+        contesta_pregunta=bool(
+            OTRO_ASUNTO.search(_sin_tildes(mensaje_cliente or ""))))
 
     return {
         "mensaje": "\n".join(lineas),

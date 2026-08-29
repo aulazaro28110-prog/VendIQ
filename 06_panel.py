@@ -839,6 +839,12 @@ class Sistema:
                     or self.redactor.rompe_la_identificacion(
                         respuesta["lineas"],
                         fichas[0].get("meta") if fichas else None, identificado)
+                    # Lo que el modelo QUITA. Las demás miran lo que añade, y
+                    # comerse la presentación del primer mensaje no lo veía
+                    # nadie: el cliente estrenaba la conversación con un «¿me
+                    # pasas la matrícula?» a secas, sin saber con quién habla.
+                    or self.redactor.rompe_la_apertura(
+                        respuesta["lineas"], respuesta.get("borrador"))
                     # Red de seguridad sobre lo que el modelo AÑADE. Va la última
                     # porque es la más cara: recorre el vocabulario de marcas.
                     or self.redactor.rompe_el_guion(

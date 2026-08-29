@@ -519,7 +519,14 @@ def clasificar(respuesta, busqueda):
     reglas = " · ".join(r["regla"] for r in respuesta["reglas"])
     if respuesta["precio_dado"]:
         return "precio"
-    if respuesta["escala"] and "escalado a persona" in reglas:
+    # «sigue escalado» es escalar igual. Es la rama del escalado pegajoso: el
+    # caso YA está con Álvaro y el cliente solo acusa recibo, así que el bot
+    # contesta corto y no se vuelve a poner por delante. La regla se llama
+    # distinto a propósito —en el panel dice algo más preciso que el genérico—,
+    # pero medir eso como «otra cosa» era medir mal: la conversación está con una
+    # persona, que es exactamente lo que este caso comprueba.
+    if respuesta["escala"] and ("escalado a persona" in reglas
+                                or "sigue escalado" in reglas):
         return "escala"
     if "cierre de venta" in reglas:
         return "cierra"
@@ -536,8 +543,14 @@ def clasificar(respuesta, busqueda):
         return "confirma"
     if busqueda["decision"] == "NO DISPONIBLE" or "no se ofrece una parecida" in reglas:
         return "no la tengo"
+    # «mensaje de cortesía» es pedir datos. Un "👍" o un "¿hay alguien?" se
+    # contestan con «Dime qué pieza buscas y para qué coche», que es pedir el
+    # dato — pero la regla se llama por lo que ENTRA, no por lo que sale, y por
+    # eso no encajaba en ninguna casilla y caía en «otra cosa». El bot hacía lo
+    # correcto; quien no sabía leerlo era esta función.
     if ("un dato por mensaje" in reglas or "no se reconoce" in reglas
-            or "apertura" in reglas or "no repite la misma frase" in reglas):
+            or "apertura" in reglas or "no repite la misma frase" in reglas
+            or "mensaje de cortesía" in reglas):
         return "pide datos"
     if "memoria de conversación" in reglas:
         return "recuerda"
