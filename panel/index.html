@@ -118,21 +118,6 @@
       </div>
     </div>
 
-    <div class="carta">
-      <h3>Lo que se le atragantó</h3>
-      <p class="nota">Consultas que no resolvió solo, ordenadas por veces que se
-        repitieron. Salen del mismo tráfico y no están filtradas: esto es lo
-        siguiente que hay que arreglar.</p>
-      <div class="barras" id="g-atasco"></div>
-    </div>
-
-    <div class="carta">
-      <h3>Conversaciones tal cual salieron</h3>
-      <p class="nota">Muestra al azar del tráfico. Ni retocadas ni elegidas:
-        son las que tocó.</p>
-      <div id="muestra-conv"></div>
-    </div>
-
     <details class="tabla-detalle">
       <summary>Ver los números en tabla</summary>
       <div class="tabla-scroll">
@@ -244,6 +229,31 @@
       <div id="salida">
         <p class="vacio">Escribe una consulta o pulsa uno de los ejemplos.</p>
       </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= atasco -->
+  <!-- Va DETRAS del chat a proposito: primero el resumen de actividad, luego
+       pruebas el bot tu mismo, y solo despues el detalle de lo que se le
+       atraganto. Antes estaban metidas en medio de las graficas y el chat
+       quedaba enterrado debajo de todo. -->
+  <section class="bloque" id="atasco">
+    <p class="eyebrow">El detalle</p>
+    <h2>Lo que no salió redondo</h2>
+
+    <div class="carta">
+      <h3>Lo que se le atragantó</h3>
+      <p class="nota">Consultas que no resolvió solo, ordenadas por veces que se
+        repitieron. Salen del mismo tráfico y no están filtradas: esto es lo
+        siguiente que hay que arreglar.</p>
+      <div class="barras" id="g-atasco"></div>
+    </div>
+
+    <div class="carta">
+      <h3>Conversaciones tal cual salieron</h3>
+      <p class="nota">Muestra al azar del tráfico. Ni retocadas ni elegidas:
+        son las que tocó.</p>
+      <div id="muestra-conv"></div>
     </div>
   </section>
 
