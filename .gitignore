@@ -46,3 +46,6 @@ salida/frio.txt
 
 # Transcripciones de tiradas de los bancos: se regeneran en cada ejecucion.
 salida/*.txt
+
+# Salidas de depuracion de tests (temporales)
+err_*.txt

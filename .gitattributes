@@ -1,0 +1,12 @@
+# Normaliza fin de línea: en el repo siempre LF (evita el ruido de CRLF de OneDrive/Windows)
+* text=auto eol=lf
+
+# Binarios: git no los toca
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.npy binary
+*.woff binary
+*.woff2 binary
