@@ -9,8 +9,9 @@ redactor con la voz real de la empresa, simulador de WhatsApp en un centro de co
 motor de ofertas, y un ciclo de aprendizaje en el que una persona contesta lo que el bot no
 supo y el sistema lo indexa al momento.
 
-Y lo que importa: **está medido**. Dos bancos de pruebas (200 conversaciones y 80 consultas)
-y catorce días de tráfico simulado pasados por el sistema real.
+Y lo que importa: **está medido**. Diez bancos de pruebas —218 conversaciones, 50 conversaciones
+largas de más de veinte mensajes (1.041 turnos), 50 correos, 80 consultas de búsqueda— y siete
+días de tráfico simulado pasados por el sistema real.
 
 > RAG = *Retrieval Augmented Generation* = "mira la carpeta antes de hablar": primero recupera
 > información real de la empresa, y luego genera la respuesta sobre ella.
@@ -196,7 +197,7 @@ La pestaña de precios cierra un círculo que merece la pena entender: tu trabaj
 se queda en resolver un caso, **entra en el sistema**. En cuanto guardas un precio, la
 siguiente consulta ya lo usa. El humano no es el plan B del bot: es quien lo alimenta.
 
-Los datos de actividad salen de `10_simular.py`: catorce días enteros de tráfico pasados
+Los datos de actividad salen de `10_simular.py`: siete días enteros de tráfico pasados
 por el buscador y el redactor **reales**. Simula los **mensajes** (es un prototipo, no hay
 clientes reales) pero mide de verdad las decisiones, los escalados y los tiempos. Si mañana
 la búsqueda empeora, los números del panel empeoran solos. `05_panel_datos.py` sigue
@@ -236,18 +237,27 @@ Y para comprobar que sigue funcionando:
 
 ```bash
 python tests/test_busqueda.py            # 80 consultas + 40 piezas inexistentes
-python tests/test_conversaciones.py      # 200 conversaciones enteras
+python tests/test_conversaciones.py      # 218 conversaciones enteras
+python tests/test_frio.py                # 50 conversaciones largas · 1.041 turnos
+python tests/test_canales.py             # 50 correos + 20 de Wallapop
+python tests/test_ciclo.py               # las 9 situaciones del ciclo, una a una
+python tests/test_prompt.py              # 12 secciones del rol, comprobadas
+python tests/test_mesa.py                # el enrutado de lo que el bot no supo
 python tests/test_ofertas.py
 python tests/test_precios.py
-python 10_simular.py --dias 14           # 14 días de tráfico por el sistema real
+python tests/test_llm.py                 # la llamada a Groq, sin clave y sin red
+python 10_simular.py --dias 7            # 7 días de tráfico por el sistema real
 ```
 
 Si te saltas un paso, el siguiente te dice cuál falta en vez de reventar con un error críptico.
 
 ## Calidad medida
 
-Dos bancos, y ninguno tiene las preguntas escritas a mano: se generan desde el propio catálogo,
+Diez bancos. Ninguno tiene las preguntas escritas a mano: se generan desde el propio catálogo,
 así que la respuesta correcta se conoce de antemano y siguen valiendo cuando el catálogo cambia.
+
+**Todos en verde.** Los tres que redactan con el LLM no son deterministas, así que se corren dos
+veces antes de dar un resultado por bueno.
 
 ### Recuperación — `tests/test_busqueda.py`
 
@@ -267,7 +277,7 @@ estaban escritos a mano en `05_panel_datos.py` y se quedaron en el 89 % del cat�
 piezas mientras el sistema ya iba por el 91 %. Si el fichero no está, el panel dice que hay que
 ejecutar el banco en vez de enseñar una cifra vieja con pinta de fresca.
 
-Acierto en el top 3: **98 %**. Guardarraíl: **40 de 40** piezas inexistentes no devuelven
+Acierto en el top 3: **98,75 %**. Guardarraíl: **40 de 40** piezas inexistentes no devuelven
 ninguna ficha (**100 %**).
 
 > El salto de "datos incompletos" de 67 % a 100 % **no es que el buscador mejorara**: es que la
@@ -276,10 +286,10 @@ ninguna ficha (**100 %**).
 
 ### Conversación — `tests/test_conversaciones.py`
 
-200 conversaciones en 17 situaciones (precio exacto, no la tenemos, regateo, quejas, mensajes
+218 conversaciones en 17 situaciones (precio exacto, no la tenemos, regateo, quejas, mensajes
 sucios, pago sin cobrar, conversaciones de 8 turnos…). **100 % acaban como deben.**
 
-Y seis **invariantes**, cosas que nunca pueden pasar. Ninguno roto en los 200 casos:
+Y seis **invariantes**, cosas que nunca pueden pasar. Ninguno roto en los 218 casos:
 
 - ni un importe publicado que la búsqueda no autorizara
 - ningún mensaje de más de 3 líneas, con emoji, tratando de usted ni vacío
@@ -288,33 +298,65 @@ Y seis **invariantes**, cosas que nunca pueden pasar. Ninguno roto en los 200 ca
 - no repite el mensaje anterior palabra por palabra
 - no dice por tercera vez la misma frase
 
+### Conversaciones largas — `tests/test_frio.py`
+
+El banco de arriba mide conversaciones cortas de gente que colabora. Éste mide lo contrario:
+**50 conversaciones desde cero, todas de más de veinte mensajes — 1.041 turnos**, porque la gente
+marea. Pregunta, se enrolla, se desvía a la garantía, cambia de coche, vuelve al de antes,
+regatea tres veces, prueba una estafa, se despide y sigue escribiendo.
+
+Casi todos los fallos que encontró aparecen **a partir del turno 12**, cuando el bot ya arrastra
+memoria de media conversación: en el turno 3 no existen. Y mide las dos puntas que ningún otro
+banco miraba — el cliente siempre abre saludando y siempre cierra despidiéndose, que es donde el
+bot no tiene ficha que consultar y más se le nota.
+
+Corre **con el LLM encendido**, a propósito: lo que se mide es el sistema entero con las guardas
+trabajando. **50 de 50, ningún invariante roto.**
+
+El corpus vive aparte, en `tests/frio_casos.py`: trozos con su trampa y 50 recetas que los
+encadenan. Así un trozo se arregla una vez y queda arreglado en las doce conversaciones que lo usan.
+
+### El modelo, auditado
+
+El LLM redacta, pero no se le cree. Cada mensaje que escribe se compara con el borrador
+determinista antes de salir, y la regla es una: **puede reformular, no puede introducir**. Si se
+inventa un precio, se inventa un «no», nombra un coche que nadie dijo, vuelve a pedir un dato ya
+dado, se come la presentación o le pregunta algo a quien se está despidiendo, **se descarta su
+redacción entera y sale el borrador**, que sí es demostrable.
+
+No es una promesa del prompt: son guardas que se ejecutan, y saltaron 29 veces en los 1.041 turnos
+del banco largo.
+
 ### Volumen — `10_simular.py`
 
-14 días de tráfico (150-200 conversaciones diarias, sábado a media máquina, domingo cerrado)
+7 días de tráfico (150-200 conversaciones diarias, sábado a media máquina, domingo cerrado)
 pasados por el sistema real. **Los mensajes son sintéticos; los números, medidos.** Cada
 decisión, cada milisegundo y cada escalado sale de ejecutar el buscador real contra las 5.000
 piezas: aquí no hay ni una cifra estimada.
 
 | Medida | Valor |
 |---|---|
-| Conversaciones | 1.863 |
-| Mensajes | 4.532 |
-| Resueltas sin persona | 1.551 — **83 %** |
-| Escaladas a un humano | 312 |
-| Precios dados solos | 1.037 |
+| Conversaciones | 930 |
+| Mensajes | 2.558 |
+| Resueltas sin persona | 892 — **96 %** |
+| Escaladas a un humano | 38 |
+| Precios dados solos | 408 |
 | **Fugas de precio** | **0** |
-| Latencia mediana / p95 / máx | 56,8 / 77,6 / 175,6 ms |
-| Tiempo de ejecución | 767 s |
+| Latencia mediana / p95 / máx | 55,6 / 80,1 / 262,5 ms |
+| Tiempo de ejecución | 424 s |
 
-La tirada se ha hecho **dos veces**, con el índice reconstruido en medio. Las
-decisiones salieron idénticas hasta el último número; las latencias, no (medianas
-de 49,3 y 56,8 ms). Lo que decide el sistema es reproducible, lo que tarda depende
-de la máquina.
+Semilla fija, así que el tráfico es reproducible: lo que decide el sistema sale idéntico entre
+tiradas y solo cambian las latencias, que dependen de la máquina.
 
-Reparto de las tres únicas acciones posibles por mensaje: **RESPONDER 3.364 · ESCALAR 618 ·
-PREGUNTAR 550**. De los 1.596 importes que entraron en juego, el bot dijo 1.019 y **se calló
-577** — no porque decidiera callarse, sino porque un precio no publicable nunca llega al texto
-que redacta.
+Reparto de las tres únicas acciones posibles por mensaje: **RESPONDER 1.906 · PREGUNTAR 519 ·
+ESCALAR 133**. De los 971 importes que entraron en juego, el bot dijo 408 y **se calló 563** —
+no porque decidiera callarse, sino porque un precio no publicable nunca llega al texto que
+redacta. De esos, **536 fueron por no tener matrícula**.
+
+> **Esta misma tirada, contra el bot de hace una semana**, daba 875 resueltas sin persona (94 %),
+> 55 escaladas y una mediana de 81,9 ms. Mismo tráfico y misma semilla: lo único que cambió es el
+> bot. El p95 bajó un 60 % y el peor caso un 79 % **sin tocar nada de rendimiento** — resulta que
+> las ramas que se comían la conversación eran las que más trabajo hacían.
 
 Salida en `salida/actividad.json`, que es lo que pinta la sección *Actividad* del panel.
 
