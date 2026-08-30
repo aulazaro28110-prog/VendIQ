@@ -1,13 +1,13 @@
 {
-  "generado": "2026-08-22T14:14:22+00:00",
+  "generado": "2026-08-30T12:09:08+00:00",
   "aviso": "Los mensajes de cliente están simulados (es un prototipo, no hay clientes reales). Las decisiones, puntuaciones y tiempos son resultado de ejecutar el sistema de verdad.",
   "resumen": {
     "consultas": 30,
     "resueltas_sin_persona": 30,
     "tasa_resolucion": 1.0,
     "escaladas": 0,
-    "ms_mediana": 68.6,
-    "ms_p95": 79.9,
+    "ms_mediana": 67.2,
+    "ms_p95": 87.1,
     "piezas_catalogo": 5000,
     "ofertas": 15,
     "ofertas_por_regla": 12,
@@ -29,7 +29,7 @@
     "preguntas_banco": 80,
     "piezas_inexistentes_probadas": 40,
     "fichas_indexadas": 5010,
-    "medido": "2026-08-22 16:13",
+    "medido": "2026-08-28 17:22",
     "fuente": "tests/test_busqueda.py",
     "acierto_antes": 0.2
   },
@@ -95,7 +95,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 74.2,
+      "ms": 94.5,
       "resultados": [
         {
           "puntuacion": 0.816,
@@ -131,7 +131,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 80.6,
+      "ms": 87.1,
       "resultados": [
         {
           "puntuacion": 0.862,
@@ -167,7 +167,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 73.6,
+      "ms": 83.1,
       "resultados": [
         {
           "puntuacion": 0.921,
@@ -203,7 +203,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 59.0,
+      "ms": 54.7,
       "resultados": [
         {
           "puntuacion": 0.376,
@@ -223,7 +223,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 57.9,
+      "ms": 56.2,
       "resultados": [
         {
           "puntuacion": 0.142,
@@ -243,7 +243,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 79.9,
+      "ms": 74.7,
       "resultados": [
         {
           "puntuacion": 0.901,
@@ -279,7 +279,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 64.8,
+      "ms": 65.0,
       "resultados": [
         {
           "puntuacion": 0.755,
@@ -307,7 +307,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 68.9,
+      "ms": 67.5,
       "resultados": [
         {
           "puntuacion": 0.876,
@@ -343,7 +343,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "pieza_equivocada",
       "existe_en_catalogo": true,
-      "ms": 67.8,
+      "ms": 67.2,
       "resultados": [
         {
           "puntuacion": 0.899,
@@ -379,7 +379,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 66.6,
+      "ms": 68.9,
       "resultados": [
         {
           "puntuacion": 0.799,
@@ -415,7 +415,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 58.4,
+      "ms": 52.3,
       "resultados": [
         {
           "puntuacion": 0.407,
@@ -443,7 +443,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 60.9,
+      "ms": 56.3,
       "resultados": [
         {
           "puntuacion": 0.848,
@@ -479,7 +479,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 68.4,
+      "ms": 60.3,
       "resultados": [
         {
           "puntuacion": 0.886,
@@ -515,7 +515,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 57.9,
+      "ms": 51.1,
       "resultados": [
         {
           "puntuacion": 0.26,
@@ -551,7 +551,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 73.3,
+      "ms": 71.6,
       "resultados": [
         {
           "puntuacion": 0.803,
@@ -587,7 +587,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 78.3,
+      "ms": 70.1,
       "resultados": [
         {
           "puntuacion": 0.823,
@@ -623,7 +623,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 75.6,
+      "ms": 68.0,
       "resultados": [
         {
           "puntuacion": 0.832,
@@ -659,7 +659,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 77.3,
+      "ms": 70.1,
       "resultados": [
         {
           "puntuacion": 0.911,
@@ -695,7 +695,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 62.0,
+      "ms": 53.6,
       "resultados": [
         {
           "puntuacion": 0.423,
@@ -731,7 +731,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 72.2,
+      "ms": 56.8,
       "resultados": [
         {
           "puntuacion": 1.0,
@@ -751,7 +751,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 79.9,
+      "ms": 68.6,
       "resultados": [
         {
           "puntuacion": 0.827,
@@ -787,7 +787,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 68.7,
+      "ms": 62.3,
       "resultados": [
         {
           "puntuacion": 0.82,
@@ -823,7 +823,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "pieza_equivocada",
       "existe_en_catalogo": true,
-      "ms": 69.0,
+      "ms": 75.8,
       "resultados": [
         {
           "puntuacion": 0.894,
@@ -859,7 +859,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 70.0,
+      "ms": 67.1,
       "resultados": [
         {
           "puntuacion": 1.0,
@@ -879,7 +879,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 60.2,
+      "ms": 69.9,
       "resultados": [
         {
           "puntuacion": 0.204,
@@ -899,7 +899,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 43.5,
+      "ms": 49.5,
       "resultados": [
         {
           "puntuacion": 0.233,
@@ -935,7 +935,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 64.0,
+      "ms": 54.5,
       "resultados": [
         {
           "puntuacion": 1.0,
@@ -955,7 +955,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 59.7,
+      "ms": 50.4,
       "resultados": [
         {
           "puntuacion": 1.0,
@@ -975,7 +975,7 @@
       "porque": "respondida con la política de la empresa",
       "veredicto": "correcta",
       "existe_en_catalogo": null,
-      "ms": 57.8,
+      "ms": 53.3,
       "resultados": [
         {
           "puntuacion": 0.214,
@@ -995,7 +995,7 @@
       "porque": "encontrada en catálogo con confianza suficiente",
       "veredicto": "correcta",
       "existe_en_catalogo": true,
-      "ms": 79.2,
+      "ms": 71.4,
       "resultados": [
         {
           "puntuacion": 0.837,
