@@ -59,8 +59,6 @@
 </header>
 
 <main class="envoltorio">
-<div class="rejilla-principal">
-<div class="columna-principal">
 
   <!-- ============================================================ día -->
   <section class="bloque" id="dia">
@@ -130,26 +128,7 @@
       </div>
     </details>
   </section>
-</div>
 
-  <aside class="lateral">
-    <div class="carta">
-      <h3>Qué hace en cada mensaje</h3>
-      <p class="nota">Las tres únicas acciones posibles por turno.</p>
-      <div class="segmentada" id="seg-acciones" role="img"
-           aria-label="Reparto de acciones"></div>
-      <div class="leyenda" id="leyenda-acciones"></div>
-      <h3 style="margin-top:24px">Por qué llega a tu mesa</h3>
-      <div class="barras" id="g-motivos"></div>
-    </div>
-
-    <div class="carta">
-      <h3>Cómo decide</h3>
-      <p class="nota">Parámetros con los que está funcionando ahora mismo.</p>
-      <div class="indicadores" id="motor" style="margin-bottom:0"></div>
-    </div>
-  </aside>
-</div>
 
   <!-- ======================================================== cliente -->
   <section class="bloque" id="cliente">
@@ -228,6 +207,42 @@
       <div class="sugerencias" id="sugerencias"></div>
       <div id="salida">
         <p class="vacio">Escribe una consulta o pulsa uno de los ejemplos.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================================================= reglas -->
+  <!-- Estas dos tarjetas vivian en un lateral pegajoso a la derecha de la
+       Actividad. El lateral solo cabia por encima de 1060 px; por debajo caia
+       en flujo normal JUSTO ANTES del chat, con el hueco vacio de la seccion
+       delante, y quien abria el panel en un portatil se comia dos graficas de
+       configuracion antes de llegar a probar el bot. Ahora es una seccion mas
+       y el orden es el mismo en cualquier pantalla: que hizo, lo pruebas, y
+       solo despues con que reglas lo hizo. -->
+  <section class="bloque" id="reglas">
+    <p class="eyebrow">Por dentro</p>
+    <h2>Con qué reglas contesta</h2>
+    <p class="intro">
+      Las tres únicas cosas que puede hacer en un turno, por qué algunos
+      mensajes acaban en tu mesa, y los parámetros con los que el motor está
+      funcionando ahora mismo.
+    </p>
+
+    <div class="rejilla-2">
+      <div class="carta">
+        <h3>Qué hace en cada mensaje</h3>
+        <p class="nota">Las tres únicas acciones posibles por turno.</p>
+        <div class="segmentada" id="seg-acciones" role="img"
+             aria-label="Reparto de acciones"></div>
+        <div class="leyenda" id="leyenda-acciones"></div>
+        <h3 style="margin-top:24px">Por qué llega a tu mesa</h3>
+        <div class="barras" id="g-motivos"></div>
+      </div>
+      <div class="carta">
+        <h3>Cómo decide</h3>
+        <p class="nota">Parámetros con los que está funcionando ahora mismo.</p>
+        <div class="indicadores" id="motor" style="margin-bottom:0"></div>
       </div>
     </div>
   </section>

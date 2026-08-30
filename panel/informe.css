@@ -73,26 +73,12 @@
   background:linear-gradient(90deg,var(--cian),transparent);
 }
 
-/* ------------------------------------- rejilla principal + lateral fijo */
-/* La rejilla envuelve SOLO la seccion de Actividad. Un lateral pegajoso al lado
-   de una pagina de 10.000 px se queda clavado toda la vida y parece roto; al lado
-   de una seccion de altura parecida, acompania y luego se suelta. El resto de la
-   pagina vuelve a ancho completo, que es lo que necesitan la mesa de negociacion,
-   el chat y las tablas del informe. */
-.rejilla-principal{display:grid;grid-template-columns:1fr 342px;gap:28px;align-items:start}
-.columna-principal{min-width:0}
-.rejilla-principal + .bloque{border-top:1px solid var(--borde)}
-.lateral{
-  position:sticky;top:78px;display:flex;flex-direction:column;gap:18px;
-  padding-top:64px;
-}
-.lateral .carta{margin-bottom:0}
-/* El lateral pegajoso solo tiene sentido si sobra ancho. Por debajo baja al
-   final de la pagina en flujo normal, que es donde se lee sin estorbar. */
-@media (max-width:1060px){
-  .rejilla-principal{grid-template-columns:1fr}
-  .lateral{position:static;padding-top:0;margin-top:40px}
-}
+/* Aqui hubo una rejilla de dos columnas con un lateral pegajoso al lado de la
+   Actividad. Se ha quitado: el lateral solo cabia por encima de 1060 px y por
+   debajo caia en flujo normal delante del chat, de manera que la pagina se leia
+   en un orden en pantalla ancha y en otro en un portatil. Una sola columna se
+   lee igual en las dos. Las tarjetas que vivian ahi son ahora la seccion
+   #reglas, detras del chat. */
 @media (max-width:760px){.stats{grid-template-columns:1fr 1fr}}
 
 /* ------------------------------------------------------------------ pie */
@@ -139,7 +125,7 @@
 
 /* -------------------------------------------------------------- bloques */
 .bloque{padding:64px 0;scroll-margin-top:78px}
-.columna-principal > .bloque:first-child{padding-top:0}
+.envoltorio > .bloque:first-child{padding-top:0}
 .bloque + .bloque{border-top:1px solid var(--borde)}
 .eyebrow{
   font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;
