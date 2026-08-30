@@ -333,8 +333,11 @@ inventa un precio, se inventa un «no», nombra un coche que nadie dijo, vuelve 
 dado, se come la presentación o le pregunta algo a quien se está despidiendo, **se descarta su
 redacción entera y sale el borrador**, que sí es demostrable.
 
-No es una promesa del prompt: son guardas que se ejecutan, y saltaron 29 veces en los 1.041 turnos
-del banco largo.
+No es una promesa del prompt: son guardas que se ejecutan. En las dos últimas tiradas del banco
+largo saltaron **12 veces** en 1.041 turnos, las dos. El número baila entre tiradas —el modelo no
+es determinista— y el reparto también: una vez fueron 7 «no» inventados y 3 presentaciones
+comidas, y la siguiente 5 presentaciones y 4 «no». Lo que no cambia es que **el cliente ve
+siempre el borrador**, que sí es reproducible.
 
 ### Volumen — `10_simular.py`
 
@@ -384,7 +387,7 @@ Salida en `salida/actividad.json`, que es lo que pinta la sección *Actividad* d
   aparecen en el diagrama del panel **punteados y en gris**, etiquetados *no conectado*: no hay
   ni una línea de código detrás. Están dibujados porque es por donde crece, no porque funcionen.
 - **El modelo no es determinista.** Groq (`openai/gpt-oss-120b`) sí se ejecuta: los tres bancos
-  que redactan con él están en verde y sus guardas saltaron 29 veces en los 1.041 turnos del
+  que redactan con él están en verde y sus guardas saltaron 12 veces en los 1.041 turnos del
   banco largo. Pero la misma pregunta no da dos veces la misma frase, así que esos tres bancos
   hay que **correrlos dos veces** antes de dar un resultado por bueno, y un banco en verde no
   garantiza la siguiente tirada: lo que sí garantiza es la guarda, que es determinista. Sin
