@@ -28,7 +28,7 @@ días de tráfico simulado pasados por el sistema real.
 
 1. **`01_ingesta_chunking.py`** — reúne los documentos (inventario + políticas + las FAQ que ha
    contestado una persona) y los **trocea** en *chunks* pequeños y buscables.
-   Salida: `salida/chunks.jsonl` (5.007 chunks: 5.000 piezas + 7 políticas).
+   Salida: `salida/chunks.jsonl` (5.010 chunks: 5.000 piezas + 10 políticas).
 2. **`02_embeddings.py`** — convierte cada chunk en un **embedding** (vector de significado) con un
    modelo local gratuito (`sentence-transformers`) y los guarda. Salida: `salida/embeddings.npy` + `salida/embeddings_meta.json`.
 3. **`03_buscar.py`** — dada la pregunta de un cliente, **recupera** los trozos relevantes
@@ -229,7 +229,7 @@ Regla del proyecto: **datos sintéticos, no reales** (privacidad).
 pip install -r requirements.txt          # una vez (~150 MB la primera vez)
 
 python 01_ingesta_chunking.py            # trocea
-python 02_embeddings.py                  # vectoriza (5.007 chunks, ~2 min)
+python 02_embeddings.py                  # vectoriza (5.010 chunks, ~2 min)
 python 06_panel.py                       # centro de control en localhost:8420
 ```
 
@@ -258,6 +258,12 @@ así que la respuesta correcta se conoce de antemano y siguen valiendo cuando el
 
 **Todos en verde.** Los tres que redactan con el LLM no son deterministas, así que se corren dos
 veces antes de dar un resultado por bueno.
+
+Los diez corren también en **GitHub Actions** en cada push (`.github/workflows/pruebas.yml`), y
+ahí el índice **se reconstruye desde el catálogo** en vez de venir versionado: así lo que se
+prueba es que un clon recién bajado se levanta entero con los pasos de arriba. Lo que CI no
+cubre es la redacción con el LLM — sin clave redacta el determinista y los bancos pasan igual,
+pero las guardas no tienen a quién auditar.
 
 ### Recuperación — `tests/test_busqueda.py`
 
@@ -381,7 +387,7 @@ Salida en `salida/actividad.json`, que es lo que pinta la sección *Actividad* d
   garantiza la siguiente tirada: lo que sí garantiza es la guarda, que es determinista. Sin
   `GROQ_API_KEY` el sistema no se cae — redacta `07_redactor.py` y todo lo demás es idéntico.
   Ver `docs/CONFIGURAR_GROQ.md`.
-- **Escala: no es el problema.** Medido, no estimado: con 5.007 fichas la mediana está
+- **Escala: no es el problema.** Medido, no estimado: con 5.010 fichas la mediana está
   **entre 50 y 60 ms** (la mayor parte, vectorizar la pregunta, que es coste fijo) y el índice
   ocupa **7,7 MB**. El rango en vez de una cifra exacta es a propósito: dos ejecuciones
   idénticas dieron 49,3 y 56,8 ms, así que el ruido de medida ronda el 15 % y publicar «47 ms»
