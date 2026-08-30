@@ -1,5 +1,8 @@
 # VendIQ — asistente de ventas para un desguace (local, coste 0)
 
+[![pruebas](https://github.com/aulazaro28110-prog/VendIQ/actions/workflows/pruebas.yml/badge.svg)](https://github.com/aulazaro28110-prog/VendIQ/actions/workflows/pruebas.yml)
+[![licencia: MIT](https://img.shields.io/badge/licencia-MIT-blue.svg)](LICENSE)
+
 **VendIQ** contesta a los clientes de un desguace (Desguaces Madrid Norte) por WhatsApp
 **fundándose en los datos reales de la empresa** y no en lo que "cree saber". Se ejecuta
 entero en local y sin API de pago.
