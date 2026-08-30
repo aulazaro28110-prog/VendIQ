@@ -46,3 +46,9 @@ salida/frio.txt
 
 # Transcripciones de tiradas de los bancos: se regeneran en cada ejecucion.
 salida/*.txt
+
+# Borrador interno de trabajo: no se publica
+docs/VendIQ_Bases_y_Posicionamiento.md
+
+# Salidas de depuracion de tests (temporales)
+err_*.txt
