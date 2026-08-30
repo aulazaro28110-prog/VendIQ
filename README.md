@@ -374,9 +374,13 @@ Salida en `salida/actividad.json`, que es lo que pinta la sección *Actividad* d
 - **Un solo canal conectado.** Solo entra WhatsApp. Gmail, Wallapop y el resto de plataformas
   aparecen en el diagrama del panel **punteados y en gris**, etiquetados *no conectado*: no hay
   ni una línea de código detrás. Están dibujados porque es por donde crece, no porque funcionen.
-- **El LLM no se ha ejecutado nunca.** `08_conversar.py` está escrito y cableado, con Groq y dos
-  barreras de seguridad, pero sin `GROQ_API_KEY` no se ha llamado ni una vez. Es código sin
-  probar. Ver `docs/CONFIGURAR_GROQ.md`.
+- **El modelo no es determinista.** Groq (`openai/gpt-oss-120b`) sí se ejecuta: los tres bancos
+  que redactan con él están en verde y sus guardas saltaron 29 veces en los 1.041 turnos del
+  banco largo. Pero la misma pregunta no da dos veces la misma frase, así que esos tres bancos
+  hay que **correrlos dos veces** antes de dar un resultado por bueno, y un banco en verde no
+  garantiza la siguiente tirada: lo que sí garantiza es la guarda, que es determinista. Sin
+  `GROQ_API_KEY` el sistema no se cae — redacta `07_redactor.py` y todo lo demás es idéntico.
+  Ver `docs/CONFIGURAR_GROQ.md`.
 - **Escala: no es el problema.** Medido, no estimado: con 5.007 fichas la mediana está
   **entre 50 y 60 ms** (la mayor parte, vectorizar la pregunta, que es coste fijo) y el índice
   ocupa **7,7 MB**. El rango en vez de una cifra exacta es a propósito: dos ejecuciones
@@ -387,7 +391,8 @@ Salida en `salida/actividad.json`, que es lo que pinta la sección *Actividad* d
 ## Estado
 
 Funciona de punta a punta en local: catálogo → índice → búsqueda con guardarraíles → redactor
-con la voz de la empresa → centro de control con simulador de WhatsApp.
+con la voz de la empresa, con el LLM auditado frase a frase → centro de control con simulador de
+WhatsApp.
 
-**Lo que falta:** enchufar la clave de Groq (el redactor con LLM está escrito pero sin ejecutar)
-y la integración real con WhatsApp.
+**Lo que falta:** la integración real con WhatsApp y los demás canales. Todo lo de arriba está
+ejecutado y medido, no descrito.
