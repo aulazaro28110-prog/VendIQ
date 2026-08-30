@@ -2,7 +2,7 @@
   "sintetico": true,
   "aviso": "Los MENSAJES son sintéticos: los genera el mismo código que el banco de pruebas. Los NÚMEROS no: cada decisión, cada milisegundo y cada escalado sale de ejecutar el sistema real contra las 5.000 piezas del catálogo.",
   "mezcla_declarada": "El reparto por tipo de mensaje es una ESTIMACIÓN de Álvaro sobre su propio WhatsApp, no un dato medido.",
-  "generado": "2026-08-23 23:43",
+  "generado": "2026-08-30 14:08",
   "parametros": {
     "dias": 7,
     "conversaciones_dia": "150-200 (lun-vie)",
@@ -17,72 +17,72 @@
   "resumen": {
     "conversaciones": 930,
     "mensajes": 2558,
-    "escaladas": 55,
-    "resueltas_sin_persona": 875,
-    "tasa_resolucion": 0.9409,
+    "escaladas": 38,
+    "resueltas_sin_persona": 892,
+    "tasa_resolucion": 0.9591,
     "precios_dados": 408,
-    "ms_mediana": 81.9,
-    "ms_p95": 202.5,
-    "ms_max": 1238.6,
+    "ms_mediana": 55.6,
+    "ms_p95": 80.1,
+    "ms_max": 262.5,
     "fugas_de_precio": 0
   },
   "por_dia": [
     {
-      "fecha": "2026-08-17",
+      "fecha": "2026-08-24",
       "dia": "lunes",
       "conversaciones": 170,
       "mensajes": 457,
-      "resueltas": 159,
-      "escaladas": 11,
-      "ms_mediana": 95.3
+      "resueltas": 164,
+      "escaladas": 6,
+      "ms_mediana": 52.6
     },
     {
-      "fecha": "2026-08-18",
+      "fecha": "2026-08-25",
       "dia": "martes",
       "conversaciones": 163,
       "mensajes": 444,
-      "resueltas": 151,
-      "escaladas": 12,
-      "ms_mediana": 81.2
+      "resueltas": 154,
+      "escaladas": 9,
+      "ms_mediana": 61.5
     },
     {
-      "fecha": "2026-08-19",
+      "fecha": "2026-08-26",
       "dia": "miércoles",
       "conversaciones": 155,
       "mensajes": 415,
       "resueltas": 148,
       "escaladas": 7,
-      "ms_mediana": 86.0
+      "ms_mediana": 55.3
     },
     {
-      "fecha": "2026-08-20",
+      "fecha": "2026-08-27",
       "dia": "jueves",
       "conversaciones": 193,
       "mensajes": 536,
-      "resueltas": 179,
-      "escaladas": 14,
-      "ms_mediana": 93.0
+      "resueltas": 186,
+      "escaladas": 7,
+      "ms_mediana": 53.8
     },
     {
-      "fecha": "2026-08-21",
+      "fecha": "2026-08-28",
       "dia": "viernes",
       "conversaciones": 167,
       "mensajes": 475,
-      "resueltas": 158,
-      "escaladas": 9,
-      "ms_mediana": 68.9
+      "resueltas": 160,
+      "escaladas": 7,
+      "ms_mediana": 55.2
     },
     {
-      "fecha": "2026-08-22",
+      "fecha": "2026-08-29",
       "dia": "sábado",
       "conversaciones": 82,
       "mensajes": 231,
       "resueltas": 80,
       "escaladas": 2,
-      "ms_mediana": 62.9
+      "ms_mediana": 57.4
     },
     {
-      "fecha": "2026-08-23",
+      "fecha": "2026-08-30",
       "dia": "domingo",
       "conversaciones": 0,
       "mensajes": 0,
@@ -146,30 +146,30 @@
     }
   ],
   "acciones": {
-    "RESPONDER": 1721,
-    "PREGUNTAR": 660,
-    "ESCALAR": 177
+    "RESPONDER": 1906,
+    "PREGUNTAR": 519,
+    "ESCALAR": 133
   },
   "intenciones": {
-    "consulta": 1277,
+    "consulta": 1302,
     "aparca": 295,
     "cierre": 268,
     "plazo": 150,
     "agradecimiento": 141,
     "saludo": 114,
-    "precio otra vez": 86,
     "estado": 82,
+    "precio otra vez": 61,
     "regateo": 51,
     "queja": 20
   },
   "motivos_escalado": [
     {
       "motivo": "lo ve una persona: es una decisión de negocio",
-      "veces": 114
+      "veces": 106
     },
     {
       "motivo": "lo ve una persona: el bot no está seguro",
-      "veces": 57
+      "veces": 21
     },
     {
       "motivo": "ya se ha preguntado 2 veces y sigue sin poder decidir: lo ve una persona en vez de seguir preguntando",
@@ -177,43 +177,43 @@
     }
   ],
   "precios": {
-    "sin_matricula": 687,
+    "sin_matricula": 536,
     "publicable": 408,
     "sin_coche": 24,
     "confianza_baja": 3
   },
   "no_cubierto": [
     {
+      "consulta": "oye necesito algo para el seat león",
+      "veces": 12
+    },
+    {
+      "consulta": "oye necesito algo para el nissan juke",
+      "veces": 10
+    },
+    {
+      "consulta": "oye necesito algo para el mercedes-benz cla",
+      "veces": 9
+    },
+    {
+      "consulta": "oye necesito algo para el skoda octavia",
+      "veces": 9
+    },
+    {
+      "consulta": "oye necesito algo para el citroen c3",
+      "veces": 9
+    },
+    {
+      "consulta": "oye necesito algo para el kia ceed",
+      "veces": 8
+    },
+    {
+      "consulta": "oye necesito algo para el peugeot 208",
+      "veces": 7
+    },
+    {
       "consulta": "¿tenéis un turbo para un renault captur?",
       "veces": 6
-    },
-    {
-      "consulta": "¿tenéis un paso de rueda trasero izquierdo para un seat ateca?",
-      "veces": 6
-    },
-    {
-      "consulta": "¿tenéis un motor de arranque para un peugeot 3008?",
-      "veces": 5
-    },
-    {
-      "consulta": "¿tenéis un cuadro de instrumentos para un renault clio?",
-      "veces": 5
-    },
-    {
-      "consulta": "¿tenéis un faro delantero derecho para un renault megane?",
-      "veces": 5
-    },
-    {
-      "consulta": "¿tenéis un motor de arranque para un hyundai i30?",
-      "veces": 4
-    },
-    {
-      "consulta": "¿tenéis un puerta delantera izquierda para un skoda fabia?",
-      "veces": 4
-    },
-    {
-      "consulta": "¿tenéis un motor completo para un opel corsa?",
-      "veces": 4
     }
   ],
   "muestra": [
@@ -230,7 +230,7 @@
             "Son 102,33 € + IVA y lo tengo aquí, si lo quieres sale mañana."
           ],
           "accion": "RESPONDER",
-          "ms": 77.6
+          "ms": 55.7
         }
       ]
     },
@@ -247,7 +247,7 @@
             "En cuanto lo vea en la cuenta te aviso y sale la pieza."
           ],
           "accion": "ESCALAR",
-          "ms": 89.5
+          "ms": 65.6
         },
         {
           "cliente": "que sí, que el banco tarda pero está hecho",
@@ -256,7 +256,7 @@
             "Álvaro ya tiene tu mensaje; si él lo ve de otra forma, te lo dice él."
           ],
           "accion": "ESCALAR",
-          "ms": 91.8
+          "ms": 57.6
         },
         {
           "cliente": "entonces cuándo sale",
@@ -265,23 +265,24 @@
             "En cuanto esté el pago confirmado, sale la pieza el mismo día."
           ],
           "accion": "ESCALAR",
-          "ms": 66.5
+          "ms": 53.5
         },
         {
           "cliente": "¿cuánto tarda?",
           "bot": [
-            "Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea."
+            "Enviamos a toda la península en 24-48 h y lo que está en stock sale al día siguiente. Baleares, Canarias, Ceuta y Melilla se consultan aparte. También puedes recogerlo en Alcobendas."
           ],
-          "accion": "ESCALAR",
-          "ms": 70.7
+          "accion": "RESPONDER",
+          "ms": 59.0
         },
         {
           "cliente": "lo consulto con el cliente y te digo",
           "bot": [
-            "Lo dicho, en eso no me puedo mover."
+            "Sin problema, aquí estoy cuando lo tengas.",
+            "Con la matrícula te lo miro en un momento."
           ],
-          "accion": "ESCALAR",
-          "ms": 75.8
+          "accion": "RESPONDER",
+          "ms": 146.2
         }
       ]
     },
@@ -293,12 +294,12 @@
         {
           "cliente": "te mando el papel del banco, ¿vale así?",
           "bot": [
-            "Buenas, soy el asistente de Desguaces Madrid Norte.",
+            "¡Hola! Soy el asistente de Desguaces Madrid Norte, encantado de ayudarte.",
             "Gracias, se lo paso a Álvaro para que compruebe el ingreso.",
             "En cuanto lo vea en la cuenta te aviso y sale la pieza."
           ],
           "accion": "ESCALAR",
-          "ms": 73.3
+          "ms": 73.2
         }
       ]
     },
@@ -310,12 +311,12 @@
         {
           "cliente": "hola, busco la referencia 7100ML20E",
           "bot": [
-            "Buenas, soy el asistente de Desguaces Madrid Norte.",
+            "¡Hola! Soy el asistente de Desguaces Madrid Norte, encantado de ayudarte.",
             "Tengo el parachoques delantero de un Ford Fiesta 1.0 EcoBoost del 2013, sin comprobar todavía. Como todos nuestros productos, con un año de garantía.",
             "Son 194,75 € + IVA y lo tengo aquí, si lo quieres sale mañana."
           ],
           "accion": "RESPONDER",
-          "ms": 67.8
+          "ms": 55.6
         },
         {
           "cliente": "¿y me lo mandas al taller?",
@@ -323,7 +324,7 @@
             "Sí, pásame la dirección y organizo el reparto para llevártelo lo antes posible."
           ],
           "accion": "RESPONDER",
-          "ms": 112.8
+          "ms": 60.7
         },
         {
           "cliente": "lo consulto con el cliente y te digo",
@@ -332,7 +333,7 @@
             "Cuando lo tengas claro me dices y lo cerramos."
           ],
           "accion": "RESPONDER",
-          "ms": 65.9
+          "ms": 63.6
         }
       ]
     },
@@ -344,12 +345,12 @@
         {
           "cliente": "¿tenéis retrovisor derecho para un Kia Ceed 1.4 CRDi?",
           "bot": [
-            "Buenas, soy el asistente de Desguaces Madrid Norte.",
+            "¡Hola! Soy el asistente de Desguaces Madrid Norte, encantado de ayudarte.",
             "De retrovisor derecho para un Kia Ceed tengo 5 referencias distintas, según el motor y el año.",
             "Pásame la matrícula y te digo cuál es el tuyo y lo que vale."
           ],
           "accion": "PREGUNTAR",
-          "ms": 89.6
+          "ms": 69.6
         },
         {
           "cliente": "la matrícula es 4521 KBD",
@@ -359,7 +360,7 @@
             "¿Te lo aparto?"
           ],
           "accion": "RESPONDER",
-          "ms": 90.2
+          "ms": 66.3
         },
         {
           "cliente": "¿cuánto tarda?",
@@ -368,10 +369,10 @@
             "Te lo mando al taller o te lo dejo preparado aquí, como prefieras."
           ],
           "accion": "RESPONDER",
-          "ms": 65.1
+          "ms": 47.1
         }
       ]
     }
   ],
-  "segundos_de_ejecucion": 746.8
+  "segundos_de_ejecucion": 423.7
 }
