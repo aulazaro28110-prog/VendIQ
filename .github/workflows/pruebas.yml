@@ -1,0 +1,78 @@
+# Los diez bancos de pruebas de VendIQ, en cada push.
+#
+# El indice (salida/embeddings.npy, ~7,7 MB) esta en .gitignore por tamano, asi
+# que CI lo RECONSTRUYE desde el catalogo antes de probar nada. Sale mas caro en
+# minutos, pero prueba una cosa que un indice versionado no probaria: que el
+# repo recien clonado se levanta entero con los pasos que dice el README.
+#
+# Lo que CI *no* cubre: la redaccion con el LLM. Sin GROQ_API_KEY el sistema no
+# se cae, redacta 07_redactor.py y los diez bancos pasan igual — pero entonces
+# las guardas sobre el modelo no tienen a quien auditar y el banco largo dice
+# "descartaron al modelo 0 veces". La ruta con LLM se verifica en local y con la
+# clave, dos veces por no ser determinista. Ver "Limites conocidos" del README.
+
+name: pruebas
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  bancos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONIOENCODING: utf-8
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 3.12 y no la 3.14 de la maquina de desarrollo: la logica es libreria
+      # estandar y da igual, pero torch (que arrastra sentence-transformers)
+      # tarda en tener ruedas para la version recien salida y aqui no hace
+      # falta compilar nada.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      # El modelo de embeddings son ~470 MB de descarga y no cambia nunca: la
+      # clave lleva su nombre, asi que solo se baja cuando se cambie de modelo.
+      - name: Cachear el modelo de embeddings
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-paraphrase-multilingual-MiniLM-L12-v2
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Construir el indice
+        run: |
+          python 01_ingesta_chunking.py
+          python 02_embeddings.py
+
+      # De mas rapido a mas lento, para que un fallo tonto salte en el minuto 3
+      # y no en el 15.
+      - name: Ofertas
+        run: python tests/test_ofertas.py
+      - name: Precios
+        run: python tests/test_precios.py
+      - name: La mesa
+        run: python tests/test_mesa.py
+      - name: La llamada a Groq (sin clave y sin red)
+        run: python tests/test_llm.py
+      - name: El prompt, seccion por seccion
+        run: python tests/test_prompt.py
+      - name: El ciclo de aprendizaje
+        run: python tests/test_ciclo.py
+      - name: Recuperacion — 80 consultas + 40 piezas inexistentes
+        run: python tests/test_busqueda.py
+      - name: Canales — 50 correos + 20 de Wallapop
+        run: python tests/test_canales.py
+      - name: Conversacion — 218 conversaciones
+        run: python tests/test_conversaciones.py
+      - name: Conversaciones largas — 50 · 1.041 turnos
+        run: python tests/test_frio.py
