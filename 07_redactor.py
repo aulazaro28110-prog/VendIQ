@@ -1145,6 +1145,12 @@ class Conversacion:
         # respuesta a una pregunta concreta que hay que recordar haber hecho.
         self.esperando_si = False
 
+        # Piezas (id de ficha) que ya se han pasado a Álvaro para que ponga
+        # precio. Sin esto, un «sí» a una pieza SIN precio volvía a ofrecerla en
+        # bucle; ahora se escala una sola vez y se espera. Ver la rama de
+        # seguimiento con pieza sobre la mesa.
+        self.precios_escalados = set()
+
     @property
     def conocido(self):
         return self.perfil == "conocido"
@@ -2664,17 +2670,45 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         meta = conversacion.ultima_pieza
         g = _genero(meta.get("pieza", ""))
         nombre = meta.get("pieza", "pieza").lower()
-        lineas += conversacion.variar("seguimiento", [
-            [f"Sin prisa, {_pron(g)} dejo apuntad{_o(g)} por si acaso.",
-             f"¿Sigue en pie lo {_del(g)} {nombre} o lo aparcamos de momento?"],
-            [f"Tú me dices y {_pron(g)} preparo.",
-             "¿Necesitas que te confirme algo más antes?"],
-            [f"Aquí sigue {_art(g)} {nombre} cuando la quieras.",
-             "Si te sale otra cosa del mismo coche, dímelo y lo miro."],
-        ])
-        reglas.append(("seguimiento sin presionar",
-                       "no se entiende el mensaje pero había una pieza sobre la "
-                       "mesa: se retoma sin volver a pedir datos ya dados"))
+        ident = str(meta.get("id") or "")
+        tiene_precio = bool(conversacion.precio_de.get(ident))
+        afirma = bool(AFIRMACION.match(mensaje_cliente or ""))
+        # Pieza SIN precio y el cliente dice que sí a seguir. Repetir «¿sigue en
+        # pie?» es el bucle que se veía en el panel: cada «sí» volvía a ofrecer.
+        # Un «sí» aquí es interés real, pero sin precio no se puede cerrar (lo
+        # impide dice_que_si a propósito). El paso que faltaba: pasárselo a Álvaro
+        # para que ponga precio, y luego ESPERAR en vez de volver a ofrecer.
+        if not tiene_precio and (afirma or ident in conversacion.precios_escalados):
+            if ident not in conversacion.precios_escalados:
+                conversacion.precios_escalados.add(ident)
+                conversacion.prometer("pasarte el precio en cuanto lo mire Álvaro", meta)
+                escala = True
+                conversacion.escalado = True
+                lineas.append(f"Le paso {_art(g)} {nombre} a Álvaro para que te "
+                              f"ponga precio.")
+                lineas.append("En cuanto me lo diga te escribo yo; no tienes que "
+                              "hacer nada.")
+                reglas.append(("pieza sin precio y el cliente sigue interesado",
+                               "se escala a Álvaro para el precio en vez de repetir "
+                               "la oferta: sin precio no se puede cerrar (dice_que_si)"))
+            else:
+                lineas.append("Sigo esperando que Álvaro me pase el precio; te "
+                              "escribo en cuanto lo tenga.")
+                reglas.append(("no repite: ya escalado a Álvaro",
+                               "el precio de esta pieza ya se pidió a Álvaro: se "
+                               "espera, no se vuelve a ofrecer"))
+        else:
+            lineas += conversacion.variar("seguimiento", [
+                [f"Sin prisa, {_pron(g)} dejo apuntad{_o(g)} por si acaso.",
+                 f"¿Sigue en pie lo {_del(g)} {nombre} o lo aparcamos de momento?"],
+                [f"Tú me dices y {_pron(g)} preparo.",
+                 "¿Necesitas que te confirme algo más antes?"],
+                [f"Aquí sigue {_art(g)} {nombre} cuando la quieras.",
+                 "Si te sale otra cosa del mismo coche, dímelo y lo miro."],
+            ])
+            reglas.append(("seguimiento sin presionar",
+                           "no se entiende el mensaje pero había una pieza sobre la "
+                           "mesa: se retoma sin volver a pedir datos ya dados"))
 
     # Muletilla, acuse o "¿hay alguien?": se responde y se reconduce, NUNCA se
     # escala. Un bot que manda a una persona un "👍" o un "vale" parece roto.
