@@ -29,9 +29,9 @@ import unicodedata
 # ---------------------------------------------------------------------------
 # EL TONO
 # ---------------------------------------------------------------------------
-# Todo lo de aquí abajo sale de los mensajes REALES de Álvaro recogidos en
-# docs/Prompt_Engineering_Ventas.html (técnica 3, few-shot). No está inventado:
-# cada giro viene de un ejemplo suyo.
+# Todo lo de aquí abajo sale de mensajes REALES de Álvaro a sus clientes, usados
+# como ejemplos few-shot. No está inventado: cada giro viene de uno de ellos, y
+# los tres que fijaron el tono están citados literalmente aquí debajo.
 #
 #   «Buenas Juan Carlos, para el Ibiza hay varios motores según versión, así que
 #    para no fallar pásame la matrícula y te clavo el que monta exacto.»

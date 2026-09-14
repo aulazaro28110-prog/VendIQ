@@ -50,5 +50,12 @@ salida/*.txt
 # Borrador interno de trabajo: no se publica
 docs/VendIQ_Bases_y_Posicionamiento.md
 
+# Borradores de trabajo, no documentacion de VendIQ. Son notas
+# previas y un borrador de diseno anterior al sistema que ya existe: lo
+# contradicen. El de diseno ademas nombra al proveedor real del cliente.
+docs/S9_RAG_Chunking_Embeddings.html
+docs/Prompt_Engineering_Ventas.html
+docs/VendIQ_Diseno_RAG.html
+
 # Salidas de depuracion de tests (temporales)
 err_*.txt
