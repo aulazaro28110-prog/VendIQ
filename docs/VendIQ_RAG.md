@@ -2,7 +2,8 @@
 
 **Empresa:** Desguaces Madrid Norte (desguace, Alcobendas · Madrid)
 **Qué es:** asistente de ventas que responde a clientes por WhatsApp/email fundándose en los datos reales de la empresa, no en lo que "cree saber".
-**Estado:** diseño + prototipo sin probar. NO desplegado. (Ver "Estado y próximos pasos".)
+**Estado:** construido y medido en local. NO desplegado en producción. (Ver "Estado" al final.)
+**Aviso:** este documento es el DISEÑO, escrito antes de construir. Las secciones 1-8 describen la arquitectura que efectivamente se levantó; el apartado final dice qué cambió al construirla.
 
 ---
 
@@ -16,10 +17,10 @@ Un asistente genérico se inventa precios, plazos y disponibilidad. VendIQ no: *
 
 ## 2. Fuente de datos
 
-- **Fuente real:** `desguacesmadridnorte.com` — tienda **PrestaShop** (desarrollada por su desarrollador web) con **+50.000 piezas**, cada una con ID, referencia OEM y vehículo (marca/modelo/motor).
+- **Fuente real:** el catálogo de la tienda del cliente — **+50.000 piezas**, cada una con ID, referencia OEM y vehículo (marca/modelo/motor).
 - **Forma correcta de alimentarlo:** un **export/feed de productos** de la tienda (CSV o API), **refrescable** — el stock cambia a diario. NO copiar la web página a página ni scrapear.
 - **Regla de precio (es la operativa real):** en la web, muchas piezas ponen **"Consultar por WhatsApp"** en vez de precio. VendIQ hace lo mismo: da precio **solo cuando está publicado**; si no, "te confirmo" o escala.
-- **Datos de prueba:** `VendIQ_inventario_PRUEBA_sintetico_100.csv` — 100 productos **sintéticos** (regla del proyecto: datos sintéticos, no reales), calcados a la estructura de la web (33 con precio, 67 "Consultar por WhatsApp").
+- **Datos de prueba:** ningún dato real. Lo que se indexa es `datos/inventario_sintetico.csv`, un catálogo **sintético** generado por `scripts/generar_catalogo.py` — 5.000 piezas calcadas a la estructura de la tienda, con la misma proporción de piezas sin precio publicado. (El diseño original proveía 100; se subió a 5.000 para medir si la escala rompía la búsqueda, y no la rompió.)
 
 ---
 
@@ -137,24 +138,41 @@ Añadir estas reglas para que funcione en un chat real:
 
 ## 9. Alcance y coste
 
+Lo que este apartado daba por caro resultó salir gratis, y conviene dejar constancia de por qué.
+
 - **Diseñar (este documento):** gratis.
-- **Probar el prototipo** (rol + CSV de 100 en claude.ai): gratis.
-- **Construir el RAG real** (feed de +50.000 piezas + embeddings + integración WhatsApp): necesita API + código Python + integración = coste por uso. Aparcado por decisión "gratis total".
+- **Construir el RAG:** gratis también. El diseño daba por hecho que haría falta una API de
+  pago, y no la hizo falta: los embeddings los calcula un modelo local
+  (`paraphrase-multilingual-MiniLM`) y la búsqueda corre en el ordenador. El índice de 5.010
+  fichas ocupa 7,7 MB y una consulta tarda entre 50 y 60 ms.
+- **Redactar con LLM:** opcional y en capa gratuita (Groq). Sin `GROQ_API_KEY` el sistema no se
+  cae: redacta `07_redactor.py` y todo lo demás es idéntico.
+- **Lo que sí sigue costando:** la integración viva con WhatsApp y Wallapop, que no está hecha.
 
 ---
 
-## 10. Estado y próximos pasos
+## 10. Estado
 
-**Hecho:** diseño completo, rol validado, guardarraíles, CSV de prueba (100 piezas sintéticas).
+Este apartado se reescribió después de construir el sistema. La versión anterior decía
+"prototipo sin probar" y había dejado de ser cierta.
 
-**NO hecho (por qué aún no está "listo"):**
-- No se ha probado ni una simulación de cliente todavía.
-- Las instrucciones de WhatsApp no están montadas en el rol (faltan 3 decisiones de Álvaro).
-- El feed de productos real no está conectado (100 sintéticas ≠ 50.000 reales).
-- Sin desplegar en WhatsApp (un Proyecto de claude.ai = copiar-pegar manual, "v0").
+**Hecho y medido.** Diez bancos de pruebas en verde, que el CI vuelve a correr en cada push
+reconstruyendo el índice desde el catálogo:
 
-**Próximo paso concreto:** montar el Proyecto de prueba en claude.ai (rol + CSV) y hacer de cliente hasta validar que encuentra la pieza, respeta el "consultar precio" y pide la matrícula. "Listo" se gana pasando pruebas, no se declara.
+| Lo que el diseño daba por pendiente | Cómo quedó |
+|---|---|
+| "No se ha probado ni una simulación de cliente" | 218 conversaciones + 50 largas de 20+ mensajes (1.041 turnos) |
+| "100 sintéticas ≠ 50.000 reales" | 5.010 fichas indexadas; la escala dejó de ser el problema |
+| "Las instrucciones de WhatsApp no están montadas" | `docs/Prompt_Agente_Conversacional.md`, auditado sección a sección por `tests/test_prompt.py` |
+| "Construir el RAG necesita API de pago" | Embeddings locales, coste 0 |
 
----
+**Lo que sigue sin estar hecho, y es lo único:** la integración viva. WhatsApp, Gmail y
+Wallapop pasan por `11_canales.py` sobre la misma búsqueda y el mismo guardarraíl de precio,
+y están medidos (50 correos y 20 conversaciones de Wallapop en `tests/test_canales.py`), pero
+los mensajes entran de un corpus: no hay webhook ni API real detrás. El feed del catálogo real
+de la tienda tampoco está conectado; lo que se indexa es un catálogo sintético de 5.000 piezas.
 
-*Borrador para iterar.*
+**Lo que cambió respecto al diseño.** Dos cosas que este documento no anticipó: que el
+guardarraíl de precio tendría que auditar también **la redacción del LLM** frase a frase (no
+basta con controlar qué dato se recupera, hay que comprobar qué escribe el modelo con él), y
+que haría falta un ciclo de aprendizaje para lo que el bot no supo contestar.

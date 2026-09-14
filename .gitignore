@@ -57,5 +57,13 @@ docs/S9_RAG_Chunking_Embeddings.html
 docs/Prompt_Engineering_Ventas.html
 docs/VendIQ_Diseno_RAG.html
 
+# Encargo de trabajo ya cumplido: las 5 tareas que pedia estan implementadas y
+# medidas. Es una lista de tareas terminada, no documentacion del repo.
+docs/PROMPT_VSCODE_conversacion.md
+
+# Depuracion de un dia concreto (por que "envias a canarias?" escalaba). Nada
+# lo referencia y termina pidiendo que le pegues la salida a alguien.
+scripts/diag_canarias.py
+
 # Salidas de depuracion de tests (temporales)
 err_*.txt

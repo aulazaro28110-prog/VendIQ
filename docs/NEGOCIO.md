@@ -34,9 +34,9 @@ Sobre 7 días de tráfico simulado y pasado por el sistema real:
 | | |
 |---|---|
 | Conversaciones | 930 · 2.558 mensajes |
-| **Resueltas sin una persona** | **94 %** (878) |
-| Van a Álvaro | 52 |
-| Tiempo de respuesta | 74 ms de mediana |
+| **Resueltas sin una persona** | **95,9 %** (892) |
+| Van a Álvaro | 38 |
+| Tiempo de respuesta | 55,6 ms de mediana (p95: 80,1 ms) |
 | **Precios dichos sin autorización** | **0** |
 
 Ese último número es el importante y se explica abajo.
