@@ -383,13 +383,21 @@ Salida en `salida/actividad.json`, que es lo que pinta la sección *Actividad* d
   combinaciones pieza+marca+modelo: **3,6 fichas por combinación de media y hasta 12**. Si el
   cliente no da el motor ni el año, su pregunta no tiene una sola respuesta correcta. La solución
   no es afinar el algoritmo, es **pedir la matrícula** — y eso ya lo hace.
-- **Un solo canal conectado.** Solo entra WhatsApp. Gmail, Wallapop y el resto de plataformas
-  aparecen en el diagrama del panel **punteados y en gris**, etiquetados *no conectado*: no hay
-  ni una línea de código detrás. Están dibujados porque es por donde crece, no porque funcionen.
+- **Tres canales con código, ninguno con integración viva.** WhatsApp, Gmail y Wallapop pasan
+  por `11_canales.py`: los tres se apoyan en la misma búsqueda y el mismo guardarraíl de precio,
+  y lo único que cambia es la forma —un WhatsApp son tres líneas y un tuteo; un correo es una
+  carta con todo dentro y se firma—. Están medidos: 50 correos y 20 conversaciones de Wallapop
+  en `tests/test_canales.py`. Lo que **no** hay es integración real: los mensajes entran de un
+  corpus, no de la API de WhatsApp ni de la de Wallapop, y nadie ha conectado un webhook. En el
+  diagrama del panel solo queda punteado y en gris *Otras plataformas*, que es la única ausencia
+  de verdad.
 - **El modelo no es determinista.** Groq (`openai/gpt-oss-120b`) sí se ejecuta: los tres bancos
-  que redactan con él están en verde y sus guardas saltaron 12 veces en los 1.041 turnos del
-  banco largo. Pero la misma pregunta no da dos veces la misma frase, así que esos tres bancos
-  hay que **correrlos dos veces** antes de dar un resultado por bueno, y un banco en verde no
+  que redactan con él están en verde. Cuántas veces salta una guarda en los 1.041 turnos
+  del banco largo **cambia en cada tirada**: cinco seguidas dieron 30, 21, 8, 0 y 0, y una de
+  esas cinco falló. Por eso aquí no va una cifra fija, igual que en la latencia: un 0 no
+  significa que las guardas sobren, sino que esa vez el modelo no se desvió. Pero la misma
+  pregunta no da dos veces la misma frase, así que esos tres bancos hay que **correrlos dos
+  veces** antes de dar un resultado por bueno, y un banco en verde no
   garantiza la siguiente tirada: lo que sí garantiza es la guarda, que es determinista. Sin
   `GROQ_API_KEY` el sistema no se cae — redacta `07_redactor.py` y todo lo demás es idéntico.
   Ver `docs/CONFIGURAR_GROQ.md`.
