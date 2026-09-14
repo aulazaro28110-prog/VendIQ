@@ -327,9 +327,10 @@ let MOTOR = null;
    se pierde ni una palabra.
 
    CANALES NO CONECTADOS
-   Gmail, Wallapop y el resto van con borde DISCONTINUO y en gris de texto, nunca
-   en un color de la paleta. No son una categoría más: son una ausencia. Hoy solo
-   entra WhatsApp, y pintarlos igual sería enseñar una capacidad que no existe.
+   Solo 'Otras plataformas' va con borde DISCONTINUO y en gris: es una ausencia,
+   no una categoría más, y pintarla igual sería enseñar una capacidad que no
+   existe. WhatsApp, Gmail y Wallapop sí corren sobre el mismo motor del panel
+   (la misma búsqueda y el mismo cerrojo del precio), y por eso van en color.
 ========================================================================== */
 
 /* Una tarjeta del recorrido. `tono` pinta el borde y la cifra; `apagado` la deja
@@ -378,7 +379,7 @@ function pintarRecorrido(a, motor) {
                pie: 'conectado en el panel', tono: 'var(--cian)'}),
     nodoFlujo({titulo: 'Gmail', pie: 'correo, conectado en el panel',
                tono: 'var(--cian)'}),
-    nodoFlujo({titulo: 'Wallapop', pie: 'no conectado', apagado: true}),
+    nodoFlujo({titulo: 'Wallapop', pie: 'conectado en el panel', tono: 'var(--cian)'}),
     nodoFlujo({titulo: 'Otras plataformas', pie: 'no conectado', apagado: true}),
   ]));
   caja.append(crear('div', 'flujo-baja'));
