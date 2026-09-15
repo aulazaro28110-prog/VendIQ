@@ -33,7 +33,17 @@ EMAIL = re.compile(r"\b[\w.+-]+@[\w-]+\.[\w.]+\b")
 print("=" * 78)
 print("1. QUE SE ESCRIBE A DISCO")
 print("=" * 78)
-for f in sorted((BASE / "salida").glob("*.json")) + sorted((BASE / "datos").glob("*.md")):
+# Recursivo y por extension, no solo la raiz de cada carpeta. La version
+# anterior hacia glob("*.json") sobre salida/ y glob("*.md") sobre datos/, asi
+# que no miraba datos/canales/*.jsonl — que es justo donde viven las 16
+# direcciones de correo del corpus. Una auditoria que no mira donde esta el dato
+# dice "sin datos personales" y deja tranquilo a quien la lee.
+CANDIDATOS = []
+for patron in ("salida/**/*.json", "salida/**/*.jsonl",
+               "datos/**/*.md", "datos/**/*.jsonl", "datos/**/*.csv"):
+    CANDIDATOS += BASE.glob(patron)
+
+for f in sorted(set(CANDIDATOS)):
     if not f.exists():
         continue
     texto = f.read_text(encoding="utf-8", errors="replace")
