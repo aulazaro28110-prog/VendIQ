@@ -19,10 +19,10 @@ qué sale de la máquina.
 
 | Dato | ¿Hay? | Nota |
 |---|---|---|
-| **Matrícula / VIN** | **Sí** | El único. Identifica un vehículo y, vía registro, a su titular. |
+| **Matrícula / VIN** | **Sí** | El más sensible. Identifica un vehículo y, vía registro, a su titular. |
 | Nombre del cliente | Solo si lo escribe él | No se pide ni se deduce. |
 | Teléfono | No | El simulador no conecta con WhatsApp: no hay números. |
-| Correo | No | — |
+| Correo | **Sí, sintéticos** | `datos/canales/correos.jsonl` versiona 50 correos con 16 direcciones inventadas por `scripts/generar_canales.py`. No es de nadie, pero la casilla no es "no". |
 | Datos de pago | No | El bot **nunca** los pide ni los toca. |
 | Catálogo de piezas | No | 5.000 fichas **sintéticas**, sin ninguna persona. |
 
@@ -61,7 +61,7 @@ decidido decirlo, que ocurre cuando el cliente pide que se lo repitan.
 | Historial | Se corta a los **12 últimos turnos**. Lo anterior se resume. |
 | Ventana al modelo | Solo **6 turnos** viajan literales. |
 | Resumen | Se genera de la memoria, **no lo escribe el modelo** — así no puede inventarse una matrícula que nadie dijo. |
-| Datos de pago | No se piden nunca. La política es explícita y hay 6 casos de prueba. |
+| Datos de pago | No se piden nunca. La política es explícita y hay 12 casos de prueba (6 de "no envía sin cobrar" y 6 de "no valida justificantes"). |
 
 ## 3. Supresión — el derecho al olvido, ejecutable
 
@@ -117,7 +117,7 @@ VENDIQ : Todavía no me has pasado ninguna.
 - **El resumen** de la conversación se monta con lo que hay en memoria. Cada línea
   o está ahí o no aparece.
 
-**Comprobar:** `py tests/test_conversaciones.py` → 212 casos, invariantes.
+**Comprobar:** `py tests/test_conversaciones.py` → 218 casos, invariantes.
 
 ## 6. Transferencias internacionales
 
@@ -145,8 +145,13 @@ despliegue real no quisiera sacar nada del país, el sistema sigue en pie.
 
 Decirlo es parte del trabajo:
 
-- **No hay base de datos de clientes.** Las conversaciones viven en memoria y
-  mueren al reiniciar. Un despliegue real necesitaría decidir cuánto guardar, y
+- **Casi no hay almacenamiento duradero, pero no es "nada".** Las conversaciones
+  sí viven en memoria y mueren al reiniciar. Las **reservas** no:
+  `salida/reservas.json` guarda la matrícula en un campo propio y sobrevive al
+  reinicio. Está en `.gitignore`, así que no se publica, y `scripts/olvidar.py`
+  ya lo recorre — pero durante un tiempo no lo hizo, y el borrado decía haber
+  limpiado una matrícula que seguía ahí. Queda escrito porque el fallo es el
+  interesante: una garantía de borrado vale lo que valga su lista de sitios. Un despliegue real necesitaría decidir cuánto guardar, y
   entonces harían falta política de retención, cifrado en reposo y control de
   acceso.
 - **No hay autenticación en el panel.** Es un servidor local en `127.0.0.1`. Si se
@@ -166,5 +171,5 @@ Decirlo es parte del trabajo:
 py scripts/auditar_datos.py           # qué datos hay y dónde
 py scripts/olvidar.py 4521 KBD --ver  # el borrado, en seco
 py tests/test_llm.py                  # que la matrícula no sale
-py tests/test_conversaciones.py       # 212 casos, invariantes
+py tests/test_conversaciones.py       # 218 casos, invariantes
 ```

@@ -21,7 +21,16 @@ fichero a fichero (`scripts/auditar_datos.py` hizo el recorrido), puede acabar e
                                una persona lo conteste, y puede llevarla dentro
   · salida/conversaciones.json detalle del banco de pruebas
   · salida/actividad.json      los ejemplos de mensajes que enseña el panel
+  · salida/panel.json          lo que el panel tiene cargado
+  · salida/reservas.json       CADA reserva guarda la matrícula en un campo suyo,
+                               y a diferencia de las conversaciones esto SÍ
+                               sobrevive a reiniciar el panel
   · datos/faq_aprendidas.md    la pregunta original que dio pie a la respuesta
+
+salida/reservas.json se añadió tarde: el script nació antes que las reservas y se
+quedaba sin recorrerlas, así que decía haber borrado una matrícula que seguía
+viva ahí dentro. Si se añade otro sitio donde acabe una matrícula, va en esta
+lista o el borrado vuelve a mentir.
 
 NO toca el catálogo (`datos/inventario_sintetico.csv`): es sintético y no tiene
 ni un dato de una persona. Tampoco el índice de embeddings, porque se reconstruye
@@ -51,6 +60,7 @@ FICHEROS_JSON = [
     BASE / "salida" / "conversaciones.json",
     BASE / "salida" / "actividad.json",
     BASE / "salida" / "panel.json",
+    BASE / "salida" / "reservas.json",
 ]
 FICHEROS_TEXTO = [
     BASE / "datos" / "faq_aprendidas.md",
