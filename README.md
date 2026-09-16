@@ -86,11 +86,15 @@ pieza parecida es una molestia ("no, yo quería la de otro modelo"). **Decir un 
 equivocado es un compromiso comercial** — el cliente se lo cree, viene a por ella, y
 alguien tiene que darle la mala noticia. Cuesta dinero y confianza.
 
+<details>
+<summary><strong>De dónde salió la condición 1: la puerta del Skoda</strong></summary>
+
 La condición 1 salió de un fallo real que detectaron las pruebas: un cliente pedía la
 puerta **trasera** izquierda de un Skoda (sin precio publicado) y el sistema le daba el
 precio de la puerta **delantera** izquierda del mismo coche. Ambas son "puerta" y ambas
 superaban la confianza mínima. Si la mejor coincidencia no tiene precio, la respuesta
 correcta es "te lo confirmo", nunca el precio de la de al lado.
+</details>
 
 Cada resultado lleva **pegada** su decisión de precio y el motivo, así que quien consuma
 la búsqueda —el panel hoy, el LLM mañana— no puede olvidarse de mirarla.
@@ -116,6 +120,9 @@ en el almacén con otro nombre, otro motor o el mismo modelo de otro año.
 
 Con matrícula sí puede decir que no. Entonces es una respuesta; sin ella es una excusa.
 
+<details>
+<summary><strong>Los tres caminos, y la excepción</strong></summary>
+
 Tres caminos en [`07_redactor.py`](07_redactor.py), `_sin_pieza()`:
 
 | Situación | Qué hace |
@@ -128,6 +135,7 @@ La excepción: cuando el bot **escala**, no se le exige pedir la matrícula. Una
 ("el alternador que me mandasteis no funciona") también cae en `NO DISPONIBLE`, porque el
 cliente nombra una pieza y ninguna ficha encaja — pero ahí no está preguntando si la tenemos.
 La regla es *"no digas que no sin matrícula"*, no *"pide siempre la matrícula"*.
+</details>
 
 Lo protege un invariante del banco de conversaciones, no un comentario: si alguien cambia
 `_sin_pieza()` para que niegue la pieza sin identificarla, los 200 casos fallan. Está
@@ -143,6 +151,9 @@ en la estantería, más interesa darle salida. Como el inventario no tiene fecha
 (comprobado: las fichas de la web no publican ninguna), la antigüedad se deduce del **número de
 stock**, que se asigna de forma correlativa. Se usa su **percentil** dentro del stock, no el
 número en bruto: así la regla sigue funcionando aunque algún día se renumere el almacén.
+
+<details>
+<summary><strong>Los tramos, lo que nunca hace solo, y las órdenes</strong></summary>
 
 | Tramo | Parte del stock | Descuento que se acepta solo |
 |---|---|---|
@@ -165,6 +176,48 @@ python 04_ofertas.py pendientes                   # lo que espera tu decisión
 python 04_ofertas.py aceptar 4 --motivo "lleva tiempo parada"
 python 04_ofertas.py historial
 ```
+</details>
+
+## Canales (`11_canales.py`)
+
+El mismo bot por tres sitios distintos. Lo que cambia de un canal a otro es la **forma**, y
+solo la forma: `11_canales.py` no sabe buscar, no decide precios y no tiene ni una condición
+sobre cuándo se puede ofrecer algo. Recibe lo que ya decidió `03_buscar.py` y le da forma. Si
+el guardarraíl de precio viviera ahí habría que escribirlo tres veces, y a la tercera copia
+alguien se dejaría una condición.
+
+| Canal | Qué cambia | Qué está medido | Qué falta |
+|---|---|---|---|
+| **WhatsApp** | Nada: es la forma nativa del redactor — tres líneas, tuteo, sin emoji | 218 conversaciones · 50 largas (1.041 turnos) · 930 de tráfico simulado | La API. Hoy los mensajes entran por el simulador del panel |
+| **Gmail** | Carta de usted, con asunto y firma. Una sola respuesta con todo dentro | 50 correos, 8 de ellos pidiendo algo que el desguace no lleva | Nadie lee una bandeja: los correos salen de un corpus |
+| **Wallapop** | Nada en la forma — es WhatsApp. Cambia **quién** escribe | 20 conversaciones incómodas: regateo, pantallazos falsos, insistencia | Ni API ni webhook |
+| **Otras plataformas** | — | — | Todo. En el panel sale punteado y en gris, que es lo que se dibuja cuando no hay nada detrás |
+
+Gmail y Wallapop se verifican en `tests/test_canales.py`, con el corpus en `datos/canales/`.
+Los tres comparten la misma búsqueda, el mismo guardarraíl de precio y el mismo redactor, así
+que **el invariante de siempre vale en los tres: ni un importe que la búsqueda no autorizara.**
+
+<details>
+<summary><strong>Por qué un correo no es una consulta, y por qué Wallapop no tiene redactor propio</strong></summary>
+
+**El correo.** Por WhatsApp el primer mensaje casi nunca trae la matrícula, así que la primera
+respuesta es siempre una pregunta. Por correo llega todo de golpe —coche, matrícula, pieza, a
+veces la referencia OEM— porque quien escribe un correo se lo ha pensado. Eso permite contestar
+**una** vez y con todo dentro, que es lo que un taller necesita para decidir. Por eso lo que se
+mide en Gmail es que la respuesta esté **completa**: si el taller tiene que volver a escribir
+para preguntar el plazo, no hemos contestado, hemos acusado recibo.
+
+Y un hallazgo que salió midiendo: pasando el correo **entero** a la búsqueda, **28 de los 50 no
+encontraban la pieza**. Con la misma pieza y el mismo coche en una consulta corta aparecían de
+2 a 4 candidatas. Un correo hay que destilarlo antes de buscar, no volcarlo.
+
+**Wallapop.** Tiene la misma forma que WhatsApp; lo que cambia es quién escribe. Por ahí llega
+el que regatea cinco veces, el que enseña la captura de una transferencia que no existe, el que
+insiste con una pieza que no llevamos. Así que aquí no hay redactor de Wallapop: hay un perfil
+que dice que se parece a WhatsApp, y un corpus de veinte conversaciones incómodas para comprobar
+que el redactor que ya existe **aguanta** sin ceder y sin perder los modales. Aquí no se mide si
+acierta: se mide si cede. Inventar un redactor por canal habría sido código de adorno.
+</details>
 
 ## Centro de control (`06_panel.py`)
 
@@ -187,6 +240,9 @@ de las dos cosas, porque el buscador necesita el modelo de embeddings en memoria
 Está organizado alrededor de una idea: **el bot resuelve lo obvio, tú decides lo que vale
 dinero.** Cada pestaña es una de las cosas que el bot no puede hacer solo.
 
+<details>
+<summary><strong>Las seis pestañas</strong></summary>
+
 | Pestaña | Qué resuelve |
 |---|---|
 | **Cómo va el día** | Diagrama de dónde acaba cada mensaje y las cifras del día |
@@ -195,10 +251,14 @@ dinero.** Cada pestaña es una de las cosas que el bot no puede hacer solo.
 | **Mesa de negociación** | Ofertas: lo que la regla cierra sola y lo que espera tu decisión |
 | **Lo que te piden y no tienes** | Demanda no cubierta — información de compra |
 | **La letra pequeña** | Acierto verificado, parámetros del motor y registro completo con su porqué |
+</details>
 
 La pestaña de precios cierra un círculo que merece la pena entender: tu trabajo manual no
 se queda en resolver un caso, **entra en el sistema**. En cuanto guardas un precio, la
 siguiente consulta ya lo usa. El humano no es el plan B del bot: es quien lo alimenta.
+
+<details>
+<summary><strong>De dónde salen los datos que pinta, y cómo está maquetado</strong></summary>
 
 Los datos de actividad salen de `10_simular.py`: siete días enteros de tráfico pasados
 por el buscador y el redactor **reales**. Simula los **mensajes** (es un prototipo, no hay
@@ -210,8 +270,12 @@ El panel se lee en dos columnas: la sección de **Actividad** lleva a su derecha
 fija con las dos tarjetas de resumen —qué hace en cada mensaje y con qué parámetros decide—
 para tenerlas delante mientras se miran los gráficos. El resto de secciones va a ancho
 completo, porque las tablas lo necesitan.
+</details>
 
 ## Datos
+
+<details>
+<summary><strong>Los tres ficheros, y la regla de privacidad</strong></summary>
 
 **`datos/inventario_sintetico.csv`** — 5.000 piezas *sintéticas* con la misma estructura que la
 web real, generadas por `scripts/generar_catalogo.py`. De 14 € a 4.647 €, mediana 121 €. El
@@ -225,6 +289,7 @@ justificantes e identificación de la pieza.
 Lo escribe el panel, nunca el bot.
 
 Regla del proyecto: **datos sintéticos, no reales** (privacidad).
+</details>
 
 ## Cómo ejecutarlo
 
@@ -236,7 +301,8 @@ python 02_embeddings.py                  # vectoriza (5.010 chunks, ~2 min)
 python 06_panel.py                       # centro de control en localhost:8420
 ```
 
-Y para comprobar que sigue funcionando:
+<details>
+<summary><strong>Y para comprobar que sigue funcionando: los diez bancos, uno a uno</strong></summary>
 
 ```bash
 python tests/test_busqueda.py            # 80 consultas + 40 piezas inexistentes
@@ -253,6 +319,7 @@ python 10_simular.py --dias 7            # 7 días de tráfico por el sistema re
 ```
 
 Si te saltas un paso, el siguiente te dice cuál falta en vez de reventar con un error críptico.
+</details>
 
 ## Calidad medida
 
@@ -268,7 +335,20 @@ prueba es que un clon recién bajado se levanta entero con los pasos de arriba. 
 cubre es la redacción con el LLM — sin clave redacta el determinista y los bancos pasan igual,
 pero las guardas no tienen a quién auditar.
 
-### Recuperación — `tests/test_busqueda.py`
+De un vistazo, y cada cifra desplegable más abajo:
+
+| Qué se mide | Resultado |
+|---|---|
+| Recuperación sobre 5.000 fichas | **91 %** · top 3: **98,75 %** |
+| Guardarraíl — piezas que no existen | **40 de 40** no devuelven ninguna ficha |
+| Conversaciones enteras | **218 de 218**, 6 invariantes sin romper |
+| Conversaciones largas (con el LLM encendido) | **50 de 50** · 1.041 turnos |
+| 7 días de tráfico por el sistema real | 930 conversaciones · **96 %** sin persona |
+| **Fugas de precio** | **0** |
+| Latencia mediana / p95 | 55,6 / 80,1 ms |
+
+<details>
+<summary><strong>Recuperación — <code>tests/test_busqueda.py</code></strong></summary>
 
 80 preguntas y 40 piezas que **no** existen, contra 5.000 fichas.
 
@@ -292,8 +372,10 @@ ninguna ficha (**100 %**).
 > El salto de "datos incompletos" de 67 % a 100 % **no es que el buscador mejorara**: es que la
 > medida estaba mal. La pregunta no da motor ni año, así que tiene varias respuestas correctas,
 > y el banco exigía adivinar una concreta. Medía suerte.
+</details>
 
-### Conversación — `tests/test_conversaciones.py`
+<details>
+<summary><strong>Conversación — <code>tests/test_conversaciones.py</code></strong></summary>
 
 218 conversaciones en 17 situaciones (precio exacto, no la tenemos, regateo, quejas, mensajes
 sucios, pago sin cobrar, conversaciones de 8 turnos…). **100 % acaban como deben.**
@@ -306,8 +388,10 @@ Y seis **invariantes**, cosas que nunca pueden pasar. Ninguno roto en los 218 ca
 - **no dice "no la tengo" sin matrícula**, ni se queda en un «no» sin pedirla
 - no repite el mensaje anterior palabra por palabra
 - no dice por tercera vez la misma frase
+</details>
 
-### Conversaciones largas — `tests/test_frio.py`
+<details>
+<summary><strong>Conversaciones largas — <code>tests/test_frio.py</code></strong></summary>
 
 El banco de arriba mide conversaciones cortas de gente que colabora. Éste mide lo contrario:
 **50 conversaciones desde cero, todas de más de veinte mensajes — 1.041 turnos**, porque la gente
@@ -324,8 +408,10 @@ trabajando. **50 de 50, ningún invariante roto.**
 
 El corpus vive aparte, en `tests/frio_casos.py`: trozos con su trampa y 50 recetas que los
 encadenan. Así un trozo se arregla una vez y queda arreglado en las doce conversaciones que lo usan.
+</details>
 
-### El modelo, auditado
+<details>
+<summary><strong>El modelo, auditado</strong></summary>
 
 El LLM redacta, pero no se le cree. Cada mensaje que escribe se compara con el borrador
 determinista antes de salir, y la regla es una: **puede reformular, no puede introducir**. Si se
@@ -338,8 +424,10 @@ largo saltaron **12 veces** en 1.041 turnos, las dos. El número baila entre tir
 es determinista— y el reparto también: una vez fueron 7 «no» inventados y 3 presentaciones
 comidas, y la siguiente 5 presentaciones y 4 «no». Lo que no cambia es que **el cliente ve
 siempre el borrador**, que sí es reproducible.
+</details>
 
-### Volumen — `10_simular.py`
+<details>
+<summary><strong>Volumen — <code>10_simular.py</code></strong></summary>
 
 7 días de tráfico (150-200 conversaciones diarias, sábado a media máquina, domingo cerrado)
 pasados por el sistema real. **Los mensajes son sintéticos; los números, medidos.** Cada
@@ -371,6 +459,7 @@ redacta. De esos, **536 fueron por no tener matrícula**.
 > las ramas que se comían la conversación eran las que más trabajo hacían.
 
 Salida en `salida/actividad.json`, que es lo que pinta la sección *Actividad* del panel.
+</details>
 
 ## Límites conocidos
 
@@ -383,14 +472,11 @@ Salida en `salida/actividad.json`, que es lo que pinta la sección *Actividad* d
   combinaciones pieza+marca+modelo: **3,6 fichas por combinación de media y hasta 12**. Si el
   cliente no da el motor ni el año, su pregunta no tiene una sola respuesta correcta. La solución
   no es afinar el algoritmo, es **pedir la matrícula** — y eso ya lo hace.
-- **Tres canales con código, ninguno con integración viva.** WhatsApp, Gmail y Wallapop pasan
-  por `11_canales.py`: los tres se apoyan en la misma búsqueda y el mismo guardarraíl de precio,
-  y lo único que cambia es la forma —un WhatsApp son tres líneas y un tuteo; un correo es una
-  carta con todo dentro y se firma—. Están medidos: 50 correos y 20 conversaciones de Wallapop
-  en `tests/test_canales.py`. Lo que **no** hay es integración real: los mensajes entran de un
-  corpus, no de la API de WhatsApp ni de la de Wallapop, y nadie ha conectado un webhook. En el
-  diagrama del panel solo queda punteado y en gris *Otras plataformas*, que es la única ausencia
-  de verdad.
+- **Tres canales con código, ninguno con integración viva.** Los tres están medidos y comparten
+  búsqueda, guardarraíl y redactor — el desglose está en [Canales](#canales-11_canalespy). Lo
+  que **no** hay es integración real: los mensajes entran de un corpus, no de la API de WhatsApp
+  ni de la de Wallapop, y nadie ha conectado un webhook. Es la única ausencia de verdad, y por
+  eso en el diagrama del panel *Otras plataformas* va punteado y en gris.
 - **El modelo no es determinista.** Groq (`openai/gpt-oss-120b`) sí se ejecuta: los tres bancos
   que redactan con él están en verde. Cuántas veces salta una guarda en los 1.041 turnos
   del banco largo **cambia en cada tirada**: cinco seguidas dieron 30, 21, 8, 0 y 0, y una de

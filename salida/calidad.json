@@ -1,10 +1,10 @@
 {
-  "acierto_ahora": 0.9125,
+  "acierto_ahora": 0.9,
   "acierto_top3": 0.9875,
   "guardarrail": 1.0,
   "preguntas_banco": 80,
   "piezas_inexistentes_probadas": 40,
   "fichas_indexadas": 5010,
-  "medido": "2026-09-14 21:25",
+  "medido": "2026-09-16 23:18",
   "fuente": "tests/test_busqueda.py"
 }
