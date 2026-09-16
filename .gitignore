@@ -47,15 +47,11 @@ salida/frio.txt
 # Transcripciones de tiradas de los bancos: se regeneran en cada ejecucion.
 salida/*.txt
 
-# Borrador interno de trabajo: no se publica
+# Borradores y notas de trabajo. No son documentacion de VendIQ: describen el
+# sistema como aun no construido y lo contradicen. Uno nombra ademas al
+# proveedor real del cliente. docs/ publica solo .md.
+docs/*.html
 docs/VendIQ_Bases_y_Posicionamiento.md
-
-# Borradores de trabajo, no documentacion de VendIQ. Son notas
-# previas y un borrador de diseno anterior al sistema que ya existe: lo
-# contradicen. El de diseno ademas nombra al proveedor real del cliente.
-docs/S9_RAG_Chunking_Embeddings.html
-docs/Prompt_Engineering_Ventas.html
-docs/VendIQ_Diseno_RAG.html
 
 # Encargo de trabajo ya cumplido: las 5 tareas que pedia estan implementadas y
 # medidas. Es una lista de tareas terminada, no documentacion del repo.
