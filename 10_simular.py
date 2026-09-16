@@ -15,8 +15,8 @@ número: cada decisión, cada milisegundo y cada escalado sale de ejecutar
 
 Es la diferencia entre "el panel dice que resolvemos el 92%" y "hemos pasado
 1.200 conversaciones por el sistema y resolvió 1.104". La primera es una
-maqueta bonita; la segunda se puede auditar, y si alguien
-pregunta "¿y esto de dónde sale?", la respuesta es este fichero.
+maqueta bonita; la segunda se puede auditar, y si alguien pregunta "¿y esto de
+dónde sale?", la respuesta es este fichero.
 
 Escribir "1.200 consultas" a mano en un JSON habría costado dos minutos y
 habría quedado igual de bien en la pantalla. También habría sido mentir.
