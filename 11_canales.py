@@ -158,7 +158,8 @@ def _trozos(correo):
     partes = [correo.get("asunto") or ""]
     for linea in (correo.get("cuerpo") or "").splitlines():
         partes += re.split(r"(?<=[.?])\s+", linea)
-    return [_sin_etiqueta(p.strip()) for p in partes if p.strip()]
+    limpios = [_sin_membrete(_sin_etiqueta(p.strip()), correo) for p in partes]
+    return [p for p in limpios if p]
 
 
 # «Motor: 2.0 TDI» no habla de un motor: es una FICHA de datos del coche, y
@@ -171,6 +172,26 @@ ETIQUETA = re.compile(r"^\s*[A-ZÁÉÍÓÚÑ][\wáéíóúñ ]{0,18}:\s*")
 
 def _sin_etiqueta(trozo):
     return ETIQUETA.sub("", trozo)
+
+
+def _sin_membrete(trozo, correo):
+    """Quita el nombre del cliente y el de su empresa de dentro del trozo.
+
+    El membrete no es una petición, pero puntuaba como si lo fuera. Costó el
+    correo 4 del banco: «Talleres Motor Sur» lleva dentro «motor», que es un
+    tipo de pieza del catálogo, así que la firma puntuaba 2 y la petición de
+    verdad —«una depósito de combustible para un Opel Corsa»— puntuaba 1. El
+    destilado salía con «Motor» pegado y la búsqueda ofrecía un motor de
+    arranque de Opel Corsa a quien pedía un depósito.
+
+    Se quita la FRASE exacta, no las palabras sueltas: si el cliente de
+    Talleres Motor Sur pide un motor de arranque, su «motor» sigue ahí.
+    """
+    for dato in (correo.get("empresa"), correo.get("quien")):
+        dato = (dato or "").strip()
+        if len(dato) >= 4:
+            trozo = re.sub(re.escape(dato), " ", trozo, flags=re.I)
+    return re.sub(r"\s{2,}", " ", trozo).strip()
 
 
 def texto_de_busqueda(correo, buscador, normalizar):
@@ -193,19 +214,66 @@ def texto_de_busqueda(correo, buscador, normalizar):
     marcas = set(getattr(buscador, "marcas_conocidas", {}))
     tipos = set(getattr(buscador, "tipos_conocidos", set()))
 
+    def vocabulario(trozo):
+        """Las palabras del trozo que el catálogo reconoce. Ni una más."""
+        palabras = set(normalizar(trozo))
+        return (palabras & tipos) | (palabras & marcas)
+
     def puntuar(trozo):
         palabras = set(normalizar(trozo))
         # Los tipos de pieza pesan el doble que las marcas: hay muchas fichas de
         # la misma marca y pocas del mismo tipo, así que el tipo discrimina más.
         return 2 * len(palabras & tipos) + len(palabras & marcas)
 
-    trozos = sorted(_trozos(correo), key=puntuar, reverse=True)
-    elegidos = [t for t in trozos[:2] if puntuar(t)]
+    # Se ordena por puntuación y, A IGUALDAD, gana el trozo más CORTO. Dos trozos
+    # que nombran la misma pieza no valen lo mismo: el asunto «Motor completo
+    # Toyota Camry» y la frase «hemos visto en su web que tienen disponible un
+    # motor completo para un Toyota Camry» puntúan idéntico, pero el segundo trae
+    # diez palabras de cortesía detrás que hunden la cobertura léxica.
+    ordenados = sorted((t for t in _trozos(correo) if puntuar(t)),
+                       key=lambda t: (puntuar(t), -len(normalizar(t))),
+                       reverse=True)
+
+    # Y el segundo trozo entra SOLO si aporta vocabulario que el primero no tiene.
+    # Antes se cogían los dos mejores siempre, y ahí estaba el fallo: cuando el
+    # asunto ya decía la pieza y el cuerpo la repetía, se pegaban los dos y la
+    # consulta pasaba de 0,893 a 0,358 — por debajo del umbral de 0,50, o sea que
+    # a un cliente que SÍ tenemos la pieza se le contestaba que no.
+    #
+    # Lo que esto no puede romper, y por eso se mira el vocabulario y no la
+    # longitud: «Necesito un alternador» en una línea y «para un Audi A4» en la
+    # siguiente. El segundo aporta la marca, que el primero no tiene, así que se
+    # conserva. Verificado en tests/test_canales.py.
+    elegidos = ordenados[:1]
+    if elegidos:
+        ya = vocabulario(elegidos[0])
+        for trozo in ordenados[1:]:
+            if vocabulario(trozo) - ya:
+                elegidos.append(trozo)
+                break
 
     texto = " ".join(elegidos)
     oem = REF_OEM.search(entero.upper())
     if oem and oem.group(0) not in texto.upper():
         texto += " " + oem.group(0)
+
+    # El número de stock suelto. Quien ha mirado la ficha en la web muchas veces
+    # no pega la dirección, solo apunta el número: «he visto la 69933». El
+    # buscador YA sabe resolverlo —lo tiene en `por_codigo` junto a las
+    # referencias OEM— pero solo si el número le llega, y un número no es
+    # vocabulario de catálogo, así que su trozo casi nunca gana la puntuación y
+    # se quedaba por el camino. Se añade igual que la OEM, y con la misma
+    # condición que ella: que sea un código que existe de verdad. Nada de
+    # reconocer «cualquier número de cinco cifras», que hoy los ids van de 69103
+    # a 79101 y mañana no.
+    por_codigo = getattr(buscador, "por_codigo", {})
+    if por_codigo:
+        ya_en_texto = set(normalizar(texto))
+        for token in normalizar(entero):
+            if token in por_codigo and token not in ya_en_texto:
+                texto += " " + token
+                break
+
     return texto.strip() or entero.strip()
 
 

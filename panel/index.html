@@ -6,6 +6,7 @@
 <title>VendIQ · Centro de control</title>
 <link rel="stylesheet" href="panel.css">
 <link rel="stylesheet" href="chat.css">
+<link rel="stylesheet" href="correo.css">
 <link rel="stylesheet" href="informe.css">
 </head>
 <body>
@@ -97,25 +98,6 @@
       <div id="g-horas"></div>
     </div>
 
-    <div class="rejilla-2">
-      <div class="carta">
-        <h3>De qué te hablan</h3>
-        <p class="nota">Intención detectada en cada mensaje. Un solo color: aquí
-          no hay categorías que comparar, solo cuántos mensajes de cada tipo.</p>
-        <div class="barras" id="g-intenciones"></div>
-      </div>
-      <div class="carta">
-        <h3>Qué pasó con los precios</h3>
-        <p class="nota">Cada vez que un importe entró en juego. El redactor solo
-          recibe los autorizados: los otros no puede decirlos aunque quiera,
-          porque nunca llegan a su texto.</p>
-        <div class="segmentada" id="seg-precios" role="img"
-             aria-label="Reparto de precios"></div>
-        <div class="leyenda" id="leyenda-precios"></div>
-        <p class="nota" id="nota-precios" style="margin-top:18px"></p>
-      </div>
-    </div>
-
     <details class="tabla-detalle">
       <summary>Ver los números en tabla</summary>
       <div class="tabla-scroll">
@@ -189,6 +171,67 @@
           <p class="vacio">Manda un mensaje o elige una conversación tipo.</p>
         </div>
       </aside>
+    </div>
+
+    <!-- ------------------------------------------- habla por correo -->
+    <h3 class="sub-titulo">Habla por correo con un cliente</h3>
+    <p class="intro">
+      El mismo bot por otro sitio. Un WhatsApp son tres líneas y un tuteo; un correo
+      llega con todo dentro y se contesta <strong>una vez</strong>, porque quien
+      escribe un correo se lo ha pensado y espera una respuesta cerrada.
+      Abre uno y pulsa Responder.
+    </p>
+
+    <div class="outlook" id="outlook">
+      <div class="ol-titulo">
+        <span class="ol-semaforo" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="ol-app">Correo</span>
+        <span class="ol-cuenta-activa">alvaro@desguacesmadridnorte.com</span>
+      </div>
+
+      <div class="ol-cuerpo">
+        <nav class="ol-carpetas" aria-label="Carpetas">
+          <button type="button" class="ol-carpeta activa" data-carpeta="entrada">
+            <span>Bandeja de entrada</span><b id="ol-n-entrada">0</b>
+          </button>
+          <button type="button" class="ol-carpeta" data-carpeta="enviados">
+            <span>Enviados</span><b id="ol-n-enviados">0</b>
+          </button>
+          <p class="ol-pie">Los cuatro correos son de prueba. Las respuestas
+            las escribe el bot en el momento.</p>
+        </nav>
+
+        <div class="ol-lista" id="ol-lista" role="list"
+             aria-label="Lista de correos"></div>
+
+        <div class="ol-lectura" id="ol-lectura">
+          <p class="vacio">Elige un correo de la lista.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="correo-traza"></div>
+
+    <!-- Estas dos tarjetas las pinta actividad.js buscándolas por su id, no por
+         la sección donde viven, así que se mueven sin tocar JavaScript. Siguen
+         leyendo de salida/actividad.json. -->
+    <div class="rejilla-2">
+      <div class="carta">
+        <h3>De qué te hablan</h3>
+        <p class="nota">Intención detectada en cada mensaje. Un solo color: aquí
+          no hay categorías que comparar, solo cuántos mensajes de cada tipo.</p>
+        <div class="barras" id="g-intenciones"></div>
+      </div>
+      <div class="carta">
+        <h3>Qué pasó con los precios</h3>
+        <p class="nota">Cada vez que un importe entró en juego. El redactor solo
+          recibe los autorizados: los otros no puede decirlos aunque quiera,
+          porque nunca llegan a su texto.</p>
+        <div class="segmentada" id="seg-precios" role="img"
+             aria-label="Reparto de precios"></div>
+        <div class="leyenda" id="leyenda-precios"></div>
+        <p class="nota" id="nota-precios" style="margin-top:18px"></p>
+      </div>
     </div>
 
     <h3 class="sub-titulo">La búsqueda por dentro</h3>
@@ -370,35 +413,11 @@
       acierta, es si aguanta.
     </p>
 
-    <div class="carta">
-      <h3>Pega un correo y mira la respuesta</h3>
-      <p class="nota">La busqueda que corre por debajo es la misma que la del
-        chat. Debajo sale la consulta destilada: lo que queda del correo cuando
-        se le quitan las ochenta palabras de cortesia que hunden la busqueda.</p>
-
-      <div class="correo-form">
-        <label>Asunto
-          <input type="text" id="correo-asunto" placeholder="Consulta disponibilidad">
-        </label>
-        <div class="rejilla-2">
-          <label>Quien escribe
-            <input type="text" id="correo-quien" placeholder="Javier Ruiz">
-          </label>
-          <label>Empresa (vacio si es un particular)
-            <input type="text" id="correo-empresa" placeholder="Talleres Motor Sur">
-          </label>
-        </div>
-        <label>Cuerpo del correo
-          <textarea id="correo-cuerpo" rows="9"></textarea>
-        </label>
-        <div class="pie-acciones">
-          <button class="boton" id="btn-correo">Redactar la respuesta</button>
-          <button class="boton sutil" id="btn-correo-ejemplo">Poner un ejemplo</button>
-        </div>
-      </div>
-
-      <div id="correo-salida"></div>
-    </div>
+    <p class="intro">
+      El correo se puede probar arriba, en
+      <a href="#cliente">Habla por correo con un cliente</a>: el mismo bot, la misma
+      busqueda y el mismo guardarrail de precio, con la forma de una carta.
+    </p>
   </section>
 
   <!-- ========================================================= faltan -->

@@ -152,6 +152,74 @@ for linea in ejemplo["cuerpo"].splitlines():
 
 # ===========================================================================
 print("\n" + "=" * 78)
+print("LA DESTILACIÓN · lo que se le pasa al buscador cuando llega un correo")
+print("=" * 78)
+# Los 50 correos de arriba NO cubren esto: todos traen matrícula o referencia
+# OEM, y un código exacto entra por su propio atajo, así que la destilación
+# podía estar rota sin que el banco se enterara. Y lo estaba.
+#
+# El fallo: `texto_de_busqueda()` cogía los DOS trozos con más vocabulario de
+# catálogo y los pegaba. Cuando el asunto ya decía la pieza y el cuerpo la
+# repetía dentro de una frase de cortesía, los dos puntuaban alto, se juntaban,
+# y las diez palabras de relleno del segundo hundían la cobertura léxica:
+#
+#     "Motor completo Toyota Camry"                          0,893  RESPONDE
+#     + "hemos visto en su web que tienen disponible un..."  0,358  NO DISPONIBLE
+#
+# O sea que a un cliente que SÍ tenemos la pieza —hay cuatro motores completos
+# de Camry, dos en stock— se le contestaba que no. Cada caso de aquí es una
+# manera distinta de romperlo, y el último está para que arreglar esto no
+# estropee lo otro.
+DESTILADOS = [
+    ("lo he visto en vuestra web, sin código",
+     {"asunto": "Motor completo Toyota Camry",
+      "cuerpo": "Buenos días:\n\nHemos visto en su web que tienen disponible un "
+                "motor completo para un Toyota Camry.\n\n¿Sigue disponible?\n\n"
+                "Un saludo,\nJavier Ruiz"},
+     "RESPONDE"),
+
+    # EL QUE NO PUEDE ROMPERSE. Por eso el segundo trozo se elige mirando el
+    # VOCABULARIO que aporta y no su longitud: aquí la pieza está en una línea y
+    # el coche en la siguiente, así que hacen falta las dos. Si alguien "mejora"
+    # esto quedándose siempre con un solo trozo, este caso se cae.
+    ("la pieza y el coche en líneas distintas",
+     {"asunto": "Consulta de pieza",
+      "cuerpo": "Buenos días:\n\nNecesito un alternador.\nEs para un Audi A4.\n\n"
+                "Un saludo,\nJavier Ruiz"},
+     "RESPONDE"),
+
+    # El número de stock suelto, sin pegar la dirección de la ficha. El buscador
+    # ya sabía resolverlo; lo que faltaba era que le llegara.
+    ("el número de stock suelto",
+     {"asunto": "Consulta",
+      "cuerpo": "Buenos días:\n\nLes escribo desde Talleres Motor Sur. He visto la "
+                "pieza 69933 en su web y quería saber si sigue disponible.\n\n"
+                "Quedo a la espera.\n\nUn saludo,\nJavier Ruiz"},
+     "RESPONDE"),
+
+    # Y el control: destilar mejor no puede convertir un "no" en un "sí". Este
+    # desguace no vende pastillas de freno, y eso no cambia.
+    ("una pieza que no llevamos sigue siendo que no",
+     {"asunto": "Pastillas de freno",
+      "cuerpo": "Buenos días:\n\nNecesito unas pastillas de freno para un Audi A4."
+                "\n\nUn saludo,\nJavier Ruiz"},
+     "NO DISPONIBLE"),
+]
+
+for titulo, correo, esperada in DESTILADOS:
+    texto = canales.texto_de_busqueda(correo, S.buscador, S.buscar_mod.normalizar)
+    d = S.consultar(texto, coche_identificado=True, registrar=False)
+    if d["decision"] != esperada:
+        falla("destilado · " + titulo,
+              "esperaba " + esperada + " y salió " + d["decision"]
+              + " · consulta destilada: «" + texto + "»")
+    else:
+        print("  OK     " + titulo + " — «" + texto + "»")
+
+print("  " + str(len(DESTILADOS)) + " correos destilados a lo que la búsqueda sabe leer")
+
+# ===========================================================================
+print("\n" + "=" * 78)
 print("WALLAPOP · 20 conversaciones difíciles, 209 mensajes")
 print("=" * 78)
 

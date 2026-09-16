@@ -1,0 +1,256 @@
+/* VendIQ · el cliente de correo
+   ------------------------------------------------------------------------
+   Un Outlook de mentira para enseñar algo de verdad: la respuesta que sale
+   aquí la escribe `componer_email()` con la misma búsqueda y el mismo
+   guardarraíl de precio que el chat de WhatsApp.
+
+   Por qué un cliente de correo y no un formulario: un formulario con cuatro
+   campos obliga a imaginarse el correo. Una bandeja con cuatro correos
+   dentro se entiende sin explicarla, y cada uno enseña una capacidad
+   distinta del sistema.
+
+   Fichero aparte y no dentro de panel.css (499 líneas) por lo mismo que el
+   chat tiene el suyo: son piezas con vida propia. Usa los tokens de
+   :root de panel.css, así que el tema se cambia en un solo sitio.
+
+   El azul es el ÚNICO color que este fichero añade al panel, y está aquí
+   porque es lo que hace que se lea como un cliente de correo y no como otra
+   tarjeta más. No se usa para dato ninguno: los datos siguen con el cian y
+   el ámbar de siempre. */
+:root{
+  --ol-azul:   #3b6fd4;
+  --ol-azul-12: rgba(59,111,212,.14);
+}
+
+.outlook{
+  border: 1px solid var(--borde-vivo);
+  border-radius: var(--r);
+  background: var(--carta);
+  box-shadow: var(--sombra);
+  overflow: hidden;
+  margin-top: 18px;
+}
+
+/* ----------------------------------------------------------- la barra */
+.ol-titulo{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px;
+  background: var(--carta-alta);
+  border-bottom: 1px solid var(--borde);
+}
+.ol-semaforo{ display: flex; gap: 6px; }
+.ol-semaforo i{
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--borde-vivo);
+}
+.ol-app{ font-weight: 600; letter-spacing: .01em; }
+.ol-cuenta-activa{
+  margin-left: auto;
+  font: 12px/1 var(--mono);
+  color: var(--tinta-3);
+}
+
+/* ------------------------------------------------------ las tres zonas */
+/* Carpetas · lista · lectura. En pantalla estrecha se apilan: la lectura es
+   lo que importa, así que se queda entera y son las otras dos las que
+   ceden. */
+.ol-cuerpo{
+  display: grid;
+  grid-template-columns: 190px 280px 1fr;
+  min-height: 430px;
+}
+
+.ol-carpetas{
+  border-right: 1px solid var(--borde);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ol-carpeta{
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0; border-radius: 9px;
+  background: transparent;
+  color: var(--tinta-2);
+  font: 500 14px/1.2 var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+.ol-carpeta:hover{ background: var(--carta-alta); color: var(--tinta); }
+.ol-carpeta.activa{
+  background: var(--ol-azul-12);
+  color: var(--tinta);
+  box-shadow: inset 2px 0 0 var(--ol-azul);
+}
+.ol-carpeta b{
+  font: 600 12px/1 var(--mono);
+  color: var(--tinta-3);
+}
+.ol-carpeta.activa b{ color: var(--ol-azul); }
+.ol-pie{
+  margin-top: auto;
+  font-size: 12px; line-height: 1.5;
+  color: var(--tinta-3);
+  padding: 0 12px;
+}
+
+/* ------------------------------------------------------------ la lista */
+.ol-lista{
+  border-right: 1px solid var(--borde);
+  overflow-y: auto;
+  max-height: 560px;
+}
+.ol-sobre{
+  display: block;
+  width: 100%;
+  padding: 13px 15px;
+  border: 0;
+  border-bottom: 1px solid var(--borde);
+  border-left: 3px solid transparent;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.ol-sobre:hover{ background: var(--carta-alta); }
+.ol-sobre.abierto{
+  background: var(--ol-azul-12);
+  border-left-color: var(--ol-azul);
+}
+.ol-sobre.sin-leer .ol-de,
+.ol-sobre.sin-leer .ol-asunto{ color: var(--tinta); font-weight: 600; }
+.ol-fila{ display: flex; align-items: baseline; gap: 10px; }
+.ol-de{
+  font-size: 13.5px;
+  color: var(--tinta-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ol-hora{
+  margin-left: auto;
+  font: 11px/1 var(--mono);
+  color: var(--tinta-3);
+  white-space: nowrap;
+}
+.ol-asunto{
+  margin: 3px 0 2px;
+  font-size: 13.5px;
+  color: var(--tinta-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ol-avance{
+  margin: 0;
+  font-size: 12.5px; line-height: 1.45;
+  color: var(--tinta-3);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* La etiqueta que dice qué enseña cada correo. No es decoración: es lo que
+   convierte una bandeja de ejemplos en una demostración con guion. */
+.ol-que{
+  display: inline-block;
+  margin-top: 7px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--borde-vivo);
+  font: 11px/1.5 var(--mono);
+  color: var(--tinta-3);
+}
+
+/* ---------------------------------------------------------- la lectura */
+.ol-lectura{
+  padding: 20px 24px 24px;
+  overflow-y: auto;
+  max-height: 560px;
+}
+.ol-lectura > .vacio{
+  color: var(--tinta-3);
+  text-align: center;
+  padding: 90px 0;
+}
+.ol-cab h4{
+  margin: 0 0 12px;
+  font: 600 19px/1.3 var(--serif);
+  color: var(--tinta);
+}
+.ol-remite{
+  display: flex; align-items: center; gap: 11px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--borde);
+}
+.ol-avatar{
+  width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--ol-azul-12);
+  color: var(--ol-azul);
+  font: 600 13px/1 var(--ui);
+  flex: 0 0 auto;
+}
+.ol-remite-datos{ min-width: 0; }
+.ol-remite-datos b{ display: block; font-size: 14px; }
+.ol-remite-datos span{ font: 12px/1.5 var(--mono); color: var(--tinta-3); }
+
+.ol-texto{
+  margin: 16px 0 0;
+  font: 14px/1.7 var(--ui);
+  color: var(--tinta-2);
+  white-space: pre-wrap;
+}
+
+.ol-acciones{ margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+.ol-responder{
+  padding: 10px 20px;
+  border: 0; border-radius: 9px;
+  background: var(--ol-azul);
+  color: #fff;
+  font: 600 14px/1 var(--ui);
+  cursor: pointer;
+}
+.ol-responder:hover{ filter: brightness(1.12); }
+.ol-responder:disabled{ opacity: .55; cursor: progress; }
+
+/* La respuesta del bot, dentro del hilo. Sangrada y con la barra cian a la
+   izquierda: es lo que distingue de un vistazo lo que escribió el cliente de
+   lo que ha escrito el sistema. */
+.ol-respuesta{
+  margin-top: 20px;
+  padding: 16px 18px;
+  border-left: 3px solid var(--cian);
+  border-radius: 0 10px 10px 0;
+  background: var(--cian-08);
+}
+.ol-respuesta .ol-de-bot{
+  font: 600 13px/1 var(--ui);
+  color: var(--cian);
+  margin: 0 0 4px;
+}
+.ol-respuesta h5{
+  margin: 0 0 10px;
+  font: 600 15px/1.4 var(--ui);
+  color: var(--tinta);
+}
+.ol-esperando{
+  margin-top: 20px;
+  font: 13px/1.6 var(--mono);
+  color: var(--tinta-3);
+}
+
+/* ------------------------------------------------------------ estrecho */
+@media (max-width: 1000px){
+  .ol-cuerpo{ grid-template-columns: 1fr; min-height: 0; }
+  .ol-carpetas{
+    flex-direction: row; align-items: center;
+    border-right: 0; border-bottom: 1px solid var(--borde);
+  }
+  .ol-carpeta{ width: auto; }
+  .ol-pie{ display: none; }
+  .ol-lista{
+    border-right: 0; border-bottom: 1px solid var(--borde);
+    max-height: 290px;
+  }
+  .ol-lectura{ max-height: none; padding: 18px 16px 20px; }
+}
