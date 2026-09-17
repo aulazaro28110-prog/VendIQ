@@ -25,10 +25,14 @@
       <span class="glifo">V</span>
       <span>VendIQ</span>
     </a>
+    <!-- En el MISMO orden en que se ven las secciones (lo fija `order` en
+         sistema.css). Un menú que no sigue al contenido desorienta más que
+         ayudar. -->
     <div class="barra-enlaces">
-      <a href="#dia">Actividad</a>
-      <a href="#cliente">El chat</a>
+      <a href="#cliente">El chat y el correo</a>
       <a href="#mesa">Ofertas</a>
+      <a href="#dia">Actividad</a>
+      <a href="#reglas">Cómo decide</a>
       <a href="#tumesa">Tu mesa</a>
       <a href="#canales">Canales</a>
       <a href="#informe">El informe</a>
@@ -95,12 +99,23 @@
       <div id="diagrama"></div>
     </div>
 
-    <div class="carta">
-      <h3>Volumen por día</h3>
-      <p class="nota">Cada barra es un día de tráfico pasado por el sistema.
-        Domingo cerrado.</p>
-      <div id="g-dias"></div>
-      <div class="leyenda" id="leyenda-dias"></div>
+    <!-- Volumen y Horas van EN PAREJA y arriba del todo: son las dos lecturas
+         del mismo tráfico (cuánto y cuándo) y se comparan de un vistazo. Los
+         ganchos #g-dias, #leyenda-dias y #g-horas no cambian, así que
+         actividad.js y graficas.js los siguen encontrando igual. -->
+    <div class="rejilla-2">
+      <div class="carta">
+        <h3>Volumen por día</h3>
+        <p class="nota">Siete días de tráfico pasados por el sistema.
+          Domingo cerrado.</p>
+        <div id="g-dias"></div>
+        <div class="leyenda" id="leyenda-dias"></div>
+      </div>
+      <div class="carta">
+        <h3>A qué hora te escriben</h3>
+        <p class="nota">Conversaciones iniciadas en cada franja.</p>
+        <div id="g-horas"></div>
+      </div>
     </div>
 
     <!-- Los cuatro porcentajes, cada uno una medida REAL con su nombre. No hay
@@ -116,10 +131,23 @@
       </div>
     </div>
 
-    <div class="carta">
-      <h3>A qué hora te escriben</h3>
-      <p class="nota">Conversaciones iniciadas en cada franja.</p>
-      <div id="g-horas"></div>
+    <div class="rejilla-2">
+      <div class="carta">
+        <h3>De qué te hablan</h3>
+        <p class="nota">Intención detectada en cada mensaje. Un solo color: aquí
+          no hay categorías que comparar, solo cuántos mensajes de cada tipo.</p>
+        <div class="barras" id="g-intenciones"></div>
+      </div>
+      <div class="carta">
+        <h3>Qué pasó con los precios</h3>
+        <p class="nota">Cada vez que un importe entró en juego. El redactor solo
+          recibe los autorizados: los otros no puede decirlos aunque quiera,
+          porque nunca llegan a su texto.</p>
+        <div class="segmentada" id="seg-precios" role="img"
+             aria-label="Reparto de precios"></div>
+        <div class="leyenda" id="leyenda-precios"></div>
+        <p class="nota" id="nota-precios" style="margin-top:18px"></p>
+      </div>
     </div>
 
     <details class="tabla-detalle">
@@ -197,7 +225,28 @@
       </aside>
     </div>
 
-    <!-- ------------------------------------------- habla por correo -->
+    <h3 class="sub-titulo">La búsqueda por dentro</h3>
+    <p class="intro">
+      Sin conversación ni memoria: una consulta suelta contra el catálogo entero, con
+      la puntuación de cada una y lo que se descartó por no llegar al umbral.
+    </p>
+    <div class="carta">
+      <form class="consola-entrada" id="form-consulta">
+        <span class="prompt" aria-hidden="true">&gt;</span>
+        <input id="entrada" autocomplete="off" spellcheck="false"
+               placeholder="¿cuánto vale un alternador para un BMW Serie 3 320d?"
+               aria-label="Consulta de cliente">
+        <button type="submit" id="btn-consulta">Consultar</button>
+      </form>
+      <div class="sugerencias" id="sugerencias"></div>
+      <div id="salida">
+        <p class="vacio">Escribe una consulta o pulsa uno de los ejemplos.</p>
+      </div>
+    </div>
+
+    <!-- ------------------------------------------- habla por correo
+         El Outlook cierra la sección a propósito: lo siguiente que se lee al
+         bajar es la Mesa de negociación, que es el orden pedido. -->
     <h3 class="sub-titulo">Habla por correo con un cliente</h3>
     <p class="intro">
       El mismo bot por otro sitio. Un WhatsApp son tres líneas y un tuteo; un correo
@@ -270,47 +319,6 @@
     </div>
 
     <div id="correo-traza"></div>
-
-    <!-- Estas dos tarjetas las pinta actividad.js buscándolas por su id, no por
-         la sección donde viven, así que se mueven sin tocar JavaScript. Siguen
-         leyendo de salida/actividad.json. -->
-    <div class="rejilla-2">
-      <div class="carta">
-        <h3>De qué te hablan</h3>
-        <p class="nota">Intención detectada en cada mensaje. Un solo color: aquí
-          no hay categorías que comparar, solo cuántos mensajes de cada tipo.</p>
-        <div class="barras" id="g-intenciones"></div>
-      </div>
-      <div class="carta">
-        <h3>Qué pasó con los precios</h3>
-        <p class="nota">Cada vez que un importe entró en juego. El redactor solo
-          recibe los autorizados: los otros no puede decirlos aunque quiera,
-          porque nunca llegan a su texto.</p>
-        <div class="segmentada" id="seg-precios" role="img"
-             aria-label="Reparto de precios"></div>
-        <div class="leyenda" id="leyenda-precios"></div>
-        <p class="nota" id="nota-precios" style="margin-top:18px"></p>
-      </div>
-    </div>
-
-    <h3 class="sub-titulo">La búsqueda por dentro</h3>
-    <p class="intro">
-      Sin conversación ni memoria: una consulta suelta contra el catálogo entero, con
-      la puntuación de cada una y lo que se descartó por no llegar al umbral.
-    </p>
-    <div class="carta">
-      <form class="consola-entrada" id="form-consulta">
-        <span class="prompt" aria-hidden="true">&gt;</span>
-        <input id="entrada" autocomplete="off" spellcheck="false"
-               placeholder="¿cuánto vale un alternador para un BMW Serie 3 320d?"
-               aria-label="Consulta de cliente">
-        <button type="submit" id="btn-consulta">Consultar</button>
-      </form>
-      <div class="sugerencias" id="sugerencias"></div>
-      <div id="salida">
-        <p class="vacio">Escribe una consulta o pulsa uno de los ejemplos.</p>
-      </div>
-    </div>
   </section>
 
 
@@ -414,14 +422,25 @@
         <button class="boton" id="btn-oferta" type="button">Lanzar oferta</button>
       </div>
     </div>
-    <div class="carta plana tabla-scroll">
-      <table>
-        <thead><tr><th class="num">#</th><th>Pieza</th><th>Cliente</th>
-          <th class="num">Publicado</th><th class="num">Ofrece</th><th class="num">Dto.</th>
-          <th>Antigüedad</th><th>Decisión</th><th>Acción</th></tr></thead>
-        <tbody id="tabla-ofertas"></tbody>
-      </table>
-    </div>
+    <!-- Contadores por estado, cada uno desplegable. Los rellena
+         mesa-estados.js leyendo /api/ofertas; ni un número escrito aquí. -->
+    <div class="estados" id="mesa-estados"></div>
+
+    <!-- La tabla completa sigue estando, plegada: los desplegables son para
+         mirar por estado, y esto para verlo todo junto y ordenado. El gancho
+         #tabla-ofertas no se mueve, así que panel.js la sigue rellenando y
+         los botones de Aceptar/Rechazar siguen funcionando igual. -->
+    <details class="tabla-detalle">
+      <summary>Ver todas las ofertas en tabla</summary>
+      <div class="carta plana tabla-scroll">
+        <table>
+          <thead><tr><th class="num">#</th><th>Pieza</th><th>Cliente</th>
+            <th class="num">Publicado</th><th class="num">Ofrece</th><th class="num">Dto.</th>
+            <th>Antigüedad</th><th>Decisión</th><th>Acción</th></tr></thead>
+          <tbody id="tabla-ofertas"></tbody>
+        </table>
+      </div>
+    </details>
   </section>
 
   <!-- ======================================================== tu mesa -->
@@ -440,6 +459,11 @@
       solo. Y <strong>descartar no es enseñar</strong>: quitar algo de la mesa no
       escribe nada en la base de conocimiento.
     </p>
+
+    <!-- Contadores de lo que espera, desplegables y ordenables. Los rellena
+         estados.js desde /api/no-resueltas. El bloque de abajo (#mesa-kpis,
+         #mesa-grupos) sigue intacto y lo pinta mesa.js como siempre. -->
+    <div class="estados" id="tumesa-estados"></div>
 
     <div class="indicadores" id="mesa-kpis"></div>
     <p class="nota" id="mesa-pie"></p>
@@ -782,5 +806,7 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
 <script src="graficas.js"></script>
 <!-- Esqueletos, entrada escalonada y chips del feed. El último de todos. -->
 <script src="ui.js"></script>
+<!-- Contadores por estado de la mesa de negociación y de tu mesa. -->
+<script src="estados.js"></script>
 </body>
 </html>

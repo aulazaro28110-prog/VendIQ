@@ -23,15 +23,65 @@
    AUTÉNTICOS, no una inversión inventada: son los colores que usan de verdad.
 */
 
-/* ===================================================== tokens que faltaban */
+/* ========================================== PASO 1 · paleta y contraste
+   Los valores de abajo NO están elegidos a ojo: están medidos con la fórmula
+   de contraste de WCAG 2.1 contra los pares que de verdad aparecen en
+   pantalla. El juego completo pasa AA (4,5:1 para texto) en los DOS temas.
+
+   Lo que estaba mal antes, medido:
+     texto apagado sobre tarjeta      3,82:1  <- por debajo de AA
+     texto apagado sobre fondo        3,97:1  <- por debajo de AA
+     tarjeta contra fondo             1,04:1  <- de ahí lo de "va plano"
+     tarjeta elevada contra tarjeta   1,05:1  <- tres superficies indistinguibles
+
+   Ese 1,04 es la clave: el fondo y la tarjeta eran prácticamente el mismo
+   tono, así que no había ni relieve ni jerarquía. Ahora son 1,24 y 1,19.
+
+   LOS COLORES SIGNIFICAN, NO DECORAN
+   ----------------------------------
+   Cuatro estados y un acento, y se usan igual en todo el panel:
+     acento/verde  el bot contesta solo        (RESPONDER, aceptado)
+     azul          tiene que preguntar cuál    (PREGUNTAR)
+     ámbar         acaba en tu mesa            (ESCALAR, pendiente)
+     rojo          rechazado o error
+   El acento es a la vez identidad y el "bien", a propósito: la tesis del
+   producto ES que contesta solo, así que el color de marca y el de resuelto
+   son el mismo. Un quinto color que no codificara nada sería arcoíris.
+
+   `--violeta` conserva el NOMBRE aunque ahora sea azul: es el token que ya
+   pasan por dentro actividad.js y panel.js para PREGUNTAR. Cambiarle el valor
+   mueve la semántica a azul sin tocar una línea de JavaScript; cambiarle el
+   nombre obligaría a editar los ficheros que no se tocan. */
 :root{
-  /* Semánticos, separados del acento. El acento es identidad; estos
-     significan algo y por eso no se usan para decorar. */
-  --bien:    var(--cian);
-  --aviso:   var(--ambar);
-  --critico: var(--rojo);
-  --realce:  #22c4b8;
-  --malla:   rgba(255,255,255,.055);
+  --fondo:      #04060a;
+  --carta:      #17202e;
+  --carta-alta: #222e3d;
+  --borde:      #2d3a4a;
+  --borde-vivo: #3d4d61;
+
+  --tinta:      #f3f7fc;
+  --tinta-2:    #b2bfcf;
+  --tinta-3:    #8593a3;
+
+  --cian:       #21b9a4;   /* acento · contesta solo */
+  --violeta:    #5e97f0;   /* azul · tiene que preguntar */
+  --ambar:      #d99a25;   /* a tu mesa */
+  --rojo:       #f4706a;   /* rechazado o error */
+
+  --cian-08:    rgba(33,185,164,.12);
+  --cian-20:    rgba(33,185,164,.28);
+  --violeta-12: rgba(94,151,240,.16);
+  --ambar-12:   rgba(217,154,37,.16);
+  --rojo-12:    rgba(244,112,106,.15);
+
+  /* Nombres por lo que significan, para que el código nuevo no tenga que
+     saber de qué color es cada estado. */
+  --bien:     var(--cian);
+  --pregunta: var(--violeta);
+  --aviso:    var(--ambar);
+  --critico:  var(--rojo);
+  --realce:   #2fd6bd;
+  --malla:    rgba(255,255,255,.07);
 
   /* Escala de espaciado. Todo por gap, nunca márgenes sueltos. */
   --e1:4px; --e2:8px; --e3:12px; --e4:18px; --e5:26px; --e6:38px;
@@ -49,47 +99,73 @@
   --anillo-fondo: rgba(255,255,255,.07);
 }
 
-/* ============================================================ tema CLARO */
+/* ============================================================ tema CLARO
+   Mismo trabajo y misma medida que el oscuro: los cuatro colores están
+   bajados de luminosidad porque sobre blanco los del modo oscuro no llegan
+   —el acento #21b9a4 se queda en 2,1:1— y el fondo se ha oscurecido hasta
+   #e2e8f0 para que la tarjeta blanca despegue (1,23:1). Al oscurecer el
+   fondo hubo que oscurecer también el texto apagado, que se quedaba en
+   4,41:1 sobre él. */
 :root[data-tema="claro"]{
-  --fondo:      #f5f7fa;
+  --fondo:      #e2e8f0;
   --carta:      #ffffff;
-  --carta-alta: #eef1f6;
-  --borde:      #e2e7ee;
-  --borde-vivo: #ccd4df;
+  --carta-alta: #eaeff6;
+  --borde:      #d3dce7;
+  --borde-vivo: #b9c6d6;
 
-  --tinta:      #121821;
-  --tinta-2:    #4a5666;
-  --tinta-3:    #74808f;
+  --tinta:      #0b1017;
+  --tinta-2:    #3d4957;
+  --tinta-3:    #5a6675;
 
-  /* Bajados de luminosidad para que pasen AA sobre blanco. El cian del
-     modo oscuro (#1aa197) sobre blanco se queda en 2,9:1 y no vale. */
-  --cian:       #0c7d73;
-  --violeta:    #5157c4;
-  --ambar:      #8a5d05;
-  --rojo:       #c32b2b;
+  --cian:       #04786b;   /* acento · contesta solo */
+  --violeta:    #1f5fc4;   /* azul · tiene que preguntar */
+  --ambar:      #8a5700;   /* a tu mesa */
+  --rojo:       #bf2530;   /* rechazado o error */
 
-  --cian-08:    rgba(12,125,115,.08);
-  --cian-20:    rgba(12,125,115,.18);
-  --violeta-12: rgba(81,87,196,.12);
-  --ambar-12:   rgba(138,93,5,.13);
-  --rojo-12:    rgba(195,43,43,.11);
+  --cian-08:    rgba(4,120,107,.09);
+  --cian-20:    rgba(4,120,107,.20);
+  --violeta-12: rgba(31,95,196,.12);
+  --ambar-12:   rgba(138,87,0,.13);
+  --rojo-12:    rgba(191,37,48,.11);
 
-  --sombra:      0 1px 2px rgba(18,24,33,.06), 0 8px 24px rgba(18,24,33,.07);
-  --sombra-alta: 0 2px 4px rgba(18,24,33,.07), 0 16px 40px rgba(18,24,33,.11);
+  --sombra:      0 1px 2px rgba(11,16,23,.07), 0 8px 24px rgba(11,16,23,.08);
+  --sombra-alta: 0 2px 4px rgba(11,16,23,.08), 0 16px 40px rgba(11,16,23,.13);
 
-  --realce:  #0fa294;
-  --malla:   rgba(18,24,33,.06);
+  --realce:  #026b5f;
+  --malla:   rgba(11,16,23,.08);
   --glow:    none;
-  --anillo-fondo: rgba(18,24,33,.08);
+  --anillo-fondo: rgba(11,16,23,.10);
   color-scheme: light;
+}
+
+/* Restos de la paleta anterior escritos a pelo en panel.css e informe.css.
+   Se corrigen aquí encima en vez de editar esos ficheros: el halo y la barra
+   llevaban los rgba() del cian y el violeta viejos, y la barra de scroll un
+   verde que ya no existe en ninguna parte. */
+body::before{
+  background:
+    radial-gradient(760px 420px at 6% -6%,  rgba(33,185,164,.15), transparent 60%),
+    radial-gradient(680px 460px at 100% 0%, rgba(94,151,240,.08), transparent 55%),
+    radial-gradient(620px 520px at 88% 104%,rgba(217,154,37,.055), transparent 60%);
+}
+::-webkit-scrollbar-track{ background:var(--carta) }
+::-webkit-scrollbar-thumb{ background:var(--borde-vivo) }
+::-webkit-scrollbar-thumb:hover{ background:var(--cian) }
+nav.barra{ background:rgba(4,6,10,.86) }
+
+/* La tarjeta ahora es bastante más clara que el fondo, así que la sombra
+   tiene que ser más profunda para que el relieve siga leyéndose. */
+:root{
+  --sombra:      0 2px 6px rgba(0,0,0,.35), 0 12px 34px rgba(0,0,0,.45);
+  --sombra-alta: 0 4px 10px rgba(0,0,0,.42), 0 20px 50px rgba(0,0,0,.6);
 }
 
 /* El halo del fondo y la malla del canvas están pensados para oscuro. En
    claro se bajan en vez de quitarse: dan profundidad sin ensuciar. */
 :root[data-tema="claro"] body::before{
   background:
-    radial-gradient(760px 420px at 6% -6%,  rgba(12,125,115,.07), transparent 60%),
-    radial-gradient(680px 460px at 100% 0%, rgba(81,87,196,.05), transparent 55%);
+    radial-gradient(760px 420px at 6% -6%,  rgba(4,120,107,.07), transparent 60%),
+    radial-gradient(680px 460px at 100% 0%, rgba(31,95,196,.05), transparent 55%);
 }
 :root[data-tema="claro"] #fondo{ opacity:.25; }
 :root[data-tema="claro"] nav.barra{ background:rgba(255,255,255,.88); }
@@ -201,6 +277,36 @@
   .envoltorio{ max-width:1220px; }
 }
 
+/* ================================== PASO 2 · el orden vertical de la página
+   Se reordena con `order` sobre el <main>, NO moviendo bloques de HTML. Mover
+   ~300 líneas de marcado entre secciones es justo como se pierde un gancho
+   del JS sin enterarse; con `order` el marcado no se toca y el orden se lee
+   aquí de un vistazo.
+
+   El orden pedido: el correo cierra el bloque del cliente, debajo la mesa de
+   negociación, y debajo el tráfico (volumen y horas, en pareja).
+
+   OJO con dos reglas de informe.css que dan por hecho el orden del DOM:
+   `.bloque:first-child{padding-top:0}` se lo aplicaría a #dia, que ahora va
+   por el medio, y `.bloque + .bloque{border-top}` dejaría sin línea a la
+   primera sección VISUAL. Las dos se rehacen aquí por orden visual. */
+main.envoltorio{ display:flex; flex-direction:column; }
+
+main.envoltorio > .bloque{ padding-top:64px; border-top:1px solid var(--borde) }
+main.envoltorio > #cliente{ padding-top:0; border-top:0 }
+
+#cliente{ order:1 }   /* chat · búsqueda · el correo */
+#mesa   { order:2 }   /* mesa de negociación */
+#dia    { order:3 }   /* volumen y horas, y el resto del tráfico */
+#reglas { order:4 }
+#atasco { order:5 }
+#precios{ order:6 }
+#tumesa { order:7 }
+#canales{ order:8 }
+#faltan { order:9 }
+#informe{ order:10 }
+#letra  { order:11 }
+
 /* ===================================================== tarjetas y rejilla */
 .carta{
   border-radius:var(--r-l);
@@ -285,6 +391,83 @@
   color:transparent !important;
 }
 
+/* ============================ PASO 3 · el recorrido, como un pipeline
+   Solo CSS. Las cuatro etapas, los nodos y los colores de "Acaba en" ya los
+   pinta pintarRecorrido() en actividad.js, leyendo los umbrales del motor en
+   marcha y los volúmenes de los días medidos; aquí no se añade ni un número.
+   Lo que faltaba era que SE VIERA que es un pipeline y no cuatro listas. */
+
+/* La cabecera de etapa: el número en un círculo de acento, el título en
+   mayúsculas con tracking. Antes era «1 · Entra por» en gris pequeño y se
+   perdía. El número viaja dentro del texto, así que se saca con un truco de
+   ancho fijo en vez de tocar el JS. */
+.flujo-titulo{
+  display:flex; align-items:center; gap:10px;
+  font-size:11px !important; font-weight:700 !important;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--tinta-2) !important;
+  margin:0 0 14px !important;
+}
+.flujo-titulo::before{
+  content:''; width:22px; height:2px; border-radius:2px;
+  background:var(--cian); flex:none;
+}
+
+/* El conector. Antes era una línea fina; ahora línea + punta de flecha en
+   acento, para que se lea la dirección del recorrido. */
+.flujo-baja{ height:38px !important }
+.flujo-baja::before{
+  background:linear-gradient(var(--cian), var(--cian-20)) !important;
+  width:2px !important;
+}
+.flujo-baja::after{
+  content:'' !important;
+  width:0 !important; height:0 !important;
+  border-left:5px solid transparent !important;
+  border-right:5px solid transparent !important;
+  border-top:7px solid var(--cian) !important;
+  background:none !important;
+  border-radius:0 !important;
+  bottom:2px; top:auto;
+}
+
+/* Los nodos: más contraste y la cifra, grande. */
+.nodo{
+  background:var(--carta-alta) !important;
+  border:1px solid var(--borde-vivo) !important;
+  border-radius:var(--r-m) !important;
+  padding:15px 16px !important;
+  transition:transform var(--rapido) var(--curva), box-shadow var(--rapido) var(--curva);
+}
+.nodo:hover{ transform:translateY(-2px); box-shadow:var(--sombra) }
+.nodo.apagado{
+  background:transparent !important;
+  border-style:dashed !important;
+  border-color:var(--borde) !important;
+}
+.nodo-cab{ display:flex; flex-wrap:wrap; align-items:baseline; gap:8px }
+.nodo-t{ font-size:13.5px !important; font-weight:650 !important; color:var(--tinta) !important }
+.nodo-c{
+  font-family:var(--mono);
+  font-size:17px !important; font-weight:700 !important;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.01em;
+}
+.nodo-p{ font-size:12px !important; color:var(--tinta-3) !important; line-height:1.55 !important }
+
+/* "Acaba en": cada tarjeta con el color de su resultado. El tono ya viene en
+   línea desde el JS (borderColor), así que aquí solo se le añade el fondo
+   tintado y la barra de la izquierda, usando currentColor del propio nodo. */
+.flujo-banda:last-of-type .nodo{
+  border-left-width:3px !important;
+  background:var(--carta) !important;
+}
+.flujo-pie{
+  border-top:1px solid var(--borde);
+  padding-top:14px;
+  margin-top:24px !important;
+}
+
 /* ================================================================ gráficas
    Todo SVG a mano (graficas.js). Los colores salen de los tokens, así que el
    cambio de tema los arrastra sin tocar el JavaScript. */
@@ -353,6 +536,107 @@
   .medidor-fila{ grid-template-columns:1fr; gap:var(--e5); }
 }
 
+/* ================ PASOS 4 y 5 · contadores por estado, desplegables
+   Mismo componente en la Mesa de negociación y en Tu mesa. El color de cada
+   contador es el semántico del paso 1, así que "aceptadas" es del mismo verde
+   que "contesta solo" en el recorrido, y "esperan tu decisión" del mismo
+   ámbar que "a tu mesa". Ese es todo el truco de que se lea como un sistema. */
+.estados{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:var(--e4); margin-bottom:var(--e5);
+  align-items:start;
+}
+.estado{
+  border:1px solid var(--borde); border-left:3px solid var(--borde-vivo);
+  border-radius:var(--r-m); background:var(--carta);
+  box-shadow:var(--sombra), var(--glow);
+  overflow:hidden;
+}
+.estado-bien    { border-left-color:var(--bien) }
+.estado-pregunta{ border-left-color:var(--pregunta) }
+.estado-aviso   { border-left-color:var(--aviso) }
+.estado-critico { border-left-color:var(--critico) }
+.estado-neutro  { border-left-color:var(--borde-vivo) }
+
+.estado-cab{
+  display:flex; align-items:center; gap:var(--e3);
+  width:100%; padding:var(--e4) var(--e4) var(--e4) var(--e4);
+  border:0; background:transparent; color:inherit; cursor:pointer;
+  text-align:left;
+  transition:background var(--rapido) var(--curva);
+}
+.estado-cab:hover{ background:var(--carta-alta) }
+.estado-txt{ flex:1; min-width:0 }
+.estado-eti{
+  margin:0; text-transform:uppercase; letter-spacing:.085em;
+  font-size:10.5px; font-weight:650; color:var(--tinta-3);
+}
+.estado-n{
+  margin:2px 0 0;
+  font-size:2rem; font-weight:700; line-height:1.1; letter-spacing:-.025em;
+  font-variant-numeric:tabular-nums;
+}
+.estado-bien .estado-n    { color:var(--bien) }
+.estado-pregunta .estado-n{ color:var(--pregunta) }
+.estado-aviso .estado-n   { color:var(--aviso) }
+.estado-critico .estado-n { color:var(--critico) }
+.estado-pie{ margin:4px 0 0; font-size:12px; color:var(--tinta-3); line-height:1.45 }
+
+.estado-flecha{
+  width:0; height:0; flex:none;
+  border-left:5px solid transparent; border-right:5px solid transparent;
+  border-top:6px solid var(--tinta-3);
+  transition:transform var(--medio) var(--curva);
+}
+.estado-cab[aria-expanded="true"] .estado-flecha{ transform:rotate(180deg) }
+
+/* max-height en vez de height:auto, que no anima. Lo calcula estados.js con
+   el scrollHeight real en el momento de abrir. */
+.estado-panel{
+  max-height:0; overflow:hidden;
+  transition:max-height var(--medio) var(--curva);
+  border-top:1px solid transparent;
+}
+.estado-panel.abierto{ border-top-color:var(--borde) }
+
+.estado-fila{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:var(--e3);
+  padding:11px var(--e4);
+  border-bottom:1px solid var(--borde);
+  font-size:13px;
+}
+.estado-fila:last-child{ border-bottom:0 }
+.estado-fila b{ display:block; font-weight:600; color:var(--tinta); line-height:1.4 }
+.estado-meta{ display:block; font-size:11.5px; color:var(--tinta-3); margin-top:2px }
+.estado-cifras{
+  display:flex; align-items:baseline; gap:7px; flex:none;
+  font-variant-numeric:tabular-nums;
+}
+.estado-tacha{ font-size:11.5px; color:var(--tinta-3); text-decoration:line-through }
+.estado-dto{ font-size:11.5px; color:var(--bien); font-family:var(--mono) }
+
+.estado-orden{
+  display:flex; gap:var(--e2); flex-wrap:wrap;
+  padding:12px var(--e4); border-bottom:1px solid var(--borde);
+}
+.estado-orden .chip{
+  border:1px solid var(--borde-vivo); background:transparent;
+  color:var(--tinta-2); border-radius:999px;
+  padding:5px 13px; font-size:12px; cursor:pointer;
+  font-family:var(--ui);
+  transition:all var(--rapido) var(--curva);
+}
+.estado-orden .chip:hover{ color:var(--tinta); border-color:var(--tinta-3) }
+.estado-orden .chip.activo{
+  background:var(--cian-08); border-color:var(--cian); color:var(--cian);
+  font-weight:600;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .estado-panel, .estado-flecha, .estado-cab{ transition:none }
+}
+
 /* ============================================== esqueletos y chips (fase 5)
    Cada esqueleto tiene la forma y la altura de lo que va a sustituirlo. Si
    mide otra cosa, al llegar los datos la página pega un salto y el esqueleto
@@ -392,6 +676,51 @@
 /* El área es SVG con viewBox y preserveAspectRatio por defecto, así que
    encoge sola. Esto es el cinturón para que nada la fuerce más ancha. */
 .g-area, .gauge, .anillo svg, .kpi-viz svg{ max-width:100% }
+
+/* =============================== PASO 6 · simetría de espacios y bordes
+   Un solo ritmo vertical para toda la página. El problema concreto era el
+   Outlook, que quedaba pegado al bloque siguiente porque .outlook traía su
+   propio margin-top de 18px y nada abajo; ahora usa el mismo hueco que
+   cualquier otra tarjeta y deja de ser un caso especial.
+
+   Regla: el espaciado lo pone el CONTENEDOR con gap, no cada hijo con su
+   margen. Así no hay que acordarse de nada al añadir una tarjeta nueva. */
+:root{ --hueco:26px }
+
+/* Las secciones apilan sus hijos con un hueco único. Los márgenes sueltos de
+   los hijos se anulan aquí para que no se sumen al gap y descuadren. */
+main.envoltorio > .bloque{
+  display:flex; flex-direction:column; gap:var(--hueco);
+}
+main.envoltorio > .bloque > *{ margin-top:0; margin-bottom:0 }
+
+/* Lo que va pegado a su título no debe llevar el hueco entero: el gap de flex
+   no distingue, así que se recorta con margen negativo. Es la única excepción
+   y está aquí, junta, en vez de repartida por cuatro ficheros. */
+main.envoltorio > .bloque > h2,
+main.envoltorio > .bloque > .sub-titulo{ margin-bottom:calc(var(--e4) - var(--hueco)) }
+main.envoltorio > .bloque > .eyebrow{ margin-bottom:calc(var(--e2) - var(--hueco)) }
+
+/* El Outlook, tratado como una tarjeta más. */
+.outlook{ margin-top:0 !important }
+
+/* Radios y paddings, los mismos en todo lo que sea una superficie. */
+.carta, .ind, .estado, .g-globo{ border-radius:var(--r-l) }
+.carta{ padding:var(--e5) }
+.rejilla-2, .indicadores, .estados, .medidor-fila{ gap:var(--e4) }
+
+/* Cabeceras de tarjeta a la misma altura, para que dos tarjetas en pareja
+   arranquen su contenido a la misma línea. */
+.carta > h3{
+  font-size:15px; font-weight:650; letter-spacing:-.01em;
+  margin:0 0 var(--e2); min-height:22px;
+}
+.carta > .nota{ margin:0 0 var(--e4); min-height:0 }
+
+@media (max-width:560px){
+  :root{ --hueco:20px }
+  .carta{ padding:var(--e4) }
+}
 
 /* ================================================ accesibilidad y motion */
 a:focus-visible, button:focus-visible,
