@@ -9,248 +9,391 @@
    dentro se entiende sin explicarla, y cada uno enseña una capacidad
    distinta del sistema.
 
-   Fichero aparte y no dentro de panel.css (499 líneas) por lo mismo que el
-   chat tiene el suyo: son piezas con vida propia. Usa los tokens de
-   :root de panel.css, así que el tema se cambia en un solo sitio.
+   POR QUÉ EL MODO OSCURO DE OUTLOOK Y NO EL CLARO
+   -----------------------------------------------
+   Outlook tiene modo oscuro de verdad, así que esta paleta no es una
+   invención para que pegue con el panel: son los grises de Fluent
+   (#1b1a19 el marco, #201f1e la lista, #3b3a39 los bordes) y el azul
+   #479ef5 que Outlook usa para acentos sobre oscuro. Se reconoce como
+   Outlook y además convive con el chat de WhatsApp que tiene al lado.
 
-   El azul es el ÚNICO color que este fichero añade al panel, y está aquí
-   porque es lo que hace que se lea como un cliente de correo y no como otra
-   tarjeta más. No se usa para dato ninguno: los datos siguen con el cian y
-   el ámbar de siempre. */
-:root{
-  --ol-azul:   #3b6fd4;
-  --ol-azul-12: rgba(59,111,212,.14);
+   Los colores viven en tokens --ol-* propios y NO en los del panel: esto
+   imita una aplicación ajena, así que no debe seguir el tema de VendIQ ni
+   arrastrarlo si el panel cambia de acento. */
+#outlook{
+  --ol-marco:    #1b1a19;
+  --ol-lista:    #201f1e;
+  --ol-hover:    #292827;
+  --ol-sel:      #323130;
+  --ol-borde:    #3b3a39;
+  --ol-borde-2:  #484644;
+  --ol-txt:      #ffffff;
+  --ol-txt-2:    #c8c6c4;
+  --ol-txt-3:    #a19f9d;
+  --ol-azul:     #479ef5;   /* acento sobre oscuro: enlaces, asuntos, contadores */
+  --ol-azul-bt:  #0f6cbd;   /* el azul sólido del botón Enviar */
+  --ol-azul-12:  rgba(71,158,245,.12);
 }
 
 .outlook{
-  border: 1px solid var(--borde-vivo);
-  border-radius: var(--r);
-  background: var(--carta);
+  border: 1px solid var(--ol-borde);
+  border-radius: 8px;            /* Outlook es menos redondeado que el panel */
+  background: var(--ol-marco);
+  color: var(--ol-txt);
   box-shadow: var(--sombra);
   overflow: hidden;
   margin-top: 18px;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
-/* ----------------------------------------------------------- la barra */
+/* ------------------------------------------------------------ la barra */
 .ol-titulo{
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 10px 16px;
-  background: var(--carta-alta);
-  border-bottom: 1px solid var(--borde);
+  gap: 12px;
+  padding: 9px 14px;
+  background: var(--ol-marco);
+  border-bottom: 1px solid var(--ol-borde);
 }
-.ol-semaforo{ display: flex; gap: 6px; }
-.ol-semaforo i{
-  width: 11px; height: 11px; border-radius: 50%;
-  background: var(--borde-vivo);
+.ol-logo{ color: var(--ol-azul); display: flex; }
+.ol-app{ font-weight: 600; font-size: 14px; }
+/* La caja de búsqueda es decorado: no busca nada y no finge que sí. Sin
+   cursor de texto y sin foco, para que nadie pierda el tiempo pulsándola. */
+.ol-buscador{
+  flex: 1;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 5px 12px;
+  border-radius: 4px;
+  background: var(--ol-lista);
+  border: 1px solid var(--ol-borde);
+  font-size: 12.5px;
+  color: var(--ol-txt-3);
+  user-select: none;
 }
-.ol-app{ font-weight: 600; letter-spacing: .01em; }
-.ol-cuenta-activa{
-  margin-left: auto;
-  font: 12px/1 var(--mono);
-  color: var(--tinta-3);
-}
+.ol-cuenta-activa{ font-size: 12px; color: var(--ol-txt-3); }
 
 /* ------------------------------------------------------ las tres zonas */
-/* Carpetas · lista · lectura. En pantalla estrecha se apilan: la lectura es
-   lo que importa, así que se queda entera y son las otras dos las que
-   ceden. */
 .ol-cuerpo{
   display: grid;
-  grid-template-columns: 190px 280px 1fr;
-  min-height: 430px;
+  grid-template-columns: 208px 310px 1fr;
+  min-height: 460px;
 }
 
+/* --------------------------------------------------------- las carpetas */
 .ol-carpetas{
-  border-right: 1px solid var(--borde);
-  padding: 14px 10px;
+  border-right: 1px solid var(--ol-borde);
+  padding: 10px 8px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 1px;
+  background: var(--ol-marco);
+}
+.ol-grupo{
+  display: flex; align-items: center; gap: 7px;
+  margin: 10px 0 4px;
+  padding: 0 8px;
+  font-size: 12px; font-weight: 600;
+  color: var(--ol-txt-2);
+}
+.ol-grupo:first-child{ margin-top: 2px; }
+.ol-grupo-cuenta{
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ol-borde);
+  color: var(--ol-txt-3);
+  font-weight: 400;
+}
+.ol-chevron{
+  width: 0; height: 0;
+  border-left: 4.5px solid currentColor;
+  border-top: 3.5px solid transparent;
+  border-bottom: 3.5px solid transparent;
+  transform: rotate(90deg);       /* grupo desplegado */
+  flex: 0 0 auto;
 }
 .ol-carpeta{
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 8px;
+  display: flex; align-items: center; gap: 9px;
   width: 100%;
-  padding: 9px 12px;
-  border: 0; border-radius: 9px;
+  padding: 7px 10px;
+  border: 0; border-radius: 4px;
   background: transparent;
-  color: var(--tinta-2);
-  font: 500 14px/1.2 var(--ui);
+  color: var(--ol-txt-2);
+  font: 400 13.5px/1.3 inherit;
   text-align: left;
   cursor: pointer;
+  transition: background 120ms ease;
 }
-.ol-carpeta:hover{ background: var(--carta-alta); color: var(--tinta); }
+.ol-ico{ width: 15px; font-size: 12px; color: var(--ol-txt-3); flex: 0 0 auto; }
+.ol-carpeta > span:nth-child(2){
+  flex: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ol-carpeta:hover{ background: var(--ol-hover); color: var(--ol-txt); }
 .ol-carpeta.activa{
-  background: var(--ol-azul-12);
-  color: var(--tinta);
-  box-shadow: inset 2px 0 0 var(--ol-azul);
+  background: var(--ol-sel);
+  color: var(--ol-txt);
+  font-weight: 600;
+  box-shadow: inset 2.5px 0 0 var(--ol-azul);
 }
 .ol-carpeta b{
-  font: 600 12px/1 var(--mono);
-  color: var(--tinta-3);
+  font: 600 12px/1 inherit;
+  color: var(--ol-azul);
+  font-variant-numeric: tabular-nums;
 }
-.ol-carpeta.activa b{ color: var(--ol-azul); }
+.ol-carpeta b:empty{ display: none; }
 .ol-pie{
   margin-top: auto;
-  font-size: 12px; line-height: 1.5;
-  color: var(--tinta-3);
-  padding: 0 12px;
+  padding: 12px 10px 2px;
+  font-size: 11.5px; line-height: 1.5;
+  color: var(--ol-txt-3);
+  border-top: 1px solid var(--ol-borde);
 }
 
-/* ------------------------------------------------------------ la lista */
-.ol-lista{
-  border-right: 1px solid var(--borde);
-  overflow-y: auto;
-  max-height: 560px;
+/* -------------------------------------------- la columna de la lista */
+.ol-columna{
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--ol-borde);
+  background: var(--ol-lista);
+  min-width: 0;
 }
+/* Prioritarios / Otros. "Otros" no está activo: esta bandeja de ejemplo no
+   tiene correo de segunda, y fingir un filtro vacío sería peor que no
+   tenerlo. Se queda como lo que es, una pestaña que no lleva a nada. */
+.ol-pestanas{
+  display: flex; gap: 22px;
+  padding: 11px 16px 0;
+  border-bottom: 1px solid var(--ol-borde);
+}
+.ol-pestana{
+  padding: 0 0 9px;
+  border: 0; border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--ol-txt-3);
+  font: 600 13.5px/1.3 inherit;
+  cursor: default;
+}
+.ol-pestana.activa{ color: var(--ol-txt); border-bottom-color: var(--ol-azul); }
+
+.ol-lista{ overflow-y: auto; max-height: 560px; }
+
+/* La cabecera de grupo por fecha: Hoy, Ayer. */
+.ol-dia{
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 16px 7px;
+  font-size: 12px; font-weight: 600;
+  color: var(--ol-txt-2);
+  background: var(--ol-lista);
+  position: sticky; top: 0;
+  border-bottom: 1px solid var(--ol-borde);
+}
+
 .ol-sobre{
-  display: block;
+  display: flex; gap: 11px;
   width: 100%;
-  padding: 13px 15px;
+  padding: 11px 14px 12px;
   border: 0;
-  border-bottom: 1px solid var(--borde);
+  border-bottom: 1px solid var(--ol-borde);
   border-left: 3px solid transparent;
   background: transparent;
   color: inherit;
   text-align: left;
   cursor: pointer;
+  transition: background 120ms ease;
 }
-.ol-sobre:hover{ background: var(--carta-alta); }
-.ol-sobre.abierto{
-  background: var(--ol-azul-12);
-  border-left-color: var(--ol-azul);
+.ol-sobre:hover{ background: var(--ol-hover); }
+.ol-sobre.abierto{ background: var(--ol-sel); border-left-color: var(--ol-azul); }
+.ol-sobre.sin-leer{ border-left-color: var(--ol-azul); }
+
+.ol-avatar{
+  width: 32px; height: 32px; border-radius: 50%;
+  display: grid; place-items: center;
+  font: 600 12px/1 inherit;
+  color: #fff;
+  flex: 0 0 auto;
 }
-.ol-sobre.sin-leer .ol-de,
-.ol-sobre.sin-leer .ol-asunto{ color: var(--tinta); font-weight: 600; }
-.ol-fila{ display: flex; align-items: baseline; gap: 10px; }
+.ol-sobre-txt{ min-width: 0; flex: 1; }
+.ol-fila{ display: flex; align-items: baseline; gap: 8px; }
 .ol-de{
-  font-size: 13.5px;
-  color: var(--tinta-2);
+  font-size: 13.5px; font-weight: 600;
+  color: var(--ol-txt-2);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.ol-sobre.sin-leer .ol-de{ color: var(--ol-txt); }
 .ol-hora{
   margin-left: auto;
-  font: 11px/1 var(--mono);
-  color: var(--tinta-3);
+  font-size: 11.5px;
+  color: var(--ol-txt-3);
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
+.ol-sobre.sin-leer .ol-hora{ color: var(--ol-azul); font-weight: 600; }
 .ol-asunto{
-  margin: 3px 0 2px;
-  font-size: 13.5px;
-  color: var(--tinta-2);
+  margin: 2px 0 3px;
+  font-size: 13px;
+  color: var(--ol-txt-2);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.ol-sobre.sin-leer .ol-asunto{ color: var(--ol-azul); font-weight: 600; }
 .ol-avance{
   margin: 0;
-  font-size: 12.5px; line-height: 1.45;
-  color: var(--tinta-3);
+  font-size: 12px; line-height: 1.45;
+  color: var(--ol-txt-3);
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden;
 }
-/* La etiqueta que dice qué enseña cada correo. No es decoración: es lo que
-   convierte una bandeja de ejemplos en una demostración con guion. */
+/* El punto azul de no leído, a la derecha del todo como en Outlook. */
+.ol-punto{
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--ol-azul);
+  flex: 0 0 auto;
+  align-self: center;
+}
+/* La etiqueta que dice qué enseña cada correo. No es decoración de Outlook:
+   es lo que convierte una bandeja de ejemplos en una demostración con guion,
+   y por eso se permite romper el mimetismo. */
 .ol-que{
   display: inline-block;
   margin-top: 7px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid var(--borde-vivo);
-  font: 11px/1.5 var(--mono);
-  color: var(--tinta-3);
+  padding: 1px 8px;
+  border-radius: 3px;
+  background: var(--ol-azul-12);
+  font: 11px/1.6 var(--mono);
+  color: var(--ol-azul);
 }
 
-/* ---------------------------------------------------------- la lectura */
+/* -------------------------------------------------------- la lectura */
 .ol-lectura{
-  padding: 20px 24px 24px;
+  padding: 0;
   overflow-y: auto;
   max-height: 560px;
+  background: var(--ol-marco);
 }
 .ol-lectura > .vacio{
-  color: var(--tinta-3);
+  color: var(--ol-txt-3);
   text-align: center;
-  padding: 90px 0;
+  padding: 120px 20px;
+  font-size: 13.5px;
 }
+
+.ol-accion-barra{
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--ol-borde);
+  position: sticky; top: 0;
+  background: var(--ol-marco);
+  z-index: 1;
+}
+.ol-enviar{
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 18px;
+  border: 0; border-radius: 4px;
+  background: var(--ol-azul-bt);
+  color: #fff;
+  font: 600 13.5px/1 inherit;
+  cursor: pointer;
+  transition: filter 120ms ease;
+}
+.ol-enviar:hover{ filter: brightness(1.15); }
+.ol-enviar:disabled{ opacity: .6; cursor: progress; }
+.ol-enviar .ol-flecha{ font-size: 11px; }
+
+.ol-lectura-cuerpo{ padding: 18px 22px 26px; }
 .ol-cab h4{
-  margin: 0 0 12px;
-  font: 600 19px/1.3 var(--serif);
-  color: var(--tinta);
+  margin: 0 0 14px;
+  font: 600 20px/1.3 inherit;
+  color: var(--ol-txt);
 }
 .ol-remite{
   display: flex; align-items: center; gap: 11px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--borde);
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--ol-borde);
 }
-.ol-avatar{
-  width: 36px; height: 36px; border-radius: 50%;
-  display: grid; place-items: center;
-  background: var(--ol-azul-12);
-  color: var(--ol-azul);
-  font: 600 13px/1 var(--ui);
-  flex: 0 0 auto;
-}
-.ol-remite-datos{ min-width: 0; }
-.ol-remite-datos b{ display: block; font-size: 14px; }
-.ol-remite-datos span{ font: 12px/1.5 var(--mono); color: var(--tinta-3); }
+.ol-remite-datos{ min-width: 0; flex: 1; }
+.ol-remite-datos b{ display: block; font-size: 13.5px; font-weight: 600; }
+.ol-remite-datos span{ font-size: 12px; color: var(--ol-txt-3); }
+.ol-remite .ol-hora{ margin-left: auto; }
 
 .ol-texto{
-  margin: 16px 0 0;
-  font: 14px/1.7 var(--ui);
-  color: var(--tinta-2);
+  margin: 18px 0 0;
+  font: 13.5px/1.75 inherit;
+  color: var(--ol-txt-2);
   white-space: pre-wrap;
 }
 
-.ol-acciones{ margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-.ol-responder{
-  padding: 10px 20px;
-  border: 0; border-radius: 9px;
-  background: var(--ol-azul);
-  color: #fff;
-  font: 600 14px/1 var(--ui);
-  cursor: pointer;
-}
-.ol-responder:hover{ filter: brightness(1.12); }
-.ol-responder:disabled{ opacity: .55; cursor: progress; }
-
-/* La respuesta del bot, dentro del hilo. Sangrada y con la barra cian a la
-   izquierda: es lo que distingue de un vistazo lo que escribió el cliente de
-   lo que ha escrito el sistema. */
+/* ------------------------------------- la respuesta, como una redacción */
+/* Se pinta con la fila Para/CC/CCO y el sello de enviado, que es lo que en
+   Outlook distingue un mensaje que sale de uno que entra. */
 .ol-respuesta{
-  margin-top: 20px;
-  padding: 16px 18px;
-  border-left: 3px solid var(--cian);
-  border-radius: 0 10px 10px 0;
-  background: var(--cian-08);
+  margin-top: 24px;
+  border: 1px solid var(--ol-borde-2);
+  border-radius: 6px;
+  background: var(--ol-lista);
+  overflow: hidden;
 }
-.ol-respuesta .ol-de-bot{
-  font: 600 13px/1 var(--ui);
+.ol-campos{ padding: 10px 16px; border-bottom: 1px solid var(--ol-borde); }
+.ol-campo{
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 0;
+  font-size: 12.5px;
+  color: var(--ol-txt-3);
+}
+.ol-campo-eti{ width: 34px; flex: 0 0 auto; }
+.ol-chip{
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 3px 9px;
+  border-radius: 12px;
+  background: var(--ol-sel);
+  color: var(--ol-txt);
+  font-size: 12.5px;
+}
+.ol-chip i{ font-style: normal; color: var(--ol-txt-3); }
+.ol-cc{ margin-left: auto; display: flex; gap: 12px; }
+.ol-sello{
+  margin-left: auto;
+  font-size: 11.5px;
   color: var(--cian);
-  margin: 0 0 4px;
 }
-.ol-respuesta h5{
-  margin: 0 0 10px;
-  font: 600 15px/1.4 var(--ui);
-  color: var(--tinta);
+.ol-respuesta-cuerpo{ padding: 14px 16px 18px; }
+.ol-respuesta-cuerpo h5{
+  margin: 0 0 12px;
+  font: 600 14.5px/1.4 inherit;
+  color: var(--ol-txt);
 }
 .ol-esperando{
-  margin-top: 20px;
+  margin: 14px 22px;
   font: 13px/1.6 var(--mono);
-  color: var(--tinta-3);
+  color: var(--rojo);
 }
 
-/* ------------------------------------------------------------ estrecho */
-@media (max-width: 1000px){
+/* ------------------------------------------- la carpeta vacía, con gracia */
+.ol-vacia{
+  text-align: center;
+  padding: 70px 24px;
+  color: var(--ol-txt-3);
+}
+.ol-vacia b{ display: block; font-size: 14px; color: var(--ol-txt-2); margin-bottom: 6px; }
+.ol-vacia span{ font-size: 12.5px; }
+
+/* ------------------------------------------------------------- estrecho */
+@media (max-width: 1060px){
   .ol-cuerpo{ grid-template-columns: 1fr; min-height: 0; }
   .ol-carpetas{
-    flex-direction: row; align-items: center;
-    border-right: 0; border-bottom: 1px solid var(--borde);
+    flex-direction: row; align-items: center; flex-wrap: wrap; gap: 4px;
+    border-right: 0; border-bottom: 1px solid var(--ol-borde);
   }
   .ol-carpeta{ width: auto; }
-  .ol-pie{ display: none; }
-  .ol-lista{
-    border-right: 0; border-bottom: 1px solid var(--borde);
-    max-height: 290px;
-  }
-  .ol-lectura{ max-height: none; padding: 18px 16px 20px; }
+  .ol-grupo, .ol-pie{ display: none; }
+  .ol-columna{ border-right: 0; border-bottom: 1px solid var(--ol-borde); }
+  .ol-lista{ max-height: 300px; }
+  .ol-lectura{ max-height: none; }
+  .ol-buscador{ display: none; }
+}
+@media (max-width: 560px){
+  .ol-cuenta-activa{ display: none; }
+  .ol-lectura-cuerpo{ padding: 16px 14px 20px; }
+}
+@media (prefers-reduced-motion: reduce){
+  .ol-carpeta, .ol-sobre, .ol-enviar{ transition: none; }
 }

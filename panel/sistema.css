@@ -1,0 +1,425 @@
+/* VendIQ · sistema de diseño
+   ========================================================================
+   Se carga DESPUÉS de panel.css, chat.css, correo.css e informe.css, y no
+   modifica ninguno: solo redefine tokens y añade componentes encima. Si se
+   quita este fichero, el panel vuelve exactamente a como estaba.
+
+   Por qué así y no editando panel.css: esos cuatro ficheros son 1.400 líneas
+   que ya funcionan y que el JS da por buenas. Tocarlos para cambiar de tema
+   es arriesgar el panel entero por un color.
+
+   CUIDADO CON .barra
+   ------------------
+   En este proyecto `.barra` son DOS cosas: la navegación (nav.barra, en
+   informe.css) y cada fila de los gráficos de barras (.barra .fila, en
+   panel.css). Todo lo de navegación se escribe `nav.barra` a propósito. Sin
+   esa precaución, convertir la nav en sidebar deforma cada gráfico del panel.
+
+   EL TEMA
+   -------
+   Oscuro por defecto (es como nació el panel). El claro entra con
+   [data-tema="claro"] en <html>, que gana en especificidad a :root a secas.
+   Las dos aplicaciones simuladas —WhatsApp y Outlook— tienen sus dos modos
+   AUTÉNTICOS, no una inversión inventada: son los colores que usan de verdad.
+*/
+
+/* ===================================================== tokens que faltaban */
+:root{
+  /* Semánticos, separados del acento. El acento es identidad; estos
+     significan algo y por eso no se usan para decorar. */
+  --bien:    var(--cian);
+  --aviso:   var(--ambar);
+  --critico: var(--rojo);
+  --realce:  #22c4b8;
+  --malla:   rgba(255,255,255,.055);
+
+  /* Escala de espaciado. Todo por gap, nunca márgenes sueltos. */
+  --e1:4px; --e2:8px; --e3:12px; --e4:18px; --e5:26px; --e6:38px;
+
+  /* Radios. El panel usaba --r:14px; se añaden los extremos. */
+  --r-s:10px; --r-m:14px; --r-l:18px;
+
+  /* Movimiento. Una sola curva para todo, que es lo que hace que un
+     conjunto de animaciones se lea como un sistema y no como un muestrario. */
+  --rapido:140ms; --medio:260ms; --cuenta:700ms;
+  --curva:cubic-bezier(.22,.8,.3,1);
+
+  /* Glow interior de las tarjetas en oscuro. En claro se apaga. */
+  --glow: inset 0 1px 0 rgba(255,255,255,.04);
+  --anillo-fondo: rgba(255,255,255,.07);
+}
+
+/* ============================================================ tema CLARO */
+:root[data-tema="claro"]{
+  --fondo:      #f5f7fa;
+  --carta:      #ffffff;
+  --carta-alta: #eef1f6;
+  --borde:      #e2e7ee;
+  --borde-vivo: #ccd4df;
+
+  --tinta:      #121821;
+  --tinta-2:    #4a5666;
+  --tinta-3:    #74808f;
+
+  /* Bajados de luminosidad para que pasen AA sobre blanco. El cian del
+     modo oscuro (#1aa197) sobre blanco se queda en 2,9:1 y no vale. */
+  --cian:       #0c7d73;
+  --violeta:    #5157c4;
+  --ambar:      #8a5d05;
+  --rojo:       #c32b2b;
+
+  --cian-08:    rgba(12,125,115,.08);
+  --cian-20:    rgba(12,125,115,.18);
+  --violeta-12: rgba(81,87,196,.12);
+  --ambar-12:   rgba(138,93,5,.13);
+  --rojo-12:    rgba(195,43,43,.11);
+
+  --sombra:      0 1px 2px rgba(18,24,33,.06), 0 8px 24px rgba(18,24,33,.07);
+  --sombra-alta: 0 2px 4px rgba(18,24,33,.07), 0 16px 40px rgba(18,24,33,.11);
+
+  --realce:  #0fa294;
+  --malla:   rgba(18,24,33,.06);
+  --glow:    none;
+  --anillo-fondo: rgba(18,24,33,.08);
+  color-scheme: light;
+}
+
+/* El halo del fondo y la malla del canvas están pensados para oscuro. En
+   claro se bajan en vez de quitarse: dan profundidad sin ensuciar. */
+:root[data-tema="claro"] body::before{
+  background:
+    radial-gradient(760px 420px at 6% -6%,  rgba(12,125,115,.07), transparent 60%),
+    radial-gradient(680px 460px at 100% 0%, rgba(81,87,196,.05), transparent 55%);
+}
+:root[data-tema="claro"] #fondo{ opacity:.25; }
+:root[data-tema="claro"] nav.barra{ background:rgba(255,255,255,.88); }
+:root[data-tema="claro"] ::-webkit-scrollbar-track{ background:var(--carta-alta); }
+:root[data-tema="claro"] ::-webkit-scrollbar-thumb{ background:#c3ccd8; }
+:root[data-tema="claro"] ::-webkit-scrollbar-thumb:hover{ background:var(--cian); }
+
+/* En claro el texto sobre cian sólido tiene que ser blanco, no el verde
+   casi negro que usa el modo oscuro. */
+:root[data-tema="claro"] .marca .glifo,
+:root[data-tema="claro"] nav.barra .glifo,
+:root[data-tema="claro"] .seg-ok,
+:root[data-tema="claro"] .segmentos button[aria-pressed="true"]{ color:#fff; }
+
+/* --------------------------------------------- WhatsApp, su modo claro real */
+/* En :root y no en .movil, que es donde chat.css los define: hay botones que
+   usan el verde de WhatsApp fuera del teléfono (.boton-aclara, en el panel de
+   "por qué ha contestado eso") y si se acotan al móvil se quedan con el verde
+   del modo oscuro sobre fondo claro. */
+:root[data-tema="claro"]{
+  --wa-fondo:    #efeae2;
+  --wa-barra:    #f0f2f5;
+  --wa-recibido: #ffffff;
+  --wa-enviado:  #d9fdd3;
+  --wa-tinta:    #111b21;
+  --wa-tinta-2:  #667781;
+  --wa-verde:    #008069;
+  --wa-azul:     #027eb5;
+}
+:root[data-tema="claro"] .burbuja.enviada .hora{ color:rgba(17,27,33,.5); }
+:root[data-tema="claro"] .movil-entrada input{ background:#fff; color:#111b21; }
+:root[data-tema="claro"] .movil-entrada button,
+:root[data-tema="claro"] .reiniciar:hover,
+:root[data-tema="claro"] .boton-aclara:hover{ color:#fff; }
+:root[data-tema="claro"] .reiniciar{ border-color:#d6dde1; }
+
+/* ---------------------------------------------- Outlook, su modo claro real */
+:root[data-tema="claro"] #outlook{
+  --ol-marco:   #ffffff;
+  --ol-lista:   #faf9f8;
+  --ol-hover:   #f3f2f1;
+  --ol-sel:     #edebe9;
+  --ol-borde:   #e1dfdd;
+  --ol-borde-2: #d2d0ce;
+  --ol-txt:     #201f1e;
+  --ol-txt-2:   #3b3a39;
+  --ol-txt-3:   #605e5c;
+  --ol-azul:    #0f6cbd;
+  --ol-azul-bt: #0f6cbd;
+  --ol-azul-12: rgba(15,108,189,.10);
+}
+
+/* ======================================================== el interruptor */
+.tema-toggle{
+  display:inline-flex; align-items:center; gap:6px;
+  flex:none;
+  padding:6px; border-radius:999px;
+  border:1px solid var(--borde); background:var(--carta);
+  cursor:pointer; color:var(--tinta-2);
+  transition:border-color var(--rapido) var(--curva), color var(--rapido) var(--curva);
+}
+.tema-toggle:hover{ border-color:var(--borde-vivo); color:var(--tinta); }
+.tema-toggle:focus-visible{ outline:2px solid var(--cian); outline-offset:2px; }
+.tema-toggle span{
+  width:24px; height:24px; border-radius:50%;
+  display:grid; place-items:center; font-size:12.5px; line-height:1;
+  transition:background var(--rapido) var(--curva), color var(--rapido) var(--curva);
+}
+.tema-toggle .t-sol{ background:var(--carta-alta); color:var(--tinta); }
+.tema-toggle .t-luna{ background:transparent; }
+:root[data-tema="claro"] .tema-toggle .t-sol{ background:transparent; color:var(--tinta-3); }
+:root[data-tema="claro"] .tema-toggle .t-luna{ background:var(--carta-alta); color:var(--tinta); }
+
+/* ============================================================ el sidebar
+   Solo a partir de 1100px. Por debajo se queda la barra superior que ya
+   existía y que ya era responsive: cambiar las dos cosas a la vez es como
+   se rompen los móviles. */
+@media (min-width:1100px){
+  nav.barra{
+    position:fixed; inset:0 auto 0 0; width:236px; z-index:30;
+    border-bottom:0; border-right:1px solid var(--borde);
+    background:var(--carta); backdrop-filter:none;
+    overflow-y:auto;
+  }
+  nav.barra .barra-dentro{
+    flex-direction:column; align-items:stretch;
+    gap:var(--e5); height:100%;
+    max-width:none; padding:22px 16px;
+  }
+  nav.barra .marca{ padding:0 10px 2px; font-size:16px; }
+  nav.barra .barra-enlaces{
+    flex-direction:column; gap:2px; flex:1; overflow:visible;
+  }
+  nav.barra .barra-enlaces a{
+    padding:9px 12px; border-radius:var(--r-s); border-bottom:0;
+    transition:background var(--rapido) var(--curva), color var(--rapido) var(--curva);
+  }
+  nav.barra .barra-enlaces a:hover{ background:var(--carta-alta); border-bottom-color:transparent; }
+  /* Resaltado por scroll: lo pone tema.js, no un router. La página sigue
+     siendo una sola y larga, que es lo que el resto del panel da por hecho. */
+  nav.barra .barra-enlaces a.aqui{
+    background:var(--cian-08); color:var(--tinta); font-weight:600;
+    box-shadow:inset 2.5px 0 0 var(--cian);
+  }
+  nav.barra .estado-vivo{ margin-top:auto; justify-content:center; }
+  nav.barra .tema-toggle{ align-self:stretch; justify-content:center; }
+
+  body{ padding-left:236px; }
+  .envoltorio{ max-width:1220px; }
+}
+
+/* ===================================================== tarjetas y rejilla */
+.carta{
+  border-radius:var(--r-l);
+  box-shadow:var(--sombra), var(--glow);
+  transition:transform var(--medio) var(--curva), box-shadow var(--medio) var(--curva);
+}
+.indicadores{ gap:var(--e4); }
+
+/* --------------------------------------------------------- la tarjeta KPI
+   El patrón clave. Lo pinta panel.js como .ind con .etiqueta/.cifra/.nota;
+   kpi.js le añade DESPUÉS el círculo del icono y la mini-viz. Si kpi.js no
+   llegara a ejecutarse, esto sigue siendo una tarjeta correcta. */
+.ind{
+  border-radius:var(--r-l);
+  padding:var(--e5) var(--e5) var(--e4);
+  box-shadow:var(--sombra), var(--glow);
+  display:flex; flex-direction:column; gap:var(--e2);
+  transition:transform var(--medio) var(--curva), box-shadow var(--medio) var(--curva);
+}
+.ind:hover{ transform:translateY(-2px); box-shadow:var(--sombra-alta), var(--glow); }
+.ind .etiqueta{
+  text-transform:uppercase; letter-spacing:.085em;
+  font-size:10.5px; font-weight:650; color:var(--tinta-3);
+}
+.ind .cifra{
+  font-variant-numeric:tabular-nums;
+  font-size:2.05rem; font-weight:680; letter-spacing:-.02em;
+  margin:0; line-height:1.1;
+}
+.ind .nota{ margin-top:var(--e1); }
+
+/* El icono en círculo. Lo inserta kpi.js; el color lo elige por el sentido
+   del dato, no por variedad. */
+.kpi-cab{ display:flex; align-items:center; gap:var(--e3); }
+.kpi-ico{
+  width:34px; height:34px; border-radius:11px;
+  display:grid; place-items:center; flex:none;
+  font-size:15px; line-height:1;
+  background:var(--cian-08); color:var(--cian);
+}
+.kpi-ico.violeta{ background:var(--violeta-12); color:var(--violeta); }
+.kpi-ico.ambar  { background:var(--ambar-12);   color:var(--ambar); }
+.kpi-ico.rojo   { background:var(--rojo-12);    color:var(--rojo); }
+
+/* El delta. Solo aparece donde HAY histórico para calcularlo: si el dato no
+   tiene serie, kpi.js no lo dibuja en vez de inventarse una flecha. */
+.kpi-delta{
+  display:inline-flex; align-items:center; gap:4px;
+  font:600 11.5px/1 var(--mono);
+  font-variant-numeric:tabular-nums;
+  padding:3px 8px; border-radius:999px;
+  background:var(--cian-08); color:var(--cian);
+}
+.kpi-delta.baja{ background:var(--rojo-12); color:var(--rojo); }
+.kpi-delta.neutro{ background:var(--carta-alta); color:var(--tinta-3); }
+
+/* La mini-viz embebida: sparkline o mini-barras, al pie de la tarjeta. */
+.kpi-viz{ margin-top:auto; padding-top:var(--e3); height:34px; }
+.kpi-viz svg{ display:block; width:100%; height:100%; overflow:visible; }
+
+/* ======================================== entrada escalonada y esqueletos */
+/* Desde estado VISIBLE: la tarjeta ya está ahí y solo se asienta. Nada de
+   opacity:0 esperando un scroll, que es como se queda media página en blanco
+   si el observador no dispara. */
+@keyframes asienta{
+  from{ transform:translateY(9px); opacity:.55 }
+  to  { transform:none; opacity:1 }
+}
+.entra{ animation:asienta var(--medio) var(--curva) backwards; }
+.entra:nth-child(2){ animation-delay:60ms }
+.entra:nth-child(3){ animation-delay:120ms }
+.entra:nth-child(4){ animation-delay:180ms }
+.entra:nth-child(5){ animation-delay:240ms }
+
+@keyframes brillo{ to{ background-position:200% 0 } }
+.esqueleto{
+  border-radius:var(--r-s);
+  background:linear-gradient(90deg,
+    var(--carta-alta) 25%, var(--borde) 37%, var(--carta-alta) 63%);
+  background-size:200% 100%;
+  animation:brillo 1.3s linear infinite;
+  color:transparent !important;
+}
+
+/* ================================================================ gráficas
+   Todo SVG a mano (graficas.js). Los colores salen de los tokens, así que el
+   cambio de tema los arrastra sin tocar el JavaScript. */
+.g-area-caja{ position:relative; }
+.g-area{ display:block; width:100%; height:auto; overflow:visible; }
+.g-eje{
+  fill:var(--tinta-3); font-family:var(--mono); font-size:11px;
+  font-variant-numeric:tabular-nums;
+}
+.g-linea{ filter:drop-shadow(0 2px 8px var(--cian-20)); }
+
+/* El globo del tooltip. Se centra sobre el día con translateX(-50%) y no se
+   deja cazar por el puntero, que si no parpadearía al pasar por encima. */
+.g-globo{
+  position:absolute; top:6px; transform:translateX(-50%);
+  pointer-events:none;
+  display:flex; flex-direction:column; gap:2px;
+  padding:9px 13px; border-radius:var(--r-s);
+  background:var(--carta-alta); border:1px solid var(--borde-vivo);
+  box-shadow:var(--sombra-alta);
+  font-size:12px; color:var(--tinta-2); white-space:nowrap; z-index:3;
+}
+.g-globo b{ color:var(--tinta); font-size:12.5px; margin-bottom:2px; }
+.g-globo .ok{ color:var(--cian); }
+.g-globo .av{ color:var(--ambar); }
+
+/* --------------------------------------------------- gauge y anillos */
+.medidor-fila{
+  display:grid; grid-template-columns:minmax(210px,260px) 1fr;
+  gap:var(--e6); align-items:center;
+}
+.gauge-caja{ text-align:center; }
+.gauge{ display:block; width:100%; max-width:230px; margin:0 auto; height:auto; }
+.gauge-num{
+  fill:var(--tinta); font-family:var(--ui); font-size:30px; font-weight:680;
+  font-variant-numeric:tabular-nums;
+}
+.gauge-eti{
+  margin:var(--e2) 0 2px; font-size:13.5px; font-weight:600; color:var(--tinta);
+}
+.gauge-pie{ margin:0; font-size:12px; color:var(--tinta-3); line-height:1.5; }
+
+.anillos{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:var(--e4);
+}
+.anillo{ text-align:center; }
+.anillo svg{ display:block; width:100%; max-width:132px; margin:0 auto; height:auto; }
+.anillo-num{
+  fill:var(--tinta); font-family:var(--ui); font-size:21px; font-weight:680;
+  font-variant-numeric:tabular-nums;
+}
+.anillo-sub{ fill:var(--tinta-3); font-family:var(--mono); font-size:10px; }
+.anillo-eti{
+  margin:var(--e2) 0 0; font-size:12.5px; color:var(--tinta-2); line-height:1.4;
+}
+
+/* La barra que manda, en acento. El relleno lleva color en línea desde
+   actividad.js, así que hace falta !important para ganarle: es el precio de
+   no reescribir esa función, y está acotado a una sola regla. */
+.barra.manda .relleno{ background:var(--realce) !important; }
+.barra.manda .nombre{ color:var(--tinta); font-weight:600; }
+.barra.manda .valor{ color:var(--realce); }
+
+@media (max-width:760px){
+  .medidor-fila{ grid-template-columns:1fr; gap:var(--e5); }
+}
+
+/* ============================================== esqueletos y chips (fase 5)
+   Cada esqueleto tiene la forma y la altura de lo que va a sustituirlo. Si
+   mide otra cosa, al llegar los datos la página pega un salto y el esqueleto
+   ha hecho más daño que bien. */
+.esq-ind  { height:150px; border-radius:var(--r-l) }
+.esq-stat { height:78px;  border-radius:var(--r-m) }
+.esq-alto { height:260px; border-radius:var(--r-m) }
+.esq-medio{ height:130px; border-radius:var(--r-m); margin-bottom:var(--e3) }
+
+/* Faltaba el violeta: es el color de "tuvo que preguntar", que ya usan las
+   acciones y el gráfico de precios. Sin él ese chip se quedaba sin estilo. */
+.p-violeta{ color:var(--violeta); background:var(--violeta-12) }
+
+.conv-cab{ display:flex; align-items:center; gap:var(--e2); flex-wrap:wrap }
+.conv-cab .conv-hora{ margin-left:auto }
+
+/* ============================================ responsive y foco (fase 6) */
+/* Nada se desborda a lo ancho: lo que no cabe, se apila. Las únicas cajas con
+   scroll horizontal permitido son las tablas, que ya lo traían. */
+@media (max-width:900px){
+  .indicadores{ grid-template-columns:repeat(auto-fit,minmax(210px,1fr)) }
+  .medidor-fila{ grid-template-columns:1fr }
+}
+@media (max-width:560px){
+  .envoltorio{ padding-left:16px; padding-right:16px }
+  .indicadores{ grid-template-columns:1fr }
+  .ind{ padding:var(--e4) }
+  .ind .cifra{ font-size:1.8rem }
+  .anillos{ grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:var(--e3) }
+  .anillo svg{ max-width:106px }
+  /* El globo del tooltip, fijado dentro de la caja: centrado sobre el último
+     día se saldría de la pantalla por la derecha. */
+  .g-globo{ left:50% !important; font-size:11.5px; padding:7px 10px }
+  .g-eje{ font-size:10px }
+}
+
+/* El área es SVG con viewBox y preserveAspectRatio por defecto, así que
+   encoge sola. Esto es el cinturón para que nada la fuerce más ancha. */
+.g-area, .gauge, .anillo svg, .kpi-viz svg{ max-width:100% }
+
+/* ================================================ accesibilidad y motion */
+a:focus-visible, button:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible{
+  outline:2px solid var(--cian); outline-offset:2px; border-radius:3px;
+}
+/* En claro el cian del foco sobre fondo blanco pierde fuerza: se engorda el
+   trazo en vez de cambiar de color, para que el foco sea siempre el mismo. */
+:root[data-tema="claro"] a:focus-visible,
+:root[data-tema="claro"] button:focus-visible,
+:root[data-tema="claro"] input:focus-visible,
+:root[data-tema="claro"] textarea:focus-visible{ outline-width:2.5px }
+
+/* Salto al contenido: el sidebar mete siete enlaces por delante de todo y sin
+   esto quien navega con teclado los recorre en cada carga. */
+.saltar{
+  position:absolute; left:-9999px; top:0; z-index:100;
+  padding:10px 18px; border-radius:0 0 var(--r-s) 0;
+  background:var(--cian); color:#04120f; font-weight:600; text-decoration:none;
+}
+.saltar:focus{ left:0 }
+:root[data-tema="claro"] .saltar{ color:#fff }
+@media (prefers-reduced-motion:reduce){
+  .entra{ animation:none }
+  .esqueleto{ animation:none }
+  .ind, .carta, .tema-toggle, nav.barra .barra-enlaces a{ transition:none }
+  .ind:hover{ transform:none }
+  /* Las gráficas ya nacen dibujadas en este modo (lo decide graficas.js);
+     esto es el cinturón por si alguna transición se colara. */
+  .g-linea, .anillo circle, .gauge path{ transition:none !important }
+}
