@@ -57,6 +57,11 @@
         <span>Tu mesa</span>
         <b class="nav-badge" data-badge="mesa" hidden></b>
       </a>
+      <a href="#stock">
+        <svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path
+          d="M3 7.5 12 3l9 4.5-9 4.5-9-4.5ZM3 7.5v9L12 21l9-4.5v-9M12 12v9"/></svg>
+        <span>Stock</span>
+      </a>
 
       <p class="nav-grupo">Análisis</p>
       <a href="#dia">
@@ -275,25 +280,6 @@
       </aside>
     </div>
 
-    <h3 class="sub-titulo">La búsqueda por dentro</h3>
-    <p class="intro">
-      Sin conversación ni memoria: una consulta suelta contra el catálogo entero, con
-      la puntuación de cada una y lo que se descartó por no llegar al umbral.
-    </p>
-    <div class="carta">
-      <form class="consola-entrada" id="form-consulta">
-        <span class="prompt" aria-hidden="true">&gt;</span>
-        <input id="entrada" autocomplete="off" spellcheck="false"
-               placeholder="¿cuánto vale un alternador para un BMW Serie 3 320d?"
-               aria-label="Consulta de cliente">
-        <button type="submit" id="btn-consulta">Consultar</button>
-      </form>
-      <div class="sugerencias" id="sugerencias"></div>
-      <div id="salida">
-        <p class="vacio">Escribe una consulta o pulsa uno de los ejemplos.</p>
-      </div>
-    </div>
-
     <!-- ------------------------------------------- habla por correo
          El Outlook cierra la sección a propósito: lo siguiente que se lee al
          bajar es la Mesa de negociación, que es el orden pedido. -->
@@ -476,6 +462,18 @@
          mesa-estados.js leyendo /api/ofertas; ni un número escrito aquí. -->
     <div class="estados" id="mesa-estados"></div>
 
+    <!-- El tablero. Cada oferta una tarjeta; al pulsarla se abre el panel
+         lateral con su detalle, su histórico y la respuesta sugerida.
+         Lo pinta tablero.js desde /api/ofertas. -->
+    <h3 class="sub-titulo">Mesa de trabajo</h3>
+    <p class="intro">
+      Las ofertas por estado. Pulsa una para ver de dónde sale la decisión y
+      responder. <strong>Aceptar y rechazar se guardan de verdad</strong>; el
+      texto de la respuesta es tuyo para copiar, porque VendIQ no tiene
+      integración viva con ningún canal.
+    </p>
+    <div class="of-tablero" id="of-tablero"></div>
+
     <!-- La tabla completa sigue estando, plegada: los desplegables son para
          mirar por estado, y esto para verlo todo junto y ordenado. El gancho
          #tabla-ofertas no se mueve, así que panel.js la sigue rellenando y
@@ -491,6 +489,41 @@
         </table>
       </div>
     </details>
+  </section>
+
+  <!-- ========================================================== stock -->
+  <!-- El buscador vivia dentro del bloque del chat como "La busqueda por
+       dentro". Es una herramienta de uso real -pega contra /api/consultar y
+       el indice de las 5.010 fichas-, asi que pasa a tener seccion propia y
+       su entrada en el menu. Los ganchos (#form-consulta, #entrada, #salida,
+       #sugerencias) NO cambian: panel.js la sigue manejando igual. -->
+  <section class="bloque" id="stock">
+    <p class="eyebrow">El almacén, a mano</p>
+    <h2>Buscar en el stock</h2>
+    <p class="intro">
+      Por descripción («alternador BMW Serie 3 320d») o por número de stock y
+      referencia OEM. Busca contra el catálogo entero con el mismo motor que
+      usa el bot, y enseña la puntuación de cada ficha y lo que descartó por no
+      llegar al umbral.
+    </p>
+    <div class="carta">
+      <form class="consola-entrada" id="form-consulta">
+        <span class="prompt" aria-hidden="true">&gt;</span>
+        <!-- El ejemplo tiene que ENCONTRAR algo. El anterior pedía un
+             alternador de BMW Serie 3 y el catálogo no lleva ninguno -solo de
+             X1 y Serie 1-, así que la primera busqueda de cualquiera que
+             probase salia vacia y parecia que el buscador no funcionaba.
+             Comprobado: este devuelve tres, el mejor a 0,905. -->
+        <input id="entrada" autocomplete="off" spellcheck="false"
+               placeholder="alternador BMW Serie 1 118d · o un nº de stock: 74868"
+               aria-label="Buscar una pieza en el stock">
+        <button type="submit" id="btn-consulta">Buscar</button>
+      </form>
+      <div class="sugerencias" id="sugerencias"></div>
+      <div id="salida">
+        <p class="vacio">Escribe qué pieza buscas o pulsa uno de los ejemplos.</p>
+      </div>
+    </div>
   </section>
 
   <!-- ======================================================== tu mesa -->
@@ -834,6 +867,16 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
   </section>
 
 
+  <!-- El panel lateral de una oferta. Vive fuera de las secciones para que se
+       superponga a todo; empieza oculto y lo abre tablero.js. -->
+  <div class="of-velo" id="of-velo" hidden></div>
+  <aside class="of-drawer" id="of-drawer" aria-hidden="true"
+         role="dialog" aria-label="Detalle de la oferta">
+    <button type="button" class="of-cerrar" id="of-cerrar"
+            aria-label="Cerrar el detalle">✕</button>
+    <div class="of-drawer-cuerpo" id="of-drawer-cuerpo"></div>
+  </aside>
+
   <footer class="pie">
     <p class="pie-nota" id="pie-nota"></p>
     <div class="pie-acciones">
@@ -858,5 +901,7 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
 <script src="ui.js"></script>
 <!-- Contadores por estado de la mesa de negociación y de tu mesa. -->
 <script src="estados.js"></script>
+<!-- El tablero de ofertas con su panel lateral. -->
+<script src="tablero.js"></script>
 </body>
 </html>

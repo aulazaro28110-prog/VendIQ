@@ -376,17 +376,18 @@ main.envoltorio{ display:flex; flex-direction:column; }
 main.envoltorio > .bloque{ padding-top:64px; border-top:1px solid var(--borde) }
 main.envoltorio > #cliente{ padding-top:0; border-top:0 }
 
-#cliente{ order:1 }   /* chat · búsqueda · el correo */
+#cliente{ order:1 }   /* el chat y el correo */
 #mesa   { order:2 }   /* mesa de negociación */
-#dia    { order:3 }   /* volumen y horas, y el resto del tráfico */
-#reglas { order:4 }
-#atasco { order:5 }
-#precios{ order:6 }
-#tumesa { order:7 }
-#canales{ order:8 }
-#faltan { order:9 }
-#informe{ order:10 }
-#letra  { order:11 }
+#tumesa { order:3 }   /* tu mesa */
+#stock  { order:4 }   /* buscar en el stock */
+#dia    { order:5 }   /* actividad: volumen, horas y el resto del tráfico */
+#atasco { order:6 }
+#precios{ order:7 }
+#informe{ order:8 }
+#reglas { order:9 }
+#canales{ order:10 }
+#faltan { order:11 }
+#letra  { order:12 }
 
 /* ===================================================== tarjetas y rejilla */
 .carta{
@@ -716,6 +717,195 @@ main.envoltorio > #cliente{ padding-top:0; border-top:0 }
 
 @media (prefers-reduced-motion:reduce){
   .estado-panel, .estado-flecha, .estado-cab{ transition:none }
+}
+
+/* ===================== PASO 3 · la mesa de trabajo de las ofertas
+   Cuatro columnas por estado, tarjetas y un panel lateral. Los colores son
+   los semánticos de siempre: verde aceptada, ámbar espera tu decisión, rojo
+   rechazada. */
+.of-tablero{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr));
+  gap:var(--e4); align-items:start;
+}
+.of-col{
+  background:var(--carta); border:1px solid var(--borde);
+  border-radius:var(--r-l); overflow:hidden;
+  box-shadow:var(--sombra), var(--glow);
+}
+.of-col-cab{
+  display:flex; align-items:center; gap:var(--e2);
+  padding:13px var(--e4);
+  border-bottom:1px solid var(--borde);
+  border-top:2px solid var(--borde-vivo);
+}
+.of-bien .of-col-cab   { border-top-color:var(--bien) }
+.of-aviso .of-col-cab  { border-top-color:var(--aviso) }
+.of-critico .of-col-cab{ border-top-color:var(--critico) }
+.of-col-t{
+  font-size:11px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--tinta-2);
+}
+.of-col-n{
+  margin-left:auto; font-family:var(--mono); font-size:13px;
+  font-variant-numeric:tabular-nums; color:var(--tinta-3);
+}
+.of-bien .of-col-n   { color:var(--bien) }
+.of-aviso .of-col-n  { color:var(--aviso) }
+.of-critico .of-col-n{ color:var(--critico) }
+.of-col-cuerpo{ padding:var(--e3); display:flex; flex-direction:column; gap:var(--e3) }
+.of-col-vacia{
+  margin:0; padding:var(--e4) 0; text-align:center;
+  font-size:12.5px; color:var(--tinta-3);
+}
+
+.of-tarjeta{
+  background:var(--carta-alta); border:1px solid var(--borde);
+  border-radius:var(--r-m); padding:var(--e3) var(--e4) var(--e4);
+  cursor:pointer;
+  transition:transform var(--rapido) var(--curva), box-shadow var(--rapido) var(--curva),
+             border-color var(--rapido) var(--curva);
+}
+.of-tarjeta:hover{
+  transform:translateY(-2px); box-shadow:var(--sombra);
+  border-color:var(--borde-vivo);
+}
+.of-tarjeta:focus-visible{ outline:2px solid var(--cian); outline-offset:2px }
+.of-cab{ display:flex; align-items:center; gap:var(--e2); margin-bottom:var(--e2) }
+.of-fecha{ margin-left:auto; font-size:11px; color:var(--tinta-3);
+  font-variant-numeric:tabular-nums }
+.of-pieza{ margin:0; font-size:13.5px; font-weight:600; line-height:1.35 }
+.of-cliente{ margin:2px 0 0; font-size:12px; color:var(--tinta-3) }
+.of-cifras{
+  display:flex; align-items:baseline; gap:8px; margin-top:var(--e2);
+  font-variant-numeric:tabular-nums;
+}
+.of-lista{ font-size:12px; color:var(--tinta-3); text-decoration:line-through }
+.of-importe{ font-size:16px; font-weight:700 }
+.of-dto{ font-size:11.5px; font-family:var(--mono); color:var(--bien) }
+.of-acciones{
+  display:flex; flex-wrap:wrap; gap:6px; align-items:center;
+  margin-top:var(--e3); padding-top:var(--e3); border-top:1px solid var(--borde);
+}
+.of-cerrada{ font-size:11.5px; color:var(--tinta-3) }
+
+/* --------------------------------------------------------- el panel lateral */
+.of-velo{
+  position:fixed; inset:0; z-index:60;
+  background:rgba(0,0,0,.5); backdrop-filter:blur(2px);
+}
+.of-velo[hidden]{ display:none }
+.of-drawer{
+  position:fixed; top:0; right:0; bottom:0; z-index:61;
+  width:min(460px,100%);
+  background:var(--carta); border-left:1px solid var(--borde-vivo);
+  box-shadow:var(--sombra-alta);
+  transform:translateX(100%);
+  transition:transform var(--medio) var(--curva);
+  overflow-y:auto;
+  visibility:hidden;
+}
+.of-drawer.abierto{ transform:none; visibility:visible }
+.of-cerrar{
+  position:sticky; top:0; float:right; z-index:1;
+  margin:var(--e3) var(--e3) 0 0;
+  width:32px; height:32px; border-radius:50%;
+  border:1px solid var(--borde); background:var(--carta-alta);
+  color:var(--tinta-2); font-size:14px; cursor:pointer;
+}
+.of-cerrar:hover{ color:var(--tinta); border-color:var(--borde-vivo) }
+.of-drawer-cuerpo{ padding:var(--e5) var(--e5) var(--e6); clear:both }
+
+.dr-cab{ margin-bottom:var(--e3) }
+.dr-pieza{ margin:0 0 4px; font-size:17px; font-weight:650; line-height:1.35 }
+.dr-cliente{ margin:0 0 var(--e4); font-size:12.5px; color:var(--tinta-3) }
+.dr-cifras{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:var(--e3); padding:var(--e4); margin-bottom:var(--e5);
+  background:var(--carta-alta); border-radius:var(--r-m);
+}
+.dr-dato{ display:flex; flex-direction:column; gap:2px }
+.dr-k{ font-size:10.5px; text-transform:uppercase; letter-spacing:.07em;
+  color:var(--tinta-3) }
+.dr-v{ font-size:14px; font-variant-numeric:tabular-nums }
+.dr-titulo{
+  margin:var(--e5) 0 var(--e3); font-size:11px; font-weight:700;
+  letter-spacing:.11em; text-transform:uppercase; color:var(--tinta-2);
+}
+
+/* El histórico. Cada hito con su punto del color de lo que significa. */
+.timeline{ list-style:none; margin:0; padding:0 0 0 var(--e2) }
+.tl-linea{ position:relative; padding:0 0 var(--e4) var(--e5) }
+.tl-linea::before{
+  content:''; position:absolute; left:5px; top:14px; bottom:0; width:1px;
+  background:var(--borde);
+}
+.tl-linea:last-child::before{ display:none }
+.tl-punto{
+  position:absolute; left:0; top:5px;
+  width:11px; height:11px; border-radius:50%;
+  background:var(--carta); border:2px solid var(--borde-vivo);
+}
+.tl-bien .tl-punto    { border-color:var(--bien) }
+.tl-aviso .tl-punto   { border-color:var(--aviso) }
+.tl-critico .tl-punto { border-color:var(--critico) }
+.tl-pregunta .tl-punto{ border-color:var(--pregunta) }
+.tl-linea b{ font-size:13.5px; font-weight:600 }
+.tl-cuando{ font-size:11.5px; color:var(--tinta-3); margin-left:8px }
+.tl-txt{ margin:3px 0 0; font-size:12.5px; color:var(--tinta-3); line-height:1.55 }
+
+.dr-razon{
+  margin:0 0 var(--e3); padding:10px 13px;
+  background:var(--cian-08); border-left:2px solid var(--cian);
+  border-radius:0 var(--r-s) var(--r-s) 0;
+  font-size:12.5px; color:var(--tinta-2); line-height:1.55;
+}
+.dr-texto{
+  width:100%; box-sizing:border-box;
+  padding:13px 15px; border-radius:var(--r-m);
+  border:1px solid var(--borde-vivo); background:var(--carta-alta);
+  color:var(--tinta); font:13.5px/1.65 var(--ui); resize:vertical;
+}
+.dr-texto:focus{ outline:2px solid var(--cian); outline-offset:1px }
+.dr-acciones{ display:flex; align-items:center; gap:var(--e3); margin-top:var(--e3) }
+.dr-demo{
+  font:11px/1 var(--mono); color:var(--aviso);
+  background:var(--ambar-12); padding:5px 10px; border-radius:999px;
+}
+.dr-demo-aviso{
+  margin:var(--e3) 0 0; padding:11px 14px;
+  background:var(--ambar-12); border-radius:var(--r-s);
+  font-size:12.5px; color:var(--tinta-2); line-height:1.55;
+}
+.dr-reales{
+  margin-top:var(--e5); padding-top:var(--e4); border-top:1px solid var(--borde);
+  display:flex; flex-wrap:wrap; gap:var(--e2); align-items:center;
+}
+.dr-reales-t{
+  width:100%; margin:0 0 var(--e2);
+  font-size:12px; color:var(--tinta-3);
+}
+
+/* ===================== PASO 4 · las fichas del buscador de stock */
+.ficha-coche{
+  margin:2px 0 0; font-size:13px; color:var(--tinta-2);
+}
+.ficha .meta{ display:flex; flex-wrap:wrap; gap:6px; margin-top:var(--e2) }
+.ficha .meta span{
+  font:11px/1.6 var(--mono);
+  padding:2px 8px; border-radius:4px;
+  background:var(--carta-alta); color:var(--tinta-3);
+}
+.ficha-disp{ color:var(--aviso) !important; background:var(--ambar-12) !important }
+.ficha-disp.hay{ color:var(--bien) !important; background:var(--cian-08) !important }
+
+@media (max-width:700px){
+  .of-tablero{ grid-template-columns:1fr }
+  .of-drawer{ width:100% }
+  .dr-cifras{ grid-template-columns:repeat(2,1fr) }
+}
+@media (prefers-reduced-motion:reduce){
+  .of-tarjeta, .of-drawer{ transition:none }
+  .of-tarjeta:hover{ transform:none }
 }
 
 /* ============================================== esqueletos y chips (fase 5)
