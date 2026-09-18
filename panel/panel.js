@@ -190,11 +190,40 @@ function fichaHTML(r, rechazada) {
   const f = crear('div', 'ficha' + (rechazada ? ' rechazada' : ''));
   f.append(crear('div', 'score', r.puntuacion.toFixed(2)));
   const cuerpo = crear('div');
-  cuerpo.append(crear('p', 'titulo', r.texto));
-  const meta = crear('div', 'meta');
-  if (r.id_pieza) meta.append(crear('span', '', `ID ${r.id_pieza}`));
-  meta.append(crear('span', '', r.tipo));
-  cuerpo.append(meta);
+
+  // La ficha de una PIEZA se enseña por campos y no como el párrafo corrido
+  // que se indexó: el texto del chunk está escrito para que lo lea el buscador,
+  // no una persona. Todo sale de r.meta, que es el registro del catálogo tal
+  // cual; aquí no se compone ni se deduce nada.
+  const m = r.meta || {};
+  if (r.tipo === 'inventario' && m.pieza) {
+    const t = crear('p', 'titulo', m.pieza);
+    cuerpo.append(t);
+
+    const coche = crear('p', 'ficha-coche');
+    coche.textContent = [m.marca, m.modelo, m.motor, m.anio && '(' + m.anio + ')']
+      .filter(Boolean).join(' ');
+    cuerpo.append(coche);
+
+    const meta = crear('div', 'meta');
+    if (m.id) meta.append(crear('span', '', 'Nº ' + m.id));
+    if (m.referencia_oem) meta.append(crear('span', '', 'OEM ' + m.referencia_oem));
+    if (m.disponibilidad) {
+      const dis = crear('span', 'ficha-disp' +
+        (/stock/i.test(m.disponibilidad) ? ' hay' : ''), m.disponibilidad);
+      meta.append(dis);
+    }
+    if (m.garantia) meta.append(crear('span', '', 'Garantía ' + m.garantia));
+    if (m.estado) meta.append(crear('span', '', m.estado));
+    cuerpo.append(meta);
+  } else {
+    // Políticas y FAQ: ahí el texto SÍ es lo que hay que leer.
+    cuerpo.append(crear('p', 'titulo', r.texto));
+    const meta = crear('div', 'meta');
+    if (r.id_pieza) meta.append(crear('span', '', `ID ${r.id_pieza}`));
+    meta.append(crear('span', '', r.tipo));
+    cuerpo.append(meta);
+  }
 
   // El precio se muestra aparte y siempre con su porqué: es la decisión que más
   // cuesta si se equivoca, así que nunca aparece un importe sin explicación.
@@ -427,10 +456,12 @@ async function iniciar() {
   }
   const s = ESTADO.sistema;
   $('#estado-texto').textContent = `${s.piezas_catalogo} piezas · índice cargado`;
-  $('#pie-nota').innerHTML =
-    `Datos generados por <code>05_panel_datos.py</code> y servidos por <code>06_panel.py</code>. ` +
-    `El acierto sale de <code>${ESTADO.calidad_medida.fuente}</code>. ` +
-    `Última generación: ${ESTADO.generado.replace('T', ' ').replace('+00:00', ' UTC')}.`;
+  // El pie llevaba una linea con los nombres de los ficheros que generan y
+  // sirven los datos. Eso es informacion de mantenimiento, no del panel: a
+  // quien lo mira no le dice nada y ensena el interior del proyecto. Se queda
+  // la fecha del dato, que si importa para saber si lo que se ve esta fresco.
+  $('#pie-nota').textContent =
+    `Medido el ${ESTADO.generado.replace('T', ' a las ').replace('+00:00', '').trim()}.`;
 
   pintarSugerencias(ESTADO);
   pintarEvolucion(ESTADO);
