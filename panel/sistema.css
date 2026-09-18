@@ -277,6 +277,87 @@ nav.barra{ background:rgba(4,6,10,.86) }
   .envoltorio{ max-width:1220px; }
 }
 
+/* ======================================= la barra lateral, por dentro
+   Grupos con cabecera, un icono por fila, indicador de activo y badges.
+   La navegación NO cambia: siguen siendo los mismos <a href="#seccion"> de
+   antes, con sus mismos destinos. Aquí solo se reestiliza alrededor. */
+
+/* Los iconos heredan el color de la fila (stroke:currentColor), así que el
+   estado activo los tiñe sin una sola regla de color extra. */
+.nav-ico{
+  width:19px; height:19px; flex:none;
+  fill:none; stroke:currentColor;
+  stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;
+  opacity:.8;
+}
+.nav-badge{
+  margin-left:auto; flex:none;
+  min-width:20px; padding:1px 7px;
+  border-radius:999px;
+  font:700 10.5px/1.7 var(--mono);
+  font-variant-numeric:tabular-nums;
+  text-align:center;
+  background:var(--ambar-12); color:var(--ambar);
+}
+.nav-badge[hidden]{ display:none }
+.nav-badge.bien   { background:var(--cian-08);    color:var(--bien) }
+.nav-badge.pregunta{ background:var(--violeta-12); color:var(--pregunta) }
+.nav-badge.critico{ background:var(--rojo-12);    color:var(--critico) }
+
+/* Las cabeceras de grupo solo existen cuando la barra es lateral. En la
+   versión estrecha los enlaces van en fila horizontal y un título en medio
+   los partiría. */
+.nav-grupo{ display:none }
+
+@media (min-width:1100px){
+  nav.barra .barra-enlaces{ gap:1px }
+
+  .nav-grupo{
+    display:block;
+    margin:var(--e4) 0 var(--e1);
+    padding:0 12px;
+    font-size:10px; font-weight:700;
+    letter-spacing:.16em; text-transform:uppercase;
+    color:var(--tinta-3);
+  }
+  .nav-grupo:first-child{ margin-top:2px }
+
+  nav.barra .barra-enlaces a{
+    display:flex; align-items:center; gap:11px;
+    padding:9px 12px 9px 13px;
+    font-size:13.5px;
+    border-radius:var(--r-s);
+    position:relative;
+  }
+  nav.barra .barra-enlaces a > span{
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  nav.barra .barra-enlaces a:hover .nav-ico{ opacity:1 }
+
+  /* El indicador de activo: pastilla de fondo + barra teal a la izquierda,
+     centrada verticalmente y más corta que la fila, que se lee mejor que un
+     borde de lado a lado. */
+  nav.barra .barra-enlaces a.aqui{
+    background:var(--cian-08);
+    color:var(--tinta);
+    font-weight:600;
+    box-shadow:none;               /* anula el inset del reskin anterior */
+  }
+  nav.barra .barra-enlaces a.aqui::before{
+    content:''; position:absolute;
+    left:0; top:50%; transform:translateY(-50%);
+    width:3px; height:18px; border-radius:0 3px 3px 0;
+    background:var(--cian);
+  }
+  nav.barra .barra-enlaces a.aqui .nav-ico{ opacity:1; color:var(--cian) }
+}
+
+@media (max-width:1099px){
+  /* En horizontal el icono sobra: ocupa sitio y los enlaces ya van sueltos. */
+  .nav-ico{ display:none }
+  nav.barra .barra-enlaces a{ display:flex; align-items:center; gap:7px }
+}
+
 /* ================================== PASO 2 · el orden vertical de la página
    Se reordena con `order` sobre el <main>, NO moviendo bloques de HTML. Mover
    ~300 líneas de marcado entre secciones es justo como se pierde un gancho

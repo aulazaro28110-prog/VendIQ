@@ -25,18 +25,68 @@
       <span class="glifo">V</span>
       <span>VendIQ</span>
     </a>
-    <!-- En el MISMO orden en que se ven las secciones (lo fija `order` en
-         sistema.css). Un menú que no sigue al contenido desorienta más que
-         ayudar. -->
+    <!-- Agrupados por lo que se va a hacer con ellos. Dentro de cada grupo el
+         orden sigue al de la página (lo fija `order` en sistema.css), que es
+         lo que evita que el menú y el contenido vayan cada uno por su lado.
+
+         Los iconos son SVG en línea, con stroke="currentColor": heredan el
+         color del enlace, así que el estado activo los tiñe solos y no hay
+         que mantener dos paletas. Nada de fuentes de iconos: el panel
+         funciona sin internet y eso no se negocia por unos pictogramas.
+
+         Los <b class="nav-badge"> nacen VACÍOS y ocultos. Los rellena
+         estados.js con la cuenta real de las APIs que ya consulta; el que no
+         tenga dato se queda oculto. Aquí no hay ni un número escrito. -->
     <div class="barra-enlaces">
-      <a href="#cliente">El chat y el correo</a>
-      <a href="#mesa">Ofertas</a>
-      <a href="#dia">Actividad</a>
-      <a href="#reglas">Cómo decide</a>
-      <a href="#tumesa">Tu mesa</a>
-      <a href="#canales">Canales</a>
-      <a href="#informe">El informe</a>
-      <a href="#letra">La letra pequeña</a>
+      <p class="nav-grupo">Operación</p>
+      <a href="#cliente">
+        <svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path
+          d="M20 12a8 8 0 0 1-11.6 7.1L4 20l.9-4.4A8 8 0 1 1 20 12Z"/></svg>
+        <span>El chat y el correo</span>
+        <b class="nav-badge" data-badge="chat" hidden></b>
+      </a>
+      <a href="#mesa">
+        <svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path
+          d="M3 12V4h8l9 9-8 8-9-9Z"/><circle cx="7.5" cy="7.5" r="1.4"/></svg>
+        <span>Ofertas</span>
+        <b class="nav-badge" data-badge="ofertas" hidden></b>
+      </a>
+      <a href="#tumesa">
+        <svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path
+          d="M3 13h5l1.5 3h5L16 13h5M4.2 6h15.6L21 13v5H3v-5Z"/></svg>
+        <span>Tu mesa</span>
+        <b class="nav-badge" data-badge="mesa" hidden></b>
+      </a>
+
+      <p class="nav-grupo">Análisis</p>
+      <a href="#dia">
+        <svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path
+          d="M3 12h4l2.5-6 4 13 2.5-7h5"/></svg>
+        <span>Actividad</span>
+      </a>
+      <a href="#informe">
+        <svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path
+          d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        <span>El informe</span>
+      </a>
+
+      <p class="nav-grupo">Cómo funciona</p>
+      <a href="#reglas">
+        <svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path
+          d="M6 4v6m0 4v6M18 4v3m0 4v9M3 12h6M15 7h6"/></svg>
+        <span>Cómo decide</span>
+      </a>
+      <a href="#canales">
+        <svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><circle
+          cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle
+          cx="18" cy="12" r="2.4"/><path d="M8.4 6h3.1a2 2 0 0 1 2 2v2.6M8.4 18h3.1a2 2 0 0 0 2-2v-2.6"/></svg>
+        <span>Canales</span>
+      </a>
+      <a href="#letra">
+        <svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><path
+          d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5V5.5ZM8 8h8M8 12h5"/></svg>
+        <span>La letra pequeña</span>
+      </a>
     </div>
     <button type="button" class="tema-toggle" aria-pressed="false"
             aria-label="Cambiar a tema claro">

@@ -238,5 +238,42 @@ async function pintarEstadosMesa() {
   destino.replaceChildren(...bloques.map(bloqueEstado));
 }
 
+/* ------------------------------------------- los badges de la barra
+   Se rellenan aquí y no en tema.js por dos razones: tema.js va en el <head>,
+   antes de que exista api(), y estos números salen de peticiones que este
+   fichero YA hace. Pedirlos otra vez sería trabajo doble por un número.
+
+   La regla, literal: si no hay dato o la cuenta es cero, el badge se queda
+   oculto. Hoy solo "Tu mesa" tiene algo detrás — las ofertas están todas
+   cerradas y del chat no existe ningún contador de no leídos en ninguna API.
+   Los tres huecos están puestos igualmente: el día que haya dato, aparecen
+   solos sin tocar el HTML. */
+function ponerBadge(cual, n, tono) {
+  const b = document.querySelector('.nav-badge[data-badge="' + cual + '"]');
+  if (!b) return;
+  if (!n) { b.hidden = true; return; }        // 0, null o undefined: nada
+  b.textContent = n > 99 ? '99+' : String(n);
+  if (tono) b.className = 'nav-badge ' + tono;
+  b.hidden = false;
+}
+
+(async () => {
+  try {
+    const d = await api('/api/no-resueltas');
+    const lista = Array.isArray(d) ? d : (d.pendientes || []);
+    // Solo las que de verdad esperan: las resueltas y las descartadas ya no
+    // te necesitan, y contarlas inflaría el badge con trabajo hecho.
+    const esperan = lista.filter((p) => !p.estado || p.estado === 'pendiente');
+    ponerBadge('mesa', esperan.length, 'aviso');
+  } catch (e) { /* sin dato, sin badge */ }
+
+  try {
+    const d = await api('/api/ofertas');
+    const ofertas = Array.isArray(d) ? d : (d.ofertas || []);
+    ponerBadge('ofertas', ofertas.filter((o) => o.estado === 'pendiente').length,
+               'aviso');
+  } catch (e) { /* sin dato, sin badge */ }
+})();
+
 pintarEstadosOfertas();
 pintarEstadosMesa();
