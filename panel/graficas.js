@@ -83,7 +83,7 @@ function pintarArea(dias) {
     const v = (tope / 4) * i;
     svg.append(svgEl('line', {
       x1: M.izda, x2: AN - M.derecha, y1: y(v), y2: y(v),
-      stroke: 'var(--malla)', 'stroke-width': 1,
+      stroke: 'var(--border)', 'stroke-width': 1, 'stroke-opacity': .4,
     }));
     const t = svgEl('text', {
       x: M.izda - 10, y: y(v) + 4, 'text-anchor': 'end', class: 'g-eje',
@@ -95,9 +95,9 @@ function pintarArea(dias) {
   const gid = idUnico('ar');
   const defs = svgEl('defs');
   const grad = svgEl('linearGradient', {id: gid, x1: 0, y1: 0, x2: 0, y2: 1});
-  [['0%', '.40'], ['55%', '.12'], ['100%', '0']].forEach(([offset, op]) => {
+  [['0%', '.18'], ['100%', '0']].forEach(([offset, op]) => {
     grad.append(svgEl('stop', {
-      offset, 'stop-color': 'var(--cian)', 'stop-opacity': op,
+      offset, 'stop-color': 'var(--accent)', 'stop-opacity': op,
     }));
   });
   defs.append(grad);
@@ -109,23 +109,20 @@ function pintarArea(dias) {
     fill: `url(#${gid})`,
   });
   const linea = svgEl('path', {
-    d, fill: 'none', stroke: 'var(--cian)', 'stroke-width': 2.4,
+    d, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 2,
     'stroke-linecap': 'round', 'stroke-linejoin': 'round', class: 'g-linea',
   });
   svg.append(area, linea);
 
   // Un punto por día; el último, destacado.
+  // Sin halo. Solo el punto final se destaca, a 4 px; los otros seis son la
+  // marca minima para que el tooltip tenga a que agarrarse.
   puntos.forEach(([px, py], i) => {
     const ultimo = i === puntos.length - 1;
-    if (ultimo) {
-      svg.append(svgEl('circle', {
-        cx: px, cy: py, r: 8, fill: 'var(--cian)', opacity: '.18', class: 'g-halo',
-      }));
-    }
     svg.append(svgEl('circle', {
-      cx: px, cy: py, r: ultimo ? 5 : 3.4,
-      fill: ultimo ? 'var(--realce)' : 'var(--fondo)',
-      stroke: 'var(--cian)', 'stroke-width': 2,
+      cx: px, cy: py, r: ultimo ? 4 : 2.5,
+      fill: ultimo ? 'var(--accent)' : 'var(--surface)',
+      stroke: 'var(--accent)', 'stroke-width': ultimo ? 0 : 1.5,
     }));
     const et = svgEl('text', {
       x: px, y: AL - 12, 'text-anchor': 'middle', class: 'g-eje',
@@ -330,11 +327,11 @@ function destacarBarras() {
     const fichas = c ? [
       [c.guardarrail, 'Guardarraíl de precios',
        `${c.piezas_inexistentes_probadas} de ${c.piezas_inexistentes_probadas}`,
-       'var(--cian)'],
+       'var(--cat-1)'],
       [c.acierto_ahora, 'Acierto a la primera',
-       `${c.preguntas_banco} preguntas`, 'var(--violeta)'],
+       `${c.preguntas_banco} preguntas`, 'var(--cat-2)'],
       [c.acierto_top3, 'Acierto en el top 3',
-       `${c.preguntas_banco} preguntas`, 'var(--ambar)'],
+       `${c.preguntas_banco} preguntas`, 'var(--cat-3)'],
     ].filter(([v]) => typeof v === 'number') : [];
 
     if (fichas.length) {

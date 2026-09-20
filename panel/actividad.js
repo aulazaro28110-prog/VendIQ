@@ -53,7 +53,7 @@ function pintarKPIsActividad(a) {
     ['Precios dados solos', miles(r.precios_dados), '',
      'sin que tú mires ninguno', 'acento'],
     ['Fugas de precio', fugas, '',
-     fugas ? 'REVISA salida/actividad.json' : 'ni un importe sin autorizar',
+     fugas ? 'hay que revisarlos uno a uno' : 'ni un importe sin autorizar',
      fugas ? 'malo' : 'acento'],
   ];
   $('#kpis').replaceChildren(...tiles.map(([et, cifra, unidad, nota, clase]) => {
@@ -431,9 +431,9 @@ function pintarRecorrido(a, motor) {
   })));
 
   const pie = crear('p', 'flujo-pie');
-  pie.textContent = 'Los umbrales se leen del motor en marcha (03_buscar.py); los '
-    + 'volúmenes, de los ' + a.parametros.dias + ' días medidos. Ni un número '
-    + 'escrito a mano.';
+  pie.textContent = 'Los umbrales se leen del motor en marcha; los volúmenes, '
+    + 'de los ' + a.parametros.dias + ' días medidos. Ni un número escrito '
+    + 'a mano.';
   caja.append(pie);
 
   $('#diagrama').replaceChildren(caja);

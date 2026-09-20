@@ -115,14 +115,27 @@ function sparkline(valores, menosEsMejor) {
   linea.setAttribute('stroke-linecap', 'round');
   linea.setAttribute('vector-effect', 'non-scaling-stroke');
 
-  const fin = document.createElementNS(ns, 'circle');
+  // El punto final, 4 px REDONDOS. No puede ser un <circle>: el viewBox se
+  // estira en horizontal (preserveAspectRatio="none") y el circulo saldria
+  // ovalado. Un subtrazo de longitud cero con remate redondo y
+  // vector-effect:non-scaling-stroke se dibuja en pixeles de pantalla, asi
+  // que sale redondo mida lo que mida la tarjeta.
   const [fx, fy] = puntos[puntos.length - 1];
-  fin.setAttribute('cx', fx); fin.setAttribute('cy', fy); fin.setAttribute('r', '2.6');
-  fin.setAttribute('fill', 'currentColor');
+  const fin = document.createElementNS(ns, 'path');
+  fin.setAttribute('class', 'sp-fin');
+  fin.setAttribute('d', 'M ' + fx.toFixed(1) + ' ' + fy.toFixed(1)
+                      + ' L ' + fx.toFixed(1) + ' ' + fy.toFixed(1));
+  fin.setAttribute('fill', 'none');
+  fin.setAttribute('stroke', 'currentColor');
+  fin.setAttribute('stroke-width', '4');
+  fin.setAttribute('stroke-linecap', 'round');
   fin.setAttribute('vector-effect', 'non-scaling-stroke');
 
   svg.append(defs, area, linea, fin);
-  svg.style.color = menosEsMejor ? 'var(--violeta)' : 'var(--cian)';
+  // Un solo acento: la sparkline no codifica nada con el color —codifica con
+  // la forma—, así que las cuatro van en --accent. La azul de antes daba a
+  // entender un estado que no existe.
+  svg.style.color = 'var(--accent)';
   return svg;
 }
 
@@ -140,7 +153,18 @@ function delta(valores, menosEsMejor) {
     + (Math.abs(variacion) < 0.05 ? ' neutro' : bueno ? '' : ' baja'));
   chip.textContent = (sube ? '↑' : '↓') + ' '
     + Math.abs(variacion).toFixed(1).replace('.', ',') + '%';
-  chip.title = 'Último día frente al anterior, de los 7 medidos';
+
+  /* El tooltip del panel es `data-tip`, no el `title` del navegador: ése lo
+     dibuja cada sistema a su manera y tarda medio segundo en salir, así que
+     el mismo dato se veía de tres formas distintas según la máquina.
+
+     Como data-tip se pinta con CSS y un lector de pantalla no lo lee, la
+     explicación va ADEMÁS en aria-label, junto al valor. Y el chip se hace
+     enfocable para que quien va con el teclado también lo alcance. */
+  const explica = 'Último día frente al anterior, de los 7 medidos';
+  chip.setAttribute('data-tip', explica);
+  chip.setAttribute('tabindex', '0');
+  chip.setAttribute('aria-label', chip.textContent + ' — ' + explica);
   return chip;
 }
 

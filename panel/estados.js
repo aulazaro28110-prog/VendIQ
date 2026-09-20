@@ -89,7 +89,7 @@ async function pintarEstadosOfertas() {
     const d = await api('/api/ofertas');
     ofertas = Array.isArray(d) ? d : (d.ofertas || []);
   } catch (e) {
-    destino.replaceChildren(Object.assign(crear('div', 'estado-vacio'),
+    destino.replaceChildren(Object.assign(crear('div', 'estado-vacio fallo'),
       {textContent: 'No se pudieron leer las ofertas: ' + e.message}));
     return;
   }
@@ -158,7 +158,7 @@ async function pintarEstadosMesa() {
     const d = await api('/api/no-resueltas');
     sin = Array.isArray(d) ? d : (d.no_resueltas || d.pendientes || []);
   } catch (e) {
-    destino.replaceChildren(Object.assign(crear('div', 'estado-vacio'),
+    destino.replaceChildren(Object.assign(crear('div', 'estado-vacio fallo'),
       {textContent: 'No se pudo leer la mesa: ' + e.message}));
     return;
   }
