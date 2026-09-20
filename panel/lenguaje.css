@@ -393,12 +393,38 @@ body::before{ display:none; }
 }
 
 /* La fila del hero es la otra tarjeta-métrica del panel. Misma anatomía que
-   la KPI: dos rejillas de tarjetas que se parecen a medias son peor que dos
-   que se parecen del todo. */
+   la KPI, del todo: dos rejillas de tarjetas que se parecen a medias son peor
+   que dos que se parecen del todo.
+
+   Le faltaba la mitad. La caja ya estaba, pero por dentro seguía con lo de
+   antes del reskin: un filete teal de 3px arriba, la cifra en mono y teñida
+   de acento, y el salto de 2px al pasar el ratón. Justo las tres cosas que
+   se le quitaron a la tarjeta KPI. */
 .stats > div{
   background:var(--surface); border:1px solid var(--border);
   border-radius:var(--r-md); padding:20px; box-shadow:none;
+  transition:border-color var(--ms-normal) var(--ease),
+             transform var(--ms-normal) var(--ease);
 }
+.stats > div:hover{
+  border-color:var(--border-strong); transform:translateY(-1px); box-shadow:none;
+}
+.stats > div::after{ display:none; }          /* el filete de color, fuera */
+
+/* Microlabel y valor, los mismos que en la tarjeta KPI. El color lo lleva el
+   estado, no la cifra: aquí no hay estado que codificar. */
+.stats .que{
+  font-family:var(--ui); font-size:12px; line-height:16px; font-weight:500;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--text-3);
+  margin:0 0 var(--sp-2);
+}
+.stats .valor{
+  font-family:var(--ui); font-size:28px; line-height:34px; font-weight:600;
+  letter-spacing:-.01em; color:var(--text); margin:0;
+  font-variant-numeric:tabular-nums;
+}
+/* Y la primera manda, igual que en la fila de KPI: es la métrica norte. */
+.stats > div:first-child .valor{ font-size:36px; line-height:42px; }
 
 /* Sidebar de 248. */
 @media (min-width:1100px){
