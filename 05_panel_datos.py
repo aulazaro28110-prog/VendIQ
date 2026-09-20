@@ -311,6 +311,10 @@ def main():
         # solo vectorial, híbrida con 100 piezas, híbrida con 1.000), no algo que
         # este script pueda recalcular hoy. Cada columna es un run real.
         # Acierto a la primera, medido con tests/test_busqueda.py en cada etapa.
+        # La ULTIMA columna es la tirada vigente, la misma que deja
+        # salida/calidad.json (acierto_ahora). Si se vuelve a pasar el banco y
+        # ese numero cambia, esta columna hay que moverla con el: son el mismo
+        # dato escrito dos veces, y ya se desincronizaron una vez.
         # "Datos incompletos" sube de 0,67 a 1,00 entre las dos últimas columnas y
         # no es que el buscador mejorara: es que la MEDIDA estaba mal. La pregunta
         # no da motor ni año, así que tiene varias respuestas correctas, y el banco
@@ -323,8 +327,8 @@ def main():
                 ["Datos incompletos",          0.07, 1.00, 0.67, 1.00],
                 ["Mensaje sucio de WhatsApp",  0.13, 1.00, 1.00, 0.80],
                 ["Por referencia OEM",         0.00, 1.00, 1.00, 1.00],
-                ["Políticas",                  0.70, 0.70, 0.60, 0.70],
-                ["TOTAL",                      0.20, 0.96, 0.89, 0.91],
+                ["Políticas",                  0.70, 0.70, 0.60, 0.60],
+                ["TOTAL",                      0.20, 0.96, 0.89, 0.90],
             ],
         },
         "demanda_no_cubierta": [
