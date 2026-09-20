@@ -23,35 +23,38 @@
    AUTÉNTICOS, no una inversión inventada: son los colores que usan de verdad.
 */
 
-/* ========================================== PASO 1 · paleta y contraste
-   Los valores de abajo NO están elegidos a ojo: están medidos con la fórmula
-   de contraste de WCAG 2.1 contra los pares que de verdad aparecen en
-   pantalla. El juego completo pasa AA (4,5:1 para texto) en los DOS temas.
+/* ============================================== PASO 1 · paleta de reserva
+   ESTOS HEX NO SON LOS QUE SE VEN EN PANTALLA.
 
-   Lo que estaba mal antes, medido:
-     texto apagado sobre tarjeta      3,82:1  <- por debajo de AA
-     texto apagado sobre fondo        3,97:1  <- por debajo de AA
-     tarjeta contra fondo             1,04:1  <- de ahí lo de "va plano"
-     tarjeta elevada contra tarjeta   1,05:1  <- tres superficies indistinguibles
+   lenguaje.css se carga después y reapunta todos estos tokens a los del
+   sistema actual: --fondo pasa a ser var(--bg), --carta var(--surface),
+   --cian var(--accent), y así los veinte. Los valores de aquí abajo son la
+   RESERVA: lo que se ve si alguien quita el <link> de lenguaje.css, que es
+   también la prueba de que el panel entero sigue en pie sin esa capa.
 
-   Ese 1,04 es la clave: el fondo y la tarjeta eran prácticamente el mismo
-   tono, así que no había ni relieve ni jerarquía. Ahora son 1,24 y 1,19.
+   Los números de contraste medidos y vigentes están en la cabecera de
+   lenguaje.css, que es donde viven los colores de verdad. Aquí no se repiten
+   para no tener la misma medida escrita en dos sitios: ya pasó una vez con
+   el acierto del banco y acabaron diciendo cosas distintas.
 
-   LOS COLORES SIGNIFICAN, NO DECORAN
-   ----------------------------------
-   Cuatro estados y un acento, y se usan igual en todo el panel:
-     acento/verde  el bot contesta solo        (RESPONDER, aceptado)
-     azul          tiene que preguntar cuál    (PREGUNTAR)
-     ámbar         acaba en tu mesa            (ESCALAR, pendiente)
+   LO QUE SÍ SIGUE SIENDO CIERTO: LOS COLORES SIGNIFICAN
+   -----------------------------------------------------
+   Un acento y cuatro estados, y se usan igual en todo el panel:
+     acento (teal) identidad y series de gráfica — NO es un estado
+     verde         el bot lo resuelve solo      (RESPONDER, aceptado)
+     azul          tiene que preguntar cuál     (PREGUNTAR)
+     ámbar         acaba en tu mesa             (ESCALAR, pendiente)
      rojo          rechazado o error
-   El acento es a la vez identidad y el "bien", a propósito: la tesis del
-   producto ES que contesta solo, así que el color de marca y el de resuelto
-   son el mismo. Un quinto color que no codificara nada sería arcoíris.
 
-   `--violeta` conserva el NOMBRE aunque ahora sea azul: es el token que ya
-   pasan por dentro actividad.js y panel.js para PREGUNTAR. Cambiarle el valor
-   mueve la semántica a azul sin tocar una línea de JavaScript; cambiarle el
-   nombre obligaría a editar los ficheros que no se tocan. */
+   El teal fue durante un tiempo las dos cosas a la vez —marca y "bien"— y
+   convivía con un segundo verde en el delta de los KPI. Dos verdes para la
+   misma idea no es un sistema: ahora "bien" es siempre --ok (verde) y el
+   acento no codifica ningún estado.
+
+   `--violeta` conserva el NOMBRE aunque sea azul: es el token que ya pasan
+   por dentro actividad.js y panel.js para PREGUNTAR. Cambiarle el valor
+   mueve la semántica sin tocar una línea de JavaScript; cambiarle el nombre
+   obligaría a editar los ficheros que no se tocan. */
 :root{
   --fondo:      #04060a;
   --carta:      #17202e;
@@ -99,13 +102,12 @@
   --anillo-fondo: rgba(255,255,255,.07);
 }
 
-/* ============================================================ tema CLARO
-   Mismo trabajo y misma medida que el oscuro: los cuatro colores están
-   bajados de luminosidad porque sobre blanco los del modo oscuro no llegan
-   —el acento #21b9a4 se queda en 2,1:1— y el fondo se ha oscurecido hasta
-   #e2e8f0 para que la tarjeta blanca despegue (1,23:1). Al oscurecer el
-   fondo hubo que oscurecer también el texto apagado, que se quedaba en
-   4,41:1 sobre él. */
+/* ================================================ tema CLARO · de reserva
+   El mismo caso que el bloque de arriba: lenguaje.css reapunta estos tokens
+   y estos hex solo se ven si se quita esa capa. El principio no cambia —los
+   colores del modo oscuro no llegan a contraste sobre blanco y hay que
+   bajarles la luminosidad—, pero los valores vigentes y sus medidas están en
+   lenguaje.css, bajo "1 · TOKENS · CLARO". */
 :root[data-tema="claro"]{
   --fondo:      #e2e8f0;
   --carta:      #ffffff;

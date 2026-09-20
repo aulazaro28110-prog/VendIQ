@@ -32,6 +32,10 @@ const COLUMNAS = [
   ['rechazadas', 'Rechazadas', 'critico', (o) => o.decision === 'RECHAZAR'],
 ];
 
+/* Cuántas tarjetas se ven en cada columna antes de plegar. Tres es lo que
+   hace que las cuatro columnas midan lo mismo con el reparto que hay hoy. */
+const TOPE = 3;
+
 const TONO_DECISION = {
   ACEPTAR: ['p-ok', 'aceptada'],
   RECHAZAR: ['p-rojo', 'rechazada'],
@@ -168,9 +172,35 @@ function pintarTablero() {
       const orden = clave === 'recibidas'
         ? [...lista].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)))
         : lista;
-      orden.forEach((o) => cuerpo.append(tarjeta(o)));
+      orden.forEach((o, i) => {
+        const t = tarjeta(o);
+        if (i >= TOPE) t.classList.add('of-oculta');
+        cuerpo.append(t);
+      });
     }
     col.append(cuerpo);
+
+    // Compacto por defecto. Las cuatro columnas reparten 15 · 5 · 9 · 1, así
+    // que sin tope la de "Recibidas" mide quince tarjetas y la de
+    // "Rechazadas" una: eso no es una rejilla, son cuatro columnas sueltas de
+    // alturas distintas. Con el tope las cuatro miden lo mismo y lo que
+    // sobra está a un clic, no escondido.
+    if (lista.length > TOPE) {
+      const mas = crear('button', 'of-mas');
+      mas.type = 'button';
+      mas.setAttribute('aria-expanded', 'false');
+      const restantes = lista.length - TOPE;
+      mas.textContent = 'Ver ' + restantes + (restantes === 1 ? ' más' : ' más');
+      mas.onclick = () => {
+        const abierta = mas.getAttribute('aria-expanded') === 'true';
+        cuerpo.querySelectorAll('.of-tarjeta').forEach((t, i) => {
+          t.classList.toggle('of-oculta', !abierta && i >= TOPE);
+        });
+        mas.setAttribute('aria-expanded', abierta ? 'false' : 'true');
+        mas.textContent = abierta ? 'Ver ' + restantes + ' más' : 'Ver menos';
+      };
+      col.append(mas);
+    }
     return col;
   }));
 }
@@ -282,7 +312,7 @@ function abrirDrawer(n) {
     no.onclick = () => decidir(o.n, 'RECHAZAR', no);
     const reales = crear('div', 'dr-reales');
     reales.append(crear('p', 'dr-reales-t',
-      'Esto sí se guarda, en salida/ofertas.json:'), si, no);
+      'Esto sí se guarda de verdad:'), si, no);
     cuerpo.append(pieAcc, reales);
   } else {
     cuerpo.append(pieAcc);
@@ -318,7 +348,7 @@ async function cargar() {
     OFERTAS = Array.isArray(d) ? d : (d.ofertas || []);
   } catch (e) {
     const t = $('#of-tablero');
-    if (t) t.replaceChildren(Object.assign(crear('div', 'estado-vacio'),
+    if (t) t.replaceChildren(Object.assign(crear('div', 'estado-vacio fallo'),
       {textContent: 'No se pudieron leer las ofertas: ' + e.message}));
     return;
   }

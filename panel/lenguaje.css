@@ -1,0 +1,850 @@
+/* VendIQ · lenguaje visual
+   ========================================================================
+   Sexta y última hoja. Se carga DESPUÉS de panel.css, chat.css, correo.css,
+   informe.css y sistema.css, y no edita ni una línea de ninguna: solo
+   redefine tokens y reescribe la anatomía de dos componentes. Si se quita el
+   <link>, el panel vuelve exactamente a como estaba.
+
+   QUÉ HAY AQUÍ Y QUÉ NO
+   ---------------------
+   Esto es el PASO 1 del encargo: los tokens completos + la tarjeta KPI y la
+   tabla acabadas con las medidas exactas. El resto del panel recibe los
+   tokens nuevos —es lo que significa que todo cuelgue de ellos— pero NO la
+   anatomía nueva: sus paddings, tamaños y pesos siguen siendo los de antes
+   hasta que se propaguen sección por sección.
+
+   EL PUENTE
+   ---------
+   Las cinco hojas anteriores y los diez ficheros de JS hablan en tokens
+   castellanos (--carta, --tinta-3, --cian). Los nombres nuevos del encargo
+   son otros (--surface, --text-3, --accent). En vez de renombrar 1.400
+   líneas de CSS y arriesgar el panel entero, el bloque 1b apunta los viejos
+   a los nuevos. Un token, dos nombres, cero ediciones en lo que ya funciona.
+
+   Hay que declararlo DOS veces, en :root y en :root[data-tema="claro"]: el
+   selector con atributo tiene especificidad (0,2,0) y le gana a :root a
+   secas, así que un único puente en :root se lo comería el tema claro.
+
+   LO QUE NO SE TOCA
+   -----------------
+   Los tokens --wa-* y --ol-* (WhatsApp y Outlook simulados) son los colores
+   AUTÉNTICOS de esas dos aplicaciones. No cuelgan del sistema a propósito:
+   si se tiñen de teal dejan de parecerse a lo que imitan, que es justo lo
+   que hace creíble la demo.
+
+   CONTRASTE: MEDIDO, NO ELEGIDO A OJO
+   -----------------------------------
+   Los valores del encargo se han pasado por la fórmula de WCAG 2.1 contra
+   los fondos donde de verdad aparecen. Pasan todos menos seis pares, que
+   están corregidos abajo con el número medido al lado y el valor original
+   del encargo en el comentario: revertir cualquiera es cambiar un hex.
+*/
+
+/* ═══════════════════════════════════════════════ 1 · TOKENS · OSCURO ════ */
+:root{
+  /* Neutros. Charcoal, nunca negro puro. */
+  --bg:           #0E1116;
+  --surface:      #151A21;
+  --surface-2:    #1C232C;
+  --surface-3:    #232C36;
+  --border:       #263039;
+  --border-strong:#33404C;
+
+  --text:         #E6EDF3;   /* 14,79:1 sobre --surface */
+  --text-2:       #9AA7B4;   /*  7,12:1 sobre --surface */
+  /* CORREGIDO. El encargo pide #6B7986: se queda en 3,92:1 sobre la tarjeta
+     y 3,55:1 sobre la cabecera de tabla, por debajo de AA (4,5:1), y este
+     token lo llevan TODOS los microlabels, que son texto pequeño. Subido lo
+     justo para llegar a 4,53:1 en el peor fondo del panel. */
+  --text-3:       #7D8B97;
+
+  /* Acento. Uno solo. Es identidad y es "el bot contesta solo": en este
+     producto son la misma cosa, y por eso no hay un segundo color de marca. */
+  --accent:       #2DD4BF;   /* 9,39:1 sobre --surface */
+  --accent-strong:#14B8A6;
+  --accent-soft:  rgba(45,212,191,.12);
+  --accent-soft-2:rgba(45,212,191,.28);   /* el escalón fuerte que ya usaban
+                                             los gráficos (era --cian-20) */
+
+  /* Semánticos. SOLO estado. Nunca decoran. */
+  --ok:   #3FB950;  --ok-soft:  rgba(63,185,80,.14);
+  --warn: #D29922;  --warn-soft:rgba(210,153,34,.14);
+  --err:  #F85149;  --err-soft: rgba(248,81,73,.14);
+  --info: #58A6FF;  --info-soft:rgba(88,166,255,.14);
+
+  --r-sm:6px; --r-md:10px; --r-lg:14px;
+
+  --sh-1:0 1px 2px rgba(0,0,0,.30);
+  --sh-2:0 8px 24px rgba(0,0,0,.35);
+
+  /* Rejilla de 8, con medio paso de 4. */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px;
+  --sp-6:32px; --sp-7:48px;
+
+  --ms-micro:120ms; --ms-normal:180ms; --ms-overlay:240ms;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+
+/* ══════════════════════════════════════════════ 1 · TOKENS · CLARO ═════ */
+/* El encargo da variante clara de los neutros y del acento, pero no de los
+   cuatro semánticos. Sobre blanco los de modo oscuro no llegan ni de lejos:
+   --ok 2,54:1 · --warn 2,52:1 · --info 2,53:1 · --err 3,35:1. Aquí van
+   bajados de luminosidad conservando el tono, hasta 4,5:1 en el peor fondo.
+   No es una licencia: es el hueco que el encargo no cubre. */
+:root[data-tema="claro"]{
+  --bg:           #F7F8FA;
+  --surface:      #FFFFFF;
+  --surface-2:    #F1F3F6;
+  --surface-3:    #E9ECF1;
+  --border:       #E2E6EC;
+  --border-strong:#CBD2DB;
+
+  --text:         #0E1116;   /* 18,91:1 sobre --surface */
+  --text-2:       #4A5563;   /*  7,58:1 sobre --surface */
+  --text-3:       #65707E;   /* CORREGIDO; el encargo pide #7A8695 = 3,70:1 */
+
+  --accent:       #0D9488;
+  --accent-strong:#0F766E;   /* 5,47:1 — el acento COMO TEXTO en claro usa
+                                éste, porque #0D9488 se queda en 3,74:1 */
+  --accent-soft:  rgba(13,148,136,.10);
+  --accent-soft-2:rgba(13,148,136,.22);
+
+  --ok:   #2B7F37;  --ok-soft:  rgba(43,127,55,.10);   /* encargo: #3FB950 */
+  --warn: #8F6817;  --warn-soft:rgba(143,104,23,.11);  /* encargo: #D29922 */
+  --err:  #DE1209;  --err-soft: rgba(222,18,9,.09);    /* encargo: #F85149 */
+  --info: #006AE4;  --info-soft:rgba(0,106,228,.09);   /* encargo: #58A6FF */
+
+  --sh-1:0 1px 2px rgba(14,17,22,.06);
+  --sh-2:0 8px 24px rgba(14,17,22,.08);
+}
+
+/* ═══════════════════════════ 1b · PUENTE con los nombres de siempre ════ */
+/* La tarjeta en claro NO despega por relleno: blanco sobre #F7F8FA son
+   1,06:1. Despega por el BORDE, como en Linear, Vercel o Stripe. Por eso el
+   borde de 1px no es decorativo aquí: es lo único que define la tarjeta, y
+   ninguna superficie puede quedarse sin él. */
+:root,
+:root[data-tema="claro"]{
+  --fondo:      var(--bg);
+  --carta:      var(--surface);
+  --carta-alta: var(--surface-2);
+  --borde:      var(--border);
+  --borde-vivo: var(--border-strong);
+
+  --tinta:      var(--text);
+  --tinta-2:    var(--text-2);
+  --tinta-3:    var(--text-3);
+
+  --cian:       var(--accent);
+  --violeta:    var(--info);      /* conserva el NOMBRE: lo pasan por dentro
+                                     actividad.js y panel.js para PREGUNTAR */
+  --ambar:      var(--warn);
+  --rojo:       var(--err);
+  --realce:     var(--accent-strong);
+
+  --cian-08:    var(--accent-soft);
+  --cian-20:    var(--accent-soft-2);
+  --violeta-12: var(--info-soft);
+  --ambar-12:   var(--warn-soft);
+  --rojo-12:    var(--err-soft);
+
+  /* UN SOLO VERDE DE ESTADO.
+     Antes habia dos: el delta del KPI subia en --ok (verde) y todo lo demas
+     que significaba "bien" iba en el teal del acento. Dos verdes distintos
+     para la misma idea es justo lo contrario de un sistema.
+     Gana --ok, y el acento se queda solo para lo que es: identidad y series
+     de grafico. Con esto cambian de golpe los diez sitios que usaban --bien
+     —badges, contadores por estado, columnas del tablero, la linea de tiempo
+     del drawer, los descuentos— sin tocar una regla de sistema.css. */
+  --bien:        var(--ok);
+  --bien-suave:  var(--ok-soft);
+
+  --sombra:      var(--sh-1);
+  --sombra-alta: var(--sh-2);
+  --glow:        none;          /* el brillo interior del 4% sobraba */
+
+  /* Radios y espaciado, a la rejilla del encargo. */
+  --r:   var(--r-md);
+  --r-s: var(--r-sm);
+  --r-m: var(--r-md);
+  --r-l: var(--r-lg);
+
+  --e1:var(--sp-1); --e2:var(--sp-2); --e3:var(--sp-3);
+  --e4:var(--sp-4); --e5:var(--sp-5); --e6:var(--sp-6);
+}
+
+/* ═══════════════════════════════════════════════════ 2 · TIPOGRAFÍA ════ */
+/* Inter y JetBrains Mono se PIDEN, no se descargan. El panel funciona sin
+   internet y eso no se negocia por una tipografía: si están instaladas se
+   usan, y si no cae al stack del sistema, que es el que se ve hoy. */
+:root,
+:root[data-tema="claro"]{
+  --ui:   "Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono: "JetBrains Mono",ui-monospace,"Cascadia Mono",Consolas,
+          "DejaVu Sans Mono",monospace;
+}
+body{ font-size:14px; line-height:20px; }
+
+/* Los números, alineados siempre. Un KPI que baila de ancho mientras se anima
+   no es un KPI, es un contador de feria. */
+.cifra, .num, .estado-n, .kpi-delta, td.num, th.num{
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1;
+}
+
+/* Microlabel: 12/16/500, mayúsculas, .06em, --text-3. Uno solo para todo. */
+.ind .etiqueta, thead th{
+  font-size:12px; line-height:16px; font-weight:500;
+  letter-spacing:.06em; text-transform:uppercase;
+  color:var(--text-3);
+}
+
+/* ═════════════════════════════════════════════════ 3 · TARJETA KPI ═════ */
+/* La pinta panel.js (.ind con .etiqueta/.cifra/.nota) y la decora kpi.js
+   DESPUÉS (delta y sparkline). Aquí solo se le cambia la ropa: ni una línea
+   de esos dos ficheros sabe que esto existe, y si fallaran, la tarjeta
+   seguiría siendo correcta, solo que sin adornos. */
+.ind{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-md);
+  padding:20px;
+  box-shadow:none;
+  display:flex; flex-direction:column; gap:var(--sp-2);
+  transition:border-color var(--ms-normal) var(--ease),
+             transform var(--ms-normal) var(--ease);
+}
+.ind:hover{
+  border-color:var(--border-strong);
+  transform:translateY(-1px);
+  box-shadow:none;
+}
+/* Fuera el filete de color de 3px del borde superior. El encargo pide
+   contención, y ese filete repetía en decoración lo que el delta ya dice con
+   dato. No se borra la regla de panel.css: se apaga desde aquí. */
+.ind::after{ display:none; }
+
+/* El valor. Color --text SIEMPRE: quien lleva el color es el chip del delta,
+   que es el que codifica un estado. Hay que nombrar también .acento y .malo
+   porque panel.css los tiñe con la misma especificidad. */
+.ind .cifra,
+.ind.acento .cifra,
+.ind.malo .cifra{
+  font-family:var(--ui);
+  font-size:28px; line-height:34px; font-weight:600;
+  letter-spacing:-.01em;
+  color:var(--text);
+  margin:0;
+}
+.ind .cifra .unidad{
+  font-size:15px; font-weight:500; color:var(--text-2); margin-left:4px;
+}
+.ind .nota{
+  font-size:13px; line-height:18px; font-weight:400;
+  color:var(--text-3); margin:0;
+}
+.ind .etiqueta{ margin:0; }
+
+/* La métrica "norte": la primera de la fila, dominante, a 36px. Es la tesis
+   del producto —cuánto contesta solo— y manda sobre las otras tres. */
+#kpis .ind:first-child .cifra{ font-size:36px; line-height:42px; }
+
+/* El icono en círculo que añadía kpi.js no está en la anatomía del encargo.
+   Se OCULTA, no se borra: volver a tenerlo es quitar esta línea. */
+.ind .kpi-ico{ display:none; }
+.kpi-cab{ display:flex; align-items:center; gap:0; }
+
+/* El delta. Solo existe donde HAY histórico real en /api/actividad: los dos
+   indicadores sin serie se quedan sin flecha, que es lo honesto. Arriba
+   verde --ok, abajo rojo --err, como pide el encargo. */
+.kpi-delta{
+  align-self:flex-start;
+  display:inline-flex; align-items:center; gap:4px;
+  height:22px; padding:0 8px; border-radius:999px;
+  font-family:var(--ui); font-size:12px; font-weight:500; line-height:22px;
+  background:var(--ok-soft); color:var(--ok);
+}
+.kpi-delta.baja  { background:var(--err-soft); color:var(--err); }
+.kpi-delta.neutro{ background:var(--surface-2); color:var(--text-3); }
+
+/* La sparkline: 32px de alto, sin ejes, sin rejilla, sin etiquetas. */
+.kpi-viz{ margin-top:auto; padding-top:var(--sp-3); height:32px; }
+.kpi-viz svg{ display:block; width:100%; height:100%; overflow:visible; }
+.kpi-viz svg path{ stroke-width:2px; }
+.kpi-viz svg path.sp-fin{ stroke-width:4px; }   /* el punto final, en px de
+                                                   pantalla, no de viewBox */
+
+/* ══════════════════════════════════════════════════════ 4 · TABLA ═════ */
+/* Fila de 44px exactos: 12 + 20 de línea + 12. Sin cebra. El separador es el
+   único adorno, y es funcional. */
+table{
+  border-collapse:collapse; width:100%;
+  font-size:14px; line-height:20px;
+}
+th, td{
+  padding:12px 16px; text-align:left; vertical-align:middle;
+  border-bottom:1px solid var(--border);
+}
+/* Cabecera pegajosa. Con border-collapse el borde se va con el scroll, así
+   que la línea se pinta con un inset shadow, que sí se queda. */
+thead th{
+  position:sticky; top:0; z-index:2;
+  background:var(--surface-2);
+  padding:12px 16px;
+  white-space:nowrap;
+  border-bottom:0;
+  box-shadow:inset 0 -1px 0 var(--border);
+}
+/* Para que la cabecera pegajosa SIRVA de algo hace falta que la tabla tenga
+   por donde deslizarse: las cinco viven dentro de .tabla-scroll, que hoy solo
+   desliza en horizontal, y un sticky dentro de una caja que no scrollea es
+   decoracion muerta. Con este tope las largas —ofertas, registro— scrollean
+   con la cabecera fija, y las cortas ni se enteran porque no lo alcanzan.
+   Hay que repetir el selector triple: .carta.plana.tabla-scroll de panel.css
+   fija overflow-y:hidden con especificidad (0,3,0) y le ganaria a .tabla-scroll. */
+.tabla-scroll,
+.carta.plana.tabla-scroll{ max-height:min(70vh,620px); overflow-y:auto; }
+
+tbody tr{ transition:background var(--ms-micro) var(--ease); }
+tbody tr:hover{ background:var(--surface-2); }
+tbody tr:last-child td{ border-bottom:none; }
+td.num, th.num{
+  text-align:right; font-family:var(--mono); white-space:nowrap;
+}
+td.num{ font-size:13px; }
+
+/* Chip de estado, el que viaja dentro de las tablas: 22px, 12/500, píldora,
+   fondo blando + texto semántico. Antes eran rectángulos de 10px con borde
+   de 1px, que en una tabla de cuarenta filas hacían mucho ruido. */
+.pastilla{
+  display:inline-flex; align-items:center;
+  height:22px; padding:0 8px; border-radius:999px;
+  font-family:var(--ui); font-size:12px; font-weight:500; line-height:22px;
+  letter-spacing:0; border:0; white-space:nowrap;
+  text-transform:none;
+}
+.p-ok     { color:var(--ok);     background:var(--ok-soft); }
+.p-ambar  { color:var(--warn);   background:var(--warn-soft); }
+.p-rojo   { color:var(--err);    background:var(--err-soft); }
+.p-violeta{ color:var(--info);   background:var(--info-soft); }
+.p-gris   { color:var(--text-2); background:var(--surface-2); }
+/* Los otros tres sitios que escribian el teal a mano para decir "bien".
+   .seg-ok es el tramo "correcta" de la barra de verificacion: lleva fondo
+   solido, y en claro sistema.css ya le pone el texto en blanco. */
+.seg-ok{ background:var(--ok); color:#0A0F0D; }
+.nav-badge.bien{ background:var(--ok-soft); color:var(--ok); }
+.ficha-disp.hay{ color:var(--ok) !important; background:var(--ok-soft) !important; }
+
+/* ════════════════════════════════════════════════════════ 5 · FONDO ════ */
+/* Fuera la decoración. Había dos capas heredadas de antes del reskin: un halo
+   radial teal/violeta/ámbar a z-index −3 y un canvas con una malla animada a
+   −2. Ninguna de las dos codifica nada, y el criterio del encargo es que si
+   algo pide más color o más animación va por mal camino. Se APAGAN, no se
+   borran: fondo.js sigue en su sitio y quitar estas dos reglas lo devuelve. */
+body::before{ display:none; }
+#fondo{ display:none; }
+
+/* La barra superior traía su color a pelo (rgba(6,8,12,.82)), de la paleta
+   vieja. Ahora es la superficie del tema, translúcida. */
+.barra{
+  background:color-mix(in srgb, var(--surface) 86%, transparent);
+  border-bottom:1px solid var(--border);
+}
+@supports not (background:color-mix(in srgb, red 50%, transparent)){
+  .barra{ background:var(--surface) }
+}
+
+/* ═══════════════════════════════════════════════════════ 6 · LAYOUT ════ */
+/* Gutter de 24. El ritmo vertical: 24 entre tarjetas de una sección, 16 entre
+   las de una misma rejilla. Los dos salen de la rejilla de 8. */
+.envoltorio{ padding:0 24px 120px; }
+.barra-dentro{ padding:12px 24px; }
+:root{ --hueco:24px }
+
+/* La fila de KPI, explícita: 4 · 2 · 1. Con auto-fit el navegador decidía
+   cuántas caben y en pantallas intermedias salían tres, que es el número que
+   peor lee: deja una tarjeta huérfana en la segunda línea. */
+.indicadores{ grid-template-columns:repeat(4,minmax(0,1fr)); gap:var(--sp-4); }
+.stats{ grid-template-columns:repeat(4,minmax(0,1fr)); gap:var(--sp-4); }
+/* Las tres filas de cuatro (#kpis, #mesa-kpis y la del hero) llenan la
+   rejilla. La del motor tiene SEIS fichas, y en cuatro columnas deja dos
+   huecos abiertos en la segunda linea: en tres son dos filas completas. */
+#motor{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+@media (max-width:960px){
+  .indicadores, .stats, #motor{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:560px){
+  .indicadores, .stats, #motor{ grid-template-columns:1fr; }
+  :root{ --hueco:16px }
+  /* En el movil el gutter baja a 16: sistema.css ya lo hacia asi y el atajo
+     de escribir el padding entero arriba se lo llevaba por delante. */
+  .envoltorio{ padding-left:16px; padding-right:16px }
+}
+
+/* La fila del hero es la otra tarjeta-métrica del panel. Misma anatomía que
+   la KPI: dos rejillas de tarjetas que se parecen a medias son peor que dos
+   que se parecen del todo. */
+.stats > div{
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-md); padding:20px; box-shadow:none;
+}
+
+/* Sidebar de 248. */
+@media (min-width:1100px){
+  nav.barra{ width:248px; }
+  body{ padding-left:248px; }
+  nav.barra .barra-dentro{ padding:20px 12px; }
+  nav.barra .barra-enlaces a{ border-radius:var(--r-sm); }
+}
+
+/* La píldora del hero, a la anatomía del chip: la misma forma que todo lo
+   demás que es una etiqueta pequeña. */
+.pildora{
+  font-family:var(--ui); font-size:12px; line-height:16px; font-weight:500;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-sm); padding:8px 12px; box-shadow:none;
+  color:var(--text-2);
+}
+.pildora b{ color:var(--text); font-weight:600; font-variant-numeric:tabular-nums }
+.pildora.fuerte{ background:var(--surface-2); color:var(--text-2) }
+.pildora.fuerte b{ font-size:13px }
+
+/* ════════════════════════════════════════════════════ 7 · CONTROLES ════ */
+/* Altura 34, radio 10, 13/500. Tres variantes y ni una más: primario (una
+   por vista, la acción de verdad), secundario y fantasma. */
+.boton, .consola-entrada button{
+  height:34px; padding:0 12px; border-radius:var(--r-md);
+  font-family:var(--ui); font-size:13px; font-weight:500; line-height:34px;
+  border:1px solid transparent;
+  background:var(--accent); color:#0A0F0D;
+  cursor:pointer; white-space:nowrap;
+  transition:background var(--ms-micro) var(--ease);
+}
+.boton:hover, .consola-entrada button:hover{
+  background:var(--accent-strong); filter:none;
+}
+.boton.sutil{
+  background:var(--surface-2); border-color:var(--border); color:var(--text);
+}
+.boton.sutil:hover{ background:var(--surface-3); border-color:var(--border-strong) }
+.boton.fantasma{ background:transparent; border-color:transparent; color:var(--text-2) }
+.boton.fantasma:hover{ background:var(--surface-2); color:var(--text) }
+.boton.peligro{ background:transparent; border-color:var(--border); color:var(--err) }
+.boton.peligro:hover{ background:var(--err-soft); border-color:var(--err) }
+.boton.mini{ height:28px; line-height:28px; padding:0 8px; font-size:12px }
+.boton:disabled, .consola-entrada button:disabled{
+  opacity:.45; cursor:not-allowed; background:var(--surface-2); color:var(--text-3);
+}
+
+/* Campos. Misma altura que los botones para que una fila de formulario tenga
+   una sola línea base. */
+.campo label{
+  font-size:12px; line-height:16px; font-weight:500; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--text-3);
+}
+.campo select, .campo input{
+  height:34px; padding:0 12px; border-radius:var(--r-md);
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+  font-family:var(--ui); font-size:13px;
+}
+.precio-inline input{
+  height:28px; padding:0 8px; border-radius:var(--r-sm);
+  background:var(--surface-2); border:1px solid var(--border);
+  font-family:var(--mono); font-size:13px;
+}
+.correo-form input, .correo-form textarea{
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+  border-radius:var(--r-md); font-family:var(--ui); font-size:13px;
+}
+
+/* Chip interactivo (sugerencias, orden, filtros). No confundir con .pastilla,
+   que es el chip de ESTADO y no se pulsa. Éste es un fantasma en píldora. */
+.chip, .estado-orden .chip{
+  height:28px; padding:0 12px; border-radius:999px;
+  background:transparent; border:1px solid var(--border); color:var(--text-2);
+  font-family:var(--ui); font-size:13px; font-weight:400; line-height:26px;
+  cursor:pointer;
+  transition:background var(--ms-micro) var(--ease),
+             border-color var(--ms-micro) var(--ease);
+}
+.chip:hover, .estado-orden .chip:hover{
+  background:var(--surface-2); border-color:var(--border-strong); color:var(--text);
+}
+.chip[aria-pressed="true"], .estado-orden .chip.activo{
+  background:var(--accent-soft); border-color:var(--accent); color:var(--text);
+}
+
+/* La consola del buscador es un campo de búsqueda, no un botón: se queda a 44
+   para que respire, con el botón de 34 centrado dentro. */
+.consola-entrada{
+  height:44px; align-items:center; padding-right:5px;
+  border:1px solid var(--border); border-radius:var(--r-md);
+  background:var(--surface-2); margin-bottom:var(--sp-3);
+  transition:border-color var(--ms-micro) var(--ease);
+}
+.consola-entrada:focus-within{ border-color:var(--border-strong) }
+.consola-entrada .prompt{ padding:0 4px 0 12px; color:var(--text-3) }
+.consola-entrada input{ font-size:14px; padding:0 12px; height:100% }
+.consola-entrada input::placeholder{ color:var(--text-3) }
+
+/* Foco, uno solo para todo: 2px de acento a 2 de distancia. */
+a:focus-visible, button:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible,
+[tabindex]:focus-visible{
+  outline:2px solid var(--accent); outline-offset:2px; border-radius:var(--r-sm);
+}
+:root[data-tema="claro"] a:focus-visible,
+:root[data-tema="claro"] button:focus-visible,
+:root[data-tema="claro"] input:focus-visible,
+:root[data-tema="claro"] textarea:focus-visible{ outline-width:2px }
+
+/* ════════════════════════════════════════════════════ 8 · DATA VIZ ════ */
+/* Tooltip: una sola forma para todos los gráficos. */
+.g-globo{
+  background:var(--surface-2); border:1px solid var(--border);
+  border-radius:8px; padding:8px 12px;
+  font-size:12px; line-height:16px; color:var(--text);
+  box-shadow:var(--sh-2);
+  font-variant-numeric:tabular-nums;
+}
+.g-guia{ stroke:var(--border-strong) }
+
+/* Paleta categórica: el acento y cuatro apagados. Solo entra aquí un color
+   cuando hay una SERIE que distinguir; para estado se usan los semánticos.
+   Medidos a 3:1, que es el mínimo de WCAG para algo que no es texto: en
+   oscuro pasan los cuatro (5,6 · 6,9 · 8,1 · 5,7), en claro sobre blanco se
+   caían el violeta (2,54) y el ámbar (2,16) y van bajados hasta 3,0. */
+:root{
+  --cat-1:var(--accent);
+  --cat-2:#6E8AFF; --cat-3:#B98CFF; --cat-4:#E0A64D; --cat-5:#E06C9F;
+}
+:root[data-tema="claro"]{
+  --cat-2:#6E8AFF; --cat-3:#AD79FF; --cat-4:#C98723; --cat-5:#E06C9F;
+}
+
+/* Ejes y cifras de gráfico, con cifras de ancho fijo. */
+.etiqueta-x, .barra .valor, .g-eje{
+  font-variant-numeric:tabular-nums; color:var(--text-3);
+}
+
+/* ══════════════════════════════════════ 9 · TABLERO DE OFERTAS ════ */
+/* Las cuatro columnas, a la misma altura y con la tarjeta densa. Antes cada
+   columna crecia con su numero de ofertas: el reparto real es 15 · 5 · 9 · 1,
+   asi que el bloque quedaba dentado y no parecia una rejilla. */
+.of-tablero{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:var(--sp-4); align-items:stretch;
+}
+@media (max-width:960px){ .of-tablero{ grid-template-columns:repeat(2,minmax(0,1fr)) } }
+@media (max-width:560px){ .of-tablero{ grid-template-columns:1fr } }
+
+.of-col{
+  display:flex; flex-direction:column;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-md); box-shadow:none;
+}
+.of-col-cab{
+  padding:12px; gap:var(--sp-2);
+  border-bottom:1px solid var(--border);
+  border-top:2px solid var(--border-strong);
+  border-radius:var(--r-md) var(--r-md) 0 0;
+}
+.of-col-t{
+  font-size:12px; line-height:16px; font-weight:500;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--text-3);
+}
+.of-col-n{ font-family:var(--mono); font-size:13px; color:var(--text-2) }
+.of-col-cuerpo{ padding:var(--sp-2); gap:var(--sp-2); flex:1 }
+.of-col-vacia{ padding:var(--sp-4) 0; font-size:13px; color:var(--text-3) }
+
+/* Tarjeta densa: sin sombra y sin salto al pasar por encima. Lo que cambia
+   en el hover es el borde, igual que en la tarjeta KPI. */
+.of-tarjeta{
+  background:var(--surface-2); border:1px solid var(--border);
+  border-radius:var(--r-sm); padding:12px;
+  box-shadow:none;
+  transition:border-color var(--ms-normal) var(--ease);
+}
+.of-tarjeta:hover{
+  transform:none; box-shadow:none; border-color:var(--border-strong);
+}
+.of-oculta{ display:none }
+.of-pieza{ font-size:13px; line-height:18px; font-weight:500 }
+.of-cliente{ font-size:12px; line-height:16px; color:var(--text-3) }
+.of-fecha{ font-size:11px; color:var(--text-3) }
+.of-importe{ font-size:14px; font-weight:600 }
+.of-lista{ font-size:12px; color:var(--text-3) }
+.of-acciones{ margin-top:var(--sp-2); padding-top:var(--sp-2); gap:var(--sp-1) }
+.of-cerrada{ font-size:12px; color:var(--text-3) }
+
+/* El pie que despliega el resto. Fantasma, para que no compita con las
+   acciones que hay dentro de las tarjetas. */
+.of-mas{
+  margin:0 var(--sp-2) var(--sp-2);
+  height:28px; border-radius:var(--r-sm);
+  background:transparent; border:1px solid var(--border); color:var(--text-2);
+  font-family:var(--ui); font-size:12px; cursor:pointer;
+  transition:background var(--ms-micro) var(--ease);
+}
+.of-mas:hover{ background:var(--surface-2); color:var(--text) }
+
+/* ═════════════════════════════════════════════════════ 10 · DRAWER ════ */
+.of-drawer{
+  width:min(420px,100%);
+  border-left:1px solid var(--border);
+  box-shadow:var(--sh-2);
+  transition:transform var(--ms-overlay) var(--ease);
+}
+.of-velo{ background:rgba(0,0,0,.5); backdrop-filter:blur(2px) }
+.of-drawer-cuerpo{ padding:var(--sp-5) var(--sp-5) var(--sp-6) }
+.of-cerrar{
+  width:28px; height:28px; border-radius:var(--r-sm);
+  border:1px solid var(--border); background:var(--surface-2); color:var(--text-2);
+}
+.of-cerrar:hover{ background:var(--surface-3); color:var(--text) }
+
+/* ════════════════════════════════════════════════════ 11 · ESTADOS ════ */
+/* Shimmer a 1,2s. */
+.esqueleto{
+  border-radius:var(--r-sm);
+  background:linear-gradient(90deg,
+    var(--surface-2) 25%, var(--surface-3) 37%, var(--surface-2) 63%);
+  background-size:200% 100%;
+  animation:brillo 1.2s linear infinite;
+}
+
+/* Vacío: icono, frase que dice qué pasa, y la salida. Se pinta con un ::before
+   para no tocar el JS que ya escribe el texto de cada vacío. */
+/* En BLOQUE, no en flex: el JS mezcla <strong>, nodos de texto sueltos y
+   <code> en el mismo hueco, y en un contenedor flex cada trozo de texto se
+   convierte en un item y acaba en su propia linea. */
+.estado-vacio{
+  display:block;
+  padding:var(--sp-5); border:1px dashed var(--border); border-radius:var(--r-md);
+  background:transparent; color:var(--text-2);
+  font-size:13px; line-height:18px;
+}
+.estado-vacio::before{
+  content:''; display:block; width:20px; height:20px; margin-bottom:var(--sp-2);
+  opacity:.75;
+  background:currentColor;
+  -webkit-mask:var(--ico-vacio) center/contain no-repeat;
+  mask:var(--ico-vacio) center/contain no-repeat;
+}
+.estado-vacio strong{ color:var(--text); font-weight:600 }
+.estado-vacio code{
+  font-family:var(--mono); font-size:12px;
+  background:var(--surface-2); border:1px solid var(--border);
+  border-radius:var(--r-sm); padding:2px 8px;
+}
+:root{
+  --ico-vacio:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M3 7h18v12H3z'/><path d='M3 7l3-4h12l3 4'/><path d='M9 12h6'/></svg>");
+  --ico-error:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 7v6M12 16.5v.01'/></svg>");
+}
+/* El mismo hueco, en rojo, cuando lo que falló fue la petición. El JS ya
+   escribe "No se pudieron leer las ofertas: ..." — aquí solo se le da forma
+   de error y se le añade cómo salir. */
+.estado-vacio.fallo{
+  border-style:solid; border-color:var(--err); background:var(--err-soft);
+  color:var(--text);
+  --ico-vacio:var(--ico-error);
+}
+.estado-vacio.fallo::after{
+  content:'Recarga la página; si sigue igual, el servidor del panel no está levantado.';
+  display:block; margin-top:var(--sp-2);
+  font-size:12px; color:var(--text-2);
+}
+
+/* Deshabilitado, en un solo sitio. */
+[disabled], [aria-disabled="true"]{ cursor:not-allowed }
+
+/* ═══════════════════════════════════════════════════ 12 · TOOLTIPS ════ */
+/* Uno solo, con la misma caja que el tooltip de los gráficos. Se pone con
+   data-tip para no depender del `title` del navegador, que cada sistema
+   dibuja a su manera y tarda medio segundo en aparecer. */
+[data-tip]{ position:relative }
+[data-tip]::after{
+  content:attr(data-tip);
+  position:absolute; bottom:calc(100% + 6px); left:50%; translate:-50% 0;
+  z-index:50; width:max-content; max-width:240px;
+  background:var(--surface-2); border:1px solid var(--border);
+  border-radius:8px; padding:8px 12px; box-shadow:var(--sh-2);
+  font-family:var(--ui); font-size:12px; line-height:16px;
+  font-weight:400; letter-spacing:0; text-transform:none; color:var(--text);
+  opacity:0; pointer-events:none;
+  transition:opacity var(--ms-micro) var(--ease);
+}
+[data-tip]:hover::after, [data-tip]:focus-visible::after{ opacity:1 }
+
+/* ══════════════════════════════════════ 13 · BARRA SUPERIOR Y MIGAS ════ */
+/* Lo monta paleta.js justo encima del hero. Pegajosa SOLO a partir de
+   1100px, que es donde el menú se convierte en barra lateral fija y la
+   franja de arriba queda libre. Por debajo, `.barra` ya está pegada al top:
+   dos barras pegajosas a la misma altura se tapan la una a la otra. */
+.chrome-franja{
+  border-bottom:1px solid var(--border);
+  background:var(--bg);
+}
+@media (min-width:1100px){
+  .chrome-franja{
+    position:sticky; top:0; z-index:25;
+    background:color-mix(in srgb, var(--bg) 86%, transparent);
+    backdrop-filter:blur(12px);
+  }
+}
+/* Reusa .envoltorio por el ancho maximo y el centrado, pero NO su padding:
+   ese trae 120px abajo para que la pagina no acabe pegada al borde, y aqui
+   dejaria una franja de 140px de alto. */
+.chrome{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:var(--sp-4); padding:12px 24px;
+}
+
+.miga{
+  display:flex; align-items:center; gap:var(--sp-2);
+  font-size:13px; line-height:18px; color:var(--text-3);
+  min-width:0;
+}
+.miga-paso{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.miga b.miga-paso{ color:var(--text); font-weight:500 }
+.miga-sep{ color:var(--text-3); opacity:.6 }
+
+/* El disparador: un campo de búsqueda falso, que es lo que la gente busca
+   con los ojos. Al pulsarlo abre la paleta, que es el campo de verdad. */
+.chrome-buscar{
+  display:flex; align-items:center; gap:var(--sp-2);
+  height:34px; padding:0 8px 0 12px; min-width:min(320px,42vw);
+  border:1px solid var(--border); border-radius:var(--r-md);
+  background:var(--surface); color:var(--text-3);
+  font-family:var(--ui); font-size:13px; cursor:pointer;
+  transition:border-color var(--ms-micro) var(--ease);
+}
+.chrome-buscar:hover{ border-color:var(--border-strong); color:var(--text-2) }
+.chrome-txt{ flex:1; text-align:left; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis }
+.chrome-lupa, .pal-lupa{
+  width:15px; height:15px; flex:none;
+  fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round;
+}
+kbd{
+  font-family:var(--mono); font-size:11px; line-height:18px;
+  min-width:20px; height:20px; padding:0 4px; text-align:center;
+  background:var(--surface-2); border:1px solid var(--border);
+  border-radius:4px; color:var(--text-3);
+}
+@media (max-width:560px){
+  .chrome{ flex-direction:column; align-items:stretch; gap:var(--sp-2) }
+  .chrome-buscar{ min-width:0 }
+}
+
+/* ═════════════════════════════════════════ 14 · PALETA DE COMANDOS ════ */
+.pal-velo{
+  position:fixed; inset:0; z-index:80;
+  background:rgba(0,0,0,.5); backdrop-filter:blur(3px);
+}
+.pal-velo[hidden], .pal[hidden]{ display:none }
+
+.pal{
+  position:fixed; z-index:81;
+  top:14vh; left:50%; translate:-50% 0;
+  width:min(560px, calc(100vw - 32px));
+  max-height:70vh; display:flex; flex-direction:column;
+  background:var(--surface); border:1px solid var(--border-strong);
+  border-radius:var(--r-lg); box-shadow:var(--sh-2);
+  overflow:hidden;
+  animation:pal-entra var(--ms-overlay) var(--ease);
+}
+@keyframes pal-entra{
+  from{ opacity:0; transform:translateY(-6px) scale(.985) }
+  to  { opacity:1; transform:none }
+}
+
+.pal-campo{
+  display:flex; align-items:center; gap:var(--sp-3);
+  padding:0 var(--sp-4); height:52px; flex:none;
+  border-bottom:1px solid var(--border);
+  color:var(--text-3);
+}
+.pal-entrada{
+  flex:1; min-width:0; height:100%;
+  background:transparent; border:0; outline:none;
+  color:var(--text); font-family:var(--ui); font-size:16px;
+}
+.pal-entrada::placeholder{ color:var(--text-3) }
+/* El foco ya lo marca la caja entera de la paleta: un anillo dentro de un
+   diálogo que solo tiene un campo es ruido. */
+.pal-entrada:focus-visible{ outline:none }
+
+.pal-lista{ overflow-y:auto; padding:var(--sp-2); flex:1 }
+.pal-grupo{
+  margin:var(--sp-2) var(--sp-2) var(--sp-1);
+  font-size:12px; line-height:16px; font-weight:500;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--text-3);
+}
+.pal-aviso{
+  margin:0 var(--sp-2) var(--sp-2);
+  padding:var(--sp-2);
+  font-size:13px; line-height:18px; color:var(--text-3);
+}
+.pal-fila{
+  display:flex; align-items:center; gap:var(--sp-3);
+  padding:0 var(--sp-3); height:44px;
+  border-radius:var(--r-sm); cursor:pointer;
+}
+.pal-fila.sel{ background:var(--surface-2) }
+.pal-txt{ flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center }
+.pal-titulo{
+  font-size:14px; line-height:18px; color:var(--text);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.pal-pie-fila{
+  font-size:12px; line-height:16px; color:var(--text-3);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.pal-dcha{
+  flex:none; font-family:var(--mono); font-size:12px; color:var(--text-2);
+  font-variant-numeric:tabular-nums;
+}
+/* La fila elegida enseña el acento SOLO en el borde izquierdo: teñirla
+   entera de teal la haría gritar más que el texto que hay que leer. */
+.pal-fila.sel .pal-dcha{ color:var(--text) }
+.pal-fila.sel{ box-shadow:inset 2px 0 0 var(--accent) }
+
+.pal-pie{
+  display:flex; gap:var(--sp-4); flex:none;
+  padding:var(--sp-2) var(--sp-4);
+  border-top:1px solid var(--border);
+  background:var(--surface-2);
+  font-size:12px; line-height:16px; color:var(--text-3);
+}
+
+/* Botón grande del hero: la única excepción de altura, y es la llamada a la
+   acción principal de la página. */
+.boton.grande{ height:40px; line-height:40px; padding:0 16px; font-size:14px }
+
+/* ═══════════════════════════════════ 15 · RITMO VERTICAL DE LA PAGINA ════ */
+/* Los dos unicos huecos grandes que quedaban fuera de la rejilla de 8. Se
+   corrigen aqui y no en informe.css para que todo el espaciado del panel se
+   lea en un solo fichero. */
+.top{ padding:80px 0 40px }              /* era 86, fuera de rejilla */
+.pie-nota{ margin-top:56px; padding-top:24px; border-top:1px solid var(--border) }
+
+/* Dos tarjetas en pareja arrancan y terminan a la misma linea: la rejilla ya
+   las estira, esto alinea lo de DENTRO para que el contenido tampoco baile. */
+.rejilla-2 > .carta{ display:flex; flex-direction:column }
+.rejilla-2 > .carta > :last-child{ margin-bottom:0 }
+
+/* ═════════════════════════════════════════════════ 16 · MOVIMIENTO ════ */
+/* micro 120 · normal 180 · overlay 240, todos con la misma curva. Y si el
+   sistema pide menos movimiento, no hay ninguno: ni entradas, ni shimmer, ni
+   el deslizamiento del panel lateral. Nada de esto lleva informacion. */
+@media (prefers-reduced-motion:reduce){
+  .ind, .ind:hover, tbody tr, .chip, .boton,
+  .chrome-buscar, .pal, .pal-fila, .of-drawer{
+    transition:none; transform:none; animation:none;
+  }
+  .pal{ animation:none }
+  .entra{ animation:none }
+  .esqueleto{ animation:none }
+  html{ scroll-behavior:auto }
+}

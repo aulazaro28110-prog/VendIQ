@@ -19,7 +19,7 @@
 const HUECOS = [
   ['#kpis',        4, 'ind',
    'No llegaron las cifras. ¿Sigue vivo 06_panel.py?'],
-  ['#hero-cifras', 3, 'stat',
+  ['#hero-cifras', 4, 'stat',
    'No llegaron las cifras de cabecera.'],
   ['#g-dias',      1, 'alto',
    'Sin días medidos. Ejecuta 10_simular.py --dias 7.'],
