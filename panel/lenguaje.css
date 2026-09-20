@@ -336,13 +336,24 @@ td.num{ font-size:13px; }
 .ficha-disp.hay{ color:var(--ok) !important; background:var(--ok-soft) !important; }
 
 /* ════════════════════════════════════════════════════════ 5 · FONDO ════ */
-/* Fuera la decoración. Había dos capas heredadas de antes del reskin: un halo
-   radial teal/violeta/ámbar a z-index −3 y un canvas con una malla animada a
-   −2. Ninguna de las dos codifica nada, y el criterio del encargo es que si
-   algo pide más color o más animación va por mal camino. Se APAGAN, no se
-   borran: fondo.js sigue en su sitio y quitar estas dos reglas lo devuelve. */
+/* Fuera el halo radial teal/violeta/ámbar que había a z-index −3: eran tres
+   manchas de color que no codificaban nada y se comían la contención. */
 body::before{ display:none; }
-#fondo{ display:none; }
+
+/* La malla animada SÍ se queda. Es la única decoración que se gana el sitio:
+   dice lo que hace el buscador por debajo —piezas que se enlazan entre ellas—
+   y viene de antes del reskin con su sitio ya resuelto en informe.css (fija,
+   a z-index −2, sin eventos y con una máscara que la desvanece hacia abajo
+   para no estorbar al leer).
+
+   Lo medido, que es lo que decide la opacidad: un nodo al 50 % de alfa sobre
+   el fondo oscuro deja el texto en 4,84:1, que ya pasa AA. A opacidad 0,5 del
+   lienzo se queda en 9,42:1, y en claro —donde sistema.css ya la baja a
+   0,25— en 15,48:1. Se ve, y no le quita ni un punto de legibilidad a nada.
+
+   El movimiento lo gobierna el propio fondo.js: con prefers-reduced-motion
+   pinta un fotograma y para, y cuando la pestaña no se ve cancela el bucle. */
+#fondo{ opacity:.5; }
 
 /* La barra superior traía su color a pelo (rgba(6,8,12,.82)), de la paleta
    vieja. Ahora es la superficie del tema, translúcida. */

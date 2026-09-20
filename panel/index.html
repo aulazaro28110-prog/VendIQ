@@ -792,7 +792,7 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
       <p>
         Lo que sí enseñó el salto a 5.000 fue algo que no esperábamos: <strong>el
         propio banco de pruebas se quedó obsoleto</strong>. Medía el guardarraíl
-        buscando combinaciones pieza+marca que no existieran, y con 5.000 fichas ya
+        buscando combinaciones pieza+marca que no existieran, y con 5.000 piezas ya
         no queda ni una libre — 37 tipos por 15 marcas son 555 casillas y están todas
         llenas. El test reventó con una división por cero. Al crecer el catálogo, la
         ausencia cambia de sitio: al cliente ya no le falta «un turbo de Kia», le
@@ -886,14 +886,10 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
   </footer>
 </main>
 
-<!-- La malla animada del fondo, DESACTIVADA en el reskin: no codificaba
-     nada y el criterio del lenguaje visual es que nada decore. El fichero se
-     queda entero y volver a tenerla es quitar los comentarios de esta linea y
-     de la regla #fondo{display:none} de lenguaje.css. Se apaga aqui y no solo
-     con CSS porque con display:none el canvas sigue invisible pero su bucle
-     de requestAnimationFrame sigue gastando CPU en cada fotograma.
+<!-- La malla animada del fondo. Lee su color de --accent, asi que sigue al
+     tema; se para sola con prefers-reduced-motion y cuando la pestana no se
+     ve. Va la primera porque no depende de nada. -->
 <script src="fondo.js"></script>
--->
 <script src="panel.js"></script>
 <script src="chat.js"></script>
 <script src="actividad.js"></script>

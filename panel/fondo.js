@@ -13,7 +13,21 @@
   const ctx = lienzo.getContext('2d');
   const quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const CIAN = '26,161,151';   // #1aa197, el cian ya validado contra #06080c
+  /* El color NO se escribe aqui. Se lee de --accent, que es el token del
+     sistema, para que la malla siga al tema sin tener el teal apuntado en dos
+     sitios: antes era '26,161,151' a pelo, el acento de antes del reskin, y
+     al cambiar la paleta se quedo pintando un color que ya no existia. */
+  function leerAcento() {
+    const v = getComputedStyle(document.documentElement)
+      .getPropertyValue('--accent').trim();
+    const m = v.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+    if (!m) return '45,212,191';                 // el teal oscuro, de reserva
+    let h = m[1];
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)).join(',');
+  }
+
+  let acento = leerAcento();
   let ancho, alto, nodos = [], raf = null;
 
   function dimensionar() {
@@ -45,7 +59,7 @@
         const d2 = dx * dx + dy * dy;
         if (d2 > 20000) continue;                    // 141 px
         const alfa = (1 - Math.sqrt(d2) / 141) * 0.16;
-        ctx.strokeStyle = `rgba(${CIAN},${alfa})`;
+        ctx.strokeStyle = `rgba(${acento},${alfa})`;
         ctx.lineWidth = 0.6;
         ctx.beginPath();
         ctx.moveTo(nodos[i].x, nodos[i].y);
@@ -54,7 +68,7 @@
       }
     }
     for (const n of nodos) {
-      ctx.fillStyle = `rgba(${CIAN},0.5)`;
+      ctx.fillStyle = `rgba(${acento},0.5)`;
       ctx.beginPath();
       ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
       ctx.fill();
@@ -90,6 +104,19 @@
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) { if (raf) cancelAnimationFrame(raf); raf = null; }
     else if (!quieto && !raf) avanzar();
+  });
+
+  /* Al cambiar de tema hay que volver a leer el acento: en claro es otro teal,
+     mas oscuro, porque el de modo oscuro sobre blanco no se ve. Con
+     movimiento reducido no hay bucle que lo repinte solo, asi que se fuerza
+     un pintado. */
+  new MutationObserver(() => {
+    const nuevo = leerAcento();
+    if (nuevo === acento) return;
+    acento = nuevo;
+    if (quieto) pintar();
+  }).observe(document.documentElement, {
+    attributes: true, attributeFilter: ['data-tema'],
   });
 
   arrancar();
