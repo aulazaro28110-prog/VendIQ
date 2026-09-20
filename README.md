@@ -339,7 +339,7 @@ De un vistazo, y cada cifra desplegable más abajo:
 
 | Qué se mide | Resultado |
 |---|---|
-| Recuperación sobre 5.000 fichas | **91 %** · top 3: **98,75 %** |
+| Recuperación sobre 5.010 fichas | **90 %** · top 3: **98,75 %** |
 | Guardarraíl — piezas que no existen | **40 de 40** no devuelven ninguna ficha |
 | Conversaciones enteras | **218 de 218**, 6 invariantes sin romper |
 | Conversaciones largas (con el LLM encendido) | **50 de 50** · 1.041 turnos |
@@ -350,7 +350,9 @@ De un vistazo, y cada cifra desplegable más abajo:
 <details>
 <summary><strong>Recuperación — <code>tests/test_busqueda.py</code></strong></summary>
 
-80 preguntas y 40 piezas que **no** existen, contra 5.000 fichas.
+80 preguntas y 40 piezas que **no** existen, contra las 5.010 fichas del
+índice (5.000 piezas + 10 políticas): diez de las preguntas son justo de
+política, así que el banco busca contra todo, no solo contra el almacén.
 
 | Tipo de pregunta | Solo vectorial | Híbrida · 1.000 | Híbrida · 5.000 |
 |---|---|---|---|
@@ -358,12 +360,12 @@ De un vistazo, y cada cifra desplegable más abajo:
 | Datos incompletos ("busco cremallera de Audi A3") | 7 % | 67 % | 100 % |
 | Mensaje sucio de WhatsApp (sin tildes ni signos) | 13 % | 100 % | 80 % |
 | Por referencia OEM | 0 % | 100 % | 100 % |
-| Políticas (garantía, plazos, pago) | 70 % | 60 % | 70 % |
-| **Total** | **20 %** | **89 %** | **91 %** |
+| Políticas (garantía, plazos, pago) | 70 % | 60 % | 60 % |
+| **Total** | **20 %** | **89 %** | **90 %** |
 
 El banco deja sus resultados en `salida/calidad.json` y el panel los lee de ahí: antes
 estaban escritos a mano en `05_panel_datos.py` y se quedaron en el 89 % del catálogo de 1.000
-piezas mientras el sistema ya iba por el 91 %. Si el fichero no está, el panel dice que hay que
+piezas mientras el sistema ya iba por el 90 %. Si el fichero no está, el panel dice que hay que
 ejecutar el banco en vez de enseñar una cifra vieja con pinta de fresca.
 
 Acierto en el top 3: **98,75 %**. Guardarraíl: **40 de 40** piezas inexistentes no devuelven

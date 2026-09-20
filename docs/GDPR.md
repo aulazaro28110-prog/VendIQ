@@ -24,7 +24,7 @@ qué sale de la máquina.
 | Teléfono | No | El simulador no conecta con WhatsApp: no hay números. |
 | Correo | **Sí, sintéticos** | `datos/canales/correos.jsonl` versiona 50 correos con 16 direcciones inventadas por `scripts/generar_canales.py`. No es de nadie, pero la casilla no es "no". |
 | Datos de pago | No | El bot **nunca** los pide ni los toca. |
-| Catálogo de piezas | No | 5.000 fichas **sintéticas**, sin ninguna persona. |
+| Catálogo de piezas | No | 5.000 piezas **sintéticas**, sin ninguna persona. |
 
 **Comprobar:**
 ```
