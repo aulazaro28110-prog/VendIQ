@@ -38,6 +38,10 @@ _to_delete/
 # Reservas de conversaciones: datos de trabajo, no codigo.
 salida/reservas.json
 
+# Conversaciones abiertas del panel. Llevan matriculas en claro: nunca al repo.
+salida/sesiones.json
+salida/sesiones.json.tmp
+
 # Copias de seguridad del redactor: el original ya esta en git.
 *.bak*
 
@@ -63,3 +67,17 @@ scripts/diag_canarias.py
 
 # Salidas de depuracion de tests (temporales)
 err_*.txt
+
+# Prompt de trabajo para reconstruir el panel en otro sitio. Es una herramienta
+# mia, no documentacion de VendIQ: describe el panel como encargo, no como lo
+# que es. Mismo criterio que docs/PROMPT_VSCODE_conversacion.md.
+docs/PROMPT_panel_duplicar.md
+
+# Salida del banco de guiones: se regenera con
+#   python tests/test_guiones.py --json salida/guiones_banco.json
+salida/guiones_banco.json
+
+# Prompts de trabajo de «conversaciones tipo» (el encargo y el cierre de semana).
+# Describen tareas, no el sistema. Mismo criterio que los otros PROMPT_*.
+docs/PROMPT_VSCODE_conversaciones_tipo_y_porque.md
+docs/semana17_cierre_prompt.md

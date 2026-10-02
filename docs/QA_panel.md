@@ -192,3 +192,48 @@ resueltas · escaladas · ms_mediana`, y `/api/estado` da totales que no se
 pueden recalcular por rango sin tocar el backend. No hay campo de canal en
 ninguno de los dos. Un filtro que solo moviera dos de doce widgets, o que
 fingiera filtrar, sería peor que no tenerlo.
+
+---
+
+## J · Conversaciones tipo y el nuevo «Por qué» (addendum, 02-10-2026)
+
+Las Fases 4-5 de `conversaciones-tipo` (rama) añaden al chat del panel: el
+desplegable de **8 tipos / 50 guiones**, el **reproductor** (Reproducir, Paso a
+paso, Parar, Velocidad), el **✓/✗ por turno** y el **«Por qué» nuevo** sacado de
+la traza del servidor (8 pasos, resumen, barra con umbral, auditorías, diff del
+modelo, memoria antes→después, clic en cualquier burbuja).
+
+### Cómo se ha probado (sin navegador)
+
+Igual que el QA original: lo que necesita pulsar y mirar va **N-P**; lo demás se
+ha comprobado por API/en proceso, sin tocar los datos de negocio (sesiones
+`guion-`/`diag-`, `persistir=False`).
+
+| Función | Resultado | Nota |
+|---|---|---|
+| Sintaxis del front | OK | `node --check panel/chat.js` sin errores |
+| `06_panel.py` compila | OK | `py_compile` de panel + `12_guiones` + `13_traza` |
+| `/api/guiones` trae los campos nuevos | OK | `id, tipo, tipos_mezcla, esperado, decision_pendiente, …` · 50 guiones |
+| `/api/chat` con `guion:{id,turno}` → `evaluacion` | OK | `{ok, esperado, obtenido, fallos, decision_pendiente}` |
+| `/api/chat` aditivo: no quita nada | OK | devuelve `bot, busqueda, memoria, traza` **y** `evaluacion` juntos |
+| ✓/✗ del servidor == banco | OK | `evaluar_guion_turno` = `evaluar_turno` en G01, G13, G07, G28 |
+| Una sola definición de la evaluación | OK | el servidor reusa `12_guiones.evaluar_turno`; no hay evaluación en JS |
+| Traza coherente (C7) | OK | banco de guiones: **541/541** turnos coinciden con la traza |
+| Guiones sin rastro en datos (C6) | OK | sesión `guion-…` excluida; recuento 40/42/16 **sin cambios** |
+| Compatibilidad «por qué» viejo | OK | si la respuesta no trae `traza`, cae al render anterior (código revisado) |
+| Solo tokens existentes (sin colores nuevos) | OK | `--ok/--ambar/--rojo/--cian/--tinta-*`; revisado en `chat.css` |
+| Render en navegador (consola, claro/oscuro, 390 px) | **N-P** | hace falta navegador — ver los 5 clics en `GUIONES_informe.md` |
+| Reproductor: Parar/Esc, teclado, foco | **N-P** | código revisado; falta pulsarlo |
+| Capturas (Playwright) | **N-P** | el panel viejo ocupa el puerto 8420; no verificable desde aquí |
+
+### Aviso para probarlo
+
+Hay un **panel antiguo escuchando en 8420** (devuelve 5 guiones sin `id`).
+Ciérralo antes y arranca `py 06_panel.py`, o no se verán los cambios (el propio
+servidor avisa si el puerto está ocupado).
+
+### Resultado
+
+Todo lo verificable sin navegador está **OK**. Lo que queda es **N-P por la misma
+razón de siempre**: pulsar y mirar necesita un navegador. Ningún N-P esconde un
+fallo conocido.

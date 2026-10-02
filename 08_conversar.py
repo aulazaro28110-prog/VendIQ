@@ -176,9 +176,26 @@ def elegir_accion(busqueda, respuesta, opciones, aclaraciones=0):
                              f"con lo que ha dicho: se pregunta cuál en vez de "
                              f"adivinar")
 
+    # Nombrar la FUENTE concreta, no una frase de relleno (§8.2 del prompt: queda
+    # prohibido «contesta con las fichas del catálogo»; hay que decir qué ficha o
+    # qué política y por qué esa). El dato sale de lo que ya devolvió la búsqueda.
+    res = busqueda.get("resultados") or []
     if "política de la empresa" in reglas:
+        pol = next((r for r in res if r.get("tipo") == "politica"), None)
+        if pol:
+            titulo = (pol.get("texto") or "").split(".")[0].split("\n")[0][:40].strip()
+            return "RESPONDER", (f"cita la política «{titulo}» porque encaja con lo "
+                                 f"que preguntaste ({pol.get('puntuacion', 0):.2f})")
         return "RESPONDER", "contesta citando la política de la empresa"
-    return "RESPONDER", "contesta con las fichas del catálogo"
+    ficha = next((r for r in res if r.get("tipo") == "inventario"), None)
+    if ficha:
+        meta = ficha.get("meta") or {}
+        pieza = meta.get("pieza") or "la pieza"
+        coche = " ".join(str(x) for x in (meta.get("marca"), meta.get("modelo")) if x)
+        coche = f" de un {coche}" if coche else ""
+        return "RESPONDER", (f"la ficha de {pieza}{coche} es la que supera el umbral "
+                             f"de confianza ({ficha.get('puntuacion', 0):.2f})")
+    return "RESPONDER", "contesta con lo que ha encontrado la búsqueda"
 
 
 # ---------------------------------------------------------------------------

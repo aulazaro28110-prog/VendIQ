@@ -243,8 +243,26 @@
         <input id="nombre-cliente" value="Juan Carlos" autocomplete="off">
       </div>
       <div class="mando crece">
-        <label>Conversaciones tipo</label>
-        <div class="sugerencias" id="guiones"></div>
+        <label id="lbl-guiones">Conversaciones tipo</label>
+        <div class="guiones-mando" role="group" aria-labelledby="lbl-guiones">
+          <div class="guiones-selects">
+            <select id="sel-tipo" aria-label="Tipo de conversación"></select>
+            <select id="sel-guion" aria-label="Guion a reproducir"></select>
+          </div>
+          <div class="guiones-repro">
+            <button type="button" class="repro-btn" id="btn-reproducir">▶ Reproducir</button>
+            <button type="button" class="repro-btn" id="btn-paso">⏭ Paso a paso</button>
+            <button type="button" class="repro-btn" id="btn-parar" disabled>⏸ Parar</button>
+            <span class="repro-vel">
+              <span class="repro-vel-et">Velocidad</span>
+              <span class="segmentos chico" id="vel-guion" role="group" aria-label="Velocidad">
+                <button type="button" data-vel="normal" aria-pressed="true">Normal</button>
+                <button type="button" data-vel="rapida" aria-pressed="false">Rápida</button>
+              </span>
+            </span>
+          </div>
+          <p class="guion-info" id="guion-info" aria-live="polite"></p>
+        </div>
       </div>
     </div>
 

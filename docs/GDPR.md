@@ -76,8 +76,8 @@ atenderlas consiste en que alguien recuerde qué siete ficheros tocar.
 Lo que hace el script:
 
 - Busca en los sitios donde **la auditoría demostró** que puede quedar: el
-  registro de dudas, el detalle del banco, los datos del panel y las FAQ
-  aprendidas.
+  registro de dudas, el detalle del banco, los datos del panel, las reservas,
+  las conversaciones guardadas (`salida/sesiones.json`) y las FAQ aprendidas.
 - Reconoce las tres formas de escribirla: `4521 KBD`, `4521KBD`, `4521-KBD`.
 - **Sustituye el dato**, no tira el registro entero. La pregunta que hizo el
   cliente es información de negocio que no identifica a nadie una vez fuera la
@@ -85,7 +85,9 @@ Lo que hace el script:
 - Valida que el JSON sigue siendo válido antes de escribirlo.
 - **Dice lo que él no puede hacer**, que es la parte que se suele callar:
   reconstruir el índice (si no, la matrícula sigue viva dentro de un vector) y
-  reiniciar el panel (para vaciar las conversaciones en memoria).
+  **parar el panel antes de borrar**: el panel reescribe `salida/sesiones.json`
+  desde su memoria en cada turno, así que un borrado con el panel en marcha dura
+  hasta el siguiente mensaje.
 
 ## 4. Acceso — el cliente puede pedir su dato
 
@@ -145,8 +147,11 @@ despliegue real no quisiera sacar nada del país, el sistema sigue en pie.
 
 Decirlo es parte del trabajo:
 
-- **Casi no hay almacenamiento duradero, pero no es "nada".** Las conversaciones
-  sí viven en memoria y mueren al reiniciar. Las **reservas** no:
+- **Hay almacenamiento duradero, y está listado.** Las conversaciones abiertas
+  se guardan en `salida/sesiones.json` para que sobrevivan a reiniciar el panel
+  (si no, un «¿ya lo tienes?» a los tres días llegaba a un bot sin memoria).
+  Llevan la matrícula en claro. Solo las guarda el panel: los bancos de pruebas y
+  el simulador no escriben ahí. Las **reservas** tampoco mueren al reiniciar:
   `salida/reservas.json` guarda la matrícula en un campo propio y sobrevive al
   reinicio. Está en `.gitignore`, así que no se publica, y `scripts/olvidar.py`
   ya lo recorre — pero durante un tiempo no lo hizo, y el borrado decía haber
