@@ -376,6 +376,17 @@ def casos_escritos():
         ("condiciones", "conocido", ["puedo devolverla si me equivoco de pieza"],
          "política"),
 
+        # --- D2 · tras la matricula, no se olvida la pieza pedida ----------
+        # El bug de la captura: «Anotada, 4521 KBD. Dime que pieza buscas» a quien
+        # acababa de pedir un turbo. Con la matricula el coche ya esta
+        # identificado, asi que decir «no la tengo» es legitimo (sin ofrecer una
+        # parecida). El invariante no_olvida_pieza caza el texto viejo turno a
+        # turno; aqui la etiqueta del ultimo turno debe ser «no la tengo».
+        ("no la tenemos", "nuevo", ["hola, busco un turbo para un ferrari f430",
+                                    "mi matricula es 4521 KBD"], "no la tengo"),
+        ("no la tenemos", "nuevo", ["busco un alternador para un bmw serie 3",
+                                    "1234 BCD"], "no la tengo"),
+
         # --- 12 · el hilo de la conversacion -------------------------------
         # Las cuatro formas de aparcar suman 318 mensajes a la semana en el
         # registro real, y las dos de preguntar por lo pendiente otros 99. Antes
@@ -406,6 +417,27 @@ def casos_escritos():
                               "la matricula es 4521 KBD",
                               "y tambien el radiador",
                               "cuanto vale el que te dije antes"], "precio"),
+        # Con la pieza ofrecida y SIN promesa, "ya lo tienes?" habla de esa
+        # pieza. Antes pedia la pieza y la matricula que acababa de mandar.
+        ("hilo", "nuevo", ["necesito un alternador para un audi a4",
+                           "la matricula es 4521 KBD",
+                           "ya lo tienes?"], "sigue"),
+        # "Avisame cuando lo sepas" es un encargo: se anota, y el "ya lo tienes?"
+        # siguiente lo encuentra.
+        ("hilo", "nuevo", ["necesito un alternador para un audi a4",
+                           "la matricula es 4521 KBD",
+                           "vale, avisame cuando lo sepas"], "sigue"),
+        ("hilo", "nuevo", ["necesito un alternador para un audi a4",
+                           "la matricula es 4521 KBD",
+                           "vale, avisame cuando lo sepas",
+                           "ya lo tienes?"], "sigue"),
+        # Una pieza que el catalogo no conoce. Antes se le preguntaba "¿que
+        # pieza?" cinco veces a quien ya la habia dicho; ahora se dice, se escala
+        # y los mensajes siguientes no reabren la identificacion.
+        ("hilo", "nuevo", ["necesito un cubrecarter para un golf 4"], "escala"),
+        ("hilo", "nuevo", ["necesito un cubrecarter para un golf 4",
+                           "Sii , es 3435dpg",
+                           "Ya te lo he dicho , un cubrecarter"], "escala"),
         # Cerrar no acaba el hilo: lo pasa a posventa, y ahi "ya lo tienes?"
         # habla de un pedido, no de un presupuesto.
         ("hilo", "nuevo", ["necesito un alternador para un audi a4",
@@ -526,7 +558,8 @@ def clasificar(respuesta, busqueda):
     # pero medir eso como «otra cosa» era medir mal: la conversación está con una
     # persona, que es exactamente lo que este caso comprueba.
     if respuesta["escala"] and ("escalado a persona" in reglas
-                                or "sigue escalado" in reglas):
+                                or "sigue escalado" in reglas
+                                or "pieza fuera del catálogo" in reglas):
         return "escala"
     if "cierre de venta" in reglas:
         return "cierra"
@@ -535,12 +568,17 @@ def clasificar(respuesta, busqueda):
     # eso: lo que se mide aqui es si el bot ha entendido en que punto esta.
     if "aparca la conversacion" in reglas or "aparca la conversación" in reglas:
         return "aparca"
-    if "recuerda lo que prometi" in reglas or "que no consta" in reglas:
+    if ("recuerda lo que prometi" in reglas or "que no consta" in reglas
+            or "recuerda la pieza" in reglas or "anota el aviso" in reglas):
         return "sigue"
     if "política de la empresa" in reglas:
         return "política"
     if "precio retenido" in reglas:
         return "confirma"
+    # Pedir el modelo del coche (P1) es pedir un dato, no decir «no la tengo». Es
+    # una regla nueva, solo de ese caso, así que no cambia nada de lo de antes.
+    if "pide el modelo del coche" in reglas:
+        return "pide datos"
     if busqueda["decision"] == "NO DISPONIBLE" or "no se ofrece una parecida" in reglas:
         return "no la tengo"
     # «mensaje de cortesía» es pedir datos. Un "👍" o un "¿hay alguien?" se

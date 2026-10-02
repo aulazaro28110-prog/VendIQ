@@ -262,6 +262,18 @@ La pestaña de precios cierra un círculo que merece la pena entender: tu trabaj
 se queda en resolver un caso, **entra en el sistema**. En cuanto guardas un precio, la
 siguiente consulta ya lo usa. El humano no es el plan B del bot: es quien lo alimenta.
 
+**Conversaciones tipo.** Dentro de «Habla como un cliente» hay un banco de **50
+conversaciones sintéticas** (8 tipos: compra, regateo, no la tenemos, datos a medias,
+posventa, taller, corrige, pago), de 10 a 15 mensajes cada una. Se eligen en un
+desplegable y se reproducen contra el bot real —no hay respuestas guionizadas, el bot
+contesta de verdad— con un ✓/✗ **por turno** frente a lo que se esperaba, evaluado en el
+servidor con la misma definición que el banco `tests/test_guiones.py`. Al pulsar una
+respuesta se ve el **«por qué» paso a paso** (la traza del servidor: qué leyó, qué
+completó con la memoria, qué encontró, el precio, las reglas, la decisión, quién redactó y
+qué recuerda). Última ejecución: **403 de 541 turnos (74 %)**, 0 fugas de precio y la traza
+coherente en los 541 turnos; el 74 % es el mapa de lo que falta por afinar en el bot, no un
+aprobado — los fallos quedan listados para arreglarlos uno a uno.
+
 <details>
 <summary><strong>De dónde salen los datos que pinta, y cómo está maquetado</strong></summary>
 
@@ -320,6 +332,7 @@ python tests/test_mesa.py                # el enrutado de lo que el bot no supo
 python tests/test_ofertas.py
 python tests/test_precios.py
 python tests/test_llm.py                 # la llamada a Groq, sin clave y sin red
+python tests/test_guiones.py             # 50 conversaciones tipo, turno a turno (+ C7)
 python 10_simular.py --dias 7            # 7 días de tráfico por el sistema real
 ```
 
