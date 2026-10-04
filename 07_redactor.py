@@ -166,7 +166,14 @@ PALABRAS_INTENCION = {
                 "me compro uno nuevo", "por ese dinero", "algo tendras que hacerme",
                 "algo me haras", "redondea", "cerramos en", "te lo pago en mano",
                 "esta por las nubes", "se te ha ido", "no me cuadra el precio",
-                "ajustame", "afinar el precio", "ultima oferta", "mi ultima"),
+                "ajustame", "afinar el precio", "ultima oferta", "mi ultima",
+                # Regateo INDIRECTO (BOT 5): no nombra el descuento, lo busca por
+                # los lados —que le regalen el transporte, sin factura, «X euros
+                # menos», o apelando a la confianza—. Todo eso lo decide Álvaro, no
+                # el bot: se escala, no se contesta con la política ni se cierra.
+                "me lo regalas", "me la regalas", "regalas el", "sin factura",
+                "euros menos", "menos y me lo", "menos y me la",
+                "clientes de siempre", "somos clientes"),
     "cierre": ("me lo quedo", "me la quedo", "lo quiero", "la quiero", "me lo llevo",
                "me la llevo", "apartamelo", "apartamela", "resérvamelo", "reservamelo",
                "reservamela", "adelante", "tramitalo", "mandamelo", "mandamela",
