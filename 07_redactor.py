@@ -836,6 +836,12 @@ def dice_que_si(conv, mensaje):
         return False
     if not AFIRMACION.match(mensaje or ""):
         return False
+    # «vale, me corre prisa, sale hoy?» / «y si la recojo?»: una afirmación que
+    # ADEMÁS pregunta por una condición (plazo, recogida) no es «me la quedo», es
+    # «vale, pero antes dime…». Eso es política, no cierre. Un «sí, me lo mandas?»
+    # SÍ cierra —pedir el envío ya es aceptar— y lo reconoce PIDE_ENVIO.
+    if "?" in (mensaje or "") and not PIDE_ENVIO.search(mensaje or ""):
+        return False
     t = _sin_tildes(mensaje)
     return not any(h in t for h in HIPOTETICO)
 
@@ -851,8 +857,15 @@ DIRECCION = re.compile(
 # §18 y §4 del prompt — EL CLIENTE CORRIGE UN DATO. Pasa constantemente y hasta
 # ahora se ignoraba: «no, es gasolina» seguía buscando el diésel. Lo que hay que
 # detectar no es el dato nuevo, es la SEÑAL de que lo anterior estaba mal.
+# El «no» del principio marca corrección SALVO cuando es «no (lo) sé», «no tengo
+# ni idea» o —lo que mataba G06— el cliente diciendo que NO TIENE un dato («no
+# tengo la matrícula») o preguntando si NO LA TENEMOS («no la tenéis?»). Esos no
+# corrigen el coche: piden seguir sin la matrícula. Se excluyen por el patrón
+# exacto (tengo la/el/ning…, la/lo/las tenéis/tienes/tengo), nunca por un «tengo»
+# amplio, que arrastraba falsos negativos a test_frio.
 CORRIGE = re.compile(
-    r"^\W*(no|nop|que no|qué no)\b(?!\s*(s[eé]|lo s[eé]|tengo ni idea))"
+    r"^\W*(no|nop|que no|qué no)\b(?!\s*(s[eé]|lo s[eé]|tengo ni idea"
+    r"|tengo (la|el|ning)|l[oa]s?\s+(ten[ée]is|tienes?|tengo)))"
     r"|\bme (he )?equivoc|\bme equivoc|\bfallo m[ií]o|\bperd[oó]n|\bperdona\b"
     r"|\bquer[ií]a decir\b|\ben realidad\b|\bmejor dicho\b"
     r"|\bes.{0,18}\bno\s+(el|la|un|una)\b", re.I)
@@ -1396,12 +1409,22 @@ def _OTRA_MANERA_DE_DECIRLO(conv):
                 "Lo tuyo está en marcha, tú tranquilo.",
                 "Sin cambios por ahora, te aviso yo en cuanto los haya."]
     if conv.ultima_pieza:
+        # Diez, no seis: una conversación de 20 mensajes que se queda en «sigo
+        # esperando» pasa por aquí más de media docena de veces —el que quiere que
+        # le llamen lo hace siete—, y con seis la red que existe para no repetir
+        # acababa repitiendo «Ahí sigue, cuando quieras». Mismo motivo que el 3→6
+        # de más arriba. Todas dicen lo mismo —está apuntado, sin prisa— de otra
+        # manera, y ninguna coincide con las de las otras ramas.
         return ["Ahí sigue, cuando quieras.",
                 "Sin prisa, me dices y seguimos.",
                 "Aquí estoy para lo que necesites.",
                 "Cuando lo tengas claro, me escribes.",
                 "No corre prisa, sigue apuntado.",
-                "Lo dejo ahí y me dices tú."]
+                "Lo dejo ahí y me dices tú.",
+                "Queda apuntado; cuando puedas seguimos.",
+                "Tranquilo, que no se me olvida.",
+                "Sigue anotado, sin agobios.",
+                "Cuando lo veas me escribes y lo retomamos."]
     return ["Dime y lo miro.",
             "Cuéntame y te digo.",
             "Tú dirás.",
