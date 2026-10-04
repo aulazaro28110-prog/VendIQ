@@ -1,18 +1,24 @@
 /* VendIQ · habla por correo con un cliente
    ------------------------------------------------------------------------
-   Una bandeja de entrada con cuatro correos. Se abre uno, se pulsa Enviar, y
+   Una bandeja de entrada con ocho correos. Se abre uno, se pulsa Enviar, y
    la respuesta la escribe `componer_email()` (11_canales.py) con LA MISMA
    búsqueda y EL MISMO guardarraíl de precio que el chat de WhatsApp. Aquí no
    hay ni una respuesta guardada: todas se redactan en el momento contra el
    catálogo real.
 
-   Los cuatro correos no son decorado. Cada uno está elegido para que falle o
-   acierte por un motivo DISTINTO, que es lo que hay que poder enseñar:
+   Los ocho correos no son decorado. Cada uno está elegido para que falle o
+   acierte por un motivo DISTINTO, que es lo que hay que poder enseñar. Los
+   cuatro primeros, las cuatro FORMAS de identificar la pieza (y el primer
+   "no"); los cuatro siguientes, otro tipo de cliente y el "no" con trampa:
 
      1. con matrícula y referencia OEM  -> el correo fácil, el que sale entero
      2. "lo he visto en vuestra web"    -> el que estaba roto hasta hoy
      3. con la dirección de la ficha    -> el atajo por número de stock
      4. una pieza que no llevamos       -> el "no" que aun así sirve de algo
+     5. un particular, con matrícula    -> el mismo fondo, otro tono (de tú)
+     6. identifica por el bastidor (VIN)-> la otra forma de clavar el coche
+     7. solo la referencia OEM          -> sin matrícula, pero identifica igual
+     8. "bomba de inyección" (no la hay)-> que NO encasquete otra bomba del catálogo
 
    Debajo de la respuesta va SIEMPRE la traza: la consulta destilada, la
    decisión y la regla que puso cada párrafo. Sin eso esto es una demo bonita;
@@ -80,6 +86,46 @@ Gracias,
 Fernando Gil`,
   },
   {
+    id: 'c5',
+    de: 'Sergio Pardo',
+    empresa: '',
+    correo: 'sergio.pardo@gmail.com',
+    hora: '08:47',
+    dia: 'Hoy',
+    color: '#ca5010',
+    que: 'un particular, con matrícula',
+    asunto: 'Faro delantero derecho Seat Ibiza 1.2 TSI',
+    cuerpo: `Hola buenas,
+
+Le di un golpe al coche y necesito un faro delantero derecho para mi Seat Ibiza 1.2 TSI del 2021. La matrícula es 6723 LXD.
+
+¿Cuánto me costaría, cuánto tardaría en llegar y qué garantía lleva?
+
+Gracias,
+Sergio Pardo`,
+  },
+  {
+    id: 'c6',
+    de: 'Marta Peña',
+    empresa: 'Auto Recambios Henares',
+    correo: 'marta.pena@autorecambios.es',
+    hora: '12:20',
+    dia: 'Hoy',
+    color: '#107c41',
+    que: 'identifica por el bastidor',
+    asunto: 'Motor de arranque Nissan Juke 1.5 dCi',
+    cuerpo: `Buenos días:
+
+Les escribo desde Auto Recambios Henares (Alcalá de Henares). Buscamos un motor de arranque para un Nissan Juke 1.5 dCi del 2018.
+Número de bastidor (VIN): SJNFAAF15U6123456.
+
+¿Nos confirman disponibilidad, precio con IVA, plazo de entrega y garantía? Trabajamos con factura.
+
+Un saludo,
+Marta Peña
+Auto Recambios Henares`,
+  },
+  {
     id: 'c4',
     de: 'Rocío Bravo',
     empresa: 'Auto Bravo',
@@ -99,6 +145,44 @@ Matrícula: 4086 MMS.
 Un saludo,
 Rocío Bravo`,
   },
+  {
+    id: 'c7',
+    de: 'Andrés Vidal',
+    empresa: 'Electromecánica Vidal',
+    correo: 'andres.vidal@electromecanica.es',
+    hora: '16:05',
+    dia: 'Ayer',
+    color: '#5c2e91',
+    que: 'solo la referencia OEM',
+    asunto: 'Referencia 9243LF75D · bomba de dirección',
+    cuerpo: `Buenas tardes:
+
+Referencia OEM 9243LF75D, correspondiente a una bomba de dirección de Peugeot 208 1.4 HDi (2005).
+
+Confírmenme por favor si disponen de ella, el importe y el plazo de entrega. Necesitamos factura a nombre de Electromecánica Vidal.
+
+Atentamente,
+Andrés Vidal`,
+  },
+  {
+    id: 'c8',
+    de: 'Patricia Nieto',
+    empresa: '',
+    correo: 'patricia.nieto@gmail.com',
+    hora: '18:30',
+    dia: 'Ayer',
+    color: '#986f0b',
+    que: 'no la llevamos (con trampa)',
+    asunto: 'Bomba de inyección Golf 2.0 TDI',
+    cuerpo: `Hola,
+
+Necesito una bomba de inyección para un Volkswagen Golf 2.0 TDI del 2017, matrícula 1180 FKS.
+
+¿La tenéis? ¿Precio y plazo?
+
+Gracias,
+Patricia Nieto`,
+  },
 ];
 
 /* Estado de la bandeja. `respuesta` se rellena cuando el bot contesta, y por
@@ -114,7 +198,7 @@ let CARPETA = 'entrada';
    contenido ahí sería inventar datos. */
 const VACIAS = {
   borradores: ['Sin borradores', 'Las respuestas se envían en cuanto las redacta el bot.'],
-  eliminados: ['No hay nada eliminado', 'Los cuatro correos de ejemplo no se borran.'],
+  eliminados: ['No hay nada eliminado', 'Los correos de ejemplo no se borran.'],
   archivo: ['El archivo está vacío', 'Esta bandeja se reinicia al recargar la página.'],
 };
 
