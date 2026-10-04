@@ -24,7 +24,7 @@ reabrimos este documento y rematamos las modificaciones del bot punto por punto.
 - [x] Fase 6 · cierre — C5 (11 bancos verdes), C6 (0 rastro), QA_panel + README + decisiones. PARADA 3 en `GUIONES_informe.md`.
 - [x] Extra del panel (03/04-10): barra lateral trasplantada del portfolio (plegable, memoria, scroll-spy), encuadre simétrico y 8 correos de ejemplo en la bandeja. Commits `7bc6813` y `ec4c5b3`.
 - [x] Árbol limpio y commiteado: borrada la basura de ficheros-fragmento; el trabajo del panel, en dos commits. (Resuelve el punto «Commit» de la sección 4.)
-- [ ] **← AQUÍ ESTAMOS:** las secciones 1-4 (arreglos del bot). Empezamos por el bug de `pieza_pedida` ([06_panel.py:689]) que BOT 1 necesita, **test-primero**.
+- [ ] **← AQUÍ ESTAMOS:** sección 1 (arreglos del bot). Probado test-primero el filtrado simple de `pieza_pedida`: **regresó el banco 403→391 y se revirtió**. El arreglo bueno es por-rama y necesita **revisión conjunta** (detalle en §1).
 
 ---
 
@@ -62,8 +62,13 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
   transporte?», «¿sin factura?» → contesta política en vez de escalar.
 - [ ] **BOT 6 · «corrige un detalle» se dispara mal** (G06·t2, G13·t2, G18·t2). Lee
   «¿no la tenéis?» o el VIN como una corrección de coche.
-- [ ] **Bug latente** `06_panel.py:689`: `pieza_pedida = mensaje` se sobrescribe con
-  cualquier mensaje que lleve un tipo de pieza dentro («no sé el motor» → «motor»).
+- [ ] **Bug latente** `06_panel.py:718`: `pieza_pedida = mensaje` guarda el mensaje
+  entero (afecta al invariante `no_olvida_pieza` y a la rama `matricula_desbloquea`).
+  **Intentado (04-10) filtrar en origen a sólo tipo+lado: REGRESÓ el banco 403→391.**
+  La rama `matricula_desbloquea` ([06_panel.py:875]) usa el crudo como contexto y, al
+  filtrar, pierde el coche embebido («…para un audi a4») con el que acertaba. Revertido.
+  El arreglo real es **por-rama** (filtrar sólo donde el coche estorba, no en la de la
+  matrícula) o endurecer el invariante aparte — es parte de BOT 1, **revisión conjunta**.
 
 > **Disciplina para cada uno:** test primero (el banco de guiones vale), y re-correr
 > TODOS los bancos después (C5). No fiarse solo de `test_conversaciones` y el banco de
