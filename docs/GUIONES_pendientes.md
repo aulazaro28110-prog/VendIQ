@@ -24,7 +24,7 @@ reabrimos este documento y rematamos las modificaciones del bot punto por punto.
 - [x] Fase 6 · cierre — C5 (11 bancos verdes), C6 (0 rastro), QA_panel + README + decisiones. PARADA 3 en `GUIONES_informe.md`.
 - [x] Extra del panel (03/04-10): barra lateral trasplantada del portfolio (plegable, memoria, scroll-spy), encuadre simétrico y 8 correos de ejemplo en la bandeja. Commits `7bc6813` y `ec4c5b3`.
 - [x] Árbol limpio y commiteado: borrada la basura de ficheros-fragmento; el trabajo del panel, en dos commits. (Resuelve el punto «Commit» de la sección 4.)
-- [ ] **← AQUÍ ESTAMOS:** sección 1 (arreglos del bot). Probado test-primero el filtrado simple de `pieza_pedida`: **regresó el banco 403→391 y se revirtió**. El arreglo bueno es por-rama y necesita **revisión conjunta** (detalle en §1).
+- [ ] **← AQUÍ ESTAMOS:** sección 1 (arreglos del bot). Dos intentos test-primero **revertidos por C5**: (1) filtrado simple de `pieza_pedida` (banco 403→391); (2) ensanche de `CORRIGE` para G06 (arregla el VIN y sube a 405, pero rompe un invariante de `test_frio`, conv 24). Los dos piden un arreglo más **quirúrgico** y **revisión conjunta** (detalle en §1).
 
 ---
 
@@ -61,7 +61,16 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
 - [ ] **BOT 5 · no escala el regateo indirecto** (G07·t6, G08·t6). «¿me regalas el
   transporte?», «¿sin factura?» → contesta política en vez de escalar.
 - [ ] **BOT 6 · «corrige un detalle» se dispara mal** (G06·t2, G13·t2, G18·t2). Lee
-  «¿no la tenéis?» o el VIN como una corrección de coche.
+  «¿no la tenéis?», «no tengo la matrícula» o el VIN como una corrección de coche.
+  **Intentado (04-10)** ampliar el lookahead de `CORRIGE` ([07_redactor.py:854]) para
+  excluir «no tengo…» y «no la/lo tenéis/tienes». Diagnóstico confirmado: el VIN SÍ se
+  detecta; lo que mataba G06 era este falso positivo. El cambio **arregla el núcleo de
+  G06** (t2 da precio por el VIN y se arrastra la cascada t3/t4/t8; banco **403→405**),
+  pero **rompe un invariante de `test_frio`** (conv 24 m18 repite «Ahí sigue, cuando
+  quieras.») y cambia 2 turnos de G06 (t5/t6: cierra en vez de dar la política de
+  envío/recogida). **Revertido por C5.** El arreglo bueno es más **quirúrgico** (excluir
+  sólo los patrones exactos, sin el «tengo» amplio) y hay que atacar aparte la
+  repetición de la conv 24 — **revisión conjunta**.
 - [ ] **Bug latente** `06_panel.py:718`: `pieza_pedida = mensaje` guarda el mensaje
   entero (afecta al invariante `no_olvida_pieza` y a la rama `matricula_desbloquea`).
   **Intentado (04-10) filtrar en origen a sólo tipo+lado: REGRESÓ el banco 403→391.**
