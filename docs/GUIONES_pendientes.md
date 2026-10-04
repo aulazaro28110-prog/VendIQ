@@ -59,8 +59,15 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
   - [x] el **VIN no identifica** como la matrícula (G06): HECHO (04-10). No era el
     VIN —se detecta bien—, era `CORRIGE` leyendo «no tengo la matrícula» como una
     corrección de coche. Arreglado en `07_redactor.py` (commit `3039551`).
-  - [ ] **varias piezas en un mensaje** (G09, G16): «módulo, airbag y faro» → el bot
-    coge una o ninguna.
+  - [x] **varias piezas en un mensaje** (G09, G16, G34, G50…): HECHO (04-10). El panel
+    parte el mensaje en piezas (partidor con guarda estricta: solo con 2+ tipos
+    distintos; validado 0 falsos positivos en 652 mensajes), busca cada una por
+    separado y el redactor contesta por todas en ≤3 líneas, con el precio de cada una
+    autorizado pieza a pieza. Se recuerdan todas —incluida la que falta— para «la
+    primera/segunda/de en medio» y «me quedo las dos». **Banco 406→414, 11 bancos
+    verdes.** Quedan sueltos **G34·t5 «las tres»** (cierre demasiado genérico para
+    patrón global) y **G16·t3 «las otras dos cuánto»** (recordar precio de las dos),
+    como soft miss sin fallo.
   - [ ] **`pieza_pedida` no se limpia** al cerrar la venta o al corregir el coche, así
     que el invariante `no_olvida_pieza` salta en falso en «vale»/«ok» tardíos.
 - [ ] **BOT 3 · escalado pegajoso** (G15, G19). Tras escalar algo (que NO es una queja),
@@ -146,5 +153,5 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
 ### Estado de lo YA hecho y verde (resumen, detalle en `GUIONES_informe.md`)
 Fase 0 (línea base + D1-D5) · Fase 1 (D2, `es_prueba`) · Fase 2 (50 guiones + motor) ·
 Fase 3 (banco + mapa) · arreglos del bot BOT 2, P1, P3 y BOT 1 parcial.
-Banco de guiones: 68 % → **75 %** (406/541, tras G06) · 0 fugas · C5 intacto (los 11
-bancos verdes; `test_frio` 0 invariantes rotos).
+Banco de guiones: 68 % → **77 %** (414/541, tras G06 y «varias piezas») · 0 fugas · C5
+intacto (los 11 bancos verdes; `test_frio` 0 trampas y 0 invariantes rotos).

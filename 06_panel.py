@@ -21,6 +21,7 @@ import json
 import mimetypes
 import os
 import socket
+import re
 import threading
 import time
 import webbrowser
@@ -547,6 +548,64 @@ class Sistema:
                                           ("pregunta", "decision", "ms", "hora", "porque")})
         return resultado
 
+    # ------------------------------------------------------- varias piezas
+    # Separadores de una lista hablada: "cremallera, turbo y amortiguador".
+    _SEPAR_PIEZAS = re.compile(r"\s*,\s*|\s+y\s+|\s+e\s+", re.I)
+
+    def _partir_piezas(self, mensaje):
+        """Si el mensaje pide VARIAS piezas, devuelve la lista de fragmentos; si
+        no, None. Es deliberadamente estricto —solo parte cuando hay DOS O MÁS
+        tipos de pieza distintos repartidos en trozos— para no trocear un mensaje
+        normal. Validado contra los 652 mensajes del banco: 0 falsos positivos.
+        """
+        trozos = [t.strip() for t in self._SEPAR_PIEZAS.split(mensaje or "")
+                  if t.strip()]
+        piezas, tipos_vistos = [], set()
+        for tr in trozos:
+            suyos = set(self.buscar_mod.normalizar(tr)) & self.buscador.tipos_conocidos
+            if suyos:
+                piezas.append(tr)
+                tipos_vistos |= suyos
+        if len(piezas) >= 2 and len(tipos_vistos) >= 2:
+            return piezas
+        return None
+
+    def _buscar_varias(self, fragmentos, conv, busqueda):
+        """Busca cada pieza por separado, con el coche del hilo pegado, y devuelve
+        la lista de lo pedido: qué hay (con su precio ya decidido) y qué falta.
+        Cada una es una consulta REAL, la misma que haría suelta.
+
+        Las fichas encontradas PASAN A SER los resultados del turno (en vez de las
+        de la búsqueda del mensaje entero, que mezcla las tres y puntúa mal): así
+        el precio de cada una lo autoriza el mismo guardarraíl que el de una
+        búsqueda normal, una por una. Y la decisión queda en RESPONDE si hay
+        alguna, para que un «no» de la que falta no tape el precio de las que sí."""
+        coche = conv.vehiculo or ""
+        pedidas, encontrados = [], []
+        for frag in fragmentos:
+            tb = self.redactor.sin_matricula(f"{frag} {coche}".strip()) or frag
+            b = self.consultar(tb, coche_identificado=bool(conv.matricula),
+                               registrar=False)
+            inv = [r for r in b["resultados"] if r.get("tipo") == "inventario"]
+            if inv:
+                pedidas.append({"nombre": (inv[0].get("meta") or {}).get("pieza", ""),
+                                "meta": inv[0].get("meta") or {},
+                                "precio_cliente": inv[0].get("precio_cliente"),
+                                "decision": b["decision"]})
+                encontrados.append(inv[0])
+            else:
+                # La que falta: su nombre es el tipo (y el lado) que el cliente dijo.
+                nombre = " ".join(t for t in self.buscar_mod.normalizar(frag)
+                                  if t in self.buscador.tipos_conocidos
+                                  or t in self.buscar_mod.LADOS)
+                pedidas.append({"nombre": nombre or frag, "meta": None,
+                                "precio_cliente": None, "decision": b["decision"]})
+        no_inv = [r for r in busqueda["resultados"] if r.get("tipo") != "inventario"]
+        busqueda["resultados"] = encontrados + no_inv
+        if encontrados:
+            busqueda["decision"] = "RESPONDE"
+        return pedidas
+
     # ----------------------------------------------------------- simulador
     def _vehiculo_en(self, texto):
         """Qué coche nombra el mensaje, según el vocabulario del propio catálogo.
@@ -894,6 +953,16 @@ class Sistema:
                                   coche_identificado=_coche_id_busqueda)
         busqueda["pregunta"] = mensaje
         busqueda["contexto"] = contexto
+        # VARIAS PIEZAS EN UN MENSAJE. "cremallera, turbo y amortiguador": se busca
+        # cada una por separado y el redactor contesta por todas a la vez. Solo
+        # cuando el mensaje lista 2+ tipos de pieza distintos (ver _partir_piezas);
+        # un mensaje normal no se parte. La búsqueda del mensaje entero sigue siendo
+        # la principal (traza, decisión); esto añade el desglose por pieza.
+        if habla_de_pieza:
+            _fragmentos = self._partir_piezas(mensaje)
+            if _fragmentos:
+                busqueda["varias_piezas"] = self._buscar_varias(
+                    _fragmentos, conv, busqueda)
         if not any(r.get("tipo") == "inventario" for r in busqueda["resultados"]):
             fuera = self._pieza_fuera_de_catalogo(mensaje, conv, vehiculo)
             if fuera:
