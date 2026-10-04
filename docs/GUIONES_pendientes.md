@@ -1,7 +1,7 @@
 # Ajustes pendientes — «Conversaciones tipo»
 
 > Lista única de todo lo que queda por decidir o arreglar, para revisarlo juntos.
-> Actualizado el 2026-10-01. Lo **hecho y verde** está en `GUIONES_informe.md`; las
+> Actualizado el 2026-10-04. Lo **hecho y verde** está en `GUIONES_informe.md`; las
 > **decisiones de negocio** en `GUIONES_decisiones.md`. Aquí solo lo PENDIENTE.
 >
 > Regla que manda sobre todo: **C5 · nada empeora** (los 10 bancos verdes). Varios
@@ -24,7 +24,16 @@ reabrimos este documento y rematamos las modificaciones del bot punto por punto.
 - [x] Fase 6 · cierre — C5 (11 bancos verdes), C6 (0 rastro), QA_panel + README + decisiones. PARADA 3 en `GUIONES_informe.md`.
 - [x] Extra del panel (03/04-10): barra lateral trasplantada del portfolio (plegable, memoria, scroll-spy), encuadre simétrico y 8 correos de ejemplo en la bandeja. Commits `7bc6813` y `ec4c5b3`.
 - [x] Árbol limpio y commiteado: borrada la basura de ficheros-fragmento; el trabajo del panel, en dos commits. (Resuelve el punto «Commit» de la sección 4.)
-- [ ] **← AQUÍ ESTAMOS:** sección 1 (arreglos del bot). Dos intentos test-primero **revertidos por C5**: (1) filtrado simple de `pieza_pedida` (banco 403→391); (2) ensanche de `CORRIGE` para G06 (arregla el VIN y sube a 405, pero rompe un invariante de `test_frio`, conv 24). Los dos piden un arreglo más **quirúrgico** y **revisión conjunta** (detalle en §1).
+- [x] **G06 cerrado (04-10):** arreglo quirúrgico en dos partes —`CORRIGE` excluye
+  «no tengo…/no la tenéis» (el VIN ya da precio) y `dice_que_si` cede ante una
+  afirmación-pregunta («vale, …sale hoy?» = política, no cierre)— más el pool
+  `ultima_pieza` 6→10 que mata la repetición de la conv 24 en `test_frio`. **Banco
+  403→406, G06 6→9, los 11 bancos verdes.** Commits `3039551` (arreglo) + flecos.
+- [x] **Fleco D4 (`aud*`) cerrado (04-10):** `test_prompt` se autolimpia sus reservas
+  `aud*` al terminar (§23 sigue comprobando la escritura real). Detalle en §2.
+- [ ] **← AQUÍ ESTAMOS:** sigue la sección 1 (BOT 1 «varias piezas» G09/G16 y el bug
+  latente de `pieza_pedida`; BOT 3/4/5; P2) y la sección 3 (expectativas). Queda
+  suelto el fleco G06·t6 (la política de recogida, soft miss sin fallo).
 
 ---
 
@@ -47,8 +56,9 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
   así que para mostrar/usar la pieza hay que arreglar antes ese bug. Es un cambio de
   diseño del redactor con riesgo C5 → test-primero + banco entero, revisión conjunta.
   Queda:
-  - [ ] el **VIN no identifica** como la matrícula (G06): tras dar el bastidor sigue
-    pidiendo la pieza.
+  - [x] el **VIN no identifica** como la matrícula (G06): HECHO (04-10). No era el
+    VIN —se detecta bien—, era `CORRIGE` leyendo «no tengo la matrícula» como una
+    corrección de coche. Arreglado en `07_redactor.py` (commit `3039551`).
   - [ ] **varias piezas en un mensaje** (G09, G16): «módulo, airbag y faro» → el bot
     coge una o ninguna.
   - [ ] **`pieza_pedida` no se limpia** al cerrar la venta o al corregir el coche, así
@@ -60,17 +70,17 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
   se come una pieza nueva o un «¿tiene garantía?».
 - [ ] **BOT 5 · no escala el regateo indirecto** (G07·t6, G08·t6). «¿me regalas el
   transporte?», «¿sin factura?» → contesta política en vez de escalar.
-- [ ] **BOT 6 · «corrige un detalle» se dispara mal** (G06·t2, G13·t2, G18·t2). Lee
-  «¿no la tenéis?», «no tengo la matrícula» o el VIN como una corrección de coche.
-  **Intentado (04-10)** ampliar el lookahead de `CORRIGE` ([07_redactor.py:854]) para
-  excluir «no tengo…» y «no la/lo tenéis/tienes». Diagnóstico confirmado: el VIN SÍ se
-  detecta; lo que mataba G06 era este falso positivo. El cambio **arregla el núcleo de
-  G06** (t2 da precio por el VIN y se arrastra la cascada t3/t4/t8; banco **403→405**),
-  pero **rompe un invariante de `test_frio`** (conv 24 m18 repite «Ahí sigue, cuando
-  quieras.») y cambia 2 turnos de G06 (t5/t6: cierra en vez de dar la política de
-  envío/recogida). **Revertido por C5.** El arreglo bueno es más **quirúrgico** (excluir
-  sólo los patrones exactos, sin el «tengo» amplio) y hay que atacar aparte la
-  repetición de la conv 24 — **revisión conjunta**.
+- [x] **BOT 6 · «corrige un detalle» se dispara mal** (G06·t2) — HECHO (04-10). Leía
+  «no tengo la matrícula» / «¿no la tenéis?» como una corrección de coche. El lookahead
+  de `CORRIGE` ([07_redactor.py:855]) ahora excluye **sólo los patrones exactos** (tengo
+  la/el/ning…, la/lo/las tenéis/tienes/tengo), sin el «tengo» amplio que el primer
+  intento usó y que arrastraba falsos negativos a `test_frio`. Al dar precio el VIN,
+  quedó al descubierto un segundo bug (t5: «vale, …sale hoy?» cerraba la venta en vez de
+  dar política): se arregló en `dice_que_si`. Y la repetición de la conv 24 se mató
+  subiendo el pool `ultima_pieza` 6→10. **Banco 403→406, G06 6→9, 11 bancos verdes**
+  (commit `3039551`). Queda **G06·t2 en G13/G18** (otras plantillas) y **G06·t6** (la
+  política de recogida) como soft miss sin fallo. El diff del banco sólo movió G06;
+  G13/G18 no cambiaron con este arreglo (si su t2 fallaba, habrá que mirarlo aparte).
 - [ ] **Bug latente** `06_panel.py:718`: `pieza_pedida = mensaje` guarda el mensaje
   entero (afecta al invariante `no_olvida_pieza` y a la rama `matricula_desbloquea`).
   **Intentado (04-10) filtrar en origen a sólo tipo+lado: REGRESÓ el banco 403→391.**
@@ -85,9 +95,13 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
 
 ## 2. Fuga de datos (D4) — un fleco
 
-- [ ] **`es_prueba` no cubre el prefijo `aud*`** (sesiones de `test_ciclo`/`test_llm`,
-  medido en la línea base). Decidir: añadirlo a `PREFIJOS_PRUEBA` o renombrar esas
-  sesiones de test. Hoy esas dos pruebas aún escriben 2 reservas.
+- [x] **La fuga `aud*` cerrada (04-10).** El origen no era `test_ciclo`/`test_llm`
+  (usan `sim-ciclo-` y `b…`, no dejan rastro), sino **`test_prompt`**: su §23 («lo que
+  dice que hace, lo hace») cierra una venta real y relee `reservas.json` para comprobar
+  que se escribió, así que NO puede usar un prefijo de prueba (silenciaría la escritura
+  que verifica). En vez de la whitelist, `test_prompt` **se autolimpia sus filas `aud*`
+  al terminar**, cuando ningún caso va a volver a leer el fichero. Cierra D4 sin tocar
+  la comprobación. Reservas `aud6`/`aud10` ya borradas.
 
 ## 3. Expectativas y evaluación
 
@@ -107,9 +121,10 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
   Hay backup en el scratchpad y está `scripts/limpiar_rastro_pruebas.py --simular`. No lo
   toco sin tu sí.
 - [x] **Commit** (04-10): árbol limpio (borrada la basura de ficheros-fragmento de 0 bytes)
-  y el trabajo del panel en dos commits (`7bc6813` barra+front, `ec4c5b3` correos). Quedan
-  sin commitear sólo tus dos docs sueltos de la raíz (`PROMPT_VSCODE_…` y `VendIQ_Manual_…`),
-  por si los quieres en el repo o en `.gitignore`.
+  y el trabajo del panel en dos commits (`7bc6813` barra+front, `ec4c5b3` correos). Los
+  tres docs sueltos de la raíz (`CIERRE_VendIQ_Prompt`, `PROMPT_VSCODE_conversaciones_
+  tipo_y_porque`, `VendIQ_Manual_Conversacion_Multiturno`) a `.gitignore` (04-10): son
+  notas de trabajo, no documentación del sistema.
 - [ ] **Frase del Ferrari** (vía `_sin_pieza`): dice «te la busco; si la localizo en
   24-48 h la tienes». Para una marca que no trabajamos quizá quieras algo más seco.
 - [ ] **`rompe_el_guion` con el LLM encendido**: la Fase 1.1 pedía revisar por qué tiró
@@ -131,5 +146,5 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
 ### Estado de lo YA hecho y verde (resumen, detalle en `GUIONES_informe.md`)
 Fase 0 (línea base + D1-D5) · Fase 1 (D2, `es_prueba`) · Fase 2 (50 guiones + motor) ·
 Fase 3 (banco + mapa) · arreglos del bot BOT 2, P1, P3 y BOT 1 parcial.
-Banco de guiones: 68 % → **74 %** (403/541) · 0 fugas · C5 intacto (`test_frio`
-reconfirmado verde tras revertir P2).
+Banco de guiones: 68 % → **75 %** (406/541, tras G06) · 0 fugas · C5 intacto (los 11
+bancos verdes; `test_frio` 0 invariantes rotos).

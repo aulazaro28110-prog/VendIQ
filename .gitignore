@@ -81,3 +81,10 @@ salida/guiones_banco.json
 # Describen tareas, no el sistema. Mismo criterio que los otros PROMPT_*.
 docs/PROMPT_VSCODE_conversaciones_tipo_y_porque.md
 docs/semana17_cierre_prompt.md
+
+# Notas y prompts de trabajo sueltos en la raiz: el encargo de «conversaciones
+# tipo», su cierre y un manual de pruebas manuales. Son herramientas mias para
+# construir VendIQ, no documentacion del sistema. Mismo criterio que los PROMPT_*.
+CIERRE_VendIQ_Prompt.md
+PROMPT_VSCODE_conversaciones_tipo_y_porque.md
+VendIQ_Manual_Conversacion_Multiturno.md
