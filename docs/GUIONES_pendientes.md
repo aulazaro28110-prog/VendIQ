@@ -20,9 +20,11 @@ reabrimos este documento y rematamos las modificaciones del bot punto por punto.
 
 - [x] Registrado el orden: Fases 4, 5 y 6 antes que los arreglos del bot.
 - [x] Fase 4 · traza del «por qué» — C7 verde (541/541), C5 intacto. En `GUIONES_informe.md`.
-- [x] Fase 5 · el panel — servidor verificado; **front pendiente de que Álvaro lo abra** (§9.4/C8). 5 clics en `GUIONES_informe.md`.
+- [x] Fase 5 · el panel — servidor verificado y **front cerrado** (reproductor, ✓/✗ por turno y «por qué» paso a paso). Commit `7bc6813`.
 - [x] Fase 6 · cierre — C5 (11 bancos verdes), C6 (0 rastro), QA_panel + README + decisiones. PARADA 3 en `GUIONES_informe.md`.
-- [ ] **← AQUÍ ESTAMOS:** volver a las secciones 1-4 (arreglos del bot y decisiones de datos/git)
+- [x] Extra del panel (03/04-10): barra lateral trasplantada del portfolio (plegable, memoria, scroll-spy), encuadre simétrico y 8 correos de ejemplo en la bandeja. Commits `7bc6813` y `ec4c5b3`.
+- [x] Árbol limpio y commiteado: borrada la basura de ficheros-fragmento; el trabajo del panel, en dos commits. (Resuelve el punto «Commit» de la sección 4.)
+- [ ] **← AQUÍ ESTAMOS:** las secciones 1-4 (arreglos del bot). Empezamos por el bug de `pieza_pedida` ([06_panel.py:689]) que BOT 1 necesita, **test-primero**.
 
 ---
 
@@ -35,7 +37,16 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
   como queja— y bloquear ventas con «queja viva» tumbaba 6 conversaciones de
   `test_frio`. **Antes de P2 hay que endurecer el clasificador de quejas** para que no
   se dispare con despidos/muletillas. El flag `queja_abierta` ya está puesto (sin usar).
-- [ ] **BOT 1 (resto) · olvidar la pieza.** Hecho lo seguro (saludo + muletilla). Queda:
+- [ ] **BOT 1 (resto) · olvidar la pieza.** Hecho lo seguro (saludo + muletilla).
+  **Causa raíz localizada (02-10):** los **17** turnos de «vuelve a preguntar qué
+  pieza» caen en el `else` final del redactor ([07_redactor.py:2897-2907]) con una
+  pieza ya sobre la mesa. No hay un arreglo de una línea: cada familia necesita una
+  respuesta distinta (seguimiento que responde por la ficha en G06; «no» que no
+  re-pregunta en G13/G14/G16/G18; retomar en el «aparca y vuelve» de G48), y está
+  **enredado con el bug de `pieza_pedida`** (guarda el mensaje entero, [06_panel.py:689]),
+  así que para mostrar/usar la pieza hay que arreglar antes ese bug. Es un cambio de
+  diseño del redactor con riesgo C5 → test-primero + banco entero, revisión conjunta.
+  Queda:
   - [ ] el **VIN no identifica** como la matrícula (G06): tras dar el bastidor sigue
     pidiendo la pieza.
   - [ ] **varias piezas en un mensaje** (G09, G16): «módulo, airbag y faro» → el bot
@@ -81,8 +92,10 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
 - [ ] **Restaurar `salida/`**: la línea base dejó +7 reservas y +1 no_resuelta de prueba.
   Hay backup en el scratchpad y está `scripts/limpiar_rastro_pruebas.py --simular`. No lo
   toco sin tu sí.
-- [ ] **Commit**: nada commiteado (por tu instrucción). Siguen tus 7 archivos sueltos
-  mezclados con lo mío en el árbol de trabajo. Decidir cómo separar cuando toque.
+- [x] **Commit** (04-10): árbol limpio (borrada la basura de ficheros-fragmento de 0 bytes)
+  y el trabajo del panel en dos commits (`7bc6813` barra+front, `ec4c5b3` correos). Quedan
+  sin commitear sólo tus dos docs sueltos de la raíz (`PROMPT_VSCODE_…` y `VendIQ_Manual_…`),
+  por si los quieres en el repo o en `.gitignore`.
 - [ ] **Frase del Ferrari** (vía `_sin_pieza`): dice «te la busco; si la localizo en
   24-48 h la tienes». Para una marca que no trabajamos quizá quieras algo más seco.
 - [ ] **`rompe_el_guion` con el LLM encendido**: la Fase 1.1 pedía revisar por qué tiró
