@@ -204,7 +204,7 @@ function pintarTraza(datos) {
     caja.append(v);
   }
   // El resumen, en grande: es lo primero que se lee (§9.3).
-  caja.append(crear('p', 'resumen-grande', traza.resumen || ''));
+  if (traza.resumen) caja.append(crear('p', 'resumen-grande', traza.resumen));
 
   const sp = selloPrecio(datos);
   if (sp) caja.append(sp);

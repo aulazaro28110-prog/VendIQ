@@ -426,10 +426,14 @@ body::before{ display:none; }
 /* Y la primera manda, igual que en la fila de KPI: es la métrica norte. */
 .stats > div:first-child .valor{ font-size:36px; line-height:42px; }
 
-/* Sidebar de 248. */
-@media (min-width:1100px){
-  nav.barra{ width:248px; }
-  body{ padding-left:248px; }
+/* Retoques del sidebar cuando está en modo lateral. El ANCHO (236) y el hueco
+   que le reserva el body (padding-left) los pone sistema.css; aquí solo ajustes
+   finos. El contenido se centra solo: `.envoltorio` es margin:0 auto, así que
+   queda centrado dentro de la zona que deja la barra, sin gutters a mano.
+   El punto de corte es 960 para que la barra salga también en portátiles con
+   escalado al 125 % (1366 px reales ≈ 1092 px de CSS); debe coincidir con el
+   de sistema.css. */
+@media (min-width:960px){
   nav.barra .barra-dentro{ padding:20px 12px; }
   nav.barra .barra-enlaces a{ border-radius:var(--r-sm); }
 }
@@ -870,6 +874,13 @@ kbd{
    las estira, esto alinea lo de DENTRO para que el contenido tampoco baile. */
 .rejilla-2 > .carta{ display:flex; flex-direction:column }
 .rejilla-2 > .carta > :last-child{ margin-bottom:0 }
+
+/* ═══════════════════════════════════════════════ 15b · NAVEGACIÓN ════ */
+/* Al pulsar un enlace del menú, la página se desliza en vez de dar un salto
+   seco. Es una sola línea y va por anclas nativas (href="#seccion"); el bloque
+   de MOVIMIENTO de abajo lo devuelve a instantáneo si el sistema pide menos
+   movimiento, por eso esta regla va ANTES que aquélla. */
+html{ scroll-behavior:smooth }
 
 /* ═════════════════════════════════════════════════ 16 · MOVIMIENTO ════ */
 /* micro 120 · normal 180 · overlay 240, todos con la misma curva. Y si el

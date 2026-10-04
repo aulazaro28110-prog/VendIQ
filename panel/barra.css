@@ -1,0 +1,147 @@
+/* VendIQ · barra lateral — trasplante fiel de la del portfolio (commit da6f96b)
+   ========================================================================
+   CAPA ADITIVA. Ni este fichero ni barra.js editan una regla existente: solo
+   añaden la `.sb` y la retirada de `nav.barra` a ≥960. Quitando el <link>, el
+   <script> y la clase `shell`, el panel vuelve a su barra de siempre.
+
+   PUENTE DE COLOR (portfolio → VendIQ), la FORMA se copia, el color es el de aquí:
+     --bg2 → --carta          --elev2 → --carta-alta
+     --line → --borde         --line2 → --borde-vivo
+     --tx → --tinta           --dim → --tinta-2        --faint → --tinta-3
+     --ac/--gold → --cian     --gold-soft → --cian-08
+     Manrope → var(--ui)      JetBrains Mono → var(--mono)
+   Radios, escala de 8, duraciones y curva (--r-sm/--r-md, --sp-*, --ms-micro,
+   --ms-normal, --ease) ya existen en VendIQ con el MISMO nombre: se reutilizan.
+   Nuevos, y solo estos (prefijados para no chocar): --sb-w y --sb-ease-ui. */
+:root{
+  --sb-w:248px;
+  --sb-ease-ui:cubic-bezier(.2,0,0,1);
+  /* Hueco de aire entre la barra y el contenido. Se reserva TAMBIÉN a la
+     derecha, así el bloque central queda con el mismo margen a cada lado
+     (simétrico) en vez de pegado a la barra. */
+  --sb-hueco:32px;
+}
+
+/* ─────────────────────────────────────────────────── el shell ───
+   A partir de 960px: barra lateral `.sb` fija y `nav.barra` retirada (sus
+   enlaces ya están en la lateral). Por debajo, `nav.barra` sigue siendo LA
+   navegación tal cual, con su comportamiento responsive. Todo cuelga de
+   `html.shell`, que pone barra.js al montar la lateral: si el script falla, no
+   se aplica nada y vuelve la barra de siempre. `montando` (lo pone tema.js en
+   el <head>) reserva el hueco y oculta la vieja desde el primer fotograma, para
+   que no haya ni salto de contenido ni un fogonazo de la barra antigua. */
+.sb{display:none}
+@media (min-width:960px){
+  html.shell nav.barra, html.montando nav.barra{display:none}
+  html.shell .sb{display:flex}
+  /* Izquierda: la barra (248) + el hueco. Derecha: el MISMO hueco. El
+     contenido (.envoltorio, margin:auto) queda así centrado con idéntico
+     margen a cada lado. */
+  html.shell body, html.montando body{
+    padding-left:calc(var(--sb-w) + var(--sb-hueco));
+    padding-right:var(--sb-hueco);
+  }
+}
+
+/* ─────────────────────────────────────────── la barra lateral ───
+   Translúcida: el fondo en movimiento (#fondo) se sigue viendo detrás. */
+.sb{
+  position:fixed;inset:0 auto 0 0;z-index:30;width:var(--sb-w);
+  flex-direction:column;gap:var(--sp-5);padding:24px 14px;
+  overflow:hidden;
+  background:color-mix(in srgb,var(--carta) 88%,transparent);
+  backdrop-filter:blur(12px);
+  border-right:1px solid var(--borde);
+}
+/* El logo. Los estilos de .marca/.glifo del panel están acotados a `.barra`,
+   así que aquí NO llegan (por eso salía «VendIQ» como enlace morado): se
+   reponen. Ya solo va el glifo; el nombre lo quita barra.js. */
+.sb .marca{display:flex;align-items:center;gap:10px;padding:2px 10px 4px;
+  text-decoration:none;color:var(--tinta);font-weight:640;font-size:16px}
+.sb .glifo{width:28px;height:28px;flex:none;border-radius:8px;
+  display:grid;place-items:center;background:var(--cian);color:#04120f;
+  font-weight:800;font-size:14px}
+
+/* La lista scrollea ELLA si no cabe; la marca de arriba y el pie de abajo se
+   quedan fijos, como en cualquier panel. */
+.sb-links{
+  display:flex;flex-direction:column;gap:1px;
+  flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  scrollbar-width:thin;scrollbar-color:var(--borde-vivo) transparent;
+}
+.sb-sec{display:flex;flex-direction:column}
+.sb-sec>.sb-grupo{margin-top:var(--sp-6,32px)}
+.sb-sec:first-child>.sb-grupo{margin-top:var(--sp-1)}
+
+/* El rótulo de grupo es un botón que no deja de ser el microlabel. */
+button.sb-grupo{
+  display:flex;align-items:center;gap:var(--sp-2);width:100%;
+  padding:var(--sp-1) 12px;background:none;border:0;text-align:left;cursor:pointer;
+  font-family:var(--ui);font-size:12px;line-height:16px;font-weight:500;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-3);
+  transition:color var(--ms-micro) var(--sb-ease-ui);
+}
+button.sb-grupo:hover{color:var(--tinta)}
+.sb-chev{
+  width:12px;height:12px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;
+  stroke-linecap:round;stroke-linejoin:round;opacity:.75;
+  transition:rotate var(--ms-normal) var(--ease);
+}
+.sb-sec.abierto>.sb-grupo .sb-chev{rotate:90deg}
+/* Si la sección que estás leyendo cae en un grupo que TÚ has plegado, un punto
+   lo dice sin desplegarlo por su cuenta. */
+.sb-sec.tiene-activa:not(.abierto)>.sb-grupo::after{
+  content:'';width:6px;height:6px;border-radius:50%;background:var(--cian);margin-left:auto;
+}
+.sb-lista{
+  display:flex;flex-direction:column;gap:3px;overflow:hidden;
+  transition:max-height var(--ms-normal) var(--ease);
+}
+
+.sb-links a{
+  position:relative;display:flex;align-items:center;gap:var(--sp-3);
+  height:42px;padding:0 12px;border-radius:var(--r-sm);
+  font-family:var(--ui);font-size:14px;line-height:20px;color:var(--tinta-2);
+  text-decoration:none;
+  transition:background var(--ms-micro) var(--sb-ease-ui),color var(--ms-micro) var(--sb-ease-ui);
+}
+.sb-links a>span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-links a:hover{background:var(--carta-alta);color:var(--tinta)}
+/* Activo: pastilla + barra de acento corta y centrada a la izquierda (se lee
+   mejor que un borde de lado a lado). */
+.sb-links a.aqui{background:var(--cian-08);color:var(--tinta);font-weight:600}
+.sb-links a.aqui::before{
+  content:'';position:absolute;left:0;top:50%;translate:0 -50%;
+  width:3px;height:18px;border-radius:0 3px 3px 0;background:var(--cian);
+}
+/* Los iconos heredan el color de la fila (stroke:currentColor): el activo los
+   tiñe sin una regla de color más. */
+.sb-ico{
+  width:18px;height:18px;flex:none;fill:none;stroke:currentColor;
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;opacity:.8;
+}
+.sb-links a:hover .sb-ico{opacity:1}
+.sb-links a.aqui .sb-ico{opacity:1;color:var(--cian)}
+
+/* Badges: los rellena estados.js con el dato real de la API; sin dato, ocultos.
+   Comparten el atributo data-badge con los de nav.barra, no la clase. */
+.sb-badge{
+  flex:none;min-width:20px;padding:0 7px;border-radius:999px;
+  font:600 11px/18px var(--mono);font-variant-numeric:tabular-nums;
+  text-align:center;background:var(--cian-08);color:var(--cian);
+}
+.sb-badge[hidden]{display:none}
+
+/* El pie: los controles de chrome (tema y «en vivo»), abajo del todo. */
+.sb-pie{
+  margin-top:auto;display:flex;align-items:center;gap:var(--sp-3);
+  padding:var(--sp-3) 8px 2px;border-top:1px solid var(--borde);
+}
+.sb-pie .estado-vivo{margin:0}
+
+/* ─────────────────────────────────────── movimiento reducido ───
+   El menú plegable vive fuera de <main>, así que la regla global no le llega:
+   se apaga aquí a mano. El plegado, además, salta al instante desde el JS. */
+@media (prefers-reduced-motion:reduce){
+  .sb-links a,.sb-pie,button.sb-grupo,.sb-chev,.sb-lista{transition:none}
+}

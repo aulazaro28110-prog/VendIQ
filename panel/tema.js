@@ -23,25 +23,34 @@ function leerTema() {
 
 function aplicarTema(tema) {
   document.documentElement.dataset.tema = tema;
-  const bt = document.querySelector('.tema-toggle');
-  if (bt) {
+  // TODOS los interruptores: el de nav.barra y el que barra.js clona en la
+  // lateral. querySelectorAll para que los dos muestren el mismo estado.
+  document.querySelectorAll('.tema-toggle').forEach((bt) => {
     bt.setAttribute('aria-pressed', tema === 'claro' ? 'true' : 'false');
     bt.setAttribute('aria-label',
       tema === 'claro' ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro');
-  }
+  });
   try { localStorage.setItem(TEMA_CLAVE, tema); } catch (e) { /* da igual */ }
 }
 
 /* El tema se fija ANTES de que pinte nada, para que no haya un fogonazo
-   oscuro al cargar en claro. Por eso este fichero va en el <head>. */
+   oscuro al cargar en claro. Por eso este fichero va en el <head>.
+
+   Y de paso, `montando`: a ≥960 barra.css la usa para ocultar la nav vieja y
+   reservar el hueco de la lateral desde el primer fotograma, de modo que no se
+   vea la barra antigua ni dé un salto el contenido mientras barra.js monta la
+   `.sb`. Se quita al cargar; si el montaje fallara, vuelve la barra de siempre. */
 aplicarTema(leerTema());
+document.documentElement.classList.add('montando');
 
 function montarToggle() {
-  const bt = document.querySelector('.tema-toggle');
-  if (!bt) return;
+  const toggles = document.querySelectorAll('.tema-toggle');
+  if (!toggles.length) return;
   aplicarTema(document.documentElement.dataset.tema || 'oscuro');
-  bt.onclick = () => aplicarTema(
-    document.documentElement.dataset.tema === 'claro' ? 'oscuro' : 'claro');
+  toggles.forEach((bt) => {
+    bt.onclick = () => aplicarTema(
+      document.documentElement.dataset.tema === 'claro' ? 'oscuro' : 'claro');
+  });
 }
 
 /* -------------------------------------------------------- dónde estoy
@@ -53,35 +62,68 @@ function montarScrollSpy() {
   const enlaces = [...document.querySelectorAll('nav.barra .barra-enlaces a')];
   if (!enlaces.length || !('IntersectionObserver' in window)) return;
 
+  const seccionDe = (a) => document.getElementById(a.getAttribute('href').slice(1));
   const porId = new Map();
   enlaces.forEach((a) => {
-    const id = a.getAttribute('href').slice(1);
-    const seccion = document.getElementById(id);
+    const seccion = seccionDe(a);
     if (seccion) porId.set(seccion, a);
   });
   if (!porId.size) return;
 
+  const marcar = (a) => enlaces.forEach((x) => x.classList.toggle('aqui', x === a));
+
+  // De las que se ven, manda la que esté más arriba en el documento.
   const visibles = new Set();
+  const reconciliar = () => {
+    let arriba = null;
+    visibles.forEach((s) => { if (!arriba || s.offsetTop < arriba.offsetTop) arriba = s; });
+    if (arriba) marcar(porId.get(arriba));
+  };
+
+  // Al pulsar un enlace, la sección se marca YA y el observador se congela
+  // mientras la página se desliza, para que el resaltado no vaya parpadeando
+  // por las secciones intermedias. Se suelta cuando el scroll termina
+  // (scrollend) o, si el navegador no lo soporta, tras una espera corta.
+  let bloqueado = false;
+  let temporizador;
+  const soltar = () => { bloqueado = false; reconciliar(); };
+  enlaces.forEach((a) => {
+    if (!porId.has(seccionDe(a))) return;
+    a.addEventListener('click', () => {
+      marcar(a);
+      bloqueado = true;
+      clearTimeout(temporizador);
+      temporizador = setTimeout(soltar, 700);
+    });
+  });
+  if ('onscrollend' in window) {
+    window.addEventListener('scrollend', () => {
+      if (!bloqueado) return;
+      clearTimeout(temporizador);
+      soltar();
+    });
+  }
+
   const observador = new IntersectionObserver((entradas) => {
     entradas.forEach((e) => {
       if (e.isIntersecting) visibles.add(e.target); else visibles.delete(e.target);
     });
-    // De las que se ven, manda la que esté más arriba en el documento.
-    let arriba = null;
-    visibles.forEach((s) => {
-      if (!arriba || s.offsetTop < arriba.offsetTop) arriba = s;
-    });
-    enlaces.forEach((a) => a.classList.remove('aqui'));
-    if (arriba && porId.get(arriba)) porId.get(arriba).classList.add('aqui');
+    if (!bloqueado) reconciliar();
   }, {rootMargin: '-15% 0px -70% 0px', threshold: 0});
 
   porId.forEach((_, seccion) => observador.observe(seccion));
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    montarToggle(); montarScrollSpy();
-  });
-} else {
+function arrancar() {
   montarToggle(); montarScrollSpy();
+  // La lateral ya está montada (barra.js corre al final del body, antes de
+  // esto): se destapa. Si barra.js hubiera fallado, no habrá `shell` y al
+  // quitar `montando` reaparece la nav de siempre.
+  document.documentElement.classList.remove('montando');
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', arrancar);
+} else {
+  arrancar();
 }

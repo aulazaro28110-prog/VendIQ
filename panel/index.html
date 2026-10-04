@@ -5,11 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>VendIQ · Centro de control</title>
 <link rel="stylesheet" href="panel.css">
-<link rel="stylesheet" href="chat.css">
+<link rel="stylesheet" href="chat.css?v=2">
 <link rel="stylesheet" href="correo.css">
 <link rel="stylesheet" href="informe.css">
-<link rel="stylesheet" href="sistema.css">
-<link rel="stylesheet" href="lenguaje.css">
+<link rel="stylesheet" href="sistema.css?v=3">
+<link rel="stylesheet" href="lenguaje.css?v=3">
+<!-- Barra lateral trasplantada del portfolio (plegable, memoria, scroll-spy).
+     Va la última: a ≥960 retira nav.barra y pone la .sb. Aditiva — ver barra.css. -->
+<link rel="stylesheet" href="barra.css?v=1">
 <!-- En el <head> y antes de pintar nada: fija el tema guardado para que no
      haya un fogonazo oscuro al cargar en claro. -->
 <script src="tema.js"></script>
@@ -909,7 +912,7 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
      ve. Va la primera porque no depende de nada. -->
 <script src="fondo.js"></script>
 <script src="panel.js"></script>
-<script src="chat.js"></script>
+<script src="chat.js?v=2"></script>
 <script src="actividad.js"></script>
 <script src="mesa.js"></script>
 <script src="canales.js"></script>
@@ -928,5 +931,8 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
 <!-- Barra de arriba, migas y paleta de comandos. Va el ultimo porque usa
      consultar() y api() de panel.js, y lee el menu que ya esta en el DOM. -->
 <script src="paleta.js"></script>
+<!-- La barra lateral. Va la última: lee el menú que ya está en el DOM (nav.barra)
+     y construye la .sb. Si falla, no pone html.shell y queda la nav de siempre. -->
+<script src="barra.js"></script>
 </body>
 </html>
