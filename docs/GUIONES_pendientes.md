@@ -41,11 +41,16 @@ reabrimos este documento y rematamos las modificaciones del bot punto por punto.
 
 Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho parcial».
 
-- [ ] **P2 · queja escalada bloquea venta nueva** (G28). *Intentado y REVERTIDO: rompía
-  C5.* El clasificador de quejas da un falso positivo —«bueno va, otra cosa» cuenta
-  como queja— y bloquear ventas con «queja viva» tumbaba 6 conversaciones de
-  `test_frio`. **Antes de P2 hay que endurecer el clasificador de quejas** para que no
-  se dispare con despidos/muletillas. El flag `queja_abierta` ya está puesto (sin usar).
+- [x] **P2 · detectar la queja de posventa** (G28) — HECHO (05-10). La clave era
+  **endurecer el clasificador** (lo que pedía la nota): en vez de palabras sueltas que
+  se disparaban con despedidas/muletillas, un detector `POSVENTA_QUEJA` que exige las
+  DOS señales JUNTAS y cerca —una pieza YA comprada («que me mandaste») + algo que va
+  mal («ruido», «no funciona»)—. Así «el turbo que me mandaste hace un ruido raro» es
+  queja, pero «gracias por el turbo que me mandaste» y «hace un ruido al frenar» (coche
+  nuevo) NO. **G28 7→11, banco 418→424, test_frio 0 trampas (el intento viejo tumbaba
+  6).** Queda en v1.1 el OTRO lado de P2: usar `queja_abierta` para que una pieza NUEVA
+  durante la queja (G28·t4) también vaya a la persona —eso es bloquear ventas y es justo
+  lo que rompía frio, así que necesita su propia calibración.
 - [ ] **BOT 1 (resto) · olvidar la pieza.** Hecho lo seguro (saludo + muletilla).
   **Causa raíz localizada (02-10):** los **17** turnos de «vuelve a preguntar qué
   pieza» caen en el `else` final del redactor ([07_redactor.py:2897-2907]) con una
@@ -162,6 +167,6 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
 ### Estado de lo YA hecho y verde (resumen, detalle en `GUIONES_informe.md`)
 Fase 0 (línea base + D1-D5) · Fase 1 (D2, `es_prueba`) · Fase 2 (50 guiones + motor) ·
 Fase 3 (banco + mapa) · arreglos del bot BOT 2, P1, P3 y BOT 1 parcial.
-Banco de guiones: 68 % → **78 %** (420/541, tras G06, «varias piezas», BOT 5, BOT 4 y
-BOT 3 parcial) · 0 fugas ·
+Banco de guiones: 68 % → **78 %** (424/541, tras G06, «varias piezas», BOT 5, BOT 4,
+BOT 3 parcial y P2) · 0 fugas ·
 C5 intacto (los 11 bancos verdes; `test_frio` 0 trampas y 0 invariantes rotos).

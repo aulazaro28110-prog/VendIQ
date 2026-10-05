@@ -1037,6 +1037,20 @@ OTRO_ASUNTO = re.compile(
 SEGUIMIENTO_PIEZA = ("precio otra vez", "estado", "kilometros")
 
 
+# POSVENTA: una pieza que el cliente YA TIENE y que falla es una queja, aunque no
+# diga «reclamación». Pide las DOS señales a la vez y cerca —ya comprada + algo va
+# mal— a propósito: así NO se dispara con «gracias por el turbo que me mandaste»
+# (sin problema) ni con un síntoma de cliente nuevo «hace un ruido al frenar» (sin
+# compra previa), que es justo lo que endurecer el clasificador de quejas pedía.
+_COMPRA_PASADA = (r"me (mandaste|mandasteis|vendiste|vendisteis|enviaste|enviasteis"
+                  r"|llego|llegaste)|que (os |te )?compre|lo recib|la recib")
+_PROBLEMA = (r"ruido|raro|falla|fall[oó]|no va\b|no funciona|no me funciona|defect"
+             r"|\broto\b|\brota\b|no arranca|no enciende|va mal|funciona mal")
+POSVENTA_QUEJA = re.compile(
+    rf"(?:{_COMPRA_PASADA}).{{0,60}}(?:{_PROBLEMA})"
+    rf"|(?:{_PROBLEMA}).{{0,60}}(?:{_COMPRA_PASADA})", re.I)
+
+
 def detectar_intencion(mensaje: str) -> str:
     """Qué está haciendo el cliente, más allá de qué pieza pide.
 
@@ -1044,6 +1058,8 @@ def detectar_intencion(mensaje: str) -> str:
     vale" recuperan lo mismo del índice y sin embargo piden respuestas opuestas.
     """
     t = _sin_tildes(mensaje)
+    if POSVENTA_QUEJA.search(t):
+        return "queja"
     hipotetico = any(h in t for h in HIPOTETICO)
 
     # §19 — EL IMPACIENTE ESCRIBE UNA PALABRA. "precio", "cuánto", "y cuánto?".
