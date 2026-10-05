@@ -92,6 +92,31 @@ POLITICAS = {
                                           "referencia de la vieja, mejor todavía.",
 }
 
+# Tema de condiciones por palabra clave, para cuando la BÚSQUEDA se queda corta: una
+# pregunta de dos palabras —«tiene garantía?», «y tarda?»— no puntúa lo suficiente
+# para que el buscador devuelva la política, y entonces la rama de venta cerrada o la
+# de escalado se la comían con un «¡perfecto!». Esto mapea el tema a su sección del
+# documento de condiciones para poder contestarla igualmente. Es un RESPALDO, no la
+# vía normal: la de verdad sigue siendo que el buscador encuentre la política.
+_TEMA_POLITICA = (
+    (re.compile(r"\bgarant[ií]a", re.I), "GARANTIA"),
+    (re.compile(r"\bdevoluc|\bdevolver\b", re.I), "FORMAS DE PAGO Y DEVOLUCIONES"),
+    (re.compile(r"\benv[ií]o|\bportes?\b|\btransporte\b|\bmensajer[ií]a\b"
+                r"|\bpen[ií]nsula\b|\bcanarias\b|\bbaleares\b|tarda", re.I),
+     "ENVIO Y PLAZOS"),
+    (re.compile(r"\biva\b", re.I), "PRECIOS Y DESCUENTOS"),
+)
+
+
+def _politica_por_tema(mensaje):
+    """La sección de condiciones que toca una pregunta, por palabra clave, y su
+    texto corto. (None, None) si no reconoce ningún tema."""
+    for rx, seccion in _TEMA_POLITICA:
+        if rx.search(mensaje or ""):
+            return seccion, POLITICAS.get(seccion)
+    return None, None
+
+
 # El único femenino de la lista es "de vehículo" -> se conjuga con la pieza.
 ESTADOS = {
     "comprobada, funcionando": "comprobad{o} y funcionando",
@@ -2254,21 +2279,36 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         # y ahí es donde el cliente deja de escribir. Un cierre con pieza sobre la
         # mesa (querer comprar) y una pieza o política nuevas (decision RESPONDE)
         # sí siguen adelante; el resto se acusa corto y se calla.
-        escala = True
-        if conversacion.matricula_recien_dada:
-            # Se le pidió la matrícula al escalar y la manda: se acusa. Contestarle
-            # «ya se lo he pasado» sin nombrarla es no haberle leído.
-            lineas.append(f"Anotada, {conversacion.matricula}: se la paso a Álvaro "
-                          f"con lo tuyo y te escribe él en cuanto lo mire.")
+        # ESCALADO QUE NO ES UNA QUEJA (una pieza que no vendemos, un modelo que no
+        # existe): si además pregunta una CONDICIÓN —«¿y tarda?», «¿tiene garantía?»—
+        # se le contesta, no es reabrir nada, y lo escalado sigue con Álvaro aparte.
+        # Con una queja viva (P2) NO: ahí todo va a la persona, sin excepción.
+        _seccion, _txt = (None, None)
+        if (not getattr(conversacion, "queja_abierta", False)
+                and not conversacion.matricula_recien_dada):
+            _seccion, _txt = _politica_por_tema(mensaje_cliente)
+        if _txt and _seccion not in conversacion.temas_tratados:
+            lineas.append(_txt)
+            conversacion.temas_tratados.add(_seccion)
+            reglas.append(("responde con la política de la empresa",
+                           f"sección «{_seccion}»: aunque haya algo escalado que no "
+                           f"es una queja, una pregunta de condiciones se contesta"))
         else:
-            lineas += conversacion.variar("sigue_escalado", [
-                ["Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea."],
-                ["Sigue con Álvaro; en cuanto lo mire te escribe él mismo."],
-                ["Lo tiene Álvaro, cualquier cosa te contesta él directamente."],
-            ])
-        reglas.append(("sigue escalado",
-                       "la conversación ya está con una persona: el bot acusa corto "
-                       "y no se vuelve a poner por delante ni reabre"))
+            escala = True
+            if conversacion.matricula_recien_dada:
+                # Se le pidió la matrícula al escalar y la manda: se acusa. Contestarle
+                # «ya se lo he pasado» sin nombrarla es no haberle leído.
+                lineas.append(f"Anotada, {conversacion.matricula}: se la paso a Álvaro "
+                              f"con lo tuyo y te escribe él en cuanto lo mire.")
+            else:
+                lineas += conversacion.variar("sigue_escalado", [
+                    ["Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea."],
+                    ["Sigue con Álvaro; en cuanto lo mire te escribe él mismo."],
+                    ["Lo tiene Álvaro, cualquier cosa te contesta él directamente."],
+                ])
+            reglas.append(("sigue escalado",
+                           "la conversación ya está con una persona: el bot acusa corto "
+                           "y no se vuelve a poner por delante ni reabre"))
 
     # ------------------------------------------------------- reglas duras
     # Ninguna de las dos las decide el bot. Repite la condición, no la discute, y
@@ -2910,14 +2950,25 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         # otra vez la matrícula "para confirmar que encaja" de algo ya comprado.
         # (decision != "RESPONDE" o hay_pieza) deja pasar una política de posventa
         # —RESPONDE sin pieza— que sí hay que contestar, y frena el re-ofrecer.
-        lineas += conversacion.variar("cerrada_corto", [
-            ["¡Perfecto! Cualquier cosa me dices."],
-            ["Genial, queda todo apuntado por aquí."],
-            ["Hecho. Si te surge algo, aquí estoy."],
-        ])
-        reglas.append(("venta cerrada: no reabrir",
-                       "la venta ya está cerrada y el mensaje no trae una pieza "
-                       "nueva: se acusa corto y no se reidentifica ni se re-ofrece"))
+        # PERO una pregunta de CONDICIONES en posventa («¿tiene garantía?», «¿y
+        # tarda?») sí se contesta: no es reabrir la venta, es informar. Si el
+        # buscador no la encontró (dos palabras no puntúan), se responde por el tema.
+        _seccion, _txt = _politica_por_tema(mensaje_cliente)
+        if _txt and _seccion not in conversacion.temas_tratados:
+            lineas.append(_txt)
+            conversacion.temas_tratados.add(_seccion)
+            reglas.append(("responde con la política de la empresa",
+                           f"sección «{_seccion}»: en posventa se contesta una "
+                           f"pregunta de condiciones sin reabrir la venta"))
+        else:
+            lineas += conversacion.variar("cerrada_corto", [
+                ["¡Perfecto! Cualquier cosa me dices."],
+                ["Genial, queda todo apuntado por aquí."],
+                ["Hecho. Si te surge algo, aquí estoy."],
+            ])
+            reglas.append(("venta cerrada: no reabrir",
+                           "la venta ya está cerrada y el mensaje no trae una pieza "
+                           "nueva: se acusa corto y no se reidentifica ni se re-ofrece"))
 
     # ---------------------------------------------------------------- pieza
     elif decision == "RESPONDE" and hay_pieza:

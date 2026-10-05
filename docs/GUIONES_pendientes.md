@@ -70,11 +70,17 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
     como soft miss sin fallo.
   - [ ] **`pieza_pedida` no se limpia** al cerrar la venta o al corregir el coche, así
     que el invariante `no_olvida_pieza` salta en falso en «vale»/«ok» tardíos.
-- [ ] **BOT 3 · escalado pegajoso** (G15, G19). Tras escalar algo (que NO es una queja),
-  el bot no atiende una pieza nueva legítima ni contesta una política. Es el lado
-  opuesto de P2: aquí sobra escalado.
-- [ ] **BOT 4 · «venta cerrada: no reabrir» tapa de más** (G03·t7, G17·t8). Tras cerrar,
-  se come una pieza nueva o un «¿tiene garantía?».
+- [~] **BOT 3 · escalado pegajoso** (G15, G19) — PARCIAL (05-10). Con algo escalado que
+  NO es queja, una pregunta de CONDICIONES («¿y tarda?») ahora se contesta en vez de
+  «sigue con Álvaro» (nuevo respaldo `_politica_por_tema` en la rama de escalado, con
+  `queja_abierta` como candado para no tocar P2). **G15 6→7.** Queda para v1.1: las
+  piezas NUEVAS legítimas y los cierres «vale, ese/esa» siguen tapados por el escalado
+  (es el cambio de fondo del estado `escalado`, que choca con P2); G19 no se movió.
+- [x] **BOT 4 · «venta cerrada: no reabrir» tapa de más** (G17·t8) — HECHO (05-10). Una
+  pregunta de condiciones en posventa («¿tiene garantía?») se contesta con la política
+  en vez de «¡perfecto!» (mismo respaldo `_politica_por_tema` en la rama de venta
+  cerrada). **G17 9→10.** Queda **G03·t7** en v1.1: la pieza nueva tras cerrar retiene
+  el precio (la ficha concreta del catálogo no lo publica; es dato, no lógica).
 - [x] **BOT 5 · no escala el regateo indirecto** (G07, G08) — HECHO (04-10). «¿me
   regalas el transporte?», «¿sin factura?», «X euros menos y me lo llevo», «clientes
   de siempre» ya se leen como regateo (van ANTES del cierre en `PALABRAS_INTENCION`),
@@ -156,5 +162,6 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
 ### Estado de lo YA hecho y verde (resumen, detalle en `GUIONES_informe.md`)
 Fase 0 (línea base + D1-D5) · Fase 1 (D2, `es_prueba`) · Fase 2 (50 guiones + motor) ·
 Fase 3 (banco + mapa) · arreglos del bot BOT 2, P1, P3 y BOT 1 parcial.
-Banco de guiones: 68 % → **77 %** (418/541, tras G06, «varias piezas» y BOT 5) · 0 fugas ·
+Banco de guiones: 68 % → **78 %** (420/541, tras G06, «varias piezas», BOT 5, BOT 4 y
+BOT 3 parcial) · 0 fugas ·
 C5 intacto (los 11 bancos verdes; `test_frio` 0 trampas y 0 invariantes rotos).
