@@ -3131,6 +3131,21 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
             lineas.append("Dime qué pieza necesitas y te digo si la tengo.")
             reglas.append(("memoria de conversación",
                            "ya tiene la matrícula: pide la pieza, no repite el dato"))
+        elif (getattr(conversacion, "pieza_pedida", None)
+              or getattr(conversacion, "pieza_desconocida", None)):
+            # YA DIJO LA PIEZA (BOT 1 / no_olvida_pieza). «no la tenéis?», «dime sí o
+            # no» sin matrícula caían aquí y se contestaban «pásame la matrícula y QUÉ
+            # PIEZA BUSCAS», volviendo a pedir lo que ya había dicho. Solo falta la
+            # matrícula para poder confirmar si la hay: se pide eso y nada más.
+            lineas += conversacion.variar("pide_matricula_sola", [
+                ["Pásame la matrícula y te digo si la tengo."],
+                ["Con la matrícula te lo confirmo en un momento."],
+                ["Dime la matrícula del coche y lo miro."],
+            ])
+            conversacion.datos_pedidos.add("matricula")
+            reglas.append(("faltan datos para buscar",
+                           "ya dijo la pieza: se pide solo la matrícula, no se repite "
+                           "la pieza que ya nombró (no_olvida_pieza)"))
         else:
             lineas += conversacion.variar("pide_datos", [
                 ["Pásame la matrícula del coche y qué pieza buscas, y te digo si "
