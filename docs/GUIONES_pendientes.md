@@ -51,7 +51,8 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
   6).** Queda en v1.1 el OTRO lado de P2: usar `queja_abierta` para que una pieza NUEVA
   durante la queja (G28·t4) también vaya a la persona —eso es bloquear ventas y es justo
   lo que rompía frio, así que necesita su propia calibración.
-- [ ] **BOT 1 (resto) · olvidar la pieza.** Hecho lo seguro (saludo + muletilla).
+- [~] **BOT 1 (resto) · olvidar la pieza.** Hecho lo seguro (saludo + muletilla) y el
+  «no» sin matrícula que ya no re-pregunta (G13/G18, ver sub-tarea).
   **Causa raíz localizada (02-10):** los **17** turnos de «vuelve a preguntar qué
   pieza» caen en el `else` final del redactor ([07_redactor.py:2897-2907]) con una
   pieza ya sobre la mesa. No hay un arreglo de una línea: cada familia necesita una
@@ -73,6 +74,16 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
     verdes.** Quedan sueltos **G34·t5 «las tres»** (cierre demasiado genérico para
     patrón global) y **G16·t3 «las otras dos cuánto»** (recordar precio de las dos),
     como soft miss sin fallo.
+  - [x] **«no» sin matrícula no re-pregunta la pieza** (G13·t2, G18·t2): HECHO (06-10).
+    «¿no la tenéis?» / «dime sí o no» con una pieza ya nombrada caían en el `else` de
+    pide-datos y contestaban «pásame la matrícula y QUÉ PIEZA BUSCAS», repitiendo la
+    pieza que el cliente acababa de decir (rompía `no_olvida_pieza`). Rama nueva
+    `pide_matricula_sola`: si `pieza_pedida`/`pieza_desconocida` está puesta, se pide solo
+    la matrícula. Y `clasificar()` ya lee «faltan datos para buscar» como pide-datos (lo
+    emite también el `else` genérico, que ya era pide-datos). **Banco 424→426, 11 bancos
+    verdes; diff determinista (LLM apagado) HEAD vs cambio: 17 turnos en 7 convs, todos el
+    «pide solo matrícula», 0 repeticiones nuevas.** Quedan las OTRAS familias de los 17
+    turnos (seguimiento por la ficha en G06, retomar en G48) en v1.1.
   - [ ] **`pieza_pedida` no se limpia** al cerrar la venta o al corregir el coche, así
     que el invariante `no_olvida_pieza` salta en falso en «vale»/«ok» tardíos.
 - [~] **BOT 3 · escalado pegajoso** (G15, G19) — PARCIAL (05-10). Con algo escalado que
@@ -167,6 +178,8 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
 ### Estado de lo YA hecho y verde (resumen, detalle en `GUIONES_informe.md`)
 Fase 0 (línea base + D1-D5) · Fase 1 (D2, `es_prueba`) · Fase 2 (50 guiones + motor) ·
 Fase 3 (banco + mapa) · arreglos del bot BOT 2, P1, P3 y BOT 1 parcial.
-Banco de guiones: 68 % → **78 %** (424/541, tras G06, «varias piezas», BOT 5, BOT 4,
-BOT 3 parcial y P2) · 0 fugas ·
-C5 intacto (los 11 bancos verdes; `test_frio` 0 trampas y 0 invariantes rotos).
+Banco de guiones: 68 % → **79 %** (426/541, tras G06, «varias piezas», BOT 5, BOT 4,
+BOT 3 parcial, P2 y BOT 1 «no re-pregunta») · 0 fugas ·
+C5 intacto (los 11 bancos verdes). OJO: `test_frio` corre con el LLM (Groq) y es **no
+determinista** —un invariante roto suelto puede ser del modelo, no del cambio; se atribuye
+diffeando el borrador determinista, no el texto final—.

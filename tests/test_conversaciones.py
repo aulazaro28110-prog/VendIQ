@@ -586,9 +586,14 @@ def clasificar(respuesta, busqueda):
     # dato — pero la regla se llama por lo que ENTRA, no por lo que sale, y por
     # eso no encajaba en ninguna casilla y caía en «otra cosa». El bot hacía lo
     # correcto; quien no sabía leerlo era esta función.
+    # «faltan datos para buscar» también es pedir el dato: «no la tenéis?» / «dime sí
+    # o no» sin matrícula se contestan con «pásame la matrícula y qué pieza buscas»,
+    # que es pedir datos. Mismo caso que arriba: el bot acierta y esta función no lo
+    # leía (caía en «otra cosa»). Salió al arreglar BOT 6 —esos mensajes dejaron de
+    # tratarse como corrección y aterrizaron aquí—.
     if ("un dato por mensaje" in reglas or "no se reconoce" in reglas
             or "apertura" in reglas or "no repite la misma frase" in reglas
-            or "mensaje de cortesía" in reglas):
+            or "mensaje de cortesía" in reglas or "faltan datos para buscar" in reglas):
         return "pide datos"
     if "memoria de conversación" in reglas:
         return "recuerda"
