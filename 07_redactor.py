@@ -151,6 +151,11 @@ PALABRAS_INTENCION = {
                        "te hago el bizum manana", "te pago manana", "te lo pago manana",
                        "lo pago manana", "pago al recibir", "pagando al recibir",
                        "cuando la reciba te pago", "cuando llegue te pago",
+                       # Mismo intento con el orden al revés: «pago cuando lleguen»
+                       # / «pago cuando llegue» es pagar al recibir, no preguntar las
+                       # formas de pago. Sin esto caía en la política de pago y
+                       # contestaba «puedes pagar con tarjeta…» en vez de escalar.
+                       "pago cuando lleg", "pago cuando la reciba", "pago cuando reciba",
                        "a 30 dias", "a 60 dias"),
     "justificante": ("justificante", "resguardo", "comprobante", "pantallazo",
                      # "captura" a secas hacia falta: "te paso captura" no casaba
