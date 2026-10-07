@@ -97,6 +97,12 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
   en vez de «¡perfecto!» (mismo respaldo `_politica_por_tema` en la rama de venta
   cerrada). **G17 9→10.** Queda **G03·t7** en v1.1: la pieza nueva tras cerrar retiene
   el precio (la ficha concreta del catálogo no lo publica; es dato, no lógica).
+  - [x] **el mismo respaldo, con la pieza AÚN en la mesa** (G20·t5): HECHO (07-10). Una
+    pregunta de condiciones («¿y de garantía qué me das?», «¿y si la recojo?») con pieza
+    sobre la mesa y que la búsqueda no puntuaba caía en el seguimiento genérico y quedaba
+    sin contestar: ahora `_politica_por_tema` también respalda la rama de `ultima_pieza`
+    (y «recoger/recogida» es tema de ENVÍO → recogida en Alcobendas). No pisa un «sí» ni
+    un cierre/regateo/pago/queja. **Banco 427→428, 11 bancos verdes; frío inerte.**
 - [x] **BOT 5 · no escala el regateo indirecto** (G07, G08) — HECHO (04-10). «¿me
   regalas el transporte?», «¿sin factura?», «X euros menos y me lo llevo», «clientes
   de siempre» ya se leen como regateo (van ANTES del cierre en `PALABRAS_INTENCION`),
@@ -184,8 +190,9 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
 ### Estado de lo YA hecho y verde (resumen, detalle en `GUIONES_informe.md`)
 Fase 0 (línea base + D1-D5) · Fase 1 (D2, `es_prueba`) · Fase 2 (50 guiones + motor) ·
 Fase 3 (banco + mapa) · arreglos del bot BOT 2, P1, P3 y BOT 1 parcial.
-Banco de guiones: 68 % → **79 %** (427/541, tras G06, «varias piezas», BOT 5, BOT 4,
-BOT 3 parcial, P2, BOT 1 «no re-pregunta» y «pago al recibir» que escala) · 0 fugas ·
+Banco de guiones: 68 % → **79 %** (428/541, tras G06, «varias piezas», BOT 5, BOT 4,
+BOT 3 parcial, P2, BOT 1 «no re-pregunta», «pago al recibir» que escala y condiciones
+con la pieza en la mesa) · 0 fugas ·
 C5 intacto (los 11 bancos verdes). OJO: `test_frio` corre con el LLM (Groq) y es **no
 determinista** —un invariante roto suelto puede ser del modelo, no del cambio; se atribuye
 diffeando el borrador determinista, no el texto final—.

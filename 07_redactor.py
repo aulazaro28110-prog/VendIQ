@@ -102,7 +102,7 @@ _TEMA_POLITICA = (
     (re.compile(r"\bgarant[ií]a", re.I), "GARANTIA"),
     (re.compile(r"\bdevoluc|\bdevolver\b", re.I), "FORMAS DE PAGO Y DEVOLUCIONES"),
     (re.compile(r"\benv[ií]o|\bportes?\b|\btransporte\b|\bmensajer[ií]a\b"
-                r"|\bpen[ií]nsula\b|\bcanarias\b|\bbaleares\b|tarda", re.I),
+                r"|\bpen[ií]nsula\b|\bcanarias\b|\bbaleares\b|tarda|\brecog", re.I),
      "ENVIO Y PLAZOS"),
     (re.compile(r"\biva\b", re.I), "PRECIOS Y DESCUENTOS"),
 )
@@ -3048,12 +3048,24 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         ident = str(meta.get("id") or "")
         tiene_precio = bool(conversacion.precio_de.get(ident))
         afirma = bool(AFIRMACION.match(mensaje_cliente or ""))
+        _sec_cond, _txt_cond = _politica_por_tema(mensaje_cliente)
+        # Una pregunta de CONDICIONES con la pieza ya en la mesa que la búsqueda no
+        # puntuó (p.ej. «¿y si la recojo?» → recogida en Alcobendas) caía en el
+        # seguimiento genérico y quedaba sin contestar. Mismo respaldo que en venta
+        # cerrada y en escalado: se contesta la política. No pisa un «sí» (afirma),
+        # ni un cierre/regateo/pago/queja, que mandan y se resuelven abajo.
+        if (_txt_cond and not afirma
+                and intencion not in ("cierre", "regateo", "pide sin pagar", "queja")):
+            lineas.append(_txt_cond)
+            reglas.append(("responde con la política de la empresa",
+                           f"pregunta de condiciones con la pieza en la mesa: "
+                           f"«{_sec_cond}»"))
         # Pieza SIN precio y el cliente dice que sí a seguir. Repetir «¿sigue en
         # pie?» es el bucle que se veía en el panel: cada «sí» volvía a ofrecer.
         # Un «sí» aquí es interés real, pero sin precio no se puede cerrar (lo
         # impide dice_que_si a propósito). El paso que faltaba: pasárselo a Álvaro
         # para que ponga precio, y luego ESPERAR en vez de volver a ofrecer.
-        if not tiene_precio and (afirma or ident in conversacion.precios_escalados):
+        elif not tiene_precio and (afirma or ident in conversacion.precios_escalados):
             if ident not in conversacion.precios_escalados:
                 conversacion.precios_escalados.add(ident)
                 conversacion.prometer("pasarte el precio en cuanto lo mire Álvaro", meta)
