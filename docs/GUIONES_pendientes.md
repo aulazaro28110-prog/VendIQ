@@ -102,6 +102,12 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
   de siempre» ya se leen como regateo (van ANTES del cierre en `PALABRAS_INTENCION`),
   así que escalan en vez de contestar la política o cerrar. **G07 8→10, G08 8→10, banco
   414→418, 11 bancos verdes.**
+  - [x] **«pago cuando lleguen» escala** (G16·t10): HECHO (07-10). La lista `pide sin
+    pagar` tenía «te pago cuando» y «cuando llegue te pago», pero no el orden «pago
+    cuando lleguen/llegue»; sin esa forma caía en la política de formas de pago y
+    contestaba «puedes pagar con tarjeta…» a quien pedía pagar al recibir (PAGO ANTES
+    DEL ENVIO). **Banco 426→427, 11 bancos verdes; frío inerte (diff determinista: 0
+    turnos cambian).**
 - [x] **BOT 6 · «corrige un detalle» se dispara mal** (G06·t2) — HECHO (04-10). Leía
   «no tengo la matrícula» / «¿no la tenéis?» como una corrección de coche. El lookahead
   de `CORRIGE` ([07_redactor.py:855]) ahora excluye **sólo los patrones exactos** (tengo
@@ -178,8 +184,8 @@ Orden sugerido por impacto. Ninguno tocado todavía salvo lo que diga «hecho pa
 ### Estado de lo YA hecho y verde (resumen, detalle en `GUIONES_informe.md`)
 Fase 0 (línea base + D1-D5) · Fase 1 (D2, `es_prueba`) · Fase 2 (50 guiones + motor) ·
 Fase 3 (banco + mapa) · arreglos del bot BOT 2, P1, P3 y BOT 1 parcial.
-Banco de guiones: 68 % → **79 %** (426/541, tras G06, «varias piezas», BOT 5, BOT 4,
-BOT 3 parcial, P2 y BOT 1 «no re-pregunta») · 0 fugas ·
+Banco de guiones: 68 % → **79 %** (427/541, tras G06, «varias piezas», BOT 5, BOT 4,
+BOT 3 parcial, P2, BOT 1 «no re-pregunta» y «pago al recibir» que escala) · 0 fugas ·
 C5 intacto (los 11 bancos verdes). OJO: `test_frio` corre con el LLM (Groq) y es **no
 determinista** —un invariante roto suelto puede ser del modelo, no del cambio; se atribuye
 diffeando el borrador determinista, no el texto final—.
