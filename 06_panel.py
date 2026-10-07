@@ -21,6 +21,7 @@ import json
 import mimetypes
 import os
 import socket
+import re
 import threading
 import time
 import webbrowser
@@ -35,6 +36,9 @@ PANEL_JSON = BASE / "salida" / "panel.json"
 ACTIVIDAD_JSON = BASE / "salida" / "actividad.json"
 PRECIOS_FIJADOS = BASE / "salida" / "precios_fijados.json"
 RESERVAS = BASE / "salida" / "reservas.json"
+# Las conversaciones abiertas, para que sobrevivan a reiniciar el panel. No es
+# salida/conversaciones.json: ese nombre ya lo usa el banco de pruebas.
+SESIONES = BASE / "salida" / "sesiones.json"
 PUERTO = 8420
 
 # De dónde cuelgan los enlaces a las fichas de stock que salen en los correos.
@@ -66,14 +70,24 @@ def cargar(fichero, alias):
 class Sistema:
     """Mantiene cargados el buscador y el motor de ofertas."""
 
-    def __init__(self):
+    def __init__(self, persistir=False):
+        """`persistir` guarda las conversaciones en disco y las recupera al arrancar.
+
+        Apagado por defecto a propósito: los bancos de pruebas y el simulador
+        crean su propio Sistema y reutilizan ids de sesión. Si heredaran las
+        conversaciones de la tirada anterior, el mismo banco daría otro resultado
+        según lo que se hubiera ejecutado antes. Solo lo enciende el panel.
+        """
         import csv
+        self.persistir = persistir
+        self._cerrojo_sesiones = threading.Lock()
         self.buscar_mod = cargar("03_buscar.py", "buscar")
         self.ofertas_mod = cargar("04_ofertas.py", "ofertas")
         self.redactor = cargar("07_redactor.py", "redactor")
         self.conversar = cargar("08_conversar.py", "conversar")
         self.aprender = cargar("09_aprender.py", "aprender")
         self.canales = cargar("11_canales.py", "canales")
+        self.traza_mod = cargar("13_traza.py", "traza")
         self.config_llm = self.conversar.leer_env()
 
         print("Cargando el índice y el modelo (una sola vez)...")
@@ -105,6 +119,8 @@ class Sistema:
         self.veredicto_mesa = {}
         self.chats = {}                            # conversaciones abiertas del simulador
         self.historiales = {}                      # turnos previos, para el LLM
+        if self.persistir:
+            self.cargar_sesiones()
         print("Redacta: " + ("Groq (" + (self.config_llm.get("GROQ_MODELO")
               or self.conversar.MODELO_POR_DEFECTO) + ")" if self.conversar.hay_llm()
               else "redactor determinista — sin GROQ_API_KEY en .env"))
@@ -219,6 +235,91 @@ class Sistema:
                                        -p["veces_preguntada"]))
         return pendientes
 
+    # ------------------------------------------------------------ sesiones
+    # EL ESTADO DE LA CONVERSACIÓN, EN DISCO. Hasta aquí vivía solo en memoria y
+    # moría al reiniciar el panel. Eso vaciaba justo lo que `promesas` existe para
+    # recordar: un «¿ya lo tienes?» tres días después llegaba a un proceso nuevo,
+    # sin promesa viva, y el bot volvía a pedir la matrícula.
+    #
+    # La Conversacion se guarda ENTERA (su __dict__) y no una lista de campos
+    # elegidos: el redactor le añade atributos sobre la marcha (`lineas_dichas`,
+    # `preguntas_de_politica`, `precios_autorizados`) y una lista a mano se
+    # quedaría atrás en silencio. JSON no tiene conjuntos, así que van marcados.
+    @staticmethod
+    def _a_json(x):
+        if isinstance(x, (set, frozenset)):
+            return {"__set__": [Sistema._a_json(v) for v in x]}
+        if isinstance(x, dict):
+            return {k: Sistema._a_json(v) for k, v in x.items()}
+        if isinstance(x, (list, tuple)):
+            return [Sistema._a_json(v) for v in x]
+        return x
+
+    @staticmethod
+    def _de_json(d):
+        if set(d) == {"__set__"}:
+            return set(d["__set__"])
+        return d
+
+    def guardar_sesiones(self):
+        """Escribe todas las conversaciones abiertas. Un fallo aquí no tumba el turno.
+
+        Se escribe a un temporal y se renombra: si el proceso muere a mitad, el
+        fichero bueno sigue siendo el anterior y no uno cortado que no se puede leer.
+        """
+        if not self.persistir:
+            return
+        try:
+            with self._cerrojo_sesiones:
+                datos = {s: {"conversacion": self._a_json(vars(c)),
+                             "historial": list(self.historiales.get(s, []))}
+                         for s, c in list(self.chats.items())
+                         # Las de prueba no son de nadie; igual que en reservas.
+                         if not self.es_prueba(s)}
+                SESIONES.parent.mkdir(parents=True, exist_ok=True)
+                tmp = SESIONES.with_suffix(".json.tmp")
+                tmp.write_text(json.dumps(datos, ensure_ascii=False, indent=1),
+                               encoding="utf-8")
+                os.replace(tmp, SESIONES)
+        except (OSError, TypeError, ValueError, RuntimeError) as e:
+            print(f"AVISO: no se han podido guardar las sesiones ({e})")
+
+    def cargar_sesiones(self):
+        """Recupera las conversaciones guardadas. Si el fichero no vale, se empieza en blanco.
+
+        Se construye una Conversacion nueva y se le pone encima lo guardado: un
+        atributo que el código haya ganado después de guardar se queda con su
+        valor por defecto en vez de faltar.
+        """
+        if not SESIONES.exists():
+            return
+        try:
+            texto = SESIONES.read_text(encoding="utf-8-sig").strip()
+            datos = json.loads(texto, object_hook=self._de_json) if texto else {}
+        except (json.JSONDecodeError, OSError) as e:
+            print(f"AVISO: {SESIONES.name} no se puede leer ({e}); se empieza sin sesiones")
+            return
+        for sesion, guardado in datos.items():
+            conv = self.redactor.Conversacion()
+            conv.__dict__.update(guardado.get("conversacion") or {})
+            self.chats[sesion] = conv
+            self.historiales[sesion] = guardado.get("historial") or []
+        if datos:
+            print(f"Recuperadas {len(datos)} conversaciones de {SESIONES.name}")
+
+    # Prefijos de sesión que son PRUEBAS, no clientes. Una sola función, y la usan
+    # anotar_reserva, el registro de dudas y la persistencia de sesiones: así no
+    # hay tres listas que se desincronizan. `panel-` NO está a propósito: es el
+    # cliente de prueba de Álvaro y SÍ tiene que escribir (es como ve una reserva
+    # de verdad). No dejan rastro: el simulador (`sim-`), el banco (`banco-`), los
+    # guiones tipo (`guion-`), el diagnóstico (`diag-`) y el estrés (`estres`).
+    PREFIJOS_PRUEBA = ("sim-", "banco-", "guion-", "diag-", "estres")
+
+    @staticmethod
+    def es_prueba(sesion):
+        """True si la sesión es de una prueba y no debe tocar los datos de negocio."""
+        return str(sesion).startswith(Sistema.PREFIJOS_PRUEBA)
+
     def anotar_reserva(self, sesion, conv):
         """Deja constancia de una venta cerrada. Lo que hace cierta la frase.
 
@@ -230,12 +331,13 @@ class Sistema:
         Se escribe entera cada vez y no se anexa una línea: son pocas y así el
         fichero es legible a ojo, que es como Álvaro lo va a mirar.
         """
-        # El simulador pasa 930 conversaciones por aqui para medir, y unas cuantas
-        # acaban en venta. Esas reservas NO son compromisos con nadie: si se
-        # escriben, el fichero donde miras lo que hay que preparar manana se llena
-        # de pedidos que no existen. Paso exactamente eso —202 falsas contra 30
-        # reales— y por eso las sesiones del simulador no dejan rastro aqui.
-        if str(sesion).startswith("sim-"):
+        # El simulador y los bancos pasan cientos de conversaciones por aqui para
+        # medir, y unas cuantas acaban en venta. Esas reservas NO son compromisos
+        # con nadie: si se escriben, el fichero donde miras lo que hay que preparar
+        # manana se llena de pedidos que no existen (D4: medi +7 en un solo pase
+        # del banco). Por eso ninguna sesion de prueba deja rastro aqui. `panel-`
+        # SI escribe: es tu cliente de prueba, y es como ves una reserva de verdad.
+        if self.es_prueba(sesion):
             return None
 
         pieza = conv.ultima_pieza or {}
@@ -446,6 +548,64 @@ class Sistema:
                                           ("pregunta", "decision", "ms", "hora", "porque")})
         return resultado
 
+    # ------------------------------------------------------- varias piezas
+    # Separadores de una lista hablada: "cremallera, turbo y amortiguador".
+    _SEPAR_PIEZAS = re.compile(r"\s*,\s*|\s+y\s+|\s+e\s+", re.I)
+
+    def _partir_piezas(self, mensaje):
+        """Si el mensaje pide VARIAS piezas, devuelve la lista de fragmentos; si
+        no, None. Es deliberadamente estricto —solo parte cuando hay DOS O MÁS
+        tipos de pieza distintos repartidos en trozos— para no trocear un mensaje
+        normal. Validado contra los 652 mensajes del banco: 0 falsos positivos.
+        """
+        trozos = [t.strip() for t in self._SEPAR_PIEZAS.split(mensaje or "")
+                  if t.strip()]
+        piezas, tipos_vistos = [], set()
+        for tr in trozos:
+            suyos = set(self.buscar_mod.normalizar(tr)) & self.buscador.tipos_conocidos
+            if suyos:
+                piezas.append(tr)
+                tipos_vistos |= suyos
+        if len(piezas) >= 2 and len(tipos_vistos) >= 2:
+            return piezas
+        return None
+
+    def _buscar_varias(self, fragmentos, conv, busqueda):
+        """Busca cada pieza por separado, con el coche del hilo pegado, y devuelve
+        la lista de lo pedido: qué hay (con su precio ya decidido) y qué falta.
+        Cada una es una consulta REAL, la misma que haría suelta.
+
+        Las fichas encontradas PASAN A SER los resultados del turno (en vez de las
+        de la búsqueda del mensaje entero, que mezcla las tres y puntúa mal): así
+        el precio de cada una lo autoriza el mismo guardarraíl que el de una
+        búsqueda normal, una por una. Y la decisión queda en RESPONDE si hay
+        alguna, para que un «no» de la que falta no tape el precio de las que sí."""
+        coche = conv.vehiculo or ""
+        pedidas, encontrados = [], []
+        for frag in fragmentos:
+            tb = self.redactor.sin_matricula(f"{frag} {coche}".strip()) or frag
+            b = self.consultar(tb, coche_identificado=bool(conv.matricula),
+                               registrar=False)
+            inv = [r for r in b["resultados"] if r.get("tipo") == "inventario"]
+            if inv:
+                pedidas.append({"nombre": (inv[0].get("meta") or {}).get("pieza", ""),
+                                "meta": inv[0].get("meta") or {},
+                                "precio_cliente": inv[0].get("precio_cliente"),
+                                "decision": b["decision"]})
+                encontrados.append(inv[0])
+            else:
+                # La que falta: su nombre es el tipo (y el lado) que el cliente dijo.
+                nombre = " ".join(t for t in self.buscar_mod.normalizar(frag)
+                                  if t in self.buscador.tipos_conocidos
+                                  or t in self.buscar_mod.LADOS)
+                pedidas.append({"nombre": nombre or frag, "meta": None,
+                                "precio_cliente": None, "decision": b["decision"]})
+        no_inv = [r for r in busqueda["resultados"] if r.get("tipo") != "inventario"]
+        busqueda["resultados"] = encontrados + no_inv
+        if encontrados:
+            busqueda["decision"] = "RESPONDE"
+        return pedidas
+
     # ----------------------------------------------------------- simulador
     def _vehiculo_en(self, texto):
         """Qué coche nombra el mensaje, según el vocabulario del propio catálogo.
@@ -531,6 +691,40 @@ class Sistema:
                 continue
         return cifras
 
+    # Lo que va justo antes del nombre de lo que se pide: «necesito UN x»,
+    # «busco x», «¿tenéis x?». Sin esto cualquier palabra rara sería una pieza.
+    _PIDE = {"un", "una", "unos", "unas", "necesito", "busco", "buscaba",
+             "quiero", "queria", "quisiera", "teneis", "tienes", "vendeis"}
+
+    def _pieza_fuera_de_catalogo(self, mensaje, conv, vehiculo):
+        """La palabra con la que el cliente pide algo que el catálogo no conoce, o None.
+
+        «Necesito un cubrecárter para un Golf 4»: el cubrecárter no es ninguno de
+        los tipos del catálogo, así que el mensaje no contaba como «habla de
+        pieza», no se guardaba nada y el bot le preguntaba cinco veces qué pieza
+        buscaba a quien ya se lo había dicho.
+
+        No hay lista de piezas escrita a mano. Una palabra cuenta si va detrás de
+        un artículo o de una petición, no es gramática, coche ni pieza conocida, y
+        NO APARECE EN NINGÚN SITIO DEL ÍNDICE — ni fichas, ni políticas, ni FAQ.
+        Y solo con un coche encima de la mesa: sin coche, «¿tenéis un momento?»
+        no es un pedido de nada.
+        """
+        if not (vehiculo or conv.vehiculo or conv.matricula):
+            return None
+        b = self.buscador
+        palabras = self.buscar_mod.normalizar(mensaje)
+        for antes, p in zip(palabras, palabras[1:]):
+            if (antes in self._PIDE and len(p) >= 5 and not p.isdigit()
+                    and p not in self.buscar_mod.PALABRAS_VACIAS
+                    and p not in self._PIDE
+                    and p not in b.tipos_conocidos
+                    and p not in b.marcas_conocidas
+                    and p not in b.modelos_conocidos
+                    and not b._apariciones.get(p)):
+                return p
+        return None
+
     def chatear(self, sesion, mensaje, perfil="nuevo", nombre="", reiniciar=False):
         """Un turno de conversación de WhatsApp: busca, redacta y recuerda.
 
@@ -543,6 +737,20 @@ class Sistema:
         if conv is None or reiniciar or conv.perfil != perfil:
             conv = self.redactor.Conversacion(perfil=perfil, nombre=nombre)
             self.chats[sesion] = conv
+
+        # Para la TRAZA (Fase 4): lo que el bot recordaba AL ENTRAR el turno, antes
+        # de tocar nada. El «después» se toma al final; la diferencia es lo que este
+        # turno ha cambiado en la memoria. Se lee aquí porque `registrar()` ya apunta
+        # la matrícula de este mensaje, y eso es parte de lo que el turno cambia.
+        _mem_antes = {
+            "matricula": getattr(conv, "matricula", None),
+            "pieza_pedida": getattr(conv, "pieza_pedida", None),
+            "vehiculo": getattr(conv, "vehiculo", "") or None,
+            "escalado": getattr(conv, "escalado", False),
+            "precio": getattr(conv, "ultimo_precio", None),
+        }
+        _matricula_en_mensaje = self.redactor.detectar_matricula(mensaje)
+
         conv.registrar(mensaje)
 
         # MEMORIA DEL COCHE. Un cliente no repite la marca en cada mensaje: dice
@@ -632,11 +840,27 @@ class Sistema:
         # `corrige_sin_resolver` también manda aquí: el mensaje que niega el coche
         # lo NOMBRA ("no es un Serie 3"), así que sin esta condición se volvería a
         # guardar el coche que se acaba de soltar dos líneas más arriba.
+        #
+        # P3 · UNA MATRÍCULA POR COCHE (D5, decidido por Álvaro). Si el cliente pasa
+        # a OTRO coche —no una corrección ni volver a nombrar el mismo—, la matrícula
+        # anterior no vale: se olvida y se pedirá la del coche nuevo. Sin esto, el
+        # precio del segundo coche saldría con la matrícula del primero. Se comparan
+        # por tokens: «Audi A4» → «Audi» es el mismo (subconjunto), pero «Audi A4» →
+        # «Audi A6» o «Seat León» es otro. Las fichas/precios ya vistos se conservan
+        # para poder recordarlos; solo se suelta la matrícula.
+        tn = set(self.buscar_mod.normalizar(vehiculo)) if vehiculo else set()
+        tv = set(self.buscar_mod.normalizar(conv.vehiculo)) if conv.vehiculo else set()
+        otro_coche = bool(tn and tv and not (tn <= tv or tv <= tn))
         if vehiculo and not conv.corregido and not conv.corrige_sin_resolver:
+            if otro_coche and conv.matricula:
+                conv.matricula = None
+                conv.matricula_recien_dada = False
+                conv.datos_pedidos.discard("matricula")
             conv.vehiculo = vehiculo
 
         contexto = None
         texto_busqueda = mensaje
+        rama_contexto, rama_porque = "ninguna", None   # traza: la etiqueta su rama
         if getattr(conv, "corregido", None) and conv.pieza_pedida:
             # LA PRIMERA de todas. Corregido el coche hay que volver a buscar la
             # misma pieza para el nuevo, y este mensaje no nombra ninguna pieza:
@@ -654,10 +878,16 @@ class Sistema:
                 if t in self.buscador.tipos_conocidos or t in self.buscar_mod.LADOS)
             contexto = " ".join(x for x in (solo_pieza, conv.vehiculo) if x)
             texto_busqueda = contexto or mensaje
+            rama_contexto = "correccion_coche"
+            _viejo, _nuevo = conv.corregido
+            rama_porque = (f"Corregiste el coche: se busca la misma pieza para el "
+                           f"{_nuevo} y se tira lo del {_viejo}.")
 
         elif habla_de_pieza and not vehiculo and conv.vehiculo:
             contexto = conv.vehiculo
             texto_busqueda = f"{mensaje} {conv.vehiculo}"
+            rama_contexto = "coche_de_memoria"
+            rama_porque = f"No repetiste el coche: se usa el {conv.vehiculo} que ya dijiste."
         elif vehiculo and not habla_de_pieza and getattr(conv, "pieza_pedida", None):
             # Solo la PIEZA del mensaje anterior, no el mensaje entero: arrastrar
             # el coche viejo junto al nuevo confundiría los dos.
@@ -667,6 +897,9 @@ class Sistema:
             if pieza:
                 contexto = pieza
                 texto_busqueda = f"{mensaje} {pieza}"
+                rama_contexto = "pieza_de_memoria"
+                rama_porque = (f"Cambiaste de coche: se busca la misma pieza "
+                               f"({pieza}) para el nuevo.")
         elif self.redactor.pieza_referida(conv, mensaje) is not None:
             # «EL QUE TE DIJE ANTES», «LA OTRA». En una conversación de taller es
             # constante: se piden tres cosas y luego se habla de una sin volver a
@@ -677,6 +910,9 @@ class Sistema:
             referida = self.redactor.pieza_referida(conv, mensaje)
             contexto = self.redactor.texto_de_pieza(referida)
             texto_busqueda = f"{mensaje} {contexto}".strip()
+            rama_contexto = "pieza_referida"
+            rama_porque = (f"Hablas de una pieza anterior: es la ficha de "
+                           f"{contexto} que ya salió.")
 
         elif conv.matricula_recien_dada and getattr(conv, "pieza_pedida", None):
             # LA MATRÍCULA DESBLOQUEA EL PRECIO, y hay que ir a buscarlo.
@@ -697,11 +933,40 @@ class Sistema:
             # era de un Passat, y se lo ofrecia a alguien con un A4.
             contexto = " ".join(x for x in (conv.pieza_pedida, conv.vehiculo) if x)
             texto_busqueda = contexto
+            rama_contexto = "matricula_desbloquea"
+            rama_porque = (f"Acabas de dar la matrícula: se vuelve a buscar "
+                           f"{conv.pieza_pedida} para dar el precio que antes se retuvo.")
 
+        # Traza: si al final no se completó nada con la memoria, la rama es
+        # "ninguna". Mantiene el invariante que comprueba C7: hay rama de contexto
+        # (≠ "ninguna") exactamente cuando se buscó con contexto añadido.
+        if not contexto:
+            rama_contexto, rama_porque = "ninguna", None
+
+        # La matrícula identifica, no busca. Si se queda dentro del texto (pieza y
+        # matrícula en el mismo mensaje), baja la puntuación y el precio se retiene
+        # aunque la pieza esté. Se quita para buscar; el mensaje original no cambia.
+        texto_busqueda = self.redactor.sin_matricula(texto_busqueda) or texto_busqueda
+
+        _coche_id_busqueda = bool(conv.matricula)
         busqueda = self.consultar(texto_busqueda,
-                                  coche_identificado=bool(conv.matricula))
+                                  coche_identificado=_coche_id_busqueda)
         busqueda["pregunta"] = mensaje
         busqueda["contexto"] = contexto
+        # VARIAS PIEZAS EN UN MENSAJE. "cremallera, turbo y amortiguador": se busca
+        # cada una por separado y el redactor contesta por todas a la vez. Solo
+        # cuando el mensaje lista 2+ tipos de pieza distintos (ver _partir_piezas);
+        # un mensaje normal no se parte. La búsqueda del mensaje entero sigue siendo
+        # la principal (traza, decisión); esto añade el desglose por pieza.
+        if habla_de_pieza:
+            _fragmentos = self._partir_piezas(mensaje)
+            if _fragmentos:
+                busqueda["varias_piezas"] = self._buscar_varias(
+                    _fragmentos, conv, busqueda)
+        if not any(r.get("tipo") == "inventario" for r in busqueda["resultados"]):
+            fuera = self._pieza_fuera_de_catalogo(mensaje, conv, vehiculo)
+            if fuera:
+                conv.pieza_desconocida = fuera
         respuesta = self.redactor.redactar(busqueda, conv)
 
         # ------------------------------------------------- las tres acciones
@@ -779,12 +1044,14 @@ class Sistema:
         if any(r["regla"] == "cierre de venta" for r in respuesta["reglas"]):
             self.anotar_reserva(sesion, conv)
 
-        historial.append({"cliente": mensaje, "bot": respuesta["mensaje"]})
-        del historial[:-12]        # el historial largo se corta, no crece sin fin
+        # (El turno se añade al historial más abajo, DESPUÉS de las auditorías.)
 
-        # Lo que no supo contestar se guarda para que lo conteste una persona.
+        # Lo que no supo contestar se guarda para que lo conteste una persona. Las
+        # sesiones de prueba no: llenaban la cola de dudas de ruido del banco (D4).
         reglas = " · ".join(r["regla"] for r in respuesta["reglas"])
-        if "no se reconoce la consulta" in reglas or "no tiene una respuesta" in reglas:
+        if (("no se reconoce la consulta" in reglas or "no tiene una respuesta" in reglas
+                or "pieza fuera del catálogo" in reglas)
+                and not self.es_prueba(sesion)):
             self.aprender.anotar(mensaje, porque_accion, sesion, busqueda["decision"])
 
         # Comprobación en caliente del guardarraíl: el redactor solo puede publicar
@@ -818,6 +1085,7 @@ class Sistema:
         #
         # Las dos las rompió el modelo la primera vez que se encendió, y el banco
         # las veía DESPUÉS, cuando al cliente ya le ha llegado el mensaje.
+        _auditorias, _texto_modelo = [], None   # para la traza (solo con LLM)
         if lineas_llm:
             # ¿Está identificado el coche? Con matrícula o VIN, sí. Y también si la
             # búsqueda ha autorizado el precio, porque la única forma de que lo
@@ -850,7 +1118,32 @@ class Sistema:
                     or self.redactor.rompe_el_guion(
                         respuesta["lineas"], respuesta.get("borrador"), conv,
                         dicho_cliente, set(self.buscador.marcas_conocidas.values())))
+            # TRAZA (§8.2): para ENSEÑARLAS se evalúan TODAS las guardas, pero la
+            # decisión de arriba —la primera que falla, en ese orden— no cambia.
+            # Es solo para el panel; va en try porque corre únicamente con el LLM
+            # encendido y no quiero que un fallo al pintar tumbe una respuesta.
+            try:
+                _marcas = set(self.buscador.marcas_conocidas.values())
+                _ev = [
+                    ("estilo", self.redactor.rompe_el_estilo(respuesta["lineas"])),
+                    ("matricula", self.redactor.rompe_la_matricula(
+                        respuesta["lineas"], busqueda["decision"],
+                        bool(conv.matricula), bool(respuesta.get("escala")))),
+                    ("identificacion", self.redactor.rompe_la_identificacion(
+                        respuesta["lineas"],
+                        fichas[0].get("meta") if fichas else None, identificado)),
+                    ("apertura", self.redactor.rompe_la_apertura(
+                        respuesta["lineas"], respuesta.get("borrador"))),
+                    ("guion", self.redactor.rompe_el_guion(
+                        respuesta["lineas"], respuesta.get("borrador"), conv,
+                        dicho_cliente, _marcas)),
+                ]
+                _auditorias = [{"nombre": n, "ok": not r,
+                                **({"motivo": r} if r else {})} for n, r in _ev]
+            except Exception:
+                _auditorias = []
             if roto:
+                _texto_modelo = "\n".join(respuesta["lineas"])   # descartado
                 respuesta["lineas"] = respuesta["borrador"]
                 respuesta["mensaje"] = "\n".join(respuesta["borrador"])
                 respuesta["redactor"] = (f"descartada la redacción del modelo: "
@@ -862,6 +1155,8 @@ class Sistema:
                       for p in (autorizados | conv.precios_autorizados) if p}
         intrusas = [c for c in cifras if c not in permitidas]
         if intrusas and respuesta.get("borrador"):
+            if _texto_modelo is None:
+                _texto_modelo = "\n".join(respuesta["lineas"])   # descartado
             respuesta["lineas"] = respuesta["borrador"]
             respuesta["mensaje"] = "\n".join(respuesta["borrador"])
             respuesta["redactor"] = (f"descartada la redacción del modelo: escribió "
@@ -870,6 +1165,21 @@ class Sistema:
             respuesta["llm_descartado"] = True
         elif intrusas:
             respuesta["precio_autorizado"] = False
+        # TRAZA: la auditoría de importes se decide aquí (sobre el texto final del
+        # modelo), así que su resultado se añade a la lista justo ahora.
+        if lineas_llm:
+            _auditorias.append({"nombre": "importes", "ok": not intrusas,
+                                **({"motivo": f"{intrusas[0]} € sin autorizar"}
+                                   if intrusas else {})})
+
+        # AL HISTORIAL VA LO QUE EL CLIENTE HA LEÍDO, y eso solo se sabe aquí. Se
+        # añadía antes de las auditorías, así que cuando una descartaba al modelo
+        # el cliente veía el borrador y el historial se quedaba con la redacción
+        # tirada. Al turno siguiente el modelo leía como dicho por él «no
+        # disponemos de esa pieza» —una frase que nunca salió— y seguía por ahí:
+        # la conversación derivaba sobre mensajes que el cliente no había visto.
+        historial.append({"cliente": mensaje, "bot": respuesta["mensaje"]})
+        del historial[:-12]        # el historial largo se corta, no crece sin fin
 
         # Si se ha localizado una pieza, su coche es mejor contexto que lo que el
         # cliente escribió: viene con modelo y motor exactos.
@@ -877,7 +1187,43 @@ class Sistema:
         if pieza.get("marca"):
             conv.vehiculo = f"{pieza['marca']} {pieza.get('modelo', '')}".strip()
 
+        # LA TRAZA DEL «POR QUÉ» (Fase 4). Se monta con lo que ya han decidido la
+        # búsqueda, el redactor y la acción —no reinterpreta nada— más la memoria
+        # antes/después de este turno. Es PURAMENTE ADITIVA: va como una clave más
+        # de la respuesta, sin tocar `bot`, `busqueda` ni `memoria`. Envuelta en
+        # try para que un error al construirla jamás tumbe una respuesta real
+        # (el guardarraíl C5 manda); si falla, el test de coherencia C7 lo caza.
+        _mem_despues = {
+            "matricula": conv.matricula,
+            "pieza_pedida": getattr(conv, "pieza_pedida", None),
+            "vehiculo": conv.vehiculo or None,
+            "escalado": conv.escalado,
+            "precio": conv.ultimo_precio,
+        }
+        try:
+            traza = self.traza_mod.construir(
+                mensaje=mensaje,
+                entrada={"habla_de_pieza": habla_de_pieza,
+                         "coche_en_mensaje": vehiculo or None,
+                         "matricula_en_mensaje": _matricula_en_mensaje,
+                         "intencion": respuesta.get("intencion")},
+                contexto={"rama": rama_contexto, "texto_buscado": texto_busqueda,
+                          "por_que": rama_porque},
+                busqueda=busqueda, respuesta=respuesta,
+                accion=accion, porque_accion=porque_accion,
+                coche_identificado=_coche_id_busqueda,
+                memoria_antes=_mem_antes, memoria_despues=_mem_despues,
+                umbrales={"inventario": self.buscar_mod.UMBRAL_PIEZA,
+                          "politica": self.buscar_mod.UMBRAL_POLITICA,
+                          "faq": self.buscar_mod.UMBRAL_FAQ},
+                umbral_precio=self.buscar_mod.UMBRAL_PRECIO,
+                auditorias=_auditorias, texto_modelo=_texto_modelo)
+        except Exception as e:                       # pragma: no cover
+            traza = {"resumen": f"(traza no disponible: {e})", "pasos": []}
+
+        self.guardar_sesiones()     # solo hace algo si el panel lo ha encendido
         return {"bot": respuesta, "busqueda": busqueda,
+                "traza": traza,
                 "memoria": {"turnos": conv.turnos, "matricula": conv.matricula,
                             "perfil": conv.perfil, "nombre": conv.nombre,
                             "vehiculo": conv.vehiculo, "escalado": conv.escalado,
@@ -886,79 +1232,71 @@ class Sistema:
                             "garantia_dicha": conv.garantia_dicha}}
 
     def guiones(self):
-        """Conversaciones tipo, construidas con piezas REALES del catálogo.
+        """Conversaciones tipo: 8 tipos, 50 guiones, evaluados turno a turno.
 
-        No están escritas a mano: si el catálogo cambia, los guiones cambian con él
-        y siguen funcionando. Cada uno enseña un comportamiento distinto del tono.
+        Las plantillas viven en `datos/guiones_tipo.json` y los huecos se rellenan
+        con el catálogo real (semilla fija) en `12_guiones.construir()`. Antes esto
+        se hacía aquí con 5 guiones y una RESERVA SILENCIOSA al Ferrari (D1): si no
+        encontraba una ausencia, caía a un texto fijo y el guion no probaba nada.
+        Ahora, si un hueco no se puede rellenar, `construir()` falla con su nombre.
+
+        La respuesta mantiene los campos de siempre (nombre, perfil, cliente,
+        que_prueba, mensajes) y añade id, tipo, tipos_mezcla, esperado y
+        decision_pendiente, así el panel viejo en caché sigue funcionando.
         """
-        import random
-        rnd = random.Random(11)
-        con_precio = [f for f in self.filas
-                      if self.ofertas_mod.precio_publicado(f["precio"])
-                      and f["disponibilidad"].lower() == "en stock"]
-        a, b = rnd.sample(con_precio, 2)
+        # Se construye una sola vez y se cachea: construir() hace búsquedas reales
+        # para comprobar que cada {A} lleva precio publicable, y no hay que repetir
+        # eso en cada /api/guiones. El catálogo no cambia mientras corre el panel.
+        if getattr(self, "_guiones_cache", None) is not None:
+            return self._guiones_cache
+        if not hasattr(self, "guiones_mod"):
+            self.guiones_mod = cargar("12_guiones.py", "guiones")
+        try:
+            self._guiones_cache = self.guiones_mod.construir(self)
+        except Exception as e:
+            print(f"AVISO: no se pudieron construir los guiones ({e})")
+            self._guiones_cache = []
+        return self._guiones_cache
 
-        def pedir(f):
-            return (f"{f['pieza'].lower()} para un {f['marca'].title()} "
-                    f"{f['modelo']} {f['motor']}")
+    def evaluar_guion_turno(self, gid, turno, sesion, res):
+        """✓/✗ de un turno de un guion, con la ÚNICA definición de la evaluación.
 
-        # Para el guion de "no la tengo" no vale cualquier combinación que falte:
-        # tiene que ser una ausencia INEQUÍVOCA. Si el nombre de la pieza comparte
-        # una sola palabra con algo que sí tenemos de esa marca (pedir "cerradura
-        # puerta delantera" cuando hay "puerta delantera izquierda"), el buscador
-        # ofrece la hermana y el guion enseña lo contrario de lo que pretende.
-        # Por eso se exige que NINGUNA palabra del nombre exista para esa marca.
-        def tokens_de(nombre):
-            return {x for x in self.buscar_mod.normalizar(nombre)
-                    if x not in self.buscar_mod.PALABRAS_VACIAS and len(x) > 2}
-
-        def cabeza(nombre):
-            t = sorted(tokens_de(nombre), key=lambda x: self.buscar_mod
-                       .normalizar(nombre).index(x))
-            return t[0] if t else None
-
-        vocabulario, modelos = {}, {}
-        for f in self.filas:
-            vocabulario.setdefault(f["marca"], set()).update(tokens_de(f["pieza"]))
-            modelos.setdefault(f["marca"], set()).add(f["modelo"])
-        piezas, marcas = sorted({f["pieza"] for f in self.filas}), sorted(vocabulario)
-        ausente = "un turbo para un Ferrari F430"
-        for _ in range(4000):
-            p, m = rnd.choice(piezas), rnd.choice(marcas)
-            if not (tokens_de(p) & vocabulario.get(m, set())):
-                ausente = (f"un {p.lower()} para un {m.title()} "
-                           f"{rnd.choice(sorted(modelos[m]))}")
-                break
-
-        return [
-            {"nombre": "Compra directa", "perfil": "nuevo", "cliente": "",
-             "que_prueba": "Encuentra la pieza, da el precio publicado y cierra.",
-             "mensajes": ["buenas, ¿tenéis " + pedir(a) + "?",
-                          "vale, ¿y me llega esta semana?",
-                          "perfecto, me lo quedo"]},
-            {"nombre": "Cliente que regatea", "perfil": "conocido",
-             "cliente": "Juan Carlos",
-             "que_prueba": "No baja el precio: cede el transporte y avisa a Álvaro.",
-             "mensajes": ["buenas! necesito " + pedir(b),
-                          "uf, está caro. ¿me lo dejas en algo menos?",
-                          "vale, déjame que lo mire"]},
-            {"nombre": "No la tenemos", "perfil": "nuevo", "cliente": "",
-             "que_prueba": "Dice que no en vez de ofrecer una pieza parecida, y "
-                           "pide la matrícula una sola vez.",
-             "mensajes": ["hola, busco " + ausente,
-                          "mi matricula es 4521 KBD",
-                          "y cuanto tarda en llegar"]},
-            {"nombre": "Datos a medias", "perfil": "conocido", "cliente": "Roberto",
-             "que_prueba": "Con la pieza sin nombrar entera NO da precio: confirma.",
-             "mensajes": [f"oye necesito algo para el {a['marca'].title()} "
-                          f"{a['modelo']}",
-                          f"la {cabeza(a['pieza'])}, la de siempre",
-                          "y de garantía qué me das"]},
-            {"nombre": "Va mal la pieza", "perfil": "conocido", "cliente": "Roberto",
-             "que_prueba": "Una queja no la contesta el bot: la escala entera.",
-             "mensajes": ["el alternador que me mandasteis no funciona",
-                          "pues vaya faena, lo tengo el coche parado"]},
-        ]
+        Reutiliza `12_guiones.evaluar_turno()` —la misma que el banco
+        `tests/test_guiones.py`—, así el panel y el banco no pueden discrepar
+        (regla del proyecto: una sola definición de cada cosa). El servidor
+        evalúa y el panel solo pinta. Devuelve {ok, esperado, obtenido, fallos,
+        decision_pendiente}, o None si el turno pedido no existe.
+        """
+        try:
+            turno = int(turno)
+        except (TypeError, ValueError):
+            return None
+        guiones = self.guiones()          # deja `self.guiones_mod` cargado
+        guion = next((g for g in guiones if g["id"] == gid), None)
+        if not guion or not (0 <= turno < len(guion.get("esperado", []))):
+            return None
+        esperado = guion["esperado"][turno]
+        conv = self.chats.get(sesion)
+        # El historial que ve el evaluador son los mensajes del bot ANTERIORES:
+        # el de este turno ya se añadió en `chatear()`, así que se descarta el
+        # último (igual que hace el banco, que evalúa antes de apilar el turno).
+        hist = self.historiales.get(sesion, [])
+        historial = [h.get("bot", "") for h in hist[:-1]]
+        datos_turno = {
+            "bot": res["bot"],
+            "busqueda": res["busqueda"],
+            "historial": historial,
+            "matricula_dada": (res.get("memoria") or {}).get("matricula"),
+            "pieza_pedida": getattr(conv, "pieza_pedida", None),
+            "estado": getattr(conv, "estado", None),
+        }
+        try:
+            ev = self.guiones_mod.evaluar_turno(esperado, datos_turno)
+        except Exception as e:                       # nunca tumbar el panel
+            return {"error": f"{type(e).__name__}: {e}"}
+        return {"ok": ev["ok"], "esperado": ev["esperado"],
+                "obtenido": ev["obtenido"], "fallos": ev["fallos"],
+                "decision_pendiente": bool(esperado.get("decision_pendiente"))}
 
     def ficha_stock(self, id_stock):
         """La ficha de UNA pieza por su número de stock, o None si no existe.
@@ -1170,11 +1508,22 @@ class Handler(BaseHTTPRequestHandler):
                 mensaje = (cuerpo.get("mensaje") or "").strip()
                 if not mensaje:
                     return self._json({"error": "escribe un mensaje"}, 400)
-                return self._json(SISTEMA.chatear(
-                    cuerpo.get("sesion") or "demo", mensaje,
+                sesion = cuerpo.get("sesion") or "demo"
+                res = SISTEMA.chatear(
+                    sesion, mensaje,
                     perfil=cuerpo.get("perfil") or "nuevo",
                     nombre=cuerpo.get("nombre") or "",
-                    reiniciar=bool(cuerpo.get("reiniciar"))))
+                    reiniciar=bool(cuerpo.get("reiniciar")))
+                # ✓/✗ POR TURNO (Fase 5). Si el mensaje viene de un guion, el
+                # SERVIDOR lo evalúa con la ÚNICA definición de la evaluación
+                # (12_guiones.evaluar_turno), la misma que usa el banco; el panel
+                # solo pinta. El chat escrito a mano no manda `guion` y no se
+                # evalúa: ahí no hay expectativa que comparar.
+                guion_ref = cuerpo.get("guion")
+                if isinstance(guion_ref, dict) and guion_ref.get("id"):
+                    res["evaluacion"] = SISTEMA.evaluar_guion_turno(
+                        guion_ref.get("id"), guion_ref.get("turno"), sesion, res)
+                return self._json(res)
 
             if ruta == "/api/aprender":
                 # La respuesta la escribe una PERSONA. No hay ninguna ruta en el
@@ -1264,7 +1613,7 @@ def main():
                 f"       panel abierto: cierralo con Ctrl+C en su ventana, o mira\n"
                 f"       quien es con:  netstat -ano | findstr {PUERTO}")
 
-    SISTEMA = Sistema()
+    SISTEMA = Sistema(persistir=True)
     servidor = ThreadingHTTPServer(("127.0.0.1", PUERTO), Handler)
     url = f"http://localhost:{PUERTO}"
     print(f"\n  VendIQ · Centro de control  ->  {url}")

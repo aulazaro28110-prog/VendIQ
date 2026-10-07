@@ -242,10 +242,12 @@ nav.barra{ background:rgba(4,6,10,.86) }
 :root[data-tema="claro"] .tema-toggle .t-luna{ background:var(--carta-alta); color:var(--tinta); }
 
 /* ============================================================ el sidebar
-   Solo a partir de 1100px. Por debajo se queda la barra superior que ya
-   existía y que ya era responsive: cambiar las dos cosas a la vez es como
-   se rompen los móviles. */
-@media (min-width:1100px){
+   A partir de 960px. Por debajo se queda la barra superior que ya existía y
+   que ya era responsive: cambiar las dos cosas a la vez es como se rompen los
+   móviles. El corte está en 960 (y no en 1100) para que la barra salga también
+   en portátiles con escalado al 125 % (1366 px reales ≈ 1092 px de CSS), donde
+   antes no aparecía nunca. Debe coincidir con el bloque de lenguaje.css. */
+@media (min-width:960px){
   nav.barra{
     position:fixed; inset:0 auto 0 0; width:236px; z-index:30;
     border-bottom:0; border-right:1px solid var(--borde);
@@ -311,7 +313,7 @@ nav.barra{ background:rgba(4,6,10,.86) }
    los partiría. */
 .nav-grupo{ display:none }
 
-@media (min-width:1100px){
+@media (min-width:960px){
   nav.barra .barra-enlaces{ gap:1px }
 
   .nav-grupo{

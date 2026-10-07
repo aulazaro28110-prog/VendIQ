@@ -22,7 +22,11 @@
   padding:20px 24px;margin-bottom:18px;
 }
 .mando{display:flex;flex-direction:column;gap:9px;min-width:0}
-.mando.crece{flex:1;min-width:280px}
+/* «Conversaciones tipo» es un bloque de varias filas (selectores + reproductor +
+   info): no cabe bien al lado del selector de perfil. Ocupa su propia fila
+   completa, separada por una línea, para que se lea como un módulo aparte. */
+.mando.crece{flex:1 1 100%;min-width:0;border-top:1px solid var(--borde);
+  padding-top:16px;margin-top:2px}
 .mando > label{font-size:12.5px;color:var(--tinta-3)}
 .mando input{
   background:var(--carta-alta);border:1px solid var(--borde);color:var(--tinta);
@@ -217,8 +221,124 @@
 .duda-ok{color:var(--cian);font-size:13.5px}
 .estado-vacio{padding:34px 28px;color:var(--tinta-2);font-size:13.5px;line-height:1.7}
 
+/* --------------------------------------- conversaciones tipo: desplegable */
+.guiones-mando{display:flex;flex-direction:column;gap:11px}
+.guiones-selects{display:flex;flex-wrap:wrap;gap:10px}
+.guiones-selects select{
+  background:var(--carta-alta);border:1px solid var(--borde);color:var(--tinta);
+  border-radius:10px;padding:9px 12px;font-family:var(--ui);font-size:13px;
+  outline:none;max-width:100%;cursor:pointer;
+}
+.guiones-selects #sel-tipo{min-width:160px}
+.guiones-selects #sel-guion{flex:1;min-width:220px}
+.guiones-selects select:focus-visible{outline:2px solid var(--cian);outline-offset:-1px}
+.guiones-selects select:disabled{opacity:.5;cursor:not-allowed}
+
+.guiones-repro{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.repro-btn{
+  background:var(--carta-alta);border:1px solid var(--borde);color:var(--tinta-2);
+  border-radius:999px;padding:7px 14px;font-family:var(--ui);font-size:12.5px;
+  cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.repro-btn:hover{color:var(--tinta);border-color:var(--borde-vivo)}
+.repro-btn:focus-visible{outline:2px solid var(--cian);outline-offset:1px}
+.repro-btn:disabled{opacity:.4;cursor:not-allowed}
+.repro-vel{display:flex;align-items:center;gap:8px}
+.repro-vel-et{font-size:12px;color:var(--tinta-3)}
+.segmentos.chico button{padding:5px 11px;font-size:12px}
+.guion-info{font-size:12.5px;color:var(--tinta-3);margin:0;line-height:1.5}
+
+/* ------------------------------------------------ ✓/✗ por turno y resumen */
+.burbuja[role="button"]{cursor:pointer}
+.burbuja.activa{outline:2px solid var(--wa-verde);outline-offset:1px}
+.veredicto{
+  align-self:flex-start;display:inline-flex;align-items:center;gap:7px;
+  margin:1px 0 7px;padding:3px 10px;border-radius:999px;font-size:11px;
+  border:1px solid var(--borde-vivo);background:var(--wa-barra);max-width:88%;
+}
+.veredicto .v-marca{font-weight:700}
+.veredicto .v-txt{color:var(--wa-tinta-2)}
+.veredicto.ok{border-color:var(--ok)}
+.veredicto.ok .v-marca{color:var(--ok)}
+.veredicto.no{border-color:var(--rojo)}
+.veredicto.no .v-marca{color:var(--rojo)}
+.resumen-guion{
+  align-self:center;margin:12px 0 4px;padding:6px 14px;border-radius:8px;
+  font-size:11.5px;color:var(--wa-tinta);background:var(--wa-barra);
+  border:1px solid var(--borde-vivo);
+}
+
+/* -------------------------------------------- el «por qué» nuevo (traza) */
+.porque-veredicto{font-size:12.5px;margin:0 0 10px;font-weight:600}
+.porque-veredicto.ok{color:var(--ok)}
+.porque-veredicto.no{color:var(--rojo)}
+.resumen-grande{
+  font-size:15px;line-height:1.5;color:var(--tinta);margin:0 0 18px;
+  letter-spacing:-.01em;
+}
+
+.pasos{display:flex;flex-direction:column;gap:2px;margin-top:4px}
+.paso{border-bottom:1px solid var(--borde)}
+.paso[open]{background:var(--carta-alta);border-radius:8px}
+.paso-sum{
+  display:flex;align-items:center;gap:10px;padding:10px 8px;cursor:pointer;
+  list-style:none;font-size:12.5px;
+}
+.paso-sum::-webkit-details-marker{display:none}
+.paso-sum:hover{color:var(--tinta)}
+.paso-sum:focus-visible{outline:2px solid var(--cian);outline-offset:-2px;border-radius:6px}
+.paso-ico{width:9px;height:9px;border-radius:50%;flex:none;background:var(--tinta-3)}
+.paso-ico.e-ok{background:var(--ok)}
+.paso-ico.e-aviso{background:var(--ambar)}
+.paso-ico.e-bloqueo{background:var(--rojo)}
+.paso-ico.e-info{background:var(--cian)}
+.paso-ico.e-gris{background:var(--tinta-3)}
+.paso-num{color:var(--tinta-3);font-size:12px;flex:none}
+.paso-tit{color:var(--tinta-2);font-weight:600;flex:none;min-width:92px}
+.paso-linea{color:var(--tinta-3);flex:1;min-width:0;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.paso-linea.vacia{color:var(--tinta-3);opacity:.6}
+.paso[open] .paso-linea{white-space:normal}
+.paso-cuerpo{padding:2px 8px 12px 29px}
+.paso-datos{display:flex;flex-direction:column;gap:4px;padding:2px 8px 12px 29px}
+.pd{display:flex;gap:10px;font-size:12px}
+.pd-k{color:var(--tinta-3);min-width:120px;flex:none}
+.pd-v{color:var(--tinta-2);font-family:var(--mono);font-size:11.5px;word-break:break-word}
+.pd-nuevo .pd-v{color:var(--cian)}
+
+.barra-caja{display:flex;align-items:center;gap:10px;margin:4px 0 10px}
+.barra{position:relative;flex:1;height:7px;border-radius:999px;
+  background:var(--carta);border:1px solid var(--borde);overflow:hidden}
+.barra-llena{position:absolute;left:0;top:0;bottom:0;background:var(--cian);
+  border-radius:999px}
+.barra-llena.corta{background:var(--ambar)}
+.barra-umbral{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--tinta)}
+.barra-txt{font-family:var(--mono);font-size:11px;color:var(--tinta-3);flex:none}
+
+.audit-pills{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 8px}
+.pill-audit{font-size:11px;padding:3px 9px;border-radius:999px;
+  border:1px solid var(--borde-vivo)}
+.pill-audit.ok{color:var(--ok);background:var(--ok-soft);border-color:var(--ok)}
+.pill-audit.no{color:var(--rojo);background:var(--rojo-12);border-color:var(--rojo)}
+.audit-nota{font-size:11.5px;color:var(--tinta-3);font-family:var(--mono);margin:2px 0}
+
+.diff{margin-top:8px}
+.diff-sum{font-size:11.5px;color:var(--cian);cursor:pointer}
+.diff-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.diff-col{border:1px solid var(--borde);border-radius:8px;padding:9px 11px}
+.diff-col.malo{border-color:var(--rojo);background:var(--rojo-12)}
+.diff-et{font-size:10.5px;color:var(--tinta-3);text-transform:uppercase;
+  letter-spacing:.06em;margin:0 0 5px}
+.diff-txt{font-size:12px;color:var(--tinta-2);margin:0;line-height:1.5}
+.descartadas{margin-top:14px}
+.descartadas > summary{cursor:pointer}
+
 @media (max-width:640px){
   .movil{height:500px}
   .porque-panel{max-height:none;padding:20px}
   .chat-mandos{padding:18px}
+  .repro-vel{margin-left:0}
+  .diff-cols{grid-template-columns:1fr}
+  .paso-tit{min-width:0}
+  .paso-linea{white-space:normal}
 }

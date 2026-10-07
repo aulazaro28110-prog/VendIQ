@@ -78,8 +78,8 @@ print("=" * 78)
 print("3. CUANTO TIEMPO SE GUARDA")
 print("=" * 78)
 panel = (BASE / "06_panel.py").read_text(encoding="utf-8")
-print(f"   conversaciones en memoria del servidor: "
-      f"{'sí (self.chats), se pierden al reiniciar' if 'self.chats = {}' in panel else '?'}")
+print(f"   conversaciones del panel: "
+      f"{'en memoria y en salida/sesiones.json, sobreviven al reinicio' if 'SESIONES' in panel else 'solo en memoria, se pierden al reiniciar'}")
 m = re.search(r"del historial\[:-(\d+)\]", panel)
 print(f"   historial por conversación: últimos {m.group(1) if m else '?'} turnos")
 print(f"   registro de dudas: {'permanente hasta que se contesta' if 'no_resueltas' in panel else '?'}")

@@ -38,6 +38,10 @@ _to_delete/
 # Reservas de conversaciones: datos de trabajo, no codigo.
 salida/reservas.json
 
+# Conversaciones abiertas del panel. Llevan matriculas en claro: nunca al repo.
+salida/sesiones.json
+salida/sesiones.json.tmp
+
 # Copias de seguridad del redactor: el original ya esta en git.
 *.bak*
 
@@ -49,3 +53,7 @@ salida/*.txt
 
 # Salidas de depuracion de tests (temporales)
 err_*.txt
+
+# Salida del banco de guiones: se regenera con
+#   python tests/test_guiones.py --json salida/guiones_banco.json
+salida/guiones_banco.json

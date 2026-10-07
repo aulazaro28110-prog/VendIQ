@@ -249,12 +249,17 @@ async function pintarEstadosMesa() {
    Los tres huecos están puestos igualmente: el día que haya dato, aparecen
    solos sin tocar el HTML. */
 function ponerBadge(cual, n, tono) {
-  const b = document.querySelector('.nav-badge[data-badge="' + cual + '"]');
-  if (!b) return;
-  if (!n) { b.hidden = true; return; }        // 0, null o undefined: nada
-  b.textContent = n > 99 ? '99+' : String(n);
-  if (tono) b.className = 'nav-badge ' + tono;
-  b.hidden = false;
+  // Por el ATRIBUTO data-badge, no por la clase: así cubre a la vez el de
+  // nav.barra (.nav-badge) y el que barra.js clona en la lateral (.sb-badge).
+  const badges = document.querySelectorAll('[data-badge="' + cual + '"]');
+  const TONOS = ['aviso', 'bien', 'pregunta', 'critico'];
+  badges.forEach((b) => {
+    if (!n) { b.hidden = true; return; }       // 0, null o undefined: nada
+    b.textContent = n > 99 ? '99+' : String(n);
+    b.classList.remove(...TONOS);               // sin pisar la clase base
+    if (tono) b.classList.add(tono);
+    b.hidden = false;
+  });
 }
 
 (async () => {
