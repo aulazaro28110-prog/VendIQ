@@ -147,4 +147,29 @@ print("=" * 90)
 fallan = [x for x in resultados if not x]
 print(f"{len(resultados) - len(fallan)}/{len(resultados)} secciones cumplidas")
 print("=" * 90)
+
+# No dejar rastro (D4). §23 cierra una venta de verdad para comprobar que SÍ se
+# escribe en salida/reservas.json: necesita una sesión real (no "sim-"/"banco-"),
+# y por eso usa "aud*". Hecha ya la comprobación, estas sesiones se borran para no
+# contaminar los datos de negocio. Se hace aquí, al final, cuando ningún `probar`
+# va a volver a leer el fichero.
+def _limpiar_rastro():
+    for nombre in ("reservas.json", "no_resueltas.json"):
+        ruta = BASE / "salida" / nombre
+        if not ruta.exists():
+            continue
+        try:
+            filas = _json.loads(ruta.read_text(encoding="utf-8"))
+        except (ValueError, OSError):
+            continue
+        quedan = [f for f in filas
+                  if not str(f.get("sesion", "")).startswith("aud")]
+        if len(quedan) != len(filas):
+            ruta.write_text(
+                _json.dumps(quedan, ensure_ascii=False, indent=2),
+                encoding="utf-8")
+
+
+_limpiar_rastro()
+
 sys.exit(1 if fallan else 0)

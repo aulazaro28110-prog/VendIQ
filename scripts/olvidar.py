@@ -25,6 +25,8 @@ fichero a fichero (`scripts/auditar_datos.py` hizo el recorrido), puede acabar e
   · salida/reservas.json       CADA reserva guarda la matrícula en un campo suyo,
                                y a diferencia de las conversaciones esto SÍ
                                sobrevive a reiniciar el panel
+  · salida/sesiones.json       las conversaciones abiertas del panel, con la
+                               matrícula en un campo y en los turnos literales
   · datos/faq_aprendidas.md    la pregunta original que dio pie a la respuesta
 
 salida/reservas.json se añadió tarde: el script nació antes que las reservas y se
@@ -39,9 +41,11 @@ matrícula seguiría viva dentro de un vector.
 
 LO QUE NO PUEDE BORRAR, Y HAY QUE DECIRLO
 -----------------------------------------
-Las conversaciones abiertas viven en la memoria del proceso del panel. Se pierden
-al reiniciarlo, y este script no puede alcanzarlas: si hay una en curso, reinicia
-el panel después.
+Las conversaciones abiertas viven en la memoria del proceso del panel, y el panel
+las vuelve a escribir en salida/sesiones.json en cada turno. Este script no llega
+a esa memoria: si el panel está en marcha mientras se borra, el siguiente mensaje
+de cualquier cliente reescribe el fichero y la matrícula vuelve. El orden es:
+parar el panel (Ctrl+C), borrar, y volver a arrancarlo.
 """
 
 import json
@@ -61,6 +65,7 @@ FICHEROS_JSON = [
     BASE / "salida" / "actividad.json",
     BASE / "salida" / "panel.json",
     BASE / "salida" / "reservas.json",
+    BASE / "salida" / "sesiones.json",
 ]
 FICHEROS_TEXTO = [
     BASE / "datos" / "faq_aprendidas.md",
@@ -139,8 +144,8 @@ def main():
     if not encontrados:
         print("No aparece en ningún fichero. No hay nada que borrar.")
         print()
-        print("Recuerda: las conversaciones en curso viven en la memoria del panel")
-        print("y se pierden al reiniciarlo. Este script no llega hasta ahí.")
+        print("Recuerda: si el panel está en marcha, lo que tiene en memoria no se ve")
+        print("aquí. Páralo (Ctrl+C) y repite, porque lo guarda en salida/sesiones.json.")
         return 0
 
     print("APARECE EN:")
@@ -160,8 +165,9 @@ def main():
     print("QUEDA POR HACER, y es importante:")
     print("   1. Reconstruye el índice, o la matrícula sigue viva dentro de un vector:")
     print("        py 01_ingesta_chunking.py  &&  py 02_embeddings.py")
-    print("   2. Reinicia el panel, para vaciar las conversaciones en memoria:")
-    print("        Ctrl+C  y  py 06_panel.py")
+    print("   2. Si el panel estaba en marcha, este borrado no vale: al siguiente")
+    print("      mensaje reescribe salida/sesiones.json desde su memoria. Páralo")
+    print("      (Ctrl+C), repite con --borrar y vuelve a arrancarlo.")
     return 0
 
 

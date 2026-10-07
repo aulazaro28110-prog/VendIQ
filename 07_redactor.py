@@ -92,6 +92,31 @@ POLITICAS = {
                                           "referencia de la vieja, mejor todavía.",
 }
 
+# Tema de condiciones por palabra clave, para cuando la BÚSQUEDA se queda corta: una
+# pregunta de dos palabras —«tiene garantía?», «y tarda?»— no puntúa lo suficiente
+# para que el buscador devuelva la política, y entonces la rama de venta cerrada o la
+# de escalado se la comían con un «¡perfecto!». Esto mapea el tema a su sección del
+# documento de condiciones para poder contestarla igualmente. Es un RESPALDO, no la
+# vía normal: la de verdad sigue siendo que el buscador encuentre la política.
+_TEMA_POLITICA = (
+    (re.compile(r"\bgarant[ií]a", re.I), "GARANTIA"),
+    (re.compile(r"\bdevoluc|\bdevolver\b", re.I), "FORMAS DE PAGO Y DEVOLUCIONES"),
+    (re.compile(r"\benv[ií]o|\bportes?\b|\btransporte\b|\bmensajer[ií]a\b"
+                r"|\bpen[ií]nsula\b|\bcanarias\b|\bbaleares\b|tarda|\brecog", re.I),
+     "ENVIO Y PLAZOS"),
+    (re.compile(r"\biva\b", re.I), "PRECIOS Y DESCUENTOS"),
+)
+
+
+def _politica_por_tema(mensaje):
+    """La sección de condiciones que toca una pregunta, por palabra clave, y su
+    texto corto. (None, None) si no reconoce ningún tema."""
+    for rx, seccion in _TEMA_POLITICA:
+        if rx.search(mensaje or ""):
+            return seccion, POLITICAS.get(seccion)
+    return None, None
+
+
 # El único femenino de la lista es "de vehículo" -> se conjuga con la pieza.
 ESTADOS = {
     "comprobada, funcionando": "comprobad{o} y funcionando",
@@ -126,6 +151,11 @@ PALABRAS_INTENCION = {
                        "te hago el bizum manana", "te pago manana", "te lo pago manana",
                        "lo pago manana", "pago al recibir", "pagando al recibir",
                        "cuando la reciba te pago", "cuando llegue te pago",
+                       # Mismo intento con el orden al revés: «pago cuando lleguen»
+                       # / «pago cuando llegue» es pagar al recibir, no preguntar las
+                       # formas de pago. Sin esto caía en la política de pago y
+                       # contestaba «puedes pagar con tarjeta…» en vez de escalar.
+                       "pago cuando lleg", "pago cuando la reciba", "pago cuando reciba",
                        "a 30 dias", "a 60 dias"),
     "justificante": ("justificante", "resguardo", "comprobante", "pantallazo",
                      # "captura" a secas hacia falta: "te paso captura" no casaba
@@ -166,11 +196,24 @@ PALABRAS_INTENCION = {
                 "me compro uno nuevo", "por ese dinero", "algo tendras que hacerme",
                 "algo me haras", "redondea", "cerramos en", "te lo pago en mano",
                 "esta por las nubes", "se te ha ido", "no me cuadra el precio",
-                "ajustame", "afinar el precio", "ultima oferta", "mi ultima"),
+                "ajustame", "afinar el precio", "ultima oferta", "mi ultima",
+                # Regateo INDIRECTO (BOT 5): no nombra el descuento, lo busca por
+                # los lados —que le regalen el transporte, sin factura, «X euros
+                # menos», o apelando a la confianza—. Todo eso lo decide Álvaro, no
+                # el bot: se escala, no se contesta con la política ni se cierra.
+                "me lo regalas", "me la regalas", "regalas el", "sin factura",
+                "euros menos", "menos y me lo", "menos y me la",
+                "clientes de siempre", "somos clientes"),
     "cierre": ("me lo quedo", "me la quedo", "lo quiero", "la quiero", "me lo llevo",
                "me la llevo", "apartamelo", "apartamela", "resérvamelo", "reservamelo",
                "reservamela", "adelante", "tramitalo", "mandamelo", "mandamela",
                "lo compro", "la compro", "de acuerdo",
+               # Compra de VARIAS: «me quedo las dos», «me los quedo», «las dos
+               # primeras». El singular ya estaba; faltaba el plural del pedido de
+               # varias piezas en un mensaje.
+               "me quedo las", "me quedo los", "me los quedo", "me las quedo",
+               "las dos primeras", "los dos primeros", "me quedo con las",
+               "me quedo con los",
                # Formas interrogativas/coloquiales que faltaban: el cliente pregunta
                # "¿me lo apartas?" en vez del imperativo "apártamelo". Era el fallo
                # nº1 del registro (150x): un cierre que se escapaba a un humano.
@@ -332,6 +375,24 @@ def detectar_matricula(texto: str):
     if m:
         return f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
     return None
+
+
+# La matrícula/VIN y las palabras que la anuncian, para QUITARLAS del texto que va
+# al buscador. La matrícula identifica, no es un término de búsqueda: si se queda
+# dentro, «necesito una bomba de agua matricula 4153 TFW» puntúa por debajo del
+# umbral por el ruido y el precio se retiene aunque la pieza esté en el almacén
+# (se ve cuando pieza y matrícula van en el MISMO mensaje). El mensaje original no
+# se toca; esto solo limpia la cadena con la que se busca.
+_QUITA_MATRICULA = re.compile(
+    r"\b[A-HJ-NPR-Z0-9]{17}\b"
+    r"|\b\d{4}\s?[BCDFGHJKLMNPRSTVWXYZ]{3}\b"
+    r"|\b[A-Z]{1,2}\s?\d{4}\s?[A-Z]{2}\b"
+    r"|\bmatr[íi]cula\b|\bbastidor\b|\bvin\b", re.IGNORECASE)
+
+
+def sin_matricula(texto: str) -> str:
+    """El texto de búsqueda sin la matrícula/VIN ni la palabra que la anuncia."""
+    return re.sub(r"\s+", " ", _QUITA_MATRICULA.sub(" ", texto or "")).strip()
 
 
 # Preguntar "¿y qué pasa si sale defectuosa?" NO es una queja: es un cliente que
@@ -521,6 +582,31 @@ def rompe_la_matricula(lineas, decision, matricula_dada, escala):
                 "puede saberlo")
     if not IDENTIFICA.search(mensaje):
         return "no tiene la pieza y no pide la matrícula: un «no» sin salida"
+    return None
+
+
+# El bot NO puede volver a preguntar qué pieza busca cuando el cliente YA se lo
+# dijo. Es el bug de D2: tras dar la matrícula, «Anotada, 4521 KBD. Dime qué
+# pieza buscas» a quien había pedido «un turbo para un Ferrari».
+REPREGUNTA_PIEZA = re.compile(
+    r"dime\s+(?:qu[eé]|de\s+qu[eé])\s+pieza"
+    r"|qu[eé]\s+pieza\s+(?:buscas|necesitas|quieres)"
+    r"|de\s+qu[eé]\s+pieza\s+me\s+hablas", re.IGNORECASE)
+
+
+def rompe_el_olvido_de_pieza(lineas, pieza_pedida):
+    """§8.1 · Nunca se vuelve a preguntar la pieza que el cliente YA dijo (D2).
+
+    `pieza_pedida` es lo que la conversación recuerda que se pidió (lo rellena el
+    panel). Si está puesto y el bot vuelve a preguntar «¿qué pieza?», es el olvido
+    de la captura. Vive aquí, con las otras reglas de la voz, para que el banco,
+    el panel y `12_guiones` compartan una sola definición.
+    """
+    if not pieza_pedida:
+        return None
+    if REPREGUNTA_PIEZA.search("\n".join(lineas)):
+        return ("vuelve a preguntar qué pieza busca cuando el cliente ya la dijo "
+                f"(«{str(pieza_pedida)[:48]}»)")
     return None
 
 
@@ -727,6 +813,11 @@ REFERENCIA_ANTERIOR = re.compile(
     r"|(el|la) otr[oa]|lo de antes|(el|la) de antes|(el|la) de la otra vez"
     r"|(el|la) mism[oa]|como (el|la) de", re.I)
 
+# Ordinales de una LISTA de piezas pedidas en un mensaje: «la primera», «la
+# segunda», «la de en medio». Solo valen cuando hubo esa lista (conv.piezas_pedidas),
+# no sueltos: «el segundo coche» no es una referencia a una pieza.
+ORDINAL_LISTA = (("de en medio", 1), ("primer", 0), ("segund", 1), ("tercer", 2))
+
 
 def pieza_referida(conv, mensaje):
     """A cuál de las piezas ya habladas se refiere el cliente, o None.
@@ -735,7 +826,18 @@ def pieza_referida(conv, mensaje):
     como cualquier otro. Distingue tres señales, que son las que usa la gente:
     «la otra» es la penúltima, «la primera» es la primera de la conversación, y
     cualquier otra referencia vale para la última.
+
+    Si hubo una lista de varias piezas en un mensaje, «la primera / segunda /
+    tercera» van POR ORDEN de esa lista —incluida la que faltaba, que no tiene
+    ficha— para poder decir «la primera no la tengo».
     """
+    pedidas = getattr(conv, "piezas_pedidas", None)
+    if pedidas:
+        t0 = _sin_tildes(mensaje)
+        for clave, i in ORDINAL_LISTA:
+            if clave in t0 and i < len(pedidas):
+                p = pedidas[i]
+                return p.get("meta") or {"pieza": p.get("pieza", "")}
     if not conv.piezas or not REFERENCIA_ANTERIOR.search(mensaje):
         return None
     t = _sin_tildes(mensaje)
@@ -793,7 +895,18 @@ def dice_que_si(conv, mensaje):
         return False
     if not AFIRMACION.match(mensaje or ""):
         return False
+    # «vale, me corre prisa, sale hoy?» / «y si la recojo?»: una afirmación que
+    # ADEMÁS pregunta por una condición (plazo, recogida) no es «me la quedo», es
+    # «vale, pero antes dime…». Eso es política, no cierre. Un «sí, me lo mandas?»
+    # SÍ cierra —pedir el envío ya es aceptar— y lo reconoce PIDE_ENVIO.
+    if "?" in (mensaje or "") and not PIDE_ENVIO.search(mensaje or ""):
+        return False
     t = _sin_tildes(mensaje)
+    # «vale, las otras dos cuanto» / «vale, y el precio?»: un «vale» que ADEMÁS
+    # pregunta un precio o una cantidad no cierra nada —pregunta—, aunque no lleve
+    # signo de interrogación. Pedir el envío sí es aceptar (lo ve PIDE_ENVIO).
+    if re.search(r"\bcuant|\bprecio\b", t) and not PIDE_ENVIO.search(mensaje or ""):
+        return False
     return not any(h in t for h in HIPOTETICO)
 
 
@@ -808,8 +921,15 @@ DIRECCION = re.compile(
 # §18 y §4 del prompt — EL CLIENTE CORRIGE UN DATO. Pasa constantemente y hasta
 # ahora se ignoraba: «no, es gasolina» seguía buscando el diésel. Lo que hay que
 # detectar no es el dato nuevo, es la SEÑAL de que lo anterior estaba mal.
+# El «no» del principio marca corrección SALVO cuando es «no (lo) sé», «no tengo
+# ni idea» o —lo que mataba G06— el cliente diciendo que NO TIENE un dato («no
+# tengo la matrícula») o preguntando si NO LA TENEMOS («no la tenéis?»). Esos no
+# corrigen el coche: piden seguir sin la matrícula. Se excluyen por el patrón
+# exacto (tengo la/el/ning…, la/lo/las tenéis/tienes/tengo), nunca por un «tengo»
+# amplio, que arrastraba falsos negativos a test_frio.
 CORRIGE = re.compile(
-    r"^\W*(no|nop|que no|qué no)\b(?!\s*(s[eé]|lo s[eé]|tengo ni idea))"
+    r"^\W*(no|nop|que no|qué no)\b(?!\s*(s[eé]|lo s[eé]|tengo ni idea"
+    r"|tengo (la|el|ning)|l[oa]s?\s+(ten[ée]is|tienes?|tengo)))"
     r"|\bme (he )?equivoc|\bme equivoc|\bfallo m[ií]o|\bperd[oó]n|\bperdona\b"
     r"|\bquer[ií]a decir\b|\ben realidad\b|\bmejor dicho\b"
     r"|\bes.{0,18}\bno\s+(el|la|un|una)\b", re.I)
@@ -922,6 +1042,20 @@ OTRO_ASUNTO = re.compile(
 SEGUIMIENTO_PIEZA = ("precio otra vez", "estado", "kilometros")
 
 
+# POSVENTA: una pieza que el cliente YA TIENE y que falla es una queja, aunque no
+# diga «reclamación». Pide las DOS señales a la vez y cerca —ya comprada + algo va
+# mal— a propósito: así NO se dispara con «gracias por el turbo que me mandaste»
+# (sin problema) ni con un síntoma de cliente nuevo «hace un ruido al frenar» (sin
+# compra previa), que es justo lo que endurecer el clasificador de quejas pedía.
+_COMPRA_PASADA = (r"me (mandaste|mandasteis|vendiste|vendisteis|enviaste|enviasteis"
+                  r"|llego|llegaste)|que (os |te )?compre|lo recib|la recib")
+_PROBLEMA = (r"ruido|raro|falla|fall[oó]|no va\b|no funciona|no me funciona|defect"
+             r"|\broto\b|\brota\b|no arranca|no enciende|va mal|funciona mal")
+POSVENTA_QUEJA = re.compile(
+    rf"(?:{_COMPRA_PASADA}).{{0,60}}(?:{_PROBLEMA})"
+    rf"|(?:{_PROBLEMA}).{{0,60}}(?:{_COMPRA_PASADA})", re.I)
+
+
 def detectar_intencion(mensaje: str) -> str:
     """Qué está haciendo el cliente, más allá de qué pieza pide.
 
@@ -929,6 +1063,8 @@ def detectar_intencion(mensaje: str) -> str:
     vale" recuperan lo mismo del índice y sin embargo piden respuestas opuestas.
     """
     t = _sin_tildes(mensaje)
+    if POSVENTA_QUEJA.search(t):
+        return "queja"
     hipotetico = any(h in t for h in HIPOTETICO)
 
     # §19 — EL IMPACIENTE ESCRIBE UNA PALABRA. "precio", "cuánto", "y cuánto?".
@@ -1076,6 +1212,7 @@ class Conversacion:
         self.ultimo_precio = None           # importe publicado, si llegó a darse
         self.datos_pedidos = set()          # qué se le ha pedido ya
         self.escalado = False               # ya está en manos de una persona
+        self.queja_abierta = False          # hay una queja/posventa viva con Álvaro
         self.matricula_recien_dada = False   # la ha dado en este mismo mensaje
         # Regla dura activa: mientras haya una encima de la mesa, el bot no se
         # mueve de ella aunque el cliente cambie de argumento. Ver redactar().
@@ -1151,6 +1288,11 @@ class Conversacion:
         # seguimiento con pieza sobre la mesa.
         self.precios_escalados = set()
 
+        # Lo que el cliente pidió y el catálogo NO conoce («un cubrecárter»). Lo
+        # rellena el panel. Sin guardarlo, el bot preguntaba «¿qué pieza?» una y
+        # otra vez a quien ya lo había dicho, porque no era ninguna de las suyas.
+        self.pieza_desconocida = None
+
     @property
     def conocido(self):
         return self.perfil == "conocido"
@@ -1175,6 +1317,7 @@ class Conversacion:
         """
         if not meta:
             return
+        self.pieza_desconocida = None      # ya se habla de una que sí tenemos
         ident = str((meta or {}).get("id") or "")
         self.piezas = [p for p in self.piezas
                        if str((p or {}).get("id") or "") != ident]
@@ -1346,12 +1489,22 @@ def _OTRA_MANERA_DE_DECIRLO(conv):
                 "Lo tuyo está en marcha, tú tranquilo.",
                 "Sin cambios por ahora, te aviso yo en cuanto los haya."]
     if conv.ultima_pieza:
+        # Diez, no seis: una conversación de 20 mensajes que se queda en «sigo
+        # esperando» pasa por aquí más de media docena de veces —el que quiere que
+        # le llamen lo hace siete—, y con seis la red que existe para no repetir
+        # acababa repitiendo «Ahí sigue, cuando quieras». Mismo motivo que el 3→6
+        # de más arriba. Todas dicen lo mismo —está apuntado, sin prisa— de otra
+        # manera, y ninguna coincide con las de las otras ramas.
         return ["Ahí sigue, cuando quieras.",
                 "Sin prisa, me dices y seguimos.",
                 "Aquí estoy para lo que necesites.",
                 "Cuando lo tengas claro, me escribes.",
                 "No corre prisa, sigue apuntado.",
-                "Lo dejo ahí y me dices tú."]
+                "Lo dejo ahí y me dices tú.",
+                "Queda apuntado; cuando puedas seguimos.",
+                "Tranquilo, que no se me olvida.",
+                "Sigue anotado, sin agobios.",
+                "Cuando lo veas me escribes y lo retomamos."]
     return ["Dime y lo miro.",
             "Cuéntame y te digo.",
             "Tú dirás.",
@@ -1648,6 +1801,104 @@ def _con_pieza(consulta, conv, reglas, salida):
     return lineas
 
 
+def _enumerar(items):
+    """['a','b','c'] -> 'a, b y c'. Lo que escribiría una persona, no 'a; b; c'."""
+    items = [x for x in items if x]
+    if not items:
+        return ""
+    if len(items) == 1:
+        return items[0]
+    return ", ".join(items[:-1]) + " y " + items[-1]
+
+
+def _nombre_art(meta):
+    """«la cremallera de dirección» / «el turbo»: el nombre de la pieza con su
+    artículo, sin motor, año ni estado. Para listar varias en una línea."""
+    pieza = meta.get("pieza") or "la pieza"
+    art = "la" if _genero(pieza) == "f" else "el"
+    return f"{art} {pieza.lower()}"
+
+
+def _varias_piezas(consulta, conversacion, reglas, salida):
+    """El cliente pidió VARIAS piezas en un mensaje («cremallera, turbo y
+    amortiguador»). El panel buscó cada una por separado; aquí se contesta por
+    todas a la vez, en una sola línea para no pasar de tres. Se recuerdan TODAS
+    —las que hay y la que falta— para que «la primera», «la segunda» o «las dos»
+    de los turnos siguientes tengan a qué referirse."""
+    pedidas = consulta.get("varias_piezas") or []
+    encontradas = [p for p in pedidas if p.get("meta")]
+    faltan = [p for p in pedidas if not p.get("meta")]
+
+    # Memoria de lo PEDIDO, en orden y con la que falta incluida (sin ficha): es
+    # lo que leen los ordinales de después en `pieza_referida`.
+    conversacion.piezas_pedidas = [
+        {"pieza": (p.get("meta") or {}).get("pieza") or p.get("nombre") or "",
+         "meta": p.get("meta")} for p in pedidas]
+    for p in encontradas:
+        conversacion.recordar_pieza(p["meta"])
+
+    coche = (conversacion.vehiculo or "").strip()
+    publicables = [p for p in encontradas
+                   if (p.get("precio_cliente") or {}).get("publicable")]
+
+    partes = []
+    for p in encontradas:
+        pc = p.get("precio_cliente") or {}
+        nom = _nombre_art(p["meta"])
+        if pc.get("publicable"):
+            partes.append(f"{nom} {pc['importe']}")
+            conversacion.precio_de[str((p["meta"]).get("id") or "")] = pc["importe"]
+        else:
+            partes.append(nom)
+
+    falta_txt = ""
+    if faltan:
+        nf = _enumerar([(p.get("nombre") or "").strip() for p in faltan])
+        falta_txt = f"{nf} no me consta" + ("n" if len(faltan) > 1 else "")
+
+    lineas = []
+    cab = f"Para tu {coche}: " if coche else ""
+    cuerpo = _enumerar(partes)
+    if encontradas and faltan:
+        lineas.append(f"{cab}{cuerpo}; {falta_txt}.")
+    elif encontradas:
+        lineas.append(f"{cab}{cuerpo}.")
+    elif faltan:
+        lineas.append(f"{falta_txt[:1].upper()}{falta_txt[1:]}.")
+
+    if publicables:
+        imp = (publicables[0].get("precio_cliente") or {})["importe"]
+        salida["precio_dado"] = conversacion.ultimo_precio = imp
+        conversacion.estado = OFRECIENDO
+        conversacion.esperando_si = True
+        reglas.append(("precio publicado",
+                       "se da el precio de cada pieza encontrada, tal cual, sin redondear"))
+        lineas.append(conversacion.variar("cierre_varias", [
+            "¿Te las preparo?", "¿Sigo con ellas?", "¿Te las aparto?",
+            "¿Las dejo apartadas?"]))
+    elif encontradas:
+        # Sin matrícula se confirman las piezas pero NO se da precio ni se cierra:
+        # igual que con una sola, se pide la matrícula primero (es lo que espera el
+        # trozo `pide_dos` del banco en frío, y la regla del negocio).
+        lineas.append("Pásame la matrícula y te confirmo cuáles montan en tu coche "
+                      "y lo que vale cada una.")
+        conversacion.datos_pedidos.add("matricula")
+        reglas.append(("precio retenido",
+                       "sin identificar el coche no se da precio: se confirman las "
+                       "piezas y se pide la matrícula"))
+        reglas.append(("la matrícula va primero",
+                       "sin la matrícula no se afirma qué pieza monta ni su precio"))
+    if faltan:
+        reglas.append(("no se ofrece una parecida",
+                       "de las pedidas, una no está: se dice cuál falta y no se "
+                       "cuela una hermana en su lugar"))
+    if encontradas:
+        reglas.append(("memoria de conversación",
+                       "se recuerdan todas las piezas pedidas para poder hablar "
+                       "luego de «la primera», «la segunda» o «las dos»"))
+    return lineas
+
+
 def _frase_equivalente(equivalentes, pedir_referencia=True):
     """«…pero sí un compresor de A4 de otra motorización», o None si no hay.
 
@@ -1761,6 +2012,12 @@ def _sin_pieza(conv, reglas, equivalentes=()):
 
 SEGUIMIENTO = ("estado", "kilometros", "precio otra vez", "compatibilidad",
                "alternativa")
+
+# Dentro de la intención «seguimiento» caben dos cosas opuestas: preguntar por lo
+# pendiente («¿ya lo tienes?») y pedir que se le avise («avísame cuando lo
+# sepas»). La primera se contesta; la segunda se anota como promesa.
+PIDE_AVISO = re.compile(r"\bav[ií]s(?:ame|adme)\b|\bme avis(?:as|[aá]is)\b",
+                        re.IGNORECASE)
 
 
 def _seguimiento(intencion, conv, reglas, salida):
@@ -2009,6 +2266,17 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     hay_pieza = any(r.get("tipo") == "inventario"
                     for r in (consulta.get("resultados") or []))
 
+    # -------------------------------------------------------- varias piezas
+    # El cliente pidió varias en un mensaje y el panel buscó cada una. Va lo
+    # primero porque es una petición nueva y entera: no la pisa el escalado ni la
+    # venta cerrada. Las reglas duras sí mandan (si está pidiendo sin pagar, eso
+    # se atiende aparte), por eso se excluyen.
+    _cierre_con_pieza = intencion == "cierre" and conversacion.ultima_pieza
+    if (consulta.get("varias_piezas")
+            and not conversacion.escalado
+            and not conversacion.regla_dura):
+        lineas += _varias_piezas(consulta, conversacion, reglas, salida)
+
     # ------------------------------------------------------------ escalado
     # Si ya está en manos de Álvaro, el bot no vuelve a meterse por el medio.
     # Sin esto, el mensaje siguiente a una queja recibía un alegre "¿qué pieza
@@ -2016,8 +2284,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     # Las reglas duras se saltan este atajo a propósito: si el cliente insiste en
     # que le mandes la pieza sin pagar, la respuesta correcta es repetirle la
     # condición, no un "ya se lo he pasado a Álvaro" que suena a que cede.
-    _cierre_con_pieza = intencion == "cierre" and conversacion.ultima_pieza
-    if (conversacion.escalado
+    elif (conversacion.escalado
             and intencion not in ("pide sin pagar", "justificante")
             # Y tampoco una DESPEDIDA. Estar esperando a Álvaro no quita que el
             # cliente se esté yendo: contestarle «ya se lo he pasado» a un adiós
@@ -2033,15 +2300,36 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         # y ahí es donde el cliente deja de escribir. Un cierre con pieza sobre la
         # mesa (querer comprar) y una pieza o política nuevas (decision RESPONDE)
         # sí siguen adelante; el resto se acusa corto y se calla.
-        escala = True
-        lineas += conversacion.variar("sigue_escalado", [
-            ["Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea."],
-            ["Sigue con Álvaro; en cuanto lo mire te escribe él mismo."],
-            ["Lo tiene Álvaro, cualquier cosa te contesta él directamente."],
-        ])
-        reglas.append(("sigue escalado",
-                       "la conversación ya está con una persona: el bot acusa corto "
-                       "y no se vuelve a poner por delante ni reabre"))
+        # ESCALADO QUE NO ES UNA QUEJA (una pieza que no vendemos, un modelo que no
+        # existe): si además pregunta una CONDICIÓN —«¿y tarda?», «¿tiene garantía?»—
+        # se le contesta, no es reabrir nada, y lo escalado sigue con Álvaro aparte.
+        # Con una queja viva (P2) NO: ahí todo va a la persona, sin excepción.
+        _seccion, _txt = (None, None)
+        if (not getattr(conversacion, "queja_abierta", False)
+                and not conversacion.matricula_recien_dada):
+            _seccion, _txt = _politica_por_tema(mensaje_cliente)
+        if _txt and _seccion not in conversacion.temas_tratados:
+            lineas.append(_txt)
+            conversacion.temas_tratados.add(_seccion)
+            reglas.append(("responde con la política de la empresa",
+                           f"sección «{_seccion}»: aunque haya algo escalado que no "
+                           f"es una queja, una pregunta de condiciones se contesta"))
+        else:
+            escala = True
+            if conversacion.matricula_recien_dada:
+                # Se le pidió la matrícula al escalar y la manda: se acusa. Contestarle
+                # «ya se lo he pasado» sin nombrarla es no haberle leído.
+                lineas.append(f"Anotada, {conversacion.matricula}: se la paso a Álvaro "
+                              f"con lo tuyo y te escribe él en cuanto lo mire.")
+            else:
+                lineas += conversacion.variar("sigue_escalado", [
+                    ["Ya se lo he pasado a Álvaro, te contesta él en cuanto lo vea."],
+                    ["Sigue con Álvaro; en cuanto lo mire te escribe él mismo."],
+                    ["Lo tiene Álvaro, cualquier cosa te contesta él directamente."],
+                ])
+            reglas.append(("sigue escalado",
+                           "la conversación ya está con una persona: el bot acusa corto "
+                           "y no se vuelve a poner por delante ni reabre"))
 
     # ------------------------------------------------------- reglas duras
     # Ninguna de las dos las decide el bot. Repite la condición, no la discute, y
@@ -2081,6 +2369,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     elif intencion == "queja":
         escala = True
         conversacion.escalado = True
+        conversacion.queja_abierta = True   # P2: con la queja viva, todo va a Álvaro
         lineas.append("Vaya, siento el problema. Esto lo lleva Álvaro directamente, "
                       "le paso ahora mismo tu mensaje.")
         lineas.append("Si tienes la factura a mano, mándamela y le ahorramos un paso.")
@@ -2413,9 +2702,53 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
             reglas.append(("recuerda lo que prometió",
                            f"quedó pendiente «{pendiente['que']}»: se le contesta "
                            f"por eso y no se le pide nada otra vez"))
+        elif (conversacion.estado == OFRECIENDO and conversacion.ultima_pieza
+              and PIDE_AVISO.search(mensaje_cliente or "")):
+            # «AVÍSAME CUANDO LO SEPAS» NO ES UNA PREGUNTA, ES UN ENCARGO. Caía
+            # en la rama de abajo y el bot contestaba «dime de qué pieza me
+            # hablas» a quien tenía la pieza y el precio dos líneas más arriba.
+            # Y como no se anotaba nada, el «¿ya lo tienes?» de después tampoco
+            # encontraba promesa. Se anota aquí, que es cuando se pide.
+            pieza = conversacion.ultima_pieza
+            g = _genero(pieza.get("pieza", ""))
+            lineas.append(f"Hecho, si hay cualquier cambio con {_art(g)} "
+                          f"{pieza.get('pieza', 'pieza').lower()} te aviso yo.")
+            lineas.append(f"Y si quieres que te {_pron(g)} aparte, me dices y "
+                          f"queda a tu nombre.")
+            conversacion.prometer("avisarle si hay cambios con la pieza", pieza)
+            reglas.append(("anota el aviso que pide",
+                           "pide que se le avise con una pieza ya ofrecida: se "
+                           "anota como promesa en vez de preguntarle cuál"))
+        elif conversacion.estado == OFRECIENDO and conversacion.ultima_pieza:
+            # §8.1 — NUNCA VUELVAS A PEDIR UN DATO QUE YA TE DIO. Con la pieza y
+            # su precio encima de la mesa, «¿ya lo tienes?» habla de ESA pieza.
+            # Antes no había promesa y se le preguntaba de qué pieza hablaba y
+            # su matrícula, que había mandado un turno antes.
+            # No se repite el precio: no lo ha preguntado, y ya lo tiene escrito.
+            pieza = conversacion.ultima_pieza
+            g = _genero(pieza.get("pieza", ""))
+            lineas.append(f"Sí, {_art(g)} {pieza.get('pieza', 'pieza').lower()} "
+                          f"sigue aquí: {_plazo(pieza, g)}.")
+            # Rotada como en la oferta: la de la oferta ya se dijo, y repetida la
+            # quitaría el filtro de repeticiones y quedaría un «sí» esperando a
+            # una pregunta que no se ha hecho.
+            lineas.append(conversacion.variar("cierre_pregunta", [
+                f"¿Te {_pron(g)} aparto?",
+                f"¿{_pron(g).capitalize()} preparo?",
+                "¿Sigo con ello?",
+                "¿Lo dejamos apartado?",
+            ]))
+            conversacion.esperando_si = True
+            reglas.append(("recuerda la pieza que se estaba hablando",
+                           f"no hay promesa pero sí una pieza ofrecida (ficha ID "
+                           f"{pieza.get('id', '?')}): se contesta por ella en vez "
+                           f"de volver a pedir la pieza y la matrícula"))
         else:
             lineas.append("Dime de qué pieza me hablas y te digo cómo va.")
-            lineas.append("Con la matrícula o el número de pedido lo veo enseguida.")
+            # La matrícula, solo si no la ha dado ya (§8.1).
+            lineas.append("Con el número de pedido lo veo enseguida."
+                          if conversacion.matricula else
+                          "Con la matrícula o el número de pedido lo veo enseguida.")
             reglas.append(("pregunta por algo que no consta",
                            "no hay nada pendiente en esta conversación: se pregunta "
                            "cuál en vez de dar por hecho un pedido"))
@@ -2563,15 +2896,43 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     # cliente decide que está hablando con una máquina. Se acusa recibo siempre.
     elif conversacion.matricula_recien_dada and not hay_pieza:
         matricula = conversacion.matricula
-        reglas.append(("acusa recibo del dato",
-                       f"el cliente acaba de dar la matrícula ({matricula}): se "
-                       f"confirma que ha llegado antes de seguir"))
         if conversacion.ultima_pieza:
+            reglas.append(("acusa recibo del dato",
+                           f"el cliente acaba de dar la matrícula ({matricula}): se "
+                           f"confirma que ha llegado antes de seguir"))
             g = _genero(conversacion.ultima_pieza.get("pieza", ""))
             lineas.append(f"Anotada, {matricula}.")
             lineas.append(f"Con eso compruebo que es {_art(g)} tuy{_o(g)} antes de "
                           f"mandar nada. ¿Te {_pron(g)} aparto?")
+        elif not conversacion.vehiculo and (
+                getattr(conversacion, "pieza_pedida", None)
+                or getattr(conversacion, "pieza_desconocida", None)):
+            # P1 · MATRÍCULA SIN COCHE (D5, decidido por Álvaro). Tiene la pieza y la
+            # matrícula, pero no sé de qué coche es (no hay DGT: la matrícula no me
+            # dice el modelo). Se pide el MODELO —no la pieza, que ya la dijo— y NO
+            # se retiene nada raro: en cuanto diga el coche, se da el precio.
+            reglas.append(("acusa recibo del dato",
+                           f"el cliente acaba de dar la matrícula ({matricula}): se "
+                           f"confirma que ha llegado antes de seguir"))
+            reglas.append(("pide el modelo del coche",
+                           "tiene la pieza y la matrícula, pero no el coche: se pide "
+                           "la marca y el modelo, no la pieza que ya dijo"))
+            lineas.append(f"Anotada, {matricula}.")
+            lineas.append("¿De qué coche es? Con la marca y el modelo te confirmo la "
+                          "pieza y el precio.")
+        elif getattr(conversacion, "pieza_pedida", None) or getattr(
+                conversacion, "pieza_desconocida", None):
+            # D2 · NO SE LE VUELVE A PREGUNTAR LA PIEZA QUE YA DIJO. Antes, si no
+            # llegó a encontrarse ninguna ficha, se contestaba «Dime qué pieza
+            # buscas» aunque `pieza_pedida` tuviera la pieza —el bug de la captura:
+            # «Anotada, 4521 KBD. Dime qué pieza buscas»—. Con el coche identificado
+            # y aun así sin ficha, decir «no la tengo» es legítimo (lo hace
+            # `_sin_pieza`, CASO 1) y no se ofrece una parecida.
+            lineas += _sin_pieza(conversacion, reglas)
         else:
+            reglas.append(("acusa recibo del dato",
+                           f"el cliente acaba de dar la matrícula ({matricula}): se "
+                           f"confirma que ha llegado antes de seguir"))
             lineas.append(f"Anotada, {matricula}.")
             lineas.append("Dime qué pieza buscas y te digo si la tengo.")
 
@@ -2610,14 +2971,25 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         # otra vez la matrícula "para confirmar que encaja" de algo ya comprado.
         # (decision != "RESPONDE" o hay_pieza) deja pasar una política de posventa
         # —RESPONDE sin pieza— que sí hay que contestar, y frena el re-ofrecer.
-        lineas += conversacion.variar("cerrada_corto", [
-            ["¡Perfecto! Cualquier cosa me dices."],
-            ["Genial, queda todo apuntado por aquí."],
-            ["Hecho. Si te surge algo, aquí estoy."],
-        ])
-        reglas.append(("venta cerrada: no reabrir",
-                       "la venta ya está cerrada y el mensaje no trae una pieza "
-                       "nueva: se acusa corto y no se reidentifica ni se re-ofrece"))
+        # PERO una pregunta de CONDICIONES en posventa («¿tiene garantía?», «¿y
+        # tarda?») sí se contesta: no es reabrir la venta, es informar. Si el
+        # buscador no la encontró (dos palabras no puntúan), se responde por el tema.
+        _seccion, _txt = _politica_por_tema(mensaje_cliente)
+        if _txt and _seccion not in conversacion.temas_tratados:
+            lineas.append(_txt)
+            conversacion.temas_tratados.add(_seccion)
+            reglas.append(("responde con la política de la empresa",
+                           f"sección «{_seccion}»: en posventa se contesta una "
+                           f"pregunta de condiciones sin reabrir la venta"))
+        else:
+            lineas += conversacion.variar("cerrada_corto", [
+                ["¡Perfecto! Cualquier cosa me dices."],
+                ["Genial, queda todo apuntado por aquí."],
+                ["Hecho. Si te surge algo, aquí estoy."],
+            ])
+            reglas.append(("venta cerrada: no reabrir",
+                           "la venta ya está cerrada y el mensaje no trae una pieza "
+                           "nueva: se acusa corto y no se reidentifica ni se re-ofrece"))
 
     # ---------------------------------------------------------------- pieza
     elif decision == "RESPONDE" and hay_pieza:
@@ -2658,10 +3030,13 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         lineas.append("A ti. Cualquier cosa me dices.")
         reglas.append(("cierre cordial", "no hay nada que buscar: no se fuerza venta"))
 
-    elif intencion == "saludo":
+    elif intencion == "saludo" and not conversacion.ultima_pieza:
         lineas.append("¡Aquí estoy! ¿Qué pieza necesitas y para qué coche?")
         reglas.append(("saludo",
                        "responde al saludo y reconduce a la pieza; un saludo nunca se escala"))
+        # Con una pieza ya sobre la mesa, un «hola de nuevo» NO reabre pidiendo la
+        # pieza: cae a la rama de `ultima_pieza` de abajo, que retoma sin repetir
+        # datos (BOT 1 · «hola de nuevo» tras aparcar no puede olvidar la pieza).
 
     # Ya se estaba hablando de una pieza y el mensaje no encaja en nada. No es un
     # cliente perdido: es uno que se lo está pensando. Volver a pedirle la matrícula
@@ -2673,12 +3048,24 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         ident = str(meta.get("id") or "")
         tiene_precio = bool(conversacion.precio_de.get(ident))
         afirma = bool(AFIRMACION.match(mensaje_cliente or ""))
+        _sec_cond, _txt_cond = _politica_por_tema(mensaje_cliente)
+        # Una pregunta de CONDICIONES con la pieza ya en la mesa que la búsqueda no
+        # puntuó (p.ej. «¿y si la recojo?» → recogida en Alcobendas) caía en el
+        # seguimiento genérico y quedaba sin contestar. Mismo respaldo que en venta
+        # cerrada y en escalado: se contesta la política. No pisa un «sí» (afirma),
+        # ni un cierre/regateo/pago/queja, que mandan y se resuelven abajo.
+        if (_txt_cond and not afirma
+                and intencion not in ("cierre", "regateo", "pide sin pagar", "queja")):
+            lineas.append(_txt_cond)
+            reglas.append(("responde con la política de la empresa",
+                           f"pregunta de condiciones con la pieza en la mesa: "
+                           f"«{_sec_cond}»"))
         # Pieza SIN precio y el cliente dice que sí a seguir. Repetir «¿sigue en
         # pie?» es el bucle que se veía en el panel: cada «sí» volvía a ofrecer.
         # Un «sí» aquí es interés real, pero sin precio no se puede cerrar (lo
         # impide dice_que_si a propósito). El paso que faltaba: pasárselo a Álvaro
         # para que ponga precio, y luego ESPERAR en vez de volver a ofrecer.
-        if not tiene_precio and (afirma or ident in conversacion.precios_escalados):
+        elif not tiene_precio and (afirma or ident in conversacion.precios_escalados):
             if ident not in conversacion.precios_escalados:
                 conversacion.precios_escalados.add(ident)
                 conversacion.prometer("pasarte el precio en cuanto lo mire Álvaro", meta)
@@ -2710,23 +3097,72 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                            "no se entiende el mensaje pero había una pieza sobre la "
                            "mesa: se retoma sin volver a pedir datos ya dados"))
 
+    # ------------------------------------------- pieza que no está en catálogo
+    # «Necesito un cubrecárter para un Golf 4». No es ninguno de nuestros tipos,
+    # así que no hay ficha que ofrecer ni parecida que proponer. Lo que hace el
+    # rol en ese caso es ESCALAR: decirlo, pasárselo a una persona —que puede
+    # conseguirlo por otro lado— y guardar la consulta. Antes caía en la rama de
+    # abajo y se le preguntaba «¿qué pieza necesitas?» a quien acababa de decirlo.
+    # Los mensajes siguientes ya los recoge la rama de «sigue escalado».
+    elif getattr(conversacion, "pieza_desconocida", None) and not hay_pieza:
+        nombre = conversacion.pieza_desconocida
+        escala = True
+        conversacion.escalado = True
+        conversacion.prometer("mirar si se puede conseguir", {"pieza": nombre})
+        lineas.append(f"No tengo {nombre} en el catálogo, así que no te lo puedo "
+                      f"confirmar yo.")
+        lineas.append("Se lo paso a Álvaro por si lo puede conseguir y te digo algo.")
+        if not conversacion.matricula:
+            lineas.append("Si me pasas la matrícula se la doy con ella y va más rápido.")
+            conversacion.datos_pedidos.add("matricula")
+        reglas.append(("pieza fuera del catálogo",
+                       f"pide «{nombre}», que no es ninguna pieza del catálogo: se "
+                       f"dice, se escala a una persona y se guarda la consulta"))
+
     # Muletilla, acuse o "¿hay alguien?": se responde y se reconduce, NUNCA se
     # escala. Un bot que manda a una persona un "👍" o un "vale" parece roto.
     elif _es_cortesia(consulta.get("pregunta", "")):
-        lineas += conversacion.variar("cortesia", [
-            ["Aquí estoy. Dime qué pieza buscas y para qué coche."],
-            ["Sin problema. ¿Qué pieza necesitas y para qué coche?"],
-            ["Cuando quieras. Dime la pieza y el coche y lo miro."],
-        ])
-        reglas.append(("mensaje de cortesía",
-                       "saludo/muletilla/ruido sin contenido real: se responde y se "
-                       "reconduce a la pieza, nunca se escala a una persona"))
+        if conversacion.pieza_pedida or conversacion.ultima_pieza:
+            # Ya hay algo sobre la mesa: un «vale»/«ok» no reabre pidiendo la pieza
+            # que el cliente ya dijo (BOT 1). Se acusa y se queda a la espera.
+            lineas += conversacion.variar("cortesia_con_pieza", [
+                ["Aquí sigo, cuando quieras seguimos."],
+                ["Perfecto, lo que necesites me dices."],
+                ["Vale, aquí estoy para lo que haga falta."],
+            ])
+            reglas.append(("mensaje de cortesía",
+                           "muletilla con una pieza ya sobre la mesa: se acusa sin "
+                           "volver a pedir la pieza que ya dijo"))
+        else:
+            lineas += conversacion.variar("cortesia", [
+                ["Aquí estoy. Dime qué pieza buscas y para qué coche."],
+                ["Sin problema. ¿Qué pieza necesitas y para qué coche?"],
+                ["Cuando quieras. Dime la pieza y el coche y lo miro."],
+            ])
+            reglas.append(("mensaje de cortesía",
+                           "saludo/muletilla/ruido sin contenido real: se responde y se "
+                           "reconduce a la pieza, nunca se escala a una persona"))
 
     else:
         if conversacion.matricula:
             lineas.append("Dime qué pieza necesitas y te digo si la tengo.")
             reglas.append(("memoria de conversación",
                            "ya tiene la matrícula: pide la pieza, no repite el dato"))
+        elif (getattr(conversacion, "pieza_pedida", None)
+              or getattr(conversacion, "pieza_desconocida", None)):
+            # YA DIJO LA PIEZA (BOT 1 / no_olvida_pieza). «no la tenéis?», «dime sí o
+            # no» sin matrícula caían aquí y se contestaban «pásame la matrícula y QUÉ
+            # PIEZA BUSCAS», volviendo a pedir lo que ya había dicho. Solo falta la
+            # matrícula para poder confirmar si la hay: se pide eso y nada más.
+            lineas += conversacion.variar("pide_matricula_sola", [
+                ["Pásame la matrícula y te digo si la tengo."],
+                ["Con la matrícula te lo confirmo en un momento."],
+                ["Dime la matrícula del coche y lo miro."],
+            ])
+            conversacion.datos_pedidos.add("matricula")
+            reglas.append(("faltan datos para buscar",
+                           "ya dijo la pieza: se pide solo la matrícula, no se repite "
+                           "la pieza que ya nombró (no_olvida_pieza)"))
         else:
             lineas += conversacion.variar("pide_datos", [
                 ["Pásame la matrícula del coche y qué pieza buscas, y te digo si "
