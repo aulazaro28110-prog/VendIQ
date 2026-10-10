@@ -167,24 +167,6 @@ function pintarVerificacion(d) {
   }));
 }
 
-/* -------------------------------------------------------------- demanda */
-function pintarDemanda(d) {
-  const lista = d.demanda_no_cubierta || [];
-  const max = Math.max(...lista.map((x) => x.veces), 1);
-  $('#demanda').replaceChildren(...lista.map((x) => {
-    const b = crear('div', 'barra');
-    const fila = crear('div', 'fila');
-    fila.append(crear('span', 'nombre', x.consulta),
-                crear('span', 'valor', `${x.veces} ${x.veces === 1 ? 'vez' : 'veces'}`));
-    const canal = crear('div', 'canal');
-    const relleno = crear('div', 'relleno');
-    relleno.style.width = `${(x.veces / max) * 100}%`;
-    canal.append(relleno);
-    b.append(fila, canal);
-    return b;
-  }));
-}
-
 /* -------------------------------------------------------------- consola */
 function fichaHTML(r, rechazada) {
   const f = crear('div', 'ficha' + (rechazada ? ' rechazada' : ''));
@@ -451,7 +433,7 @@ async function iniciar() {
     ESTADO = await api('/api/estado');
   } catch {
     $('#estado-texto').textContent = 'sin conexión';
-    $('#hero-pie').textContent = 'Arranca el panel con:  python 06_panel.py';
+    $('#hero-pie').textContent = 'Arranca el panel con:  python src/06_panel.py';
     return;
   }
   const s = ESTADO.sistema;
@@ -470,7 +452,6 @@ async function iniciar() {
   // Si esos datos no existen todavía, actividad.js llama a estas de aquí.
   if (!ACTIVIDAD_LISTA) { pintarHero(ESTADO); pintarDiagrama(ESTADO); pintarKPIs(ESTADO); }
   pintarVerificacion(ESTADO);
-  pintarDemanda(ESTADO);
   pintarFiltros();
   pintarRegistro();
   pintarMotor(ESTADO);

@@ -342,8 +342,11 @@ const horaAhora = () => new Date().toLocaleTimeString('es-ES',
 
 /* ----------------------------------------------------------------- la traza
    Lo que hace defendible el apartado: la consulta que de verdad se le pasó al
-   buscador, la decisión y la regla detrás de cada párrafo. */
-function pintarTraza(d) {
+   buscador, la decisión y la regla detrás de cada párrafo.
+   Con nombre propio: los scripts de la página comparten el ámbito global y
+   chat.js ya tiene un pintarTraza. Con el mismo nombre, este lo pisaba: el
+   «por qué» en el chat salía «undefined» y cada turno vaciaba esta caja. */
+function pintarTrazaCorreo(d) {
   const caja = $('#correo-traza');
   caja.replaceChildren();
   if (!d) return;
@@ -379,7 +382,7 @@ function abrir(id) {
   contar();
   pintarLista();
   pintarLectura();
-  pintarTraza(c && c.respuesta ? c.respuesta : null);
+  pintarTrazaCorreo(c && c.respuesta ? c.respuesta : null);
 }
 
 async function responder(id, bt) {
@@ -395,7 +398,7 @@ async function responder(id, bt) {
     contar();
     pintarLista();
     pintarLectura();
-    pintarTraza(d);
+    pintarTrazaCorreo(d);
   } catch (e) {
     pintarLectura();
     $('#ol-lectura').append(Object.assign(crear('p', 'ol-esperando'),

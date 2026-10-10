@@ -98,7 +98,7 @@ async function pintarEstadosOfertas() {
     const v = crear('div', 'estado-vacio');
     v.append(crear('strong', null, 'Todavía no hay ninguna oferta.'),
              document.createTextNode(' Lanza una arriba, o desde la línea de '),
-             crear('code', null, 'python 04_ofertas.py oferta 69183 780'));
+             crear('code', null, 'python src/04_ofertas.py oferta 69183 780'));
     destino.replaceChildren(v);
     return;
   }

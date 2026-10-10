@@ -74,7 +74,10 @@ function montarScrollSpy() {
 
   // De las que se ven, manda la que esté más arriba en el documento.
   const visibles = new Set();
+  // El hero no es una sección del menú: mientras ocupa la franja no se marca ninguna.
+  const cabecera = document.querySelector('header.top');
   const reconciliar = () => {
+    if (visibles.has(cabecera)) { marcar(null); return; }
     let arriba = null;
     visibles.forEach((s) => { if (!arriba || s.offsetTop < arriba.offsetTop) arriba = s; });
     if (arriba) marcar(porId.get(arriba));
@@ -110,6 +113,7 @@ function montarScrollSpy() {
     });
     if (!bloqueado) reconciliar();
   }, {rootMargin: '-15% 0px -70% 0px', threshold: 0});
+  if (cabecera) observador.observe(cabecera);
 
   porId.forEach((_, seccion) => observador.observe(seccion));
 }
