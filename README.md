@@ -128,7 +128,7 @@ Con matrícula sí puede decir que no. Entonces es una respuesta; sin ella es un
 <details>
 <summary><strong>Los tres caminos, y la excepción</strong></summary>
 
-Tres caminos en [`07_redactor.py`](07_redactor.py), `_sin_pieza()`:
+Tres caminos en [`07_redactor.py`](src/07_redactor.py), `_sin_pieza()`:
 
 | Situación | Qué hace |
 |---|---|
@@ -175,11 +175,11 @@ dos veces la misma pieza con el mismo cliente (si no, basta con ir bajando la of
 con el umbral). Toda oferta queda registrada en `salida/ofertas.json`, la decida la regla o tú.
 
 ```bash
-python 04_ofertas.py reglas                       # ver la tabla
-python 04_ofertas.py oferta 69183 780 --cliente "Taller Ruiz"
-python 04_ofertas.py pendientes                   # lo que espera tu decisión
-python 04_ofertas.py aceptar 4 --motivo "lleva tiempo parada"
-python 04_ofertas.py historial
+python src/04_ofertas.py reglas                       # ver la tabla
+python src/04_ofertas.py oferta 69183 780 --cliente "Taller Ruiz"
+python src/04_ofertas.py pendientes                   # lo que espera tu decisión
+python src/04_ofertas.py aceptar 4 --motivo "lleva tiempo parada"
+python src/04_ofertas.py historial
 ```
 </details>
 
@@ -230,8 +230,8 @@ Panel web en local. Es la cara visible del proyecto: enseña cómo está funcion
 herramienta en lenguaje de negocio, y **opera sobre ella de verdad**.
 
 ```bash
-python 05_panel_datos.py     # mide una semana de mensajes con el sistema real
-python 06_panel.py           # levanta el panel y abre el navegador
+python src/05_panel_datos.py     # mide una semana de mensajes con el sistema real
+python src/06_panel.py           # levanta el panel y abre el navegador
 ```
 
 No añade dependencias: solo `http.server` de la librería estándar. El modelo se carga
@@ -246,7 +246,7 @@ Está organizado alrededor de una idea: **el bot resuelve lo obvio, tú decides 
 dinero.** Cada pestaña es una de las cosas que el bot no puede hacer solo.
 
 <details>
-<summary><strong>Las seis pestañas</strong></summary>
+<summary><strong>Las cinco pestañas</strong></summary>
 
 | Pestaña | Qué resuelve |
 |---|---|
@@ -254,7 +254,6 @@ dinero.** Cada pestaña es una de las cosas que el bot no puede hacer solo.
 | **Habla como un cliente** | Escribes como un cliente y ves la búsqueda real: fichas, puntuación, si se puede dar precio y las descartadas |
 | **Precios sin poner** | Las piezas sin precio, ordenadas por cuántas veces te las han pedido. Pones el precio y **el bot ya puede venderla** |
 | **Mesa de negociación** | Ofertas: lo que la regla cierra sola y lo que espera tu decisión |
-| **Lo que te piden y no tienes** | Demanda no cubierta — información de compra |
 | **La letra pequeña** | Acierto verificado, parámetros del motor y registro completo con su porqué |
 </details>
 
@@ -308,14 +307,26 @@ Lo escribe el panel, nunca el bot.
 Regla del proyecto: **datos sintéticos, no reales** (privacidad).
 </details>
 
+## Estructura
+
+```
+src/        el sistema, numerado en orden: 01 trocea el catálogo, 13 deja la traza
+panel/      el centro de control: index.html, con css/ y js/ al lado
+datos/      catálogo sintético, políticas, FAQ aprendidas y corpus de canales
+salida/     lo que se genera: índice, medidas, ofertas y registro de dudas
+tests/      los diez bancos de pruebas
+scripts/    utilidades: generar los datos sintéticos, auditar la privacidad, probar Groq
+docs/       decisiones e informes, y guías de Groq y de protección de datos
+```
+
 ## Cómo ejecutarlo
 
 ```bash
 pip install -r requirements.txt          # una vez (~150 MB la primera vez)
 
-python 01_ingesta_chunking.py            # trocea
-python 02_embeddings.py                  # vectoriza (5.010 chunks, ~2 min)
-python 06_panel.py                       # centro de control en localhost:8420
+python src/01_ingesta_chunking.py        # trocea
+python src/02_embeddings.py              # vectoriza (5.010 chunks, ~2 min)
+python src/06_panel.py                   # centro de control en localhost:8420
 ```
 
 <details>
@@ -333,7 +344,7 @@ python tests/test_ofertas.py
 python tests/test_precios.py
 python tests/test_llm.py                 # la llamada a Groq, sin clave y sin red
 python tests/test_guiones.py             # 50 conversaciones tipo, turno a turno (+ C7)
-python 10_simular.py --dias 7            # 7 días de tráfico por el sistema real
+python src/10_simular.py --dias 7        # 7 días de tráfico por el sistema real
 ```
 
 Si te saltas un paso, el siguiente te dice cuál falta en vez de reventar con un error críptico.

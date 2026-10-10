@@ -38,12 +38,12 @@ LO QUE ESTE MÓDULO NUNCA HACE SOLO
   - No negocia dos veces la misma pieza con el mismo cliente sin pasar por Álvaro.
 
 Uso:
-    python 04_ofertas.py reglas                      # ver la tabla de márgenes
-    python 04_ofertas.py oferta 69109 150 --cliente "Juan"
-    python 04_ofertas.py pendientes                  # lo que espera decisión de Álvaro
-    python 04_ofertas.py aceptar 3
-    python 04_ofertas.py rechazar 3 --motivo "por debajo de coste"
-    python 04_ofertas.py historial
+    python src/04_ofertas.py reglas                      # ver la tabla de márgenes
+    python src/04_ofertas.py oferta 69109 150 --cliente "Juan"
+    python src/04_ofertas.py pendientes                  # lo que espera decisión de Álvaro
+    python src/04_ofertas.py aceptar 3
+    python src/04_ofertas.py rechazar 3 --motivo "por debajo de coste"
+    python src/04_ofertas.py historial
 """
 
 import argparse
@@ -53,7 +53,7 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
-BASE = Path(__file__).parent
+BASE = Path(__file__).resolve().parent.parent   # raíz: el código vive en src/
 CSV_INVENTARIO = BASE / "datos" / "inventario_sintetico.csv"
 REGISTRO = BASE / "salida" / "ofertas.json"
 
@@ -314,7 +314,7 @@ def cmd_pendientes(_):
     print(f"{len(pendientes)} oferta(s) esperando tu decisión:")
     for o in pendientes:
         mostrar(o)
-    print(f"\n  Para cerrarlas:  python 04_ofertas.py aceptar <n>  |  rechazar <n>")
+    print(f"\n  Para cerrarlas:  python src/04_ofertas.py aceptar <n>  |  rechazar <n>")
 
 
 def cmd_aceptar(args):

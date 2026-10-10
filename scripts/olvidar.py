@@ -164,7 +164,7 @@ def main():
     print()
     print("QUEDA POR HACER, y es importante:")
     print("   1. Reconstruye el índice, o la matrícula sigue viva dentro de un vector:")
-    print("        py 01_ingesta_chunking.py  &&  py 02_embeddings.py")
+    print("        py src/01_ingesta_chunking.py  &&  py src/02_embeddings.py")
     print("   2. Si el panel estaba en marcha, este borrado no vale: al siguiente")
     print("      mensaje reescribe salida/sesiones.json desde su memoria. Páralo")
     print("      (Ctrl+C), repite con --borrar y vuelve a arrancarlo.")

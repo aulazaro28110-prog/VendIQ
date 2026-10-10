@@ -39,7 +39,7 @@ BASE = Path(__file__).resolve().parent.parent
 
 def cargar_modulo_busqueda():
     """Importa 03_buscar.py (el nombre empieza por un número, así que no vale 'import')."""
-    spec = importlib.util.spec_from_file_location("buscar", BASE / "03_buscar.py")
+    spec = importlib.util.spec_from_file_location("buscar", BASE / "src" / "03_buscar.py")
     modulo = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modulo)
     return modulo

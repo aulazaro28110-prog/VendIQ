@@ -25,14 +25,14 @@ from collections import Counter
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-BASE = Path(__file__).parent
+BASE = Path(__file__).resolve().parent.parent   # raíz: el código vive en src/
 SALIDA = BASE / "salida" / "panel.json"
 SEMILLA = 20260812
 
 
 def cargar(nombre_fichero, alias):
     """Importa un módulo cuyo nombre empieza por un número."""
-    spec = importlib.util.spec_from_file_location(alias, BASE / nombre_fichero)
+    spec = importlib.util.spec_from_file_location(alias, Path(__file__).resolve().parent / nombre_fichero)
     modulo = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modulo)
     return modulo
