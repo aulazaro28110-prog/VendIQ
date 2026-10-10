@@ -22,7 +22,7 @@ const HUECOS = [
   ['#hero-cifras', 4, 'stat',
    'No llegaron las cifras de cabecera.'],
   ['#g-dias',      1, 'alto',
-   'Sin días medidos. Ejecuta 10_simular.py --dias 7.'],
+   'Sin días medidos. Ejecuta src/10_simular.py --dias 7.'],
   ['#diagrama',    1, 'alto',
    'Sin recorrido que dibujar.'],
   ['#muestra-conv', 2, 'medio',

@@ -360,7 +360,7 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
 
 /* ===================================================== ACTIVIDAD MEDIDA */
 /* Gráficos de salida/actividad.json. Marcas finas, rejilla discreta y el
-   color solo donde distingue algo. Ver panel/actividad.js. */
+   color solo donde distingue algo. Ver panel/js/actividad.js. */
 
 .declaracion{
   border:1px solid var(--borde-vivo);border-left:3px solid var(--cian);

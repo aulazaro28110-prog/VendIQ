@@ -1,0 +1,407 @@
+/* VendIQ · capa de acabado, el marco
+   ========================================================================
+   La parte estructural de la capa de acabado (tokens y vidrio en acabado.css,
+   componentes en acabado-piezas.css).
+   La cabecera de 64 px, la barra lateral de 200 px que se pliega a un carril
+   de 60, el hero compacto, el ritmo de las secciones, el grano y las
+   entradas. Solo CSS: lo que necesita comportamiento —plegar, el cajón del
+   móvil, las entradas al hacer scroll— lo pone acabado.js, y sin él todo esto
+   se queda en un estado correcto y quieto.
+
+   PUNTOS DE CORTE
+   ---------------
+   El encargo da 1440, 900 y 560. El de 900 se queda en 960 a propósito: es
+   donde barra.css, sistema.css y lenguaje.css ya cambian la navegación, y dos
+   cortes a 60 px el uno del otro son justo como salen estados intermedios
+   rotos que nadie ve hasta que alguien abre el panel en una tablet.
+     ≥1440   barra de 200 · hero a dos columnas (texto y cifras)
+     960+    barra de 200, plegable a 60 · hero a una columna
+     <960    carril de 60 (solo iconos) + hamburguesa que lo abre en cajón
+     ≤560    cabecera compacta y todo a una columna
+
+   LAS CLASES QUE PONE acabado.js EN <html>
+   --------------------------------------
+     v-listo     la barra lateral manda también en móvil
+     sb-plegada  el usuario la plegó en escritorio (se recuerda)
+     sb-carril   se está viendo como carril de 60 px
+     sb-abierta  el cajón del móvil está abierto
+     v-aparece   las entradas al hacer scroll están activas
+   sb-plegada y sb-carril las pone ya el <script> del <head>, antes del primer
+   fotograma, para que la barra no nazca ancha y luego encoja. */
+
+/* ════════════════════════════════════════════════════ 1 · CABECERA ════ */
+/* La franja de paleta.js —migas y buscador— es la cabecera del encargo:
+   64 px, vidrio de verdad y pegada arriba. A la izquierda la marca y dónde
+   estás; a la derecha, la acción. El "Sign out" del encargo no se inventa:
+   este panel no tiene sesión que cerrar. */
+.chrome-franja{
+  box-sizing:border-box; height:var(--header-height);
+  background:var(--vidrio-barra);
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid var(--glass-border);
+}
+.chrome{ height:100%; padding:0 24px; gap:var(--space-lg); }
+@media (min-width:960px){
+  .chrome-franja{ position:sticky; top:0; z-index:var(--z-header); }
+  /* Con barra lateral el body deja aire a cada lado. La cabecera se come ese
+     aire para tocar la barra y el borde derecho, y su contenido se queda
+     alineado con la columna de abajo. */
+  html.shell .chrome-franja, html.montando .chrome-franja{
+    margin-left:calc(-1 * var(--sb-hueco));
+    margin-right:calc(-1 * var(--sb-hueco));
+  }
+  html.shell .chrome-franja .chrome, html.montando .chrome-franja .chrome{
+    max-width:calc(1200px + 2 * var(--sb-hueco));
+    padding:0 calc(var(--sb-hueco) + 24px);
+  }
+}
+@media (max-width:959px){
+  html.v-listo .chrome-franja{ position:sticky; top:0; z-index:var(--z-header); }
+}
+
+.miga{ gap:10px; font-size:13px; color:var(--color-text-muted); }
+.miga > .miga-paso:first-child{
+  color:var(--color-text); font-weight:600; letter-spacing:var(--letter-spacing-normal);
+}
+.miga b.miga-paso{ color:var(--color-text); font-weight:500; }
+.miga-sep{ opacity:.45; }
+
+.chrome-buscar{
+  height:var(--btn-height-sm); padding:0 8px 0 12px; gap:var(--space-sm);
+  border:1px solid var(--color-border); border-radius:var(--border-radius);
+  background:var(--vidrio-brillo), var(--glass-bg); box-shadow:var(--shadow-sm);
+  color:var(--color-text-muted); font-family:var(--font-family-ui);
+  transition:border-color var(--transition-fast), box-shadow var(--transition-base),
+             color var(--transition-fast);
+}
+.chrome-buscar:hover{
+  color:var(--color-text-secondary); border-color:var(--color-text-muted);
+  box-shadow:var(--shadow-sm), var(--shadow-md);
+}
+
+/* ═════════════════════════════════════════════════ 2 · BARRA LATERAL ════ */
+.sb{
+  width:var(--sb-w); padding:0 8px 14px; gap:var(--space-sm);
+  z-index:var(--z-sidebar);
+  background:var(--vidrio-barra);
+  backdrop-filter:blur(20px) saturate(140%);
+  -webkit-backdrop-filter:blur(20px) saturate(140%);
+  border-right:1px solid var(--glass-border);
+  transition:width var(--ms-normal) var(--easing-smooth);
+}
+/* La fila de arriba mide lo mismo que la cabecera y su borde sigue al de ella:
+   de lado a lado se lee como una sola barra. La .sb-cab la monta acabado.js;
+   sin él, la marca sola hace de fila. */
+.sb-cab, .sb > .marca{
+  display:flex; align-items:center; flex:none;
+  height:var(--header-height); margin:0 -8px;
+  border-bottom:1px solid var(--glass-border);
+}
+.sb-cab{ justify-content:space-between; padding:0 12px 0 16px; }
+.sb > .marca{ padding:0 16px; }
+.sb-cab .marca{ padding:0; }
+.sb .glifo{
+  width:28px; height:28px; border-radius:var(--border-radius);
+  background:var(--accent); color:var(--texto-sobre-acento);
+  font:700 13px/1 var(--font-family-ui);
+  box-shadow:0 0 18px var(--accent-soft-2);
+}
+
+/* La hamburguesa. En escritorio pliega la barra; en móvil abre el cajón, y
+   con el cajón abierto las tres rayas se cruzan en una X. */
+.sb-alternar{
+  position:relative; flex:none; width:32px; height:32px; padding:0;
+  border:1px solid transparent; border-radius:var(--border-radius);
+  background:transparent; color:var(--color-text-muted); cursor:pointer;
+  transition:background-color var(--transition-fast), color var(--transition-fast),
+             border-color var(--transition-fast);
+}
+.sb-alternar:hover{
+  background:var(--tinta-suave); border-color:var(--glass-border); color:var(--color-text);
+}
+.sb-alternar i{
+  position:absolute; left:8px; width:14px; height:1.5px; border-radius:2px;
+  background:currentColor;
+  transition:transform var(--ms-normal) var(--easing-smooth),
+             top var(--ms-normal) var(--easing-smooth), opacity var(--transition-fast);
+}
+.sb-alternar i:nth-child(1){ top:9.5px; }
+.sb-alternar i:nth-child(2){ top:14.25px; }
+.sb-alternar i:nth-child(3){ top:19px; }
+html.sb-abierta .sb-alternar i:nth-child(1){ top:14.25px; transform:rotate(45deg); }
+html.sb-abierta .sb-alternar i:nth-child(2){ opacity:0; transform:scaleX(0); }
+html.sb-abierta .sb-alternar i:nth-child(3){ top:14.25px; transform:rotate(-45deg); }
+
+.sb-links{ gap:2px; padding-top:var(--space-sm); }
+.sb-sec > .sb-grupo{ margin-top:20px; }
+.sb-sec:first-child > .sb-grupo{ margin-top:4px; }
+/* El rótulo de grupo, un pelo más apretado que el microlabel general. Nació
+   para la barra de 160 px, donde «CÓMO FUNCIONA» se partía en dos líneas; a
+   200 ya cabe, pero así los rótulos pesan menos que los enlaces. */
+button.sb-grupo{ padding:4px 6px; gap:5px; font-size:10.5px; letter-spacing:.05em; }
+button.sb-grupo:hover{ color:var(--color-text-secondary); }
+.sb-chev{ width:10px; height:10px; }
+.sb-lista{ gap:2px; }
+.sb-links a{
+  height:34px; padding:0 10px; gap:10px;
+  border:1px solid transparent; border-radius:var(--border-radius);
+  font-size:13px; letter-spacing:var(--letter-spacing-normal);
+  color:var(--color-text-muted);
+  transition:background-color var(--transition-fast), color var(--transition-fast),
+             border-color var(--transition-fast), box-shadow var(--transition-base);
+}
+.sb-links a:hover{ background:var(--glass-glow); color:var(--color-text); }
+/* Dónde estás: una píldora de vidrio teñida de teal, con el icono en teal
+   (eso ya lo pone barra.css) y la rayita corta de la izquierda que tenía el
+   panel anterior, ahora con un poco de luz. */
+.sb-links a.aqui{
+  background:var(--vidrio-brillo), var(--accent-soft);
+  border-color:var(--acento-borde); box-shadow:var(--shadow-sm);
+  color:var(--color-text); font-weight:500;
+}
+.sb-links a.aqui::before{ height:16px; box-shadow:0 0 8px var(--accent); }
+:root[data-tema="claro"] .sb-links a.aqui::before{ box-shadow:none; }
+/* Los iconos vuelven también a la barra ancha, como en el panel anterior. Por
+   eso mide 200 px y no los 160 que pedía el encargo: con icono, «El chat y el
+   correo» (106 px de texto) no cabía. En el carril, donde son lo único que se
+   ve, crecen a 18. El color lo heredan de la fila (barra.css). */
+.sb-ico{ width:16px; height:16px; stroke-width:1.6; }
+.sb-badge{
+  min-width:18px; height:18px; padding:0 6px; border-radius:999px;
+  font:500 10.5px/18px var(--mono);
+  background:var(--tinta-suave-2); color:var(--color-text);
+}
+/* estados.js le pone a cada badge el tono de lo que cuenta. La lateral los
+   pintaba todos en el acento; ahora cada uno lleva su color de estado. */
+.sb-badge.aviso   { background:var(--warn-soft); color:var(--warn); }
+.sb-badge.bien    { background:var(--ok-soft);   color:var(--ok); }
+.sb-badge.pregunta{ background:var(--info-soft); color:var(--info); }
+.sb-badge.critico { background:var(--err-soft);  color:var(--err); }
+.sb-sec.tiene-activa:not(.abierto) > .sb-grupo::after{
+  background:var(--accent); box-shadow:0 0 6px var(--accent);
+}
+:root[data-tema="claro"] .sb-sec.tiene-activa:not(.abierto) > .sb-grupo::after{ box-shadow:none; }
+.sb-pie{
+  padding:var(--space-md) 0 0; gap:var(--space-sm);
+  justify-content:center; flex-wrap:wrap;
+  border-top:1px solid var(--glass-border);
+}
+/* El «en vivo» lo trae acabado.js desde la barra de arriba. En escritorio no
+   se enseña, como hasta ahora; en móvil sale en el pie del cajón. */
+.sb .estado-vivo{ display:none; }
+.sb-pie .estado-vivo{
+  width:100%; justify-content:center; padding:6px 10px; margin:0;
+  border:1px solid var(--glass-border); border-radius:999px;
+  background:var(--glass-bg); font-size:11.5px; color:var(--color-text-muted);
+}
+
+.tema-toggle{
+  padding:3px; gap:2px; border-radius:999px;
+  border:1px solid var(--glass-border); background:var(--glass-bg);
+  box-shadow:var(--shadow-sm); color:var(--color-text-muted);
+}
+.tema-toggle:hover{ border-color:var(--color-border); color:var(--color-text); }
+.tema-toggle span{ width:26px; height:26px; }
+.tema-toggle .t-sol{ background:var(--tinta-suave-2); color:var(--color-text); }
+.tema-toggle .t-luna{ background:transparent; color:var(--color-text-muted); }
+:root[data-tema="claro"] .tema-toggle .t-sol{ background:transparent; color:var(--color-text-muted); }
+:root[data-tema="claro"] .tema-toggle .t-luna{ background:var(--tinta-suave-2); color:var(--color-text); }
+
+@media (min-width:960px){
+  .envoltorio{ max-width:1200px; }
+  html.shell.sb-plegada body, html.montando.sb-plegada body{
+    padding-left:calc(var(--sidebar-width-collapsed) + var(--sb-hueco));
+  }
+  html.shell body{ transition:padding-left var(--ms-normal) var(--easing-smooth); }
+}
+/* Tablet: la barra sigue a 200 y lo que se recorta es el aire. */
+@media (min-width:960px) and (max-width:1439px){
+  :root, :root[data-tema="claro"]{ --sb-hueco:var(--space-xl); }
+}
+
+/* ═══════════════════════════════════════════════════ 3 · EL CARRIL ════ */
+/* 60 px, solo iconos: la barra plegada del escritorio y la de siempre en
+   móvil. Los nombres no se borran: se esconden a la vista y siguen en el
+   árbol de accesibilidad, y acabado.js los copia al title para el ratón. */
+html.sb-carril .sb{ width:var(--sidebar-width-collapsed); padding:0 8px 12px; }
+html.sb-carril .sb-cab, html.sb-carril .sb > .marca{ justify-content:center; padding:0; }
+html.sb-carril .sb-cab .marca{ display:none; }
+html.sb-carril .sb-ico{ width:18px; height:18px; }
+html.sb-carril .sb-links a{
+  justify-content:center; width:42px; height:40px; margin:0 auto; padding:0;
+}
+html.sb-carril .sb-links a > span,
+html.sb-carril button.sb-grupo > span{
+  position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0;
+  overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap;
+}
+html.sb-carril button.sb-grupo{ justify-content:center; padding:6px 0; }
+html.sb-carril .sb-sec > .sb-grupo{ margin-top:12px; }
+html.sb-carril .sb-sec:first-child > .sb-grupo{ margin-top:4px; }
+html.sb-carril .sb-sec.tiene-activa:not(.abierto) > .sb-grupo::after{ margin-left:2px; }
+html.sb-carril .sb-badge{
+  position:absolute; top:2px; right:0;
+  min-width:15px; height:15px; padding:0 4px;
+  font-size:9.5px; line-height:15px;
+}
+html.sb-carril .sb-pie{ flex-direction:column; padding-top:var(--space-sm); }
+html.sb-carril .tema-toggle{ flex-direction:column; }
+
+/* ═════════════════════════════════════════════════════ 4 · MÓVIL ════ */
+/* `montando` (lo pone tema.js en el <head>) reserva el carril desde el primer
+   fotograma. Si barra.js o acabado.js fallan, tema.js la quita al cargar y
+   vuelve la barra de arriba de siempre: v-listo solo existe si todo montó. */
+@media (max-width:959px){
+  html.montando nav.barra, html.shell.v-listo nav.barra{ display:none; }
+  html.montando body, html.shell.v-listo body{ padding-left:var(--sidebar-width-collapsed); }
+  html.shell.v-listo .sb{ display:flex; }
+  /* El cajón: la misma barra, ancha, por encima de todo y con velo. */
+  html.sb-abierta .sb{
+    width:248px; z-index:var(--z-drawer);
+    background:var(--vidrio-capa);
+    box-shadow:var(--shadow-sm), 24px 0 60px rgba(0,0,0,.5);
+  }
+  html.sb-abierta .sb-ico{ display:block; }
+  html.sb-abierta .sb .estado-vivo{ display:flex; }
+  html.sb-abierta, html.sb-abierta body{ overflow:hidden; }
+  .rejilla-2{ grid-template-columns:1fr; }
+  .top{ padding:var(--space-2xl) 0 var(--space-xl); }
+}
+.sb-velo{
+  position:fixed; inset:0; z-index:calc(var(--z-drawer) - 1);
+  background:var(--color-overlay);
+  backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+  opacity:0; pointer-events:none;
+  transition:opacity var(--ms-normal) var(--easing-smooth);
+}
+html.sb-abierta .sb-velo{ opacity:1; pointer-events:auto; }
+
+/* ═════════════════════════════════════════════════════════ 5 · HERO ════ */
+/* Más compacto, como pide el encargo, y a una columna hasta 1440. Ojo con
+   .envoltorio: trae 120 px de relleno abajo pensados para el final de la
+   página, y dentro del hero dejaban un hueco vacío bajo las cifras. */
+.top{ padding:var(--space-3xl) 0 var(--space-2xl); }
+.top > .envoltorio{ padding-bottom:0; }
+.top-dentro{
+  flex-direction:column; align-items:flex-start; flex-wrap:nowrap;
+  gap:var(--space-xl); margin-bottom:var(--space-xl);
+}
+.top-txt{ min-width:0; width:100%; }
+.hero-titulo{ margin:0 0 var(--space-lg); }
+.hero-pie{ margin:0 0 var(--space-xl); max-width:58ch; }
+.hero-acciones{ gap:var(--space-sm); }
+.col-fecha{ flex-direction:row; flex-wrap:wrap; align-items:center; gap:var(--space-sm); }
+.pildora{
+  display:inline-flex; align-items:center; gap:6px;
+  height:30px; padding:0 12px; border-radius:999px;
+  border:1px solid var(--glass-border);
+  background:var(--vidrio-brillo), var(--glass-bg); box-shadow:var(--shadow-sm);
+  font:400 12px/1 var(--font-family-ui); color:var(--color-text-muted);
+  white-space:nowrap;
+}
+.pildora b{ color:var(--color-text); font-weight:600; }
+.pildora.fuerte{
+  background:var(--vidrio-brillo), var(--tinta-suave); border-color:var(--color-border);
+}
+.pildora.fuerte b{ font-size:12px; }
+.stats{ gap:var(--space-md); }
+.stats > div{ padding:18px 20px; }
+@media (min-width:1440px){
+  .top > .envoltorio{
+    display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+    gap:var(--space-3xl); align-items:center;
+  }
+  .top-dentro{ margin-bottom:0; }
+  .stats{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+
+/* ═════════════════════════════════════════════════════ 6 · SECCIONES ════ */
+main.envoltorio > .bloque{ border-top-color:var(--color-border-subtle); }
+/* El pie, sin `order`, caía el PRIMERO del <main>: sistema.css reordena las
+   secciones con order:1…12 y al pie nadie le puso número, así que «Medido
+   el… · Volver arriba» salía entre el hero y el chat. Va al final. */
+main.envoltorio > .pie{ order:99; }
+.pie{ border-top-color:var(--glass-border); }
+.pie-nota{ color:var(--color-text-muted); }
+
+/* ═══════════════════════════════════════════════ 7 · GRANO Y MALLA ════ */
+/* El grano del encargo: ruido fractal en gris, fijo y por encima de todo
+   (--z-grain), sin recibir el ratón. Estático a propósito: animarlo sería
+   repintar la pantalla entera sesenta veces por segundo para un efecto que
+   apenas se ve. */
+body::after{
+  content:''; position:fixed; inset:0; z-index:var(--z-grain);
+  pointer-events:none; opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size:160px 160px;
+}
+:root[data-tema="claro"] body::after{ opacity:.035; mix-blend-mode:multiply; }
+/* La malla de fondo.js: partículas que se mueven y se enlazan, en el teal de
+   --accent. Presente pero de fondo: casi entera de opacidad, porque el tope lo
+   ponen las líneas en el propio JS (32 % como mucho), y con la máscara de
+   informe.css suavizada. Aquella la apagaba por completo a mitad de pantalla;
+   esta la deja seguir abajo al 40 %, para que acompañe todo el recorrido. */
+#fondo{
+  opacity:.9;
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 50%,rgba(0,0,0,.4) 100%);
+  mask-image:linear-gradient(180deg,#000 0%,#000 50%,rgba(0,0,0,.4) 100%);
+}
+:root[data-tema="claro"] #fondo{ opacity:.55; }
+
+/* ═════════════════════════════════════════════════ 8 · MOVIMIENTO ════ */
+/* Las cuatro entradas del encargo. acabado.js las pone cuando cada pieza
+   entra en pantalla, a 70 ms una de otra si llegan juntas. Nunca se esconde
+   nada a ciegas: solo lo que al cargar está por DEBAJO de la primera
+   pantalla, y solo si hay IntersectionObserver. La primera pantalla es de
+   ui.js (.entra) y no se toca. `backwards` y no `both`: al acabar, la pieza
+   vuelve a su estilo de siempre y su hover sigue moviéndola. */
+@keyframes in-fade { from{ opacity:0; } to{ opacity:1; } }
+@keyframes in-scale{ from{ opacity:0; transform:scale(.97); } to{ opacity:1; transform:none; } }
+@keyframes in-soft { from{ opacity:0; transform:translateY(12px); filter:blur(6px); }
+                     to{ opacity:1; transform:none; filter:none; } }
+@keyframes in-pop  { 0%{ opacity:0; transform:scale(.92); }
+                     60%{ opacity:1; transform:scale(1.015); }
+                     100%{ opacity:1; transform:none; } }
+
+html.v-aparece .apa:not(.apa-vista){ opacity:0; }
+.apa-vista{
+  animation-duration:.7s; animation-timing-function:var(--easing-smooth);
+  animation-fill-mode:backwards; animation-delay:var(--apa-d, 0ms);
+}
+.apa-vista.apa-fade { animation-name:in-fade; }
+.apa-vista.apa-scale{ animation-name:in-scale; }
+.apa-vista.apa-soft { animation-name:in-soft; }
+.apa-vista.apa-pop  { animation-name:in-pop; }
+
+/* El encargo: con movimiento reducido, ni animaciones ni transiciones. Con
+   ::before y ::after, que la hamburguesa y los puntos también se mueven.
+   Ninguna lleva información: quitarlas no quita nada. */
+@media (prefers-reduced-motion:reduce){
+  *, *::before, *::after{ animation:none !important; transition:none !important; }
+  html.v-aparece .apa{ opacity:1 !important; }
+}
+@media print{
+  .apa{ opacity:1 !important; animation:none !important; }
+  body::after, .sb-velo{ display:none !important; }
+}
+
+/* ══════════════════════════════════════════════════ 9 · PUNTOS DE CORTE ════ */
+@media (max-width:560px){
+  .top{ padding:var(--space-xl) 0 var(--space-lg); }
+  .chrome{ flex-direction:row; align-items:center; gap:var(--space-sm); padding:0 16px; }
+  /* Las migas se quedan en la sección actual y el buscador, en su lupa. El
+     texto del botón se esconde a la vista, no del todo: sigue siendo su
+     nombre para el lector de pantalla. */
+  .miga > :not(:last-child){ display:none; }
+  .chrome-buscar{
+    min-width:0; width:var(--btn-height-sm); padding:0;
+    justify-content:center; flex:none;
+  }
+  .chrome-buscar kbd{ display:none; }
+  .chrome-buscar .chrome-txt{
+    position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden;
+    clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap;
+  }
+  .hero-acciones .boton.grande{ flex:1 1 auto; }
+}

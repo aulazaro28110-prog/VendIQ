@@ -1,4 +1,4 @@
-/* VendIQ · barra lateral — trasplante fiel de la del portfolio (commit da6f96b)
+/* VendIQ · barra lateral — trasplante fiel de la de mi web personal (commit da6f96b)
    ========================================================================
    ADITIVO. Construye una barra lateral `.sb` a partir de la navegación que YA
    existe (nav.barra): mismos grupos, enlaces, iconos y badges — ni una palabra
@@ -7,7 +7,7 @@
    + scroll-spy con bloqueo al clic. Si algo aquí falla, no se añade `html.shell`
    y el panel sigue con nav.barra tal cual: no se pierde navegación.
 
-   Reutiliza, casi literal, la mecánica probada del portfolio: plegar/enganchar
+   Reutiliza, casi literal, la mecánica probada de mi web: plegar/enganchar
    (plegado con memoria) y calcular/vigilar/marcarActiva/fijar (scroll-spy).
    Adaptado a VendIQ: el menú se lee del DOM en vez de un MAPA fijo (aquí los
    textos viven en el HTML), y las secciones se ordenan por posición en el
@@ -39,7 +39,7 @@
  });
  if(!grupos.length) return;
 
- /* ── plegado con memoria (del portfolio, literal salvo nombres) ──
+ /* ── plegado con memoria (de mi web, literal salvo nombres) ──
     max-height a la altura real y, al terminar, se suelta a `none` para que la
     lista pueda crecer. Cerrada queda inerte: ni se tabula ni se pulsa. */
  const CLAVE_MENU='vendiq-menu';
@@ -122,7 +122,7 @@
  document.body.insertBefore(sb,barraVieja);
  document.documentElement.classList.add('shell');
 
- /* ── scroll-spy (del portfolio; `calcular` adaptado al orden del documento) ──
+ /* ── scroll-spy (de mi web; `calcular` adaptado al orden en el documento) ──
     Un IntersectionObserver nuevo. Su raíz es la franja de arriba hasta LINEA;
     en cada aviso se recalcula por geometría, así da igual quién lo disparó. */
  const SECCIONES=[];
@@ -158,7 +158,7 @@
   const raiz=document.documentElement;
   if(window.innerHeight+window.scrollY>=raiz.scrollHeight-2){
    marcarActiva(SECCIONES[SECCIONES.length-1].href);return;}   // al final, la última
-  let cual=SECCIONES[0].href,mejor=-Infinity;
+  let cual=null,mejor=-Infinity;   // en el hero ninguna pasó la línea: no se marca nada
   SECCIONES.forEach(s=>{const t=s.destino.getBoundingClientRect().top;
    if(t<=LINEA&&t>mejor){mejor=t;cual=s.href;}});               // la más baja que aún no pasó la línea
   marcarActiva(cual);

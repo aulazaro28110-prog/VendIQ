@@ -1,10 +1,10 @@
-/* VendIQ · barra lateral — trasplante fiel de la del portfolio (commit da6f96b)
+/* VendIQ · barra lateral — trasplante fiel de la de mi web personal (commit da6f96b)
    ========================================================================
    CAPA ADITIVA. Ni este fichero ni barra.js editan una regla existente: solo
    añaden la `.sb` y la retirada de `nav.barra` a ≥960. Quitando el <link>, el
    <script> y la clase `shell`, el panel vuelve a su barra de siempre.
 
-   PUENTE DE COLOR (portfolio → VendIQ), la FORMA se copia, el color es el de aquí:
+   PUENTE DE COLOR (mi web → VendIQ), la FORMA se copia, el color es el de aquí:
      --bg2 → --carta          --elev2 → --carta-alta
      --line → --borde         --line2 → --borde-vivo
      --tx → --tinta           --dim → --tinta-2        --faint → --tinta-3

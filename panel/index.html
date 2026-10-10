@@ -4,18 +4,41 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>VendIQ · Centro de control</title>
-<link rel="stylesheet" href="panel.css">
-<link rel="stylesheet" href="chat.css?v=2">
-<link rel="stylesheet" href="correo.css">
-<link rel="stylesheet" href="informe.css">
-<link rel="stylesheet" href="sistema.css?v=3">
-<link rel="stylesheet" href="lenguaje.css?v=3">
-<!-- Barra lateral trasplantada del portfolio (plegable, memoria, scroll-spy).
-     Va la última: a ≥960 retira nav.barra y pone la .sb. Aditiva — ver barra.css. -->
-<link rel="stylesheet" href="barra.css?v=1">
+<!-- Capa de acabado · tipografías. Se PIDEN a Google Fonts con fallback al sistema:
+     si no hay red, Inter cae al stack del sistema, Instrument Serif a un serif
+     de titulares y JetBrains Mono al monoespaciado de siempre. El panel sigue
+     en pie sin internet; solo pierde el calco exacto de la tipografía. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="css/panel.css">
+<link rel="stylesheet" href="css/chat.css?v=2">
+<link rel="stylesheet" href="css/correo.css">
+<link rel="stylesheet" href="css/informe.css">
+<link rel="stylesheet" href="css/sistema.css?v=3">
+<link rel="stylesheet" href="css/lenguaje.css?v=3">
+<!-- Barra lateral trasplantada de mi web personal (plegable, memoria, scroll-spy).
+     Va detrás de las seis anteriores (y delante de la capa de acabado): a ≥960
+     retira nav.barra y pone la .sb. Aditiva — ver barra.css. -->
+<link rel="stylesheet" href="css/barra.css?v=1">
+<!-- Capa de acabado: negro puro, liquid-glass, Inter +
+     Instrument Serif. Las ÚLTIMAS hojas. Aditivas y reversibles: solo
+     redefinen tokens y visten encima. Quitando estos tres <link>, el <script>
+     de abajo y acabado.js, el panel vuelve EXACTO a como estaba. -->
+<link rel="stylesheet" href="css/acabado.css?v=1">
+<link rel="stylesheet" href="css/acabado-piezas.css?v=1">
+<link rel="stylesheet" href="css/acabado-marco.css?v=1">
 <!-- En el <head> y antes de pintar nada: fija el tema guardado para que no
      haya un fogonazo oscuro al cargar en claro. -->
-<script src="tema.js"></script>
+<script src="js/tema.js"></script>
+<!-- Capa de acabado: lo mismo para la barra lateral. Si estaba plegada, o la
+     pantalla es estrecha, nace en carril de 60 px desde el primer fotograma. -->
+<script>
+  (function(){var d=document.documentElement,p=false;
+   try{p=localStorage.getItem('vendiq-sb-plegada')==='1';}catch(e){}
+   if(p)d.classList.add('sb-plegada');
+   if(p||window.innerWidth<960)d.classList.add('sb-carril');})();
+</script>
 </head>
 <body>
 
@@ -588,35 +611,24 @@
     <h2>Gmail y Wallapop</h2>
     <p class="intro">
       Un desguace no vende solo por WhatsApp. Lo que cambia de un canal a otro es
-      la <strong>forma</strong>, y solo la forma: un WhatsApp son tres lineas y un
+      la <strong>forma</strong>, y solo la forma: un WhatsApp son tres líneas y un
       tuteo, un correo es una carta con todo dentro. Lo que no cambia es el fondo
-      — el precio sigue necesitando saber de que coche es la pieza, venga la
+      — el precio sigue necesitando saber de qué coche es la pieza, venga la
       pregunta por donde venga.
     </p>
     <p class="intro nota-dura">
-      Wallapop no tiene redactor propio a proposito: tiene la misma forma que
-      WhatsApp y lo que cambia es <strong>quien escribe</strong>. Se comprueba con
-      20 conversaciones incomodas —el que regatea seis veces, el que ensena la
-      captura de una transferencia que no existe— y lo que se mide alli no es si
+      Wallapop no tiene redactor propio a propósito: tiene la misma forma que
+      WhatsApp y lo que cambia es <strong>quién escribe</strong>. Se comprueba con
+      20 conversaciones incómodas —el que regatea seis veces, el que enseña la
+      captura de una transferencia que no existe— y lo que se mide allí no es si
       acierta, es si aguanta.
     </p>
 
     <p class="intro">
       El correo se puede probar arriba, en
       <a href="#cliente">Habla por correo con un cliente</a>: el mismo bot, la misma
-      busqueda y el mismo guardarrail de precio, con la forma de una carta.
+      búsqueda y el mismo guardarraíl de precio, con la forma de una carta.
     </p>
-  </section>
-
-  <!-- ========================================================= faltan -->
-  <section class="bloque" id="faltan">
-    <p class="eyebrow">Inteligencia de compra</p>
-    <h2>Lo que te piden y no tienes</h2>
-    <p class="intro">
-      Piezas que los clientes buscan y no están en catálogo. Sale gratis del registro
-      de consultas: qué desguazar y qué reponer primero.
-    </p>
-    <div class="carta"><div class="barras" id="demanda"></div></div>
   </section>
 
   <!-- ======================================================== informe -->
@@ -910,29 +922,32 @@ CLIENTE: ¿tenéis un alternador para un BMW 320d?
 <!-- La malla animada del fondo. Lee su color de --accent, asi que sigue al
      tema; se para sola con prefers-reduced-motion y cuando la pestana no se
      ve. Va la primera porque no depende de nada. -->
-<script src="fondo.js"></script>
-<script src="panel.js"></script>
-<script src="chat.js?v=2"></script>
-<script src="actividad.js"></script>
-<script src="mesa.js"></script>
-<script src="canales.js"></script>
+<script src="js/fondo.js"></script>
+<script src="js/panel.js"></script>
+<script src="js/chat.js?v=2"></script>
+<script src="js/actividad.js"></script>
+<script src="js/mesa.js"></script>
+<script src="js/canales.js"></script>
 <!-- El último: decora la fila de KPIs que ya pintó panel.js. Aditivo — si
      no cargara, la fila sigue completa, solo sin adornos. -->
-<script src="kpi.js"></script>
+<script src="js/kpi.js"></script>
 <!-- Sustituye el contenido de #g-dias por el área y rellena anillos y gauge.
      Si no cargara, en #g-dias se quedan las barras apiladas de actividad.js. -->
-<script src="graficas.js"></script>
+<script src="js/graficas.js"></script>
 <!-- Esqueletos, entrada escalonada y chips del feed. El último de todos. -->
-<script src="ui.js"></script>
+<script src="js/ui.js"></script>
 <!-- Contadores por estado de la mesa de negociación y de tu mesa. -->
-<script src="estados.js"></script>
+<script src="js/estados.js"></script>
 <!-- El tablero de ofertas con su panel lateral. -->
-<script src="tablero.js"></script>
+<script src="js/tablero.js"></script>
 <!-- Barra de arriba, migas y paleta de comandos. Va el ultimo porque usa
      consultar() y api() de panel.js, y lee el menu que ya esta en el DOM. -->
-<script src="paleta.js"></script>
+<script src="js/paleta.js"></script>
 <!-- La barra lateral. Va la última: lee el menú que ya está en el DOM (nav.barra)
      y construye la .sb. Si falla, no pone html.shell y queda la nav de siempre. -->
-<script src="barra.js"></script>
+<script src="js/barra.js"></script>
+<!-- Capa de acabado: plegar la lateral, el cajón del móvil y las entradas al
+     hacer scroll. La última de todas: necesita la .sb que monta barra.js. -->
+<script src="js/acabado.js?v=1"></script>
 </body>
 </html>

@@ -1,0 +1,336 @@
+/* VendIQ · capa de acabado, las piezas
+   ========================================================================
+   Los componentes de la capa de acabado: botones, campos, tablas, indicadores,
+   el panel lateral de ofertas, la paleta, las gráficas, el informe y el marco
+   del chat. Los tokens, la base, la tipografía y el vidrio van en acabado.css
+   (que se carga antes y del que salen todas las variables de aquí), y la
+   cabecera, la barra lateral y el movimiento en acabado-marco.css. La
+   numeración de las secciones sigue la de acabado.css.
+
+   El mismo trato que el resto de la capa: no edita ninguna regla anterior ni
+   una línea de JavaScript. Quitando su <link>, estas piezas vuelven al
+   aspecto de lenguaje.css con los colores nuevos. */
+
+/* ════════════════════════════════════════════════════════ 6 · BOTONES ════ */
+/* Dos variantes y sus derivados. Sólido: el teal de la marca con tinta
+   oscura, como en el panel anterior, y al pasar el ratón, un halo de su
+   mismo color. Fantasma: vidrio con filo. */
+.boton, .consola-entrada button{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:var(--btn-height-sm); padding:0 16px;
+  border:1px solid transparent; border-radius:var(--border-radius);
+  background:var(--accent); color:var(--texto-sobre-acento);
+  font:500 13px/1 var(--font-family-ui); letter-spacing:var(--letter-spacing-normal);
+  text-decoration:none; cursor:pointer; box-shadow:var(--shadow-sm);
+  transition:box-shadow var(--transition-base), background-color var(--transition-fast),
+             border-color var(--transition-fast), color var(--transition-fast),
+             transform var(--transition-fast);
+}
+.boton:hover, .consola-entrada button:hover{
+  background:var(--accent-strong); box-shadow:var(--shadow-glow);
+}
+.boton:active, .consola-entrada button:active{ transform:scale(.98); }
+.boton.grande{ display:inline-flex; height:var(--btn-height); padding:0 20px; font-size:14px; }
+.boton.mini{ height:28px; padding:0 10px; font-size:12px; }
+.boton.sutil{
+  background:var(--vidrio-brillo), var(--glass-bg);
+  border-color:var(--color-border); color:var(--color-text);
+}
+.boton.sutil:hover{
+  background:var(--vidrio-brillo), var(--tinta-suave);
+  border-color:var(--color-text-muted);
+  box-shadow:var(--shadow-sm), var(--shadow-md);
+}
+.boton.fantasma{
+  background:transparent; border-color:transparent;
+  color:var(--color-text-secondary); box-shadow:none;
+}
+.boton.fantasma:hover{ background:var(--tinta-suave); color:var(--color-text); box-shadow:none; }
+.boton.peligro{
+  background:transparent; color:var(--err); box-shadow:none;
+  border-color:color-mix(in srgb, var(--err) 45%, transparent);
+}
+.boton.peligro:hover{ background:var(--err-soft); border-color:var(--err); box-shadow:none; }
+.boton:disabled, .consola-entrada button:disabled{
+  opacity:.4; cursor:not-allowed; transform:none; box-shadow:none;
+  background:var(--color-bg-tertiary); color:var(--color-text-muted);
+}
+
+/* Píldoras de vidrio: sugerencias, filtros, orden y el reproductor de
+   guiones. No confundir con .pastilla, el chip de ESTADO, que no se pulsa. */
+.chip, .estado-orden .chip, .repro-btn{
+  display:inline-flex; align-items:center; gap:6px;
+  height:30px; padding:0 13px; border-radius:999px;
+  background:var(--vidrio-brillo), var(--glass-bg);
+  border:1px solid var(--glass-border); box-shadow:var(--shadow-sm);
+  color:var(--color-text-secondary);
+  font:400 13px/1 var(--font-family-ui); letter-spacing:var(--letter-spacing-normal);
+  cursor:pointer;
+  transition:background-color var(--transition-fast), border-color var(--transition-fast),
+             box-shadow var(--transition-base), color var(--transition-fast);
+}
+.chip:hover, .estado-orden .chip:hover, .repro-btn:hover:not(:disabled){
+  color:var(--color-text); border-color:var(--color-border);
+  background:var(--vidrio-brillo), var(--tinta-suave);
+  box-shadow:var(--shadow-sm), var(--shadow-md);
+}
+.chip[aria-pressed="true"], .estado-orden .chip.activo{
+  color:var(--color-text); font-weight:500;
+  border-color:var(--acento-borde);
+  background:var(--vidrio-brillo), var(--accent-soft);
+}
+.repro-btn:disabled{ opacity:.4; }
+
+.segmentos{
+  background:var(--glass-bg); border:1px solid var(--glass-border);
+  border-radius:var(--border-radius-lg); padding:3px; gap:2px;
+  box-shadow:var(--shadow-sm);
+}
+.segmentos button{
+  border-radius:var(--border-radius); color:var(--color-text-muted);
+  font-family:var(--font-family-ui); font-weight:500;
+  transition:background-color var(--transition-fast), color var(--transition-fast),
+             box-shadow var(--transition-base);
+}
+.segmentos button:hover{ color:var(--color-text); }
+/* El pulsado, en teal como en el panel anterior, pero en vidrio teñido y no
+   sólido. El claro también: sistema.css le ponía texto blanco porque el fondo
+   era teal sólido, y sobre el vidrio claro el blanco no se vería. */
+.segmentos button[aria-pressed="true"],
+:root[data-tema="claro"] .segmentos button[aria-pressed="true"]{
+  background:var(--vidrio-brillo), var(--accent-soft-2);
+  color:var(--color-text); font-weight:500;
+  box-shadow:var(--shadow-sm), inset 0 0 0 1px var(--acento-borde);
+}
+
+/* ═════════════════════════════════════════════════════════ 7 · CAMPOS ════ */
+.campo input, .campo select, .mando input, .guiones-selects select,
+.precio-inline input, .correo-form input, .correo-form textarea,
+.duda-responder textarea, .dr-texto{
+  background:var(--glass-bg); color:var(--color-text);
+  border:1px solid var(--color-border); border-radius:var(--border-radius);
+  font-family:var(--font-family-ui); box-shadow:var(--shadow-sm);
+  transition:border-color var(--transition-fast), box-shadow var(--transition-base);
+}
+.campo input, .campo select, .mando input, .guiones-selects select{
+  height:var(--btn-height-sm); padding:0 12px; font-size:14px;
+}
+.precio-inline input{ height:30px; padding:0 10px; font-family:var(--mono); font-size:13px; }
+/* El foco de un campo es un anillo suave y el filo en teal, no el contorno
+   de 2 px de los botones: en un formulario con cinco campos, cinco contornos
+   gruesos gritan. */
+:is(.campo, .mando, .guiones-selects, .precio-inline, .correo-form, .duda-responder)
+  :is(input, select, textarea):focus-visible,
+.dr-texto:focus-visible{
+  outline:none; border-color:var(--accent);
+  box-shadow:var(--shadow-sm), 0 0 0 3px var(--accent-soft);
+}
+select option{ background:var(--color-bg-secondary); color:var(--color-text); }
+
+.consola-entrada{
+  height:48px; padding:0 6px 0 4px;
+  background:var(--vidrio-brillo), var(--glass-bg);
+  border:1px solid var(--color-border); border-radius:var(--border-radius-lg);
+  box-shadow:var(--shadow-sm);
+  transition:border-color var(--transition-fast), box-shadow var(--transition-base);
+}
+.consola-entrada:focus-within{
+  border-color:var(--accent);
+  box-shadow:var(--shadow-sm), 0 0 0 3px var(--accent-soft), var(--shadow-md);
+}
+.consola-entrada .prompt{ color:var(--color-text-muted); font-family:var(--mono); }
+.consola-entrada input{ font-size:15px; color:var(--color-text); }
+.consola-entrada input:focus-visible{ outline:none; }
+.consola-entrada button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+/* ═════════════════════════════════════════════════════════ 8 · TABLAS ════ */
+th, td{ border-bottom:1px solid var(--color-border-subtle); }
+thead th{
+  background:var(--color-bg-tertiary);
+  box-shadow:inset 0 -1px 0 var(--glass-border);
+}
+tbody tr:hover{ background:var(--glass-glow); }
+td.num{ font-family:var(--mono); font-size:13px; }
+.pastilla{
+  line-height:20px; font-family:var(--font-family-ui);
+  border:1px solid color-mix(in srgb, currentColor 22%, transparent);
+}
+.tabla-detalle summary{ color:var(--color-text-muted); transition:color var(--transition-fast); }
+.tabla-detalle summary:hover{ color:var(--color-text); }
+
+/* ═══════════════════════════════════════ 9 · INDICADORES Y ESTADOS ════ */
+.ind .cifra, .ind.acento .cifra, .ind.malo .cifra, .stats .valor,
+.estado-n, .gauge-num, .anillo-num{
+  font-family:var(--font-family-ui); font-weight:600;
+  letter-spacing:var(--letter-spacing-tight);
+}
+.kpi-delta{ border:1px solid color-mix(in srgb, currentColor 22%, transparent); }
+
+/* El borde de vidrio de arriba pisa el de color de la izquierda: se repone,
+   con el mismo color de estado que sistema.css. */
+.estado{ border-left-width:2px; }
+.estado-bien    { border-left-color:var(--ok); }
+.estado-pregunta{ border-left-color:var(--info); }
+.estado-aviso   { border-left-color:var(--warn); }
+.estado-critico { border-left-color:var(--err); }
+.estado-neutro  { border-left-color:var(--color-border); }
+.estado-cab:hover{ background:var(--glass-glow); }
+.estado-panel.abierto, .estado-orden{ border-color:var(--glass-border); }
+.estado-fila{ border-bottom-color:var(--color-border-subtle); }
+
+.of-col-cab{
+  border-top-width:2px; border-bottom-color:var(--glass-border);
+  border-radius:var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+.of-mas{
+  border-radius:var(--border-radius); border-color:var(--glass-border);
+  background:var(--glass-bg);
+  transition:background-color var(--transition-fast), color var(--transition-fast);
+}
+
+/* ══════════════════════════════════════════════════ 10 · PANEL LATERAL ════ */
+.of-velo{
+  z-index:calc(var(--z-drawer) - 1);
+  background:var(--color-overlay);
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+}
+/* Al cerrar, `visibility` espera a que termine el deslizamiento: antes se
+   ocultaba de golpe y la salida no llegaba a verse. */
+.of-drawer{
+  z-index:var(--z-drawer); width:min(440px,100%);
+  background:var(--vidrio-capa);
+  backdrop-filter:blur(24px) saturate(140%);
+  -webkit-backdrop-filter:blur(24px) saturate(140%);
+  border-left:1px solid var(--glass-border);
+  box-shadow:var(--shadow-sm), var(--shadow-lg);
+  transition:transform .5s var(--easing-smooth), visibility 0s linear .5s;
+}
+.of-drawer.abierto{ transition:transform .5s var(--easing-smooth), visibility 0s; }
+.of-cerrar{
+  width:32px; height:32px; border-radius:50%;
+  border:1px solid var(--glass-border); background:var(--glass-bg);
+  color:var(--color-text-secondary); box-shadow:var(--shadow-sm);
+  transition:color var(--transition-fast), border-color var(--transition-fast),
+             box-shadow var(--transition-base);
+}
+.of-cerrar:hover{
+  color:var(--color-text); border-color:var(--color-border);
+  box-shadow:var(--shadow-sm), var(--shadow-md);
+}
+.dr-razon{ background:var(--glass-bg); border-left-color:var(--accent); }
+.tl-punto{ background:var(--color-bg); }
+
+/* ════════════════════════════════════════════ 11 · PALETA Y GLOBOS ════ */
+.pal-velo{
+  z-index:calc(var(--z-modal) - 1);
+  background:var(--color-overlay);
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+}
+.pal{
+  z-index:var(--z-modal);
+  background:var(--vidrio-capa);
+  backdrop-filter:blur(28px) saturate(150%);
+  -webkit-backdrop-filter:blur(28px) saturate(150%);
+  border:1px solid var(--color-border); border-radius:var(--border-radius-lg);
+  box-shadow:var(--shadow-sm), var(--shadow-lg), 0 30px 80px rgba(0,0,0,.55);
+}
+.pal-campo{ height:56px; border-bottom-color:var(--glass-border); }
+.pal-entrada{ font-family:var(--font-family-ui); }
+.pal-fila{ transition:background-color var(--transition-fast); }
+.pal-fila.sel{ background:var(--accent-soft); box-shadow:inset 2px 0 0 var(--accent); }
+.pal-pie{ background:transparent; border-top-color:var(--glass-border); }
+kbd{
+  background:var(--glass-bg); border:1px solid var(--glass-border);
+  box-shadow:var(--shadow-sm); color:var(--color-text-muted);
+}
+.g-globo, [data-tip]::after{
+  background:var(--vidrio-capa);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--glass-border); border-radius:var(--border-radius);
+  box-shadow:var(--shadow-sm), var(--shadow-lg);
+}
+
+/* ═════════════════════════════════════════════════════ 12 · GRÁFICAS ════ */
+.g-linea{ filter:drop-shadow(0 0 6px var(--accent-soft-2)); }
+/* El globo nace con `hidden`, pero sistema.css le pone display:flex y eso le
+   gana al [hidden] del navegador: se quedaba una caja vacía en la esquina del
+   gráfico. Con el vidrio nuevo se notaba más. */
+.g-globo[hidden]{ display:none; }
+/* Anillos y semicírculo, más finos. graficas.js les escribe el grosor como
+   atributo y el CSS manda sobre él; la animación del trazo no depende del
+   grosor, así que no se entera. A 11 y 15 pesaban más que el número que
+   rodean. */
+.anillo svg circle{ stroke-width:7; }
+.gauge path{ stroke-width:10; }
+
+/* `.barra` son TRES cosas en este proyecto: la navegación, cada fila de un
+   gráfico de barras y la barrita de puntuación del chat. informe.css y
+   lenguaje.css la estilan como si solo fuera la navegación, y eso se colaba
+   en las otras dos: sticky, desenfoque, borde y z-index 20 en cada fila.
+   Aquí se les quita, acotado a donde viven. */
+.barras > .barra{
+  position:static; z-index:auto; height:auto; flex:none; overflow:visible;
+  background:none; border:0; border-radius:0;
+  backdrop-filter:none; -webkit-backdrop-filter:none;
+}
+.barra-caja .barra{
+  position:relative; top:auto; z-index:auto; height:6px;
+  border:0; border-radius:999px; background:var(--color-border-subtle);
+  backdrop-filter:none; -webkit-backdrop-filter:none;
+}
+.barra .canal{ height:4px; border-radius:999px; background:var(--color-border-subtle); }
+.barra .relleno{ border-radius:999px; }
+
+.segmentada{ border-radius:var(--border-radius); background:var(--color-border-subtle); }
+/* El tramo "lo hizo el bot solo" usa la MISMA tinta que su muestra en la
+   leyenda (la pinta el JS con var(--cian)). lenguaje.css lo había pasado al
+   verde de estado y la barra dejó de coincidir con su propia leyenda. */
+.seg-ok{ background:var(--accent); color:var(--texto-sobre-acento); }
+/* Los otros tres tramos llevan su número en tinta oscura; en claro el fondo
+   es oscuro y el número tiene que ser blanco (6,5:1 en el peor). */
+:root[data-tema="claro"] .seg-pregunta,
+:root[data-tema="claro"] .seg-nada,
+:root[data-tema="claro"] .seg-falso{ color:#ffffff; }
+.leyenda i{ border-radius:2px; }
+
+/* ═════════════════════════════════════════════════════ 13 · EL INFORME ════ */
+/* Los números de hito, en cursiva de la serif y en teal, el color que ya
+   tenían en el panel anterior: capítulos, no casillas. */
+.hito-num{
+  height:auto; border:0; background:none; place-items:start;
+  font-family:var(--font-family-accent); font-style:italic; font-weight:400;
+  font-size:34px; line-height:1; letter-spacing:-.02em;
+  color:var(--accent);
+}
+.bloque-codigo{ font-family:var(--mono); font-size:12.5px; }
+.bloque-codigo .bien{ color:var(--ok); }
+.lista li::marker{ color:var(--color-text-muted); }
+
+/* ═══════════════════════════════════════════ 14 · ALREDEDOR DEL CHAT ════ */
+/* Solo el marco del panel. El WhatsApp y el Outlook de dentro conservan sus
+   colores AUTÉNTICOS (--wa-*, --ol-*) y no se tocan: si se visten con esta capa
+   dejan de parecerse a lo que imitan.
+   La letra del móvil, tampoco. Antes pedía Inter y, sin Inter instalada, caía
+   a la del sistema; ahora Inter se descarga y el WhatsApp habría pasado a
+   escribir en Inter. Se fija a la del sistema, que es la que usa WhatsApp de
+   verdad. Redefinir --ui aquí alcanza también al campo de escribir, que la
+   pide por nombre. El Outlook ya fija su "Segoe UI" en correo.css. */
+.movil{
+  --ui:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-family:var(--ui);
+}
+.chat-mandos{ padding:20px 24px; }
+.mando.crece{ border-top-color:var(--glass-border); }
+.porque-panel{ padding:24px; }
+.memoria .dato{
+  border-radius:999px; background:var(--glass-bg);
+  border-color:var(--glass-border); box-shadow:var(--shadow-sm);
+}
+.paso{ border-bottom-color:var(--color-border-subtle); }
+.paso[open]{ background:var(--glass-bg); border-radius:var(--border-radius); }
+.contexto{ border-radius:var(--border-radius); }
+
+.saltar{
+  z-index:400; background:var(--accent); color:var(--texto-sobre-acento);
+  border-radius:0 0 var(--border-radius) 0;
+}

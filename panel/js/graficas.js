@@ -1,9 +1,9 @@
 /* VendIQ · las gráficas
    ========================================================================
    SVG a mano, sin librería. No es cabezonería: panel.css declara que el panel
-   funciona SIN INTERNET (por eso la tipografía no viene de Google Fonts), y
-   una gráfica por CDN rompe esa propiedad — sin conexión desaparecerían. En
-   una entrevista "funciona sin red" vale más que un tooltip regalado.
+   funciona SIN INTERNET, y una gráfica por CDN rompe esa propiedad — sin
+   conexión desaparecerían. En una demo, "funciona sin red" vale más que un
+   tooltip regalado.
 
    ADITIVO, como kpi.js
    --------------------

@@ -164,7 +164,7 @@ comprueba("7 · con la venta cerrada remata corto",
 # --------------------------------------------------------------------- 8
 # El panel. Gmail está al mismo nivel que WhatsApp —misma búsqueda, mismo
 # cerrojo de precio— y la tarjeta tiene que decirlo.
-js = (BASE / "panel" / "actividad.js").read_text(encoding="utf-8")
+js = (BASE / "panel" / "js" / "actividad.js").read_text(encoding="utf-8")
 tarjeta_gmail = re.search(r"nodoFlujo\(\{titulo: 'Gmail'.*?\}\)", js, re.S)
 comprueba("8 · la tarjeta de Gmail existe en pintarRecorrido",
           tarjeta_gmail is not None)
