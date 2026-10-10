@@ -40,7 +40,7 @@ Set-Content -Path .env -Value "GROQ_API_KEY=gsk_tu_clave_aqui" -Encoding utf8
 ## 3. Comprobar
 
 ```powershell
-python 06_panel.py
+python src/06_panel.py
 ```
 
 Al arrancar dice cuál de los dos está redactando:

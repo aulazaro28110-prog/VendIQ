@@ -21,7 +21,7 @@ from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
 
-spec = importlib.util.spec_from_file_location("buscar", BASE / "03_buscar.py")
+spec = importlib.util.spec_from_file_location("buscar", BASE / "src" / "03_buscar.py")
 buscar_mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(buscar_mod)
 

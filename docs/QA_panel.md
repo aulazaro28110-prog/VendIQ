@@ -211,7 +211,7 @@ ha comprobado por API/en proceso, sin tocar los datos de negocio (sesiones
 
 | Función | Resultado | Nota |
 |---|---|---|
-| Sintaxis del front | OK | `node --check panel/chat.js` sin errores |
+| Sintaxis del front | OK | `node --check panel/js/chat.js` sin errores |
 | `06_panel.py` compila | OK | `py_compile` de panel + `12_guiones` + `13_traza` |
 | `/api/guiones` trae los campos nuevos | OK | `id, tipo, tipos_mezcla, esperado, decision_pendiente, …` · 50 guiones |
 | `/api/chat` con `guion:{id,turno}` → `evaluacion` | OK | `{ok, esperado, obtenido, fallos, decision_pendiente}` |
@@ -229,7 +229,7 @@ ha comprobado por API/en proceso, sin tocar los datos de negocio (sesiones
 ### Aviso para probarlo
 
 Hay un **panel antiguo escuchando en 8420** (devuelve 5 guiones sin `id`).
-Ciérralo antes y arranca `py 06_panel.py`, o no se verán los cambios (el propio
+Ciérralo antes y arranca `py src/06_panel.py`, o no se verán los cambios (el propio
 servidor avisa si el puerto está ocupado).
 
 ### Resultado

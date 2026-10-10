@@ -38,7 +38,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-BASE = Path(__file__).parent
+BASE = Path(__file__).resolve().parent.parent   # raíz: el código vive en src/
 ENV = BASE / ".env"
 
 MODELO_POR_DEFECTO = "openai/gpt-oss-120b"  # llama-3.3-70b lo apagó Groq el 16/08/26

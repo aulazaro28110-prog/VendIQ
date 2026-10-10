@@ -22,7 +22,7 @@ reabrimos este documento y rematamos las modificaciones del bot punto por punto.
 - [x] Fase 4 · traza del «por qué» — C7 verde (541/541), C5 intacto. En `GUIONES_informe.md`.
 - [x] Fase 5 · el panel — servidor verificado y **front cerrado** (reproductor, ✓/✗ por turno y «por qué» paso a paso). Commit `7bc6813`.
 - [x] Fase 6 · cierre — C5 (11 bancos verdes), C6 (0 rastro), QA_panel + README + decisiones. PARADA 3 en `GUIONES_informe.md`.
-- [x] Extra del panel (03/04-10): barra lateral trasplantada del portfolio (plegable, memoria, scroll-spy), encuadre simétrico y 8 correos de ejemplo en la bandeja. Commits `7bc6813` y `ec4c5b3`.
+- [x] Extra del panel (03/04-10): barra lateral trasplantada de mi web personal (plegable, memoria, scroll-spy), encuadre simétrico y 8 correos de ejemplo en la bandeja. Commits `7bc6813` y `ec4c5b3`.
 - [x] Árbol limpio y commiteado: borrada la basura de ficheros-fragmento; el trabajo del panel, en dos commits. (Resuelve el punto «Commit» de la sección 4.)
 - [x] **G06 cerrado (04-10):** arreglo quirúrgico en dos partes —`CORRIGE` excluye
   «no tengo…/no la tenéis» (el VIN ya da precio) y `dice_que_si` cede ante una

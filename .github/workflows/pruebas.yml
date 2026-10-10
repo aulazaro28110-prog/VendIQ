@@ -51,8 +51,8 @@ jobs:
 
       - name: Construir el indice
         run: |
-          python 01_ingesta_chunking.py
-          python 02_embeddings.py
+          python src/01_ingesta_chunking.py
+          python src/02_embeddings.py
 
       # De mas rapido a mas lento, para que un fallo tonto salte en el minuto 3
       # y no en el 15.

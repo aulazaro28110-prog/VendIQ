@@ -40,7 +40,7 @@ mínimo, `buscar()` devuelve una lista VACÍA. Ese vacío es la señal de "no lo
 pregunta o escala a Álvaro" — es decir, el guardarraíl del diseño, ya ejecutable.
 
 Uso:
-    python 03_buscar.py "¿tenéis un alternador para un BMW 320d?"
+    python src/03_buscar.py "¿tenéis un alternador para un BMW 320d?"
 Si no pasas pregunta, usa unos ejemplos por defecto.
 
 Requisitos: haber ejecutado antes 01_ingesta_chunking.py y 02_embeddings.py.
@@ -57,7 +57,7 @@ from pathlib import Path
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-BASE = Path(__file__).parent
+BASE = Path(__file__).resolve().parent.parent   # raíz: el código vive en src/
 EMB_NPY = BASE / "salida" / "embeddings.npy"
 EMB_META = BASE / "salida" / "embeddings_meta.json"
 
@@ -901,8 +901,8 @@ def cargar_buscador() -> Buscador:
         raise SystemExit(
             "ERROR: falta el índice de búsqueda.\n"
             "       Ejecuta antes, en este orden:\n"
-            "         python 01_ingesta_chunking.py\n"
-            "         python 02_embeddings.py"
+            "         python src/01_ingesta_chunking.py\n"
+            "         python src/02_embeddings.py"
         )
 
     embeddings = np.load(EMB_NPY)
@@ -923,7 +923,7 @@ def cargar_buscador() -> Buscador:
         raise SystemExit(
             f"ERROR: el índice está desincronizado "
             f"({len(embeddings)} vectores frente a {len(items)} fichas).\n"
-            f"       Vuelve a ejecutar:  python 02_embeddings.py"
+            f"       Vuelve a ejecutar:  python src/02_embeddings.py"
         )
 
     modelo = SentenceTransformer(nombre_modelo)
@@ -936,7 +936,7 @@ def cargar_buscador() -> Buscador:
         raise SystemExit(
             f"ERROR: el índice se creó con otro modelo "
             f"({dim_indice} dimensiones frente a {dim_modelo}).\n"
-            f"       Vuelve a ejecutar:  python 02_embeddings.py"
+            f"       Vuelve a ejecutar:  python src/02_embeddings.py"
         )
 
     return Buscador(embeddings, items, modelo)

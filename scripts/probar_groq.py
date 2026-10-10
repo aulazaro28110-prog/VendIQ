@@ -131,7 +131,7 @@ def main():
         print("   TOPE_RESPUESTA o baja ESFUERZO en 08_conversar.py.")
         return 1
     print()
-    print("TODO BIEN. Arranca el panel:  py 06_panel.py")
+    print("TODO BIEN. Arranca el panel:  py src/06_panel.py")
     return 0
 
 

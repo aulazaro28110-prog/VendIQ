@@ -44,7 +44,7 @@ import os
 import re
 from pathlib import Path
 
-BASE = Path(__file__).parent
+BASE = Path(__file__).resolve().parent.parent   # raíz: el código vive en src/
 POLITICAS = BASE / "datos" / "politicas.md"
 
 

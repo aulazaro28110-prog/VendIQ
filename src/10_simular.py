@@ -35,9 +35,9 @@ de MEZCLA_REAL son la estimación de Álvaro sobre su propio WhatsApp, y están
 declarados como estimación.
 
 Uso:
-    python 10_simular.py                  # 14 días
-    python 10_simular.py --dias 7
-    python 10_simular.py --dias 30 --semilla 5
+    python src/10_simular.py                  # 14 días
+    python src/10_simular.py --dias 7
+    python src/10_simular.py --dias 30 --semilla 5
 """
 
 import argparse
@@ -51,7 +51,7 @@ from collections import Counter
 from datetime import date, timedelta
 from pathlib import Path
 
-BASE = Path(__file__).parent
+BASE = Path(__file__).resolve().parent.parent   # raíz: el código vive en src/
 SALIDA = BASE / "salida" / "actividad.json"
 
 # Cómo se reparte un día real de WhatsApp en un desguace. ES UNA ESTIMACIÓN de
@@ -87,7 +87,7 @@ COLETILLAS = [
 
 
 def cargar(fichero, alias):
-    spec = importlib.util.spec_from_file_location(alias, BASE / fichero)
+    spec = importlib.util.spec_from_file_location(alias, Path(__file__).resolve().parent / fichero)
     modulo = importlib.util.module_from_spec(spec)
     sys.modules[alias] = modulo
     spec.loader.exec_module(modulo)
@@ -281,7 +281,7 @@ def main():
     args = ap.parse_args()
 
     panel = cargar("06_panel.py", "panel")
-    banco = cargar("tests/test_conversaciones.py", "banco")
+    banco = cargar(BASE / "tests" / "test_conversaciones.py", "banco")
     sistema = panel.Sistema()
 
     # SIN LLM salvo que se pida. Lo que mide este fichero son las DECISIONES del

@@ -103,7 +103,7 @@ contamina:** correr el banco deja `reservas.json` en 40 (antes +5).
 
 **Números.**
 ```
-py 12_guiones.py --validar
+py src/12_guiones.py --validar
   compra 6 · regatea 6 · no_hay 7 · a_medias 6 · posventa 6 · taller 7 · corrige 6 · pago 6
   TOTAL 50 guiones · 13 mezclas · 6 con decisión pendiente (G14,G24,G28,G33,G40,G44)
   VALIDACIÓN: OK
@@ -365,7 +365,7 @@ y oscuro, y todo funciona con teclado.
   `panel-…` y sigue escribiendo a propósito.
 
 **Qué he verificado (sin navegador).**
-- Sintaxis: `node --check panel/chat.js` OK; `py_compile` de `06_panel.py` OK.
+- Sintaxis: `node --check panel/js/chat.js` OK; `py_compile` de `06_panel.py` OK.
 - **Servidor == banco:** `evaluar_guion_turno` da el mismo ✓/✗ que el banco en G01,
   G13, G07 y G28 (script de comprobación), reutilizando la única definición.
 - **Payload de `/api/chat` con guion** (en proceso): devuelve `bot, busqueda, memoria,
@@ -380,7 +380,7 @@ en consola, tema oscuro y claro, y a 390 px de ancho. **No lo puedo abrir desde 
 > **IMPORTANTE para probarlo:** hay un panel **antiguo ya escuchando en el puerto
 > 8420** (devuelve los 5 guiones viejos, sin `id`). Ciérralo antes (Ctrl+C en su
 > ventana, o `netstat -ano | findstr 8420` y matar ese PID) y arranca de nuevo
-> `py 06_panel.py`, o no verás los cambios (el propio panel te avisará de que el
+> `py src/06_panel.py`, o no verás los cambios (el propio panel te avisará de que el
 > puerto está ocupado).
 
 **5 clics para que pruebes tú:**
@@ -395,8 +395,8 @@ en consola, tema oscuro y claro, y a 390 px de ancho. **No lo puedo abrir desde 
 5. Cambia a **tema claro** y estrecha la ventana a **390 px**: revisa que no haya
    errores en consola ni desbordes, y que los 8 pasos se lean.
 
-**Commit pendiente** (por tu instrucción): Fase 5 = `panel/index.html`, `panel/chat.js`,
-`panel/chat.css` + el endpoint de evaluación en `06_panel.py`.
+**Commit pendiente** (por tu instrucción): Fase 5 = `panel/index.html`, `panel/js/chat.js`,
+`panel/css/chat.css` + el endpoint de evaluación en `06_panel.py`.
 
 ---
 

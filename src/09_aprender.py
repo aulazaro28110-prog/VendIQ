@@ -33,7 +33,7 @@ import re
 import time
 from pathlib import Path
 
-BASE = Path(__file__).parent
+BASE = Path(__file__).resolve().parent.parent   # raíz: el código vive en src/
 REGISTRO = BASE / "salida" / "no_resueltas.json"
 APRENDIDAS = BASE / "datos" / "faq_aprendidas.md"
 
@@ -343,7 +343,7 @@ def main():
         n, texto = sys.argv[2], " ".join(sys.argv[3:])
         print(aprender(n, texto)["entrada"])
         print("Reconstruye el índice para que el bot la use: "
-              "python 01_ingesta_chunking.py && python 02_embeddings.py")
+              "python src/01_ingesta_chunking.py && python src/02_embeddings.py")
         return
     pendientes = [e for e in registro if e["estado"] == "pendiente"]
     print(f"{len(pendientes)} preguntas sin responder, de {len(registro)} anotadas\n")
@@ -351,7 +351,7 @@ def main():
         print(f"  [{e['n']:>3}] x{e['veces']}  {e['pregunta']}")
         print(f"        {e['motivo']}")
     if pendientes:
-        print('\nPara contestar una:  python 09_aprender.py responder 3 "El texto..."')
+        print('\nPara contestar una:  python src/09_aprender.py responder 3 "El texto..."')
 
 
 if __name__ == "__main__":

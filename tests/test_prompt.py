@@ -30,7 +30,7 @@ sys.path.insert(0, str(BASE))
 
 
 def cargar(f, alias):
-    spec = importlib.util.spec_from_file_location(alias, BASE / f)
+    spec = importlib.util.spec_from_file_location(alias, BASE / "src" / f)
     m = importlib.util.module_from_spec(spec); sys.modules[alias] = m
     spec.loader.exec_module(m); return m
 

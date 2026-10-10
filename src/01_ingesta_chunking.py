@@ -28,7 +28,7 @@ import re
 from pathlib import Path
 
 # Rutas relativas a la carpeta de este script (así funciona desde cualquier sitio).
-BASE = Path(__file__).parent
+BASE = Path(__file__).resolve().parent.parent   # raíz: el código vive en src/
 CSV_INVENTARIO = BASE / "datos" / "inventario_sintetico.csv"
 MD_POLITICAS = BASE / "datos" / "politicas.md"
 # Las respuestas que ha escrito una persona a preguntas que el bot no supo

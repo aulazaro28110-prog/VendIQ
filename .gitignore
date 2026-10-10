@@ -77,10 +77,9 @@ docs/PROMPT_panel_duplicar.md
 #   python tests/test_guiones.py --json salida/guiones_banco.json
 salida/guiones_banco.json
 
-# Prompts de trabajo de «conversaciones tipo» (el encargo y el cierre de semana).
+# Prompts de trabajo de «conversaciones tipo» (el encargo y su cierre).
 # Describen tareas, no el sistema. Mismo criterio que los otros PROMPT_*.
 docs/PROMPT_VSCODE_conversaciones_tipo_y_porque.md
-docs/semana17_cierre_prompt.md
 
 # Notas y prompts de trabajo sueltos en la raiz: el encargo de «conversaciones
 # tipo», su cierre y un manual de pruebas manuales. Son herramientas mias para
@@ -88,3 +87,10 @@ docs/semana17_cierre_prompt.md
 CIERRE_VendIQ_Prompt.md
 PROMPT_VSCODE_conversaciones_tipo_y_porque.md
 VendIQ_Manual_Conversacion_Multiturno.md
+
+# Material privado de trabajo: prompts, encargos, especificaciones, notas y
+# borradores. Son herramientas mías para construir VendIQ, no documentación
+# del sistema, y alguno nombra datos que no pueden ser públicos. Todo vive en
+# esta carpeta; las reglas sueltas de arriba se quedan por si alguno vuelve a
+# su sitio de antes.
+_privado/

@@ -50,7 +50,7 @@ matrícula: sí, ya la dio — no se la vuelvas a pedir
 El dato entero se queda en esta máquina. Sale **solo** si el redactor propio ha
 decidido decirlo, que ocurre cuando el cliente pide que se lo repitan.
 
-- **Dónde:** `sin_matricula()` en [`08_conversar.py`](../08_conversar.py)
+- **Dónde:** `sin_matricula()` en [`08_conversar.py`](../src/08_conversar.py)
 - **Comprobar:** `py tests/test_llm.py` → *«NO manda la matrícula, solo que se
   dio»* y *«ni en ningún otro mensaje de la petición»*
 
@@ -106,7 +106,7 @@ VENDIQ : Todavía no me has pasado ninguna.
          Mándamela y te digo qué pieza monta tu coche.
 ```
 
-- **Dónde:** intención `recuerda mi dato` en [`07_redactor.py`](../07_redactor.py)
+- **Dónde:** intención `recuerda mi dato` en [`07_redactor.py`](../src/07_redactor.py)
 
 ## 5. Exactitud — no se inventan datos
 

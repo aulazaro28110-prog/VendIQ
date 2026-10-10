@@ -19,7 +19,7 @@ BASE = Path(__file__).resolve().parent.parent
 
 
 def cargar_modulo():
-    spec = importlib.util.spec_from_file_location("ofertas", BASE / "04_ofertas.py")
+    spec = importlib.util.spec_from_file_location("ofertas", BASE / "src" / "04_ofertas.py")
     modulo = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modulo)
     return modulo
