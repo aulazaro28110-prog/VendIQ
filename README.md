@@ -243,21 +243,26 @@ oferta se escribe en `salida/ofertas.json`. Un fichero estático no puede hacer 
 de las dos cosas, porque el buscador necesita el modelo de embeddings en memoria.
 
 Está organizado alrededor de una idea: **el bot resuelve lo obvio, tú decides lo que vale
-dinero.** Cada pestaña es una de las cosas que el bot no puede hacer solo.
+dinero.** Es una sola página que se recorre con scroll: la barra lateral, plegable, la
+reparte en tres bloques y marca en qué sección estás.
 
 <details>
-<summary><strong>Las cinco pestañas</strong></summary>
+<summary><strong>Las secciones del panel</strong></summary>
 
-| Pestaña | Qué resuelve |
-|---|---|
-| **Cómo va el día** | Diagrama de dónde acaba cada mensaje y las cifras del día |
-| **Habla como un cliente** | Escribes como un cliente y ves la búsqueda real: fichas, puntuación, si se puede dar precio y las descartadas |
-| **Precios sin poner** | Las piezas sin precio, ordenadas por cuántas veces te las han pedido. Pones el precio y **el bot ya puede venderla** |
-| **Mesa de negociación** | Ofertas: lo que la regla cierra sola y lo que espera tu decisión |
-| **La letra pequeña** | Acierto verificado, parámetros del motor y registro completo con su porqué |
+| Bloque | Sección | Qué resuelve |
+|---|---|---|
+| Operación | **El chat y el correo** | «Habla como un cliente»: escribes como un cliente, por WhatsApp o por correo, y al lado ves por qué ha contestado eso: qué encontró, el precio y la regla que aplicó |
+| | **Ofertas** | La mesa de negociación: lo que la regla cierra sola y lo que espera tu decisión |
+| | **Tu mesa** | Lo que el bot no resolvió, agrupado por lo que hay que decidir. Lo que contestas pasa a la base de conocimiento |
+| | **Stock** | Buscar una pieza por descripción, número de stock o referencia OEM, con el mismo motor que usa el bot |
+| Análisis | **Actividad** | Dónde acaba cada mensaje, lo que no salió redondo y los **precios sin poner**: las piezas sin precio, ordenadas por cuántas veces te las han pedido. Pones el precio y **el bot ya puede venderla** |
+| | **El informe** | Lo que se midió, lo que falló y lo que se arregló |
+| Cómo funciona | **Cómo decide** | Las tres cosas que puede hacer en un turno, por qué un mensaje acaba en tu mesa y los parámetros del motor |
+| | **Canales** | Gmail y Wallapop: el mismo bot, con la forma de cada sitio |
+| | **La letra pequeña** | Acierto verificado, parámetros del motor y registro completo con su porqué |
 </details>
 
-La pestaña de precios cierra un círculo que merece la pena entender: tu trabajo manual no
+La sección de precios cierra un círculo que merece la pena entender: tu trabajo manual no
 se queda en resolver un caso, **entra en el sistema**. En cuanto guardas un precio, la
 siguiente consulta ya lo usa. El humano no es el plan B del bot: es quien lo alimenta.
 
