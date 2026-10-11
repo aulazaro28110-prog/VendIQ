@@ -274,8 +274,8 @@ contesta de verdad— con un ✓/✗ **por turno** frente a lo que se esperaba, 
 servidor con la misma definición que el banco `tests/test_guiones.py`. Al pulsar una
 respuesta se ve el **«por qué» paso a paso** (la traza del servidor: qué leyó, qué
 completó con la memoria, qué encontró, el precio, las reglas, la decisión, quién redactó y
-qué recuerda). Última ejecución: **403 de 541 turnos (74 %)**, 0 fugas de precio y la traza
-coherente en los 541 turnos; el 74 % es el mapa de lo que falta por afinar en el bot, no un
+qué recuerda). Última ejecución: **428 de 541 turnos (79 %)**, 0 fugas de precio y la traza
+coherente en los 541 turnos; el 79 % es el mapa de lo que falta por afinar en el bot, no un
 aprobado — los fallos quedan listados para arreglarlos uno a uno.
 
 <details>
