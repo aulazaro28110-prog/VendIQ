@@ -311,7 +311,7 @@ Regla del proyecto: **datos sintéticos, no reales** (privacidad).
 
 ```
 src/        el sistema, numerado en orden: 01 trocea el catálogo, 13 deja la traza
-panel/      el centro de control: index.html, con css/ y js/ al lado
+panel/      el centro de control: index.html, con css/, js/ y fuentes/ al lado
 datos/      catálogo sintético, políticas, FAQ aprendidas y corpus de canales
 salida/     lo que se genera: índice, medidas, ofertas y registro de dudas
 tests/      los diez bancos de pruebas
