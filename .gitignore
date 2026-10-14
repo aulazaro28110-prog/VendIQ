@@ -51,9 +51,18 @@ salida/frio.txt
 # Transcripciones de tiradas de los bancos: se regeneran en cada ejecucion.
 salida/*.txt
 
+# docs/ publica solo .md.
+docs/*.html
+
+# Depuracion de un caso concreto; no forma parte del sistema.
+scripts/diag_canarias.py
+
 # Salidas de depuracion de tests (temporales)
 err_*.txt
 
 # Salida del banco de guiones: se regenera con
 #   python tests/test_guiones.py --json salida/guiones_banco.json
 salida/guiones_banco.json
+
+# Material de trabajo fuera del repositorio.
+_privado/
