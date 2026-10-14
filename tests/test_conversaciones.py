@@ -38,7 +38,7 @@ BASE = Path(__file__).resolve().parent.parent
 
 
 def cargar(fichero, alias):
-    spec = importlib.util.spec_from_file_location(alias, BASE / fichero)
+    spec = importlib.util.spec_from_file_location(alias, BASE / "src" / fichero)
     modulo = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modulo)
     return modulo

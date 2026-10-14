@@ -1,0 +1,402 @@
+/* VendIQ · capa de acabado
+   ========================================================================
+   Séptima hoja, la primera de las tres de la capa de acabado. El mismo trato que
+   sistema.css y lenguaje.css: NO edita ninguna regla anterior ni una línea de
+   JavaScript. Redefine tokens y viste componentes por encima. Quitando los
+   tres <link> de acabado, su <script> del <head> y acabado.js, el panel vuelve
+   EXACTO a como estaba.
+
+   QUÉ ES
+   ------
+   La estética de este rediseño: negro puro, liquid-glass, Inter
+   para la interfaz e Instrument Serif para los titulares. Repartida en tres
+   hojas para que ninguna pase de 500 líneas:
+     acabado.css         tokens, base, tipografía y el vidrio de las superficies
+     acabado-piezas.css  botones, campos, tablas, gráficas y demás componentes
+     acabado-marco.css   cabecera, barra lateral, hero, grano y movimiento
+
+   La navegación NO cambia: una página con scroll y anclas. El paso a pestañas
+   que se planteó se descartó a propósito: obligaba a
+   reescribir el scroll-spy, la paleta de comandos y las migas, y el encargo
+   era tocar la estética, no la funcionalidad.
+
+   EL PUENTE, OTRA VEZ
+   -------------------
+   Los tokens del encargo (--color-bg, --color-text…) son la fuente. Debajo se
+   apuntan a ellos los del sistema anterior (--bg, --surface, --accent…), que
+   ya alimentan a los castellanos (--carta, --tinta, --cian) por el puente de
+   lenguaje.css. Un valor, tres nombres, ni una edición en lo que ya funciona.
+
+   EL ACENTO ES EL TEAL DE SIEMPRE
+   -------------------------------
+   La primera versión de esta capa era monocroma: el acento pasaba a ser el
+   blanco. Comparada con el panel anterior, perdía su identidad, así que el
+   teal vuelve como color de marca y de señal —el logo, la acción principal,
+   dónde estás, el foco y las series de gráfica—, nunca como relleno. Es el
+   mismo valor que fijaba lenguaje.css (#2DD4BF). En claro va a #0F766E y no
+   al #0D9488 de antes, que da 3,74:1 sobre blanco y aquí colorea texto.
+   Basta con --accent: lenguaje.css lo lleva a --cian, y fondo.js y kpi.js lo
+   leen, así que la malla y las sparklines lo siguen sin tocarlos.
+
+   CONTRASTE: MEDIDO, NO ELEGIDO A OJO (WCAG 2.1, texto a 4,5:1)
+   ------------------------------------------------------------
+   Oscuro. Los neutros del encargo pasan en todos los fondos: #9a9a9a, el más
+   flojo, da 6,55:1 sobre #141414. Éxito y aviso pasan tal cual. Error e info
+   NO: #ef4444 y #3b82f6 se quedan en 4,25 y 4,29:1 como chip sobre una
+   superficie #141414. Van un tono más claro de la MISMA familia (#f87171,
+   #60a5fa): su peor caso sube a 4,99 y 5,32:1.
+   Claro. El encargo no da estados para claro, y los suyos sobre blanco dan de
+   2,15 a 3,76:1. Van en el tono 700/800 de su familia; el peor caso (chip
+   sobre #f3f3f3) da 4,96:1. Revertir cualquiera es cambiar un hex. */
+
+/* ═══════════════════════════════════════════ 1 · TOKENS DEL ENCARGO ════ */
+:root{
+  --color-bg:#000000;
+  --color-bg-secondary:#0a0a0a;
+  --color-bg-tertiary:#141414;
+  --color-text:#ffffff;
+  --color-text-secondary:#d8d8d8;
+  --color-text-muted:#9a9a9a;
+  --color-border:rgba(255,255,255,.16);
+  --color-border-soft:rgba(255,255,255,.12);
+  --color-border-subtle:rgba(255,255,255,.08);
+  --color-overlay:rgba(0,0,0,.4);
+
+  --color-success:#22c55e;
+  --color-error:#f87171;      /* CORREGIDO: el encargo pide #ef4444 */
+  --color-warning:#f59e0b;
+  --color-info:#60a5fa;       /* CORREGIDO: el encargo pide #3b82f6 */
+
+  /* El acento de marca (ver la cabecera). */
+  --color-accent:#2dd4bf;     /* 11,3:1 sobre negro; 9,9:1 sobre #141414 */
+  --color-accent-hover:#5eead4;
+  --acento-suave:rgba(45,212,191,.12);
+  --acento-suave-2:rgba(45,212,191,.26);
+  --acento-borde:rgba(45,212,191,.38);
+
+  --glass-bg:rgba(255,255,255,.02);
+  --glass-border:rgba(255,255,255,.08);
+  --glass-glow:rgba(255,255,255,.04);
+
+  --font-family-ui:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-family-accent:"Instrument Serif","Times New Roman",serif;
+  --font-size-xs:11px;   --font-size-sm:12px;  --font-size-base:14px;
+  --font-size-md:15.5px; --font-size-lg:18px;  --font-size-xl:24px;
+  --font-size-2xl:32px;
+  --font-weight-regular:400;  --font-weight-medium:500;
+  --font-weight-semibold:600; --font-weight-bold:700;
+  --letter-spacing-tight:-.03em;
+  --letter-spacing-normal:-.01em;
+  --letter-spacing-relaxed:0;
+
+  --space-xs:4px;  --space-sm:8px;  --space-md:12px; --space-lg:16px;
+  --space-xl:24px; --space-2xl:32px; --space-3xl:40px;
+
+  --header-height:64px;
+  --sidebar-width:200px;      /* el encargo da 160; con iconos no caben (acabado-marco.css) */
+  --sidebar-width-collapsed:60px;
+  --border-radius:6px;
+  --border-radius-lg:8px;
+  --btn-height:40px;
+  --btn-height-sm:36px;
+
+  --shadow-sm:inset 0 1px 0 rgba(255,255,255,.08);
+  --shadow-md:0 0 18px rgba(200,210,230,.18);
+  --shadow-lg:0 8px 18px rgba(255,255,255,.12);
+  --shadow-glow:0 0 22px rgba(45,212,191,.32);
+
+  --transition-base:.35s ease;
+  --transition-fast:.25s ease;
+  --transition-slow:.5s ease;
+  --easing-smooth:cubic-bezier(.16,1,.3,1);
+
+  --z-base:1; --z-raised:10; --z-header:100; --z-sidebar:90;
+  --z-modal:200; --z-drawer:210; --z-grain:300;
+
+  /* Lo que el encargo no nombra y el panel necesita. Fondos suaves de estado
+     al 14 %, el escalón de hover y los vidrios de lo que flota. */
+  --surface-4:#1c1c1c;
+  --ok-suave:rgba(34,197,94,.14);
+  --err-suave:rgba(248,113,113,.14);
+  --warn-suave:rgba(245,158,11,.14);
+  --info-suave:rgba(96,165,250,.14);
+  --tinta-suave:rgba(255,255,255,.07);
+  --tinta-suave-2:rgba(255,255,255,.16);
+  --vidrio-brillo:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0) 55%);
+  --vidrio-barra:rgba(0,0,0,.66);
+  --vidrio-capa:rgba(12,12,12,.86);
+  --texto-sobre-acento:#000000;
+}
+
+/* ═══════════════════════════════════════════════ 1b · TOKENS · CLARO ════ */
+/* Los neutros, los del encargo. Los estados, corregidos (ver la cabecera).
+   Las sombras de luz no se ven sobre blanco: aquí son de tinta. */
+:root[data-tema="claro"]{
+  --color-bg:#ffffff;
+  --color-bg-secondary:#f9f9f9;
+  --color-bg-tertiary:#f3f3f3;
+  --color-text:#0a0a0a;
+  --color-text-secondary:#333333;
+  --color-text-muted:#666666;
+  --color-border:rgba(0,0,0,.12);
+  --color-border-soft:rgba(0,0,0,.08);
+  --color-border-subtle:rgba(0,0,0,.04);
+  --glass-bg:rgba(0,0,0,.02);
+  --glass-border:rgba(0,0,0,.08);
+  --glass-glow:rgba(0,0,0,.03);
+
+  --color-success:#166534;    /* encargo #22c55e = 2,28:1 sobre blanco */
+  --color-error:#b91c1c;      /* encargo #ef4444 = 3,76:1 */
+  --color-warning:#92400e;    /* encargo #f59e0b = 2,15:1 */
+  --color-info:#1d4ed8;       /* encargo #3b82f6 = 3,68:1 */
+
+  --color-accent:#0f766e;     /* 5,47:1 sobre blanco */
+  --color-accent-hover:#115e59;
+  --acento-suave:rgba(15,118,110,.10);
+  --acento-suave-2:rgba(15,118,110,.20);
+  --acento-borde:rgba(15,118,110,.32);
+
+  --shadow-sm:inset 0 1px 0 rgba(255,255,255,.9), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 0 18px rgba(0,0,0,.08);
+  --shadow-lg:0 8px 18px rgba(0,0,0,.10);
+  --shadow-glow:0 0 22px rgba(15,118,110,.24);
+
+  --surface-4:#ebebeb;
+  --ok-suave:rgba(22,101,52,.10);
+  --err-suave:rgba(185,28,28,.10);
+  --warn-suave:rgba(146,64,14,.10);
+  --info-suave:rgba(29,78,216,.10);
+  --tinta-suave:rgba(10,10,10,.06);
+  --tinta-suave-2:rgba(10,10,10,.14);
+  --vidrio-brillo:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,255,255,0) 55%);
+  --vidrio-barra:rgba(255,255,255,.74);
+  --vidrio-capa:rgba(255,255,255,.9);
+  --texto-sobre-acento:#ffffff;
+  color-scheme:light;
+}
+
+/* ═════════════════════════════════ 2 · PUENTE con los nombres de siempre ════ */
+/* En los dos selectores, como en lenguaje.css: :root[data-tema="claro"] le
+   gana en especificidad a :root, y un puente solo en :root se lo comería el
+   tema claro. */
+:root,
+:root[data-tema="claro"]{
+  --bg:var(--color-bg);
+  --surface:var(--color-bg-secondary);
+  --surface-2:var(--color-bg-tertiary);
+  --surface-3:var(--surface-4);
+  --border:var(--color-border-soft);
+  --border-strong:var(--color-border);
+  --text:var(--color-text);
+  --text-2:var(--color-text-secondary);
+  --text-3:var(--color-text-muted);
+
+  --accent:var(--color-accent);
+  --accent-strong:var(--color-accent-hover);
+  --accent-soft:var(--acento-suave);
+  --accent-soft-2:var(--acento-suave-2);
+
+  --ok:var(--color-success);    --ok-soft:var(--ok-suave);
+  --warn:var(--color-warning);  --warn-soft:var(--warn-suave);
+  --err:var(--color-error);     --err-soft:var(--err-suave);
+  --info:var(--color-info);     --info-soft:var(--info-suave);
+
+  --r-sm:var(--border-radius);
+  --r-md:var(--border-radius);
+  --r-lg:var(--border-radius-lg);
+  --sh-1:var(--shadow-sm);
+  --sh-2:var(--shadow-lg);
+  /* lenguaje.css lo dejaba en `none`, y `none` dentro de una lista de sombras
+     invalida la declaración entera: `var(--sombra), var(--glow)` se quedaba
+     sin ninguna. Una sombra vacía es la forma correcta de "nada". */
+  --glow:0 0 0 0 transparent;
+  --anillo-fondo:var(--color-border-subtle);
+  /* --cat-2…5 no se tocan: la paleta categórica de lenguaje.css. La serie 1
+     es el teal y las demás se distinguen de él. */
+
+  --sp-1:var(--space-xs);  --sp-2:var(--space-sm); --sp-3:var(--space-md);
+  --sp-4:var(--space-lg);  --sp-5:var(--space-xl); --sp-6:var(--space-2xl);
+  --sp-7:var(--space-3xl);
+  /* Las duraciones del encargo vienen con la curva pegada (".35s ease") y
+     aquí hacen falta sueltas. 350 ms y no más en lo normal: barra.js suelta
+     el plegado de los grupos a los 400 ms pase lo que pase. */
+  --ms-micro:250ms; --ms-normal:350ms; --ms-overlay:500ms;
+  --rapido:250ms;   --medio:350ms;
+  --ease:var(--easing-smooth);
+  --curva:var(--easing-smooth);
+
+  --ui:var(--font-family-ui);
+  --serif:var(--font-family-accent);
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+
+  --sb-w:var(--sidebar-width);
+  --sb-hueco:var(--space-2xl);
+}
+
+/* ═══════════════════════════════════════════════════════ 3 · BASE ════ */
+html{ background:var(--color-bg); color-scheme:dark; }
+body{
+  /* Transparente a propósito. El negro lo pone <html>, y cuando <html> tiene
+     fondo, el de <body> se pinta ENCIMA de la malla de fondo.js (que va en
+     z-index -2) y la tapa entera: con esta regla en negro, la malla estuvo
+     invisible desde la primera versión de esta capa. */
+  background:transparent; color:var(--color-text);
+  font-family:var(--font-family-ui);
+  font-size:var(--font-size-base); line-height:1.55;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+}
+::selection{ background:var(--acento-suave-2); color:var(--color-text); }
+::placeholder{ color:var(--color-text-muted); opacity:1; }
+
+html{ scrollbar-color:var(--color-border) transparent; }
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{
+  background:var(--color-border); border:3px solid transparent;
+  border-radius:999px; background-clip:padding-box;
+}
+::-webkit-scrollbar-thumb:hover{ background-color:var(--color-text-muted); }
+
+/* ═════════════════════════════════════════════════ 4 · TIPOGRAFÍA ════ */
+/* Instrument Serif tiene UN peso (400, más su cursiva) y los cinco titulares
+   que usaban --serif iban a 600: sin bajarlos, el navegador se inventa una
+   negrita falsa. Los títulos pequeños de tarjeta pasan a Inter: la serif es
+   el acento del encargo, y a 15 px deja de serlo. */
+.hero-titulo, .bloque > h2, .sub-titulo, .hito h3, .aviso-escala h3, .dr-pieza{
+  font-family:var(--font-family-accent); font-weight:400;
+  letter-spacing:-.015em; text-wrap:balance;
+}
+.hero-titulo{ font-size:clamp(2.25rem, 2.2vw + 1.4rem, 3.5rem); line-height:1.04; }
+/* La segunda frase, como en el panel anterior: un degradado teal. Ahora en
+   la cursiva de la serif; el énfasis lo ponen la letra y la marca. */
+.hero-titulo em{
+  font-style:italic; color:var(--accent);
+  background:linear-gradient(100deg,var(--accent) 10%,var(--color-accent-hover) 95%);
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.bloque > h2{ font-size:clamp(1.75rem, 1.2vw + 1.3rem, var(--font-size-2xl)); line-height:1.12; }
+.sub-titulo{ font-size:var(--font-size-xl); line-height:1.2; }
+.hito h3{ font-size:var(--font-size-xl); line-height:1.25; margin:2px 0 10px; }
+.aviso-escala h3{ font-size:22px; line-height:1.25; }
+.dr-pieza{ font-size:26px; line-height:1.15; }
+
+.carta > h3, .porque-panel > h3{
+  font-family:var(--font-family-ui); font-size:15px; font-weight:600;
+  letter-spacing:var(--letter-spacing-normal); line-height:1.35;
+  color:var(--color-text);
+}
+.bloque > .intro, .hero-pie{
+  font-size:var(--font-size-md); line-height:1.65; color:var(--color-text-secondary);
+}
+.nota, .carta > .nota, .ind .nota{ color:var(--color-text-muted); }
+strong{ font-weight:600; }
+/* Los enlaces dentro de un párrafo. Ninguna capa les daba color y salían con
+   el azul que pone el navegador por defecto, también en el panel anterior.
+   Teal, como todo lo que se pulsa, con el subrayado a media tinta. */
+.bloque :is(p, li) a:not([class]){
+  color:var(--accent); text-decoration:underline;
+  text-decoration-color:var(--acento-borde); text-underline-offset:3px;
+  transition:text-decoration-color var(--transition-fast);
+}
+.bloque :is(p, li) a:not([class]):hover{ text-decoration-color:currentColor; }
+
+/* La etiqueta de sección, en píldora de vidrio con un punto de luz teal: lo
+   que queda de la raya + mayúsculas en teal que llevaba el panel anterior. */
+.eyebrow, .hero-eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  align-self:flex-start; width:fit-content;
+  /* Alto MÍNIMO y no fijo: en un móvil la del hero ("Desguaces Madrid Norte ·
+     asistente de ventas") parte en dos líneas y con alto fijo la segunda se
+     salía de la píldora. En una línea sigue midiendo 26 px. */
+  min-height:26px; padding:4px 11px 4px 10px; margin:0 0 var(--space-lg);
+  border:1px solid var(--glass-border); border-radius:13px;
+  background:var(--vidrio-brillo), var(--glass-bg); box-shadow:var(--shadow-sm);
+  font:500 var(--font-size-sm)/1.3 var(--font-family-ui);
+  letter-spacing:0; text-transform:none; color:var(--color-text-secondary);
+}
+.eyebrow::before, .hero-eyebrow::before{
+  width:6px; height:6px; border-radius:50%;
+  background:var(--accent); box-shadow:0 0 8px var(--accent);
+}
+.eyebrow::after{ display:none; }
+/* Un punto de LUZ solo existe sobre oscuro: en claro, el mismo halo es una
+   mancha gris alrededor del punto. */
+:root[data-tema="claro"] .eyebrow::before,
+:root[data-tema="claro"] .hero-eyebrow::before{ box-shadow:none; }
+
+/* Un solo microlabel: 11 px, mayúsculas, gris. */
+.ind .etiqueta, thead th, .stats .que, .campo label, .mando > label,
+.estado-eti, .of-col-t, .dr-k, .dr-titulo, button.sb-grupo, .pal-grupo,
+.porque-sub, .diff-et, .correo-traza h4, .repro-vel-et{
+  font-family:var(--font-family-ui); font-size:var(--font-size-xs);
+  font-weight:500; line-height:16px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--color-text-muted);
+}
+
+/* ═════════════════════════════════════════ 5 · SUPERFICIES · VIDRIO ════ */
+/* Liquid-glass SIN backdrop-filter: detrás de cada tarjeta corre la malla de
+   fondo.js, y desenfocar treinta cajas a 60 fps es caro. El vidrio se dibuja
+   con lo que no cuesta: un brillo vertical, un filo de 1 px y la luz del borde
+   de arriba (--shadow-sm). El desenfoque de verdad se reserva para lo que
+   flota: cabecera, barra lateral, paleta y panel lateral. */
+.carta, .ind, .stats > div, .estado, .of-col, .chat-mandos, .porque-panel,
+.declaracion, .aviso-escala, .bloque-codigo{
+  background:var(--vidrio-brillo), var(--color-bg-secondary);
+  border:1px solid var(--glass-border);
+  border-radius:var(--border-radius-lg);
+  box-shadow:var(--shadow-sm);
+}
+/* El filete teal de 3 px de panel.css vuelve, más fino (2 px), en el canto de
+   arriba: la marca que el panel anterior ponía a las tarjetas destacadas. A
+   1 px no se llegaba a ver a tamaño normal. */
+.carta::before{
+  height:2px; border-radius:0;
+  background:linear-gradient(90deg,transparent 2%,var(--accent) 14%,transparent 72%);
+}
+.declaracion{ border-left:2px solid var(--accent); }
+
+.ind, .stats > div{
+  transition:border-color var(--transition-fast), box-shadow var(--transition-base),
+             transform var(--transition-base);
+}
+.ind:hover, .stats > div:hover{
+  border-color:var(--color-border);
+  box-shadow:var(--shadow-sm), var(--shadow-md);
+  transform:translateY(-1px);
+}
+
+/* Lo que vive DENTRO de una tarjeta: el mismo vidrio, un escalón más fino. */
+.of-tarjeta, .ficha, .conv-muestra, .sello-precio, .dr-cifras{
+  background:var(--glass-bg); border:1px solid var(--glass-border);
+  border-radius:var(--border-radius); box-shadow:var(--shadow-sm);
+}
+.of-tarjeta{
+  transition:border-color var(--transition-fast), box-shadow var(--transition-base),
+             transform var(--transition-base);
+}
+.of-tarjeta:hover{
+  border-color:var(--color-border);
+  box-shadow:var(--shadow-sm), var(--shadow-md); transform:translateY(-1px);
+}
+/* Los nodos del recorrido. sistema.css los fija con !important, así que
+   esto también: es la única forma de ganarle sin editarlo. */
+.nodo{
+  background:var(--glass-bg) !important;
+  border:1px solid var(--glass-border) !important;
+  border-radius:var(--border-radius-lg) !important;
+  box-shadow:var(--shadow-sm);
+}
+.nodo:hover{ border-color:var(--color-border) !important; box-shadow:var(--shadow-sm), var(--shadow-md); }
+.nodo.apagado{ background:transparent !important; border-style:dashed !important; box-shadow:none; }
+.flujo-banda:last-of-type .nodo{
+  border-left:2px solid var(--color-border) !important;
+  background:var(--color-bg-secondary) !important;
+}
+
+.estado-vacio{
+  border:1px dashed var(--color-border); border-radius:var(--border-radius-lg);
+  background:var(--glass-bg);
+}
+.estado-vacio.fallo{ border-style:solid; border-color:var(--err); background:var(--err-soft); }

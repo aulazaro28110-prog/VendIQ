@@ -18,8 +18,8 @@ reutiliza `clasificar()` e `invariantes()` de `tests/test_conversaciones.py` y l
 reglas de la voz de `07_redactor.py`. No se copia ninguna.
 
 Uso:
-    py 12_guiones.py --validar          # comprueba los 50 y el recuento
-    py 12_guiones.py --ver G13          # imprime un guion ya rellenado
+    py src/12_guiones.py --validar          # comprueba los 50 y el recuento
+    py src/12_guiones.py --ver G13          # imprime un guion ya rellenado
 """
 import argparse
 import importlib.util
@@ -30,12 +30,12 @@ import sys
 import unicodedata
 from pathlib import Path
 
-BASE = Path(__file__).resolve().parent
+BASE = Path(__file__).resolve().parent.parent   # raíz: el código vive en src/
 PLANTILLAS = BASE / "datos" / "guiones_tipo.json"
 
 
 def cargar(fichero, alias):
-    spec = importlib.util.spec_from_file_location(alias, BASE / fichero)
+    spec = importlib.util.spec_from_file_location(alias, Path(__file__).resolve().parent / fichero)
     modulo = importlib.util.module_from_spec(spec)
     sys.modules[alias] = modulo
     spec.loader.exec_module(modulo)
@@ -644,7 +644,7 @@ def _cargar_evaluadores():
     if _test is not None:
         return
     _redactor = cargar("07_redactor.py", "redactor")
-    _test = cargar("tests/test_conversaciones.py", "test_conversaciones")
+    _test = cargar(BASE / "tests" / "test_conversaciones.py", "test_conversaciones")
     _test.redactor = _redactor
     _test.conversar = cargar("08_conversar.py", "conversar")
 

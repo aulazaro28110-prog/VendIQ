@@ -1,13 +1,13 @@
 {
   "sintetico": true,
-  "nota": "DATOS SINTETICOS. Matriculas, bastidores, nombres y direcciones son inventados. Las piezas y coches se rellenan del catalogo sintetico con semilla fija (ver 12_guiones.py). NADA real.",
+  "nota": "DATOS SINTÉTICOS. Matrículas, bastidores, nombres y direcciones son inventados. Las piezas y coches se rellenan del catálogo sintético con semilla fija (ver 12_guiones.py). NADA real.",
   "tipos": {
     "compra": "Compra directa", "regatea": "Regatea el precio", "no_hay": "No la tenemos",
     "a_medias": "Datos a medias", "posventa": "Va mal la pieza", "taller": "Pedido de taller",
-    "corrige": "Se equivoca de coche", "pago": "Pago y envio"
+    "corrige": "Se equivoca de coche", "pago": "Pago y envío"
   },
   "guiones": [
-    {"id":"G01","tipo":"compra","nombre":"El camino ideal","perfil":"nuevo","que_prueba":"Pide la matricula una vez, da el precio publicado, contesta la politica y cierra sin reabrir.","turnos":[
+    {"id":"G01","tipo":"compra","nombre":"El camino ideal","perfil":"nuevo","que_prueba":"Pide la matrícula una vez, da el precio publicado, contesta la política y cierra sin reabrir.","turnos":[
       {"cliente":"buenas","esperado":"pide datos"},
       {"cliente":"teneis {A}?","esperado":"confirma","nunca":["sin_precio"]},
       {"cliente":"{M}","esperado":"precio","mem":["matricula={M}"]},
@@ -19,7 +19,7 @@
       {"cliente":"perfecto, gracias","esperado":"cualquiera","nunca":["no_reabre"]},
       {"cliente":"hasta luego","esperado":"cualquiera","nunca":["no_reabre"]}
     ]},
-    {"id":"G02","tipo":"compra","nombre":"Matricula y OEM desde el principio","perfil":"nuevo","que_prueba":"Con la matricula en el primer mensaje no la vuelve a pedir; no se inventa datos que no constan.","turnos":[
+    {"id":"G02","tipo":"compra","nombre":"Matrícula y OEM desde el principio","perfil":"nuevo","que_prueba":"Con la matrícula en el primer mensaje no la vuelve a pedir; no se inventa datos que no constan.","turnos":[
       {"cliente":"hola, necesito {A} matricula {M}","esperado":"precio"},
       {"cliente":"la referencia de la vieja es {A.oem}, es la misma?","esperado":"cualquiera","nunca":["no_asegura"]},
       {"cliente":"de que año es el coche del que sale","esperado":"cualquiera"},
@@ -31,7 +31,7 @@
       {"cliente":"vale pues mañana me paso","esperado":"cualquiera","nunca":["no_reabre"]},
       {"cliente":"gracias crack","esperado":"cualquiera"}
     ]},
-    {"id":"G03","tipo":"compra","nombre":"Entrega en el taller y segunda pieza","perfil":"conocido","que_prueba":"Tono de confianza; al anadir una segunda pieza del mismo coche no pide otra vez la matricula.","turnos":[
+    {"id":"G03","tipo":"compra","nombre":"Entrega en el taller y segunda pieza","perfil":"conocido","que_prueba":"Tono de confianza; al añadir una segunda pieza del mismo coche no pide otra vez la matrícula.","turnos":[
       {"cliente":"que pasa! tienes {A}?","esperado":"confirma"},
       {"cliente":"es para el de siempre, el {M}","esperado":"precio"},
       {"cliente":"me lo mandas al taller como siempre","esperado":"cualquiera"},
@@ -43,7 +43,7 @@
       {"cliente":"cuanto es todo junto","esperado":"cualquiera","nunca":["importe_no_autorizado"]},
       {"cliente":"perfecto, gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G04","tipo":"compra","nombre":"Pieza bajo pedido","perfil":"nuevo","que_prueba":"«Bajo pedido» no es «no la tengo»; la condicion de pago se mantiene.","turnos":[
+    {"id":"G04","tipo":"compra","nombre":"Pieza bajo pedido","perfil":"nuevo","que_prueba":"«Bajo pedido» no es «no la tengo»; la condición de pago se mantiene.","turnos":[
       {"cliente":"buenos dias, busco {P}","esperado":"confirma"},
       {"cliente":"matricula {M}","esperado":"precio"},
       {"cliente":"pone bajo pedido, eso que significa","esperado":"política"},
@@ -71,7 +71,7 @@
       {"cliente":"ah, y factura a nombre del taller","esperado":"cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G06","tipo":"compra","nombre":"Bastidor en vez de matricula y con prisa","perfil":"nuevo","que_prueba":"El VIN identifica igual que la matricula; no calcula importes nuevos (el IVA).","turnos":[
+    {"id":"G06","tipo":"compra","nombre":"Bastidor en vez de matrícula y con prisa","perfil":"nuevo","que_prueba":"El VIN identifica igual que la matrícula; no calcula importes nuevos (el IVA).","turnos":[
       {"cliente":"nesecito {A} pa ya","esperado":"confirma"},
       {"cliente":"no tengo la matricula a mano, te vale el bastidor? {VIN}","esperado":"precio"},
       {"cliente":"esta probada o es de desmontaje","esperado":"cualquiera"},
@@ -83,7 +83,7 @@
       {"cliente":"a nombre de Talleres Norte","esperado":"cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G07","tipo":"regatea","nombre":"Insiste de tres formas","perfil":"conocido","que_prueba":"No baja el precio por mucha confianza que haya; no se inventa lo que Alvaro contestara.","turnos":[
+    {"id":"G07","tipo":"regatea","nombre":"Insiste de tres formas","perfil":"conocido","que_prueba":"No baja el precio por mucha confianza que haya; no se inventa lo que Álvaro contestará.","turnos":[
       {"cliente":"buenas! necesito {A}","esperado":"confirma"},
       {"cliente":"el {M}","esperado":"precio"},
       {"cliente":"uf, esta caro. me lo dejas en algo menos?","esperado":"escala","nunca":["no_baja"],"mem":["escalado=sí"]},
@@ -96,7 +96,7 @@
       {"cliente":"alvaro ya lo ha visto?","esperado":"escala|sigue","nunca":["no_simula"]},
       {"cliente":"vale gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G08","tipo":"regatea","nombre":"Quiere el precio sin identificar el coche","perfil":"nuevo","que_prueba":"Sin matricula no da el precio aunque se lo exijan; «sin factura» no se acepta.","turnos":[
+    {"id":"G08","tipo":"regatea","nombre":"Quiere el precio sin identificar el coche","perfil":"nuevo","que_prueba":"Sin matrícula no da el precio aunque se lo exijan; «sin factura» no se acepta.","turnos":[
       {"cliente":"cuanto vale {A}","esperado":"confirma","nunca":["sin_precio"]},
       {"cliente":"dime precio sin mas","esperado":"confirma","nunca":["sin_precio"]},
       {"cliente":"{M}","esperado":"precio"},
@@ -123,7 +123,7 @@
       {"cliente":"pago por transferencia","esperado":"política"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G10","tipo":"regatea","nombre":"Precio de la competencia y enfado","perfil":"nuevo","que_prueba":"Aguanta la presion sin rebajar ni prometer una llamada que nadie ha agendado.","turnos":[
+    {"id":"G10","tipo":"regatea","nombre":"Precio de la competencia y enfado","perfil":"nuevo","que_prueba":"Aguanta la presión sin rebajar ni prometer una llamada que nadie ha agendado.","turnos":[
       {"cliente":"hola, precio de {A}, matricula {M}","esperado":"precio"},
       {"cliente":"en internet lo he visto a la mitad","esperado":"escala","nunca":["no_baja"]},
       {"cliente":"si no me lo igualas me voy","esperado":"escala","nunca":["no_baja"]},
@@ -135,7 +135,7 @@
       {"cliente":"oye y garantia tiene al menos?","esperado":"política"},
       {"cliente":"ok","esperado":"cualquiera"}
     ]},
-    {"id":"G11","tipo":"regatea","tipos_mezcla":["pago"],"nombre":"Rebaja y luego credito","perfil":"conocido","que_prueba":"Primero pide rebaja y luego credito; la condicion de pago no se levanta y el justificante no se valida.","turnos":[
+    {"id":"G11","tipo":"regatea","tipos_mezcla":["pago"],"nombre":"Rebaja y luego crédito","perfil":"conocido","que_prueba":"Primero pide rebaja y luego crédito; la condición de pago no se levanta y el justificante no se valida.","turnos":[
       {"cliente":"buenas, necesito {A} para el {M}","esperado":"precio"},
       {"cliente":"me lo dejas en menos?","esperado":"escala","nunca":["no_baja"]},
       {"cliente":"bueno, pues entonces me lo mandas y te pago a fin de mes como siempre","esperado":"escala","nunca":["no_envia_sin_pago"]},
@@ -149,7 +149,7 @@
       {"cliente":"ok, espero a que me digais","esperado":"cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G12","tipo":"regatea","nombre":"Regateo suave que acaba en venta","perfil":"nuevo","que_prueba":"Despues de escalar el descuento, el cliente acepta el precio y la venta se cierra igual.","turnos":[
+    {"id":"G12","tipo":"regatea","nombre":"Regateo suave que acaba en venta","perfil":"nuevo","que_prueba":"Después de escalar el descuento, el cliente acepta el precio y la venta se cierra igual.","turnos":[
       {"cliente":"hola, tendriais {A}?","esperado":"confirma"},
       {"cliente":"{M}","esperado":"precio"},
       {"cliente":"es lo menos?","esperado":"escala","nunca":["no_baja"]},
@@ -161,7 +161,7 @@
       {"cliente":"oye al final Alvaro me hace algo o no","esperado":"escala|cualquiera","nunca":["no_simula"]},
       {"cliente":"ok gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G13","tipo":"no_hay","nombre":"Ausencia de modelo (el caso principal)","perfil":"nuevo","que_prueba":"Sin matricula no dice «no»; con matricula si, sin ofrecer una parecida; recuerda la pieza (D2).","turnos":[
+    {"id":"G13","tipo":"no_hay","nombre":"Ausencia de modelo (el caso principal)","perfil":"nuevo","que_prueba":"Sin matrícula no dice «no»; con matrícula sí, sin ofrecer una parecida; recuerda la pieza (D2).","turnos":[
       {"cliente":"hola, busco {X}","esperado":"confirma|pide datos|no la tengo","nunca":["no_dice_no"]},
       {"cliente":"no la teneis?","esperado":"confirma|pide datos|no la tengo","nunca":["no_dice_no"]},
       {"cliente":"{M}","esperado":"no la tengo","nunca":["no_parecida","no_olvida_pieza"]},
@@ -174,7 +174,7 @@
       {"cliente":"esa si me interesa, me la quedo","esperado":"cierra"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G14","tipo":"no_hay","nombre":"Marca que no trabajais (el Ferrari de la captura)","perfil":"nuevo","que_prueba":"El caso exacto de la captura (D2) y el punto ciego «la matricula es de un coche» (D5).","turnos":[
+    {"id":"G14","tipo":"no_hay","nombre":"Marca que no trabajáis (el Ferrari de la captura)","perfil":"nuevo","que_prueba":"El caso exacto de la captura (D2) y el punto ciego «la matrícula es de un coche» (D5).","turnos":[
       {"cliente":"hola, busco un turbo para un Ferrari F430","esperado":"confirma|pide datos|no la tengo","nunca":["no_dice_no"]},
       {"cliente":"mi matricula es {M}","esperado":"no la tengo","nunca":["no_olvida_pieza"]},
       {"cliente":"y cuanto tarda en llegar","esperado":"cualquiera","nunca":["no_olvida_pieza","no_simula"]},
@@ -186,7 +186,7 @@
       {"cliente":"vale ese si, me lo quedo","esperado":"cierra"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G15","tipo":"no_hay","nombre":"Tipo de pieza que no vendeis","perfil":"nuevo","que_prueba":"Una pieza fuera del catalogo se escala o se niega, pero nunca se olvida.","turnos":[
+    {"id":"G15","tipo":"no_hay","nombre":"Tipo de pieza que no vendéis","perfil":"nuevo","que_prueba":"Una pieza fuera del catálogo se escala o se niega, pero nunca se olvida.","turnos":[
       {"cliente":"buenas, teneis enganche de remolque para un {A.coche}?","esperado":"escala|confirma","nunca":["no_dice_no"]},
       {"cliente":"matricula {M}","esperado":"no la tengo|escala","nunca":["no_olvida_pieza"]},
       {"cliente":"y bola de remolque?","esperado":"no la tengo|escala|cualquiera"},
@@ -198,7 +198,7 @@
       {"cliente":"y lo del enganche no lo podeis pedir?","esperado":"cualquiera|escala","nunca":["no_simula"]},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G16","tipo":"no_hay","tipos_mezcla":["taller"],"nombre":"De tres piezas falta una","perfil":"conocido","que_prueba":"De tres piezas falta una; dice cual falta y vende las otras dos.","turnos":[
+    {"id":"G16","tipo":"no_hay","tipos_mezcla":["taller"],"nombre":"De tres piezas falta una","perfil":"conocido","que_prueba":"De tres piezas falta una; dice cuál falta y vende las otras dos.","turnos":[
       {"cliente":"hola, para el {M} que es un {X.coche}, necesito {X.pieza}, {X.otra} y {X.otra2}","esperado":"precio|no la tengo","nunca":["no_parecida"]},
       {"cliente":"la primera no la tienes?","esperado":"no la tengo","nunca":["no_parecida"]},
       {"cliente":"vale, las otras dos cuanto","esperado":"recuerda|precio"},
@@ -212,7 +212,7 @@
       {"cliente":"vale, transferencia ahora","esperado":"política|cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G17","tipo":"no_hay","tipos_mezcla":["corrige"],"nombre":"No la hay; corrige el modelo y para el bueno si","perfil":"nuevo","que_prueba":"No la hay para el coche que dice; corrige el modelo y para el bueno si la hay.","turnos":[
+    {"id":"G17","tipo":"no_hay","tipos_mezcla":["corrige"],"nombre":"No la hay; corrige el modelo y para el bueno sí","perfil":"nuevo","que_prueba":"No la hay para el coche que dice; corrige el modelo y para el bueno sí la hay.","turnos":[
       {"cliente":"hola busco {X}","esperado":"confirma|pide datos|no la tengo","nunca":["no_dice_no"]},
       {"cliente":"{M}","esperado":"no la tengo","nunca":["no_olvida_pieza"]},
       {"cliente":"ah perdona, no es un {X.modelo}, es un {Xs.modelo}","esperado":"precio|confirma","mem":["vehiculo~{Xs.modelo}"]},
@@ -225,7 +225,7 @@
       {"cliente":"y el precio era?","esperado":"recuerda|precio"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G18","tipo":"no_hay","nombre":"Exige un si o un no sin dar la matricula","perfil":"nuevo","que_prueba":"Paciencia; no dice «no» sin identificar el coche, no pregunta sin fin y explica por que pide la matricula.","turnos":[
+    {"id":"G18","tipo":"no_hay","nombre":"Exige un sí o un no sin dar la matrícula","perfil":"nuevo","que_prueba":"Paciencia; no dice «no» sin identificar el coche, no pregunta sin fin y explica por qué pide la matrícula.","turnos":[
       {"cliente":"teneis {X}?","esperado":"confirma|pide datos|no la tengo","nunca":["no_dice_no"]},
       {"cliente":"no tengo la matricula, dime si o no","esperado":"confirma|pide datos|no la tengo","nunca":["no_dice_no"]},
       {"cliente":"solo quiero saber si la teneis","esperado":"confirma|pide datos|no la tengo","nunca":["no_dice_no"]},
@@ -237,7 +237,7 @@
       {"cliente":"y usada de otro coche que valga?","esperado":"cualquiera","nunca":["no_asegura"]},
       {"cliente":"bueno, gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G19","tipo":"no_hay","nombre":"Insiste en que la de otro modelo es igual","perfil":"conocido","que_prueba":"No afirma una compatibilidad que no puede comprobar; la manda a Alvaro.","turnos":[
+    {"id":"G19","tipo":"no_hay","nombre":"Insiste en que la de otro modelo es igual","perfil":"conocido","que_prueba":"No afirma una compatibilidad que no puede comprobar; la manda a Álvaro.","turnos":[
       {"cliente":"necesito {X.pieza} para el {X.coche}, matricula {M}","esperado":"no la tengo"},
       {"cliente":"y la de un {Xs.coche} no vale? es igual","esperado":"cualquiera","nunca":["no_asegura"]},
       {"cliente":"tu mirala, que seguro que es la misma","esperado":"cualquiera|escala","nunca":["no_asegura"]},
@@ -262,7 +262,7 @@
       {"cliente":"vale","esperado":"cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G21","tipo":"a_medias","nombre":"La informacion llega a trozos","perfil":"nuevo","que_prueba":"Junta pieza, marca, modelo y motor de cuatro mensajes y no vuelve a preguntar lo ya dicho.","turnos":[
+    {"id":"G21","tipo":"a_medias","nombre":"La información llega a trozos","perfil":"nuevo","que_prueba":"Junta pieza, marca, modelo y motor de cuatro mensajes y no vuelve a preguntar lo ya dicho.","turnos":[
       {"cliente":"hola","esperado":"pide datos"},
       {"cliente":"necesito un {A.pieza}","esperado":"pide datos|confirma"},
       {"cliente":"es para un {A.marca}","esperado":"pide datos|confirma","nunca":["no_olvida_pieza"]},
@@ -275,7 +275,7 @@
       {"cliente":"perfecto, mañana paso","esperado":"cierra|cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G22","tipo":"a_medias","nombre":"Describe un sintoma, no una pieza","perfil":"nuevo","que_prueba":"Traduce el sintoma a una pieza posible, pero no diagnostica ni asegura que sea eso.","turnos":[
+    {"id":"G22","tipo":"a_medias","nombre":"Describe un síntoma, no una pieza","perfil":"nuevo","que_prueba":"Traduce el síntoma a una pieza posible, pero no diagnostica ni asegura que sea eso.","turnos":[
       {"cliente":"hola, el coche no carga la bateria, es un {AA.coche}","esperado":"cualquiera","nunca":["no_diagnostica"]},
       {"cliente":"que pieza sera?","esperado":"cualquiera","nunca":["no_diagnostica"]},
       {"cliente":"vale pues el alternador","esperado":"confirma"},
@@ -299,7 +299,7 @@
       {"cliente":"ok avisame cuando salga","esperado":"sigue|cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G24","tipo":"a_medias","tipos_mezcla":["corrige"],"nombre":"Dos coches","perfil":"nuevo","que_prueba":"Corrige el modelo antes de dar la matricula; despues, el coche del hermano necesita su propia matricula (D5).","turnos":[
+    {"id":"G24","tipo":"a_medias","tipos_mezcla":["corrige"],"nombre":"Dos coches","perfil":"nuevo","que_prueba":"Corrige el modelo antes de dar la matrícula; después, el coche del hermano necesita su propia matrícula (D5).","turnos":[
       {"cliente":"buenas, necesito un {A.pieza} para un {A.marca}","esperado":"confirma|pide datos"},
       {"cliente":"{C.modelo}","esperado":"confirma"},
       {"cliente":"espera no, perdona, es un {A.modelo}","esperado":"confirma","mem":["vehiculo~{A.modelo}"],"nunca":["ficha_del_coche_anterior"]},
@@ -313,7 +313,7 @@
       {"cliente":"pago por tarjeta","esperado":"política"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G25","tipo":"a_medias","nombre":"Llega con el numero de stock de la web","perfil":"nuevo","que_prueba":"El numero de stock identifica la ficha, pero no confirma que encaje en su coche.","turnos":[
+    {"id":"G25","tipo":"a_medias","nombre":"Llega con el número de stock de la web","perfil":"nuevo","que_prueba":"El número de stock identifica la ficha, pero no confirma que encaje en su coche.","turnos":[
       {"cliente":"hola, he visto en la web la pieza {A.id}","esperado":"precio"},
       {"cliente":"es para un {A.coche}, vale?","esperado":"cualquiera","nunca":["no_asegura"]},
       {"cliente":"no se, dime tu","esperado":"cualquiera","nunca":["no_asegura"]},
@@ -349,7 +349,7 @@
       {"cliente":"vale espero","esperado":"cualquiera"},
       {"cliente":"mas os vale","esperado":"cualquiera"}
     ]},
-    {"id":"G28","tipo":"posventa","tipos_mezcla":["compra"],"nombre":"Con una queja escalada, una compra nueva","perfil":"conocido","que_prueba":"Con una queja escalada, se atiende una compra nueva? (D5, decision de negocio).","turnos":[
+    {"id":"G28","tipo":"posventa","tipos_mezcla":["compra"],"nombre":"Con una queja escalada, una compra nueva","perfil":"conocido","que_prueba":"¿Con una queja escalada, se atiende una compra nueva? (D5, decisión de negocio).","turnos":[
       {"cliente":"oye el {A.pieza} que me mandaste hace un ruido raro","esperado":"escala","nunca":["no_diagnostica"]},
       {"cliente":"no se si es la pieza o el montaje","esperado":"escala","nunca":["no_diagnostica"]},
       {"cliente":"bueno eso que lo mire alvaro","esperado":"escala"},
@@ -363,7 +363,7 @@
       {"cliente":"pago con tarjeta","esperado":"política|cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G29","tipo":"posventa","nombre":"Devolucion porque se equivoco al pedir","perfil":"nuevo","que_prueba":"Explica la devolucion (sin montar y con el envio a cargo del cliente) y deja el cambio a una persona.","turnos":[
+    {"id":"G29","tipo":"posventa","nombre":"Devolución porque se equivocó al pedir","perfil":"nuevo","que_prueba":"Explica la devolución (sin montar y con el envío a cargo del cliente) y deja el cambio a una persona.","turnos":[
       {"cliente":"hola, compre un {A.pieza} y me he equivocado de modelo","esperado":"política|escala"},
       {"cliente":"lo puedo devolver?","esperado":"política"},
       {"cliente":"esta sin montar, en su caja","esperado":"política"},
@@ -375,7 +375,7 @@
       {"cliente":"vale, hacemos el cambio","esperado":"escala"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G30","tipo":"posventa","nombre":"Garantia meses despues","perfil":"conocido","que_prueba":"La garantia existe (1 año), pero la decide una persona despues de revisar la pieza.","turnos":[
+    {"id":"G30","tipo":"posventa","nombre":"Garantía meses después","perfil":"conocido","que_prueba":"La garantía existe (1 año), pero la decide una persona después de revisar la pieza.","turnos":[
       {"cliente":"el {A.pieza} que os compre en marzo ha dejado de funcionar","esperado":"escala|política"},
       {"cliente":"tiene garantia no?","esperado":"política|escala"},
       {"cliente":"tengo la factura","esperado":"escala|política"},
@@ -387,7 +387,7 @@
       {"cliente":"ok","esperado":"cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G31","tipo":"posventa","tipos_mezcla":["pago"],"nombre":"Quiere el recambio antes de devolver","perfil":"nuevo","que_prueba":"La urgencia no levanta la condicion de pago y el justificante no se valida.","turnos":[
+    {"id":"G31","tipo":"posventa","tipos_mezcla":["pago"],"nombre":"Quiere el recambio antes de devolver","perfil":"nuevo","que_prueba":"La urgencia no levanta la condición de pago y el justificante no se valida.","turnos":[
       {"cliente":"hola, el {A.pieza} llego con el conector roto","esperado":"escala"},
       {"cliente":"mandame otro y os devuelvo este","esperado":"escala","nunca":["no_promete","no_envia_sin_pago"]},
       {"cliente":"pero si ya lo pague!","esperado":"escala"},
@@ -415,7 +415,7 @@
       {"cliente":"pago por transferencia","esperado":"política"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G33","tipo":"taller","nombre":"Dos coches, cada uno con su matricula","perfil":"nuevo","que_prueba":"El segundo coche no hereda la matricula del primero (D5).","turnos":[
+    {"id":"G33","tipo":"taller","nombre":"Dos coches, cada uno con su matrícula","perfil":"nuevo","que_prueba":"El segundo coche no hereda la matrícula del primero (D5).","turnos":[
       {"cliente":"hola, soy de un taller, tengo dos coches","esperado":"pide datos"},
       {"cliente":"el primero un {A.coche}, necesito {A.pieza}","esperado":"confirma"},
       {"cliente":"matricula {M}","esperado":"precio"},
@@ -442,7 +442,7 @@
       {"cliente":"bizum","esperado":"política"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G35","tipo":"taller","tipos_mezcla":["a_medias","regatea"],"nombre":"Dos piezas, una con el lado sin decir","perfil":"nuevo","que_prueba":"Dos piezas, una con el lado sin decir; al dar la matricula recuerda LAS DOS.","turnos":[
+    {"id":"G35","tipo":"taller","tipos_mezcla":["a_medias","regatea"],"nombre":"Dos piezas, una con el lado sin decir","perfil":"nuevo","que_prueba":"Dos piezas, una con el lado sin decir; al dar la matrícula recuerda LAS DOS.","turnos":[
       {"cliente":"hola buenas","esperado":"pide datos"},
       {"cliente":"necesito varias cosas para un {AL.marca}","esperado":"pide datos|no la tengo"},
       {"cliente":"{AL.modelo}","esperado":"pide datos|confirma"},
@@ -508,7 +508,7 @@
       {"cliente":"ok","esperado":"cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G40","tipo":"corrige","nombre":"Otra marca entera","perfil":"nuevo","que_prueba":"Cambiar de marca cambia el coche entero; volver al primer coche necesita otra matricula.","turnos":[
+    {"id":"G40","tipo":"corrige","nombre":"Otra marca entera","perfil":"nuevo","que_prueba":"Cambiar de marca cambia el coche entero; volver al primer coche necesita otra matrícula.","turnos":[
       {"cliente":"necesito {A.pieza} para un {A.coche}","esperado":"confirma"},
       {"cliente":"uy no, que tonto, es un {CM.coche}","esperado":"confirma|precio","mem":["vehiculo~{CM.marca}"]},
       {"cliente":"{M}","esperado":"precio"},
@@ -520,7 +520,7 @@
       {"cliente":"ok","esperado":"cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G41","tipo":"corrige","nombre":"Corrige a un modelo que no esta en el catalogo","perfil":"nuevo","que_prueba":"Suelta el coche viejo sin quedarse otro inventado y no dice «no» a ciegas.","turnos":[
+    {"id":"G41","tipo":"corrige","nombre":"Corrige a un modelo que no está en el catálogo","perfil":"nuevo","que_prueba":"Suelta el coche viejo sin quedarse otro inventado y no dice «no» a ciegas.","turnos":[
       {"cliente":"busco {A.pieza} para un {A.marca} {A.modelo}","esperado":"confirma"},
       {"cliente":"no, perdona, no es un {A.modelo}, es un {A.marca} {A.modelo_falso}","esperado":"pide datos|confirma","nunca":["ficha_del_coche_anterior","no_dice_no"]},
       {"cliente":"{M}","esperado":"no la tengo|confirma|escala"},
@@ -532,7 +532,7 @@
       {"cliente":"cuando","esperado":"política"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G42","tipo":"corrige","nombre":"Corrige el motor","perfil":"conocido","que_prueba":"Un detalle corregido cambia la ficha; no asegura cual encaja sin comprobarlo.","turnos":[
+    {"id":"G42","tipo":"corrige","nombre":"Corrige el motor","perfil":"conocido","que_prueba":"Un detalle corregido cambia la ficha; no asegura cuál encaja sin comprobarlo.","turnos":[
       {"cliente":"para el {M}, {A.pieza} del {A.coche}","esperado":"precio"},
       {"cliente":"ah espera, que es el {A.motor_otro}, no el {A.motor}","esperado":"precio|confirma"},
       {"cliente":"cambia algo?","esperado":"cualquiera"},
@@ -544,7 +544,7 @@
       {"cliente":"ok","esperado":"cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G43","tipo":"corrige","tipos_mezcla":["no_hay"],"nombre":"Para el primer coche si; al corregir, no","perfil":"nuevo","que_prueba":"Para el primer coche si la hay; al corregir, para el bueno no. Los precios del primero no sobreviven.","turnos":[
+    {"id":"G43","tipo":"corrige","tipos_mezcla":["no_hay"],"nombre":"Para el primer coche sí; al corregir, no","perfil":"nuevo","que_prueba":"Para el primer coche sí la hay; al corregir, para el bueno no. Los precios del primero no sobreviven.","turnos":[
       {"cliente":"busco {X.pieza} para un {Xs.coche}","esperado":"confirma"},
       {"cliente":"{M}","esperado":"precio"},
       {"cliente":"uy no, es un {X.modelo}","esperado":"no la tengo|confirma","nunca":["ficha_del_coche_anterior","no_parecida"]},
@@ -557,7 +557,7 @@
       {"cliente":"ok","esperado":"cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G44","tipo":"corrige","nombre":"Matricula sin coche y luego cambia la matricula","perfil":"nuevo","que_prueba":"El punto ciego «matricula sin coche» (D5) y que se quede con la matricula corregida.","turnos":[
+    {"id":"G44","tipo":"corrige","nombre":"Matrícula sin coche y luego cambia la matrícula","perfil":"nuevo","que_prueba":"El punto ciego «matrícula sin coche» (D5) y que se quede con la matrícula corregida.","turnos":[
       {"cliente":"necesito {A.pieza}, matricula {M}","esperado":"pide datos","nunca":["no_olvida_pieza"]},
       {"cliente":"es un {A.coche}","esperado":"precio"},
       {"cliente":"perdona, la matricula buena es {M2}, la otra era de otro coche","esperado":"cualquiera","mem":["matricula={M2}"]},
@@ -569,7 +569,7 @@
       {"cliente":"cuando llega","esperado":"política"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G45","tipo":"pago","nombre":"Contrarreembolso","perfil":"nuevo","que_prueba":"No hay contrarreembolso; la recogida en tienda tambien se paga al retirar.","turnos":[
+    {"id":"G45","tipo":"pago","nombre":"Contrarreembolso","perfil":"nuevo","que_prueba":"No hay contrarreembolso; la recogida en tienda también se paga al retirar.","turnos":[
       {"cliente":"hola, teneis {A}? matricula {M}","esperado":"precio"},
       {"cliente":"me lo mandas contrarreembolso?","esperado":"escala|política","nunca":["no_envia_sin_pago"]},
       {"cliente":"es que no me fio de pagar antes","esperado":"escala","nunca":["no_envia_sin_pago"]},
@@ -593,7 +593,7 @@
       {"cliente":"vale","esperado":"cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G47","tipo":"pago","nombre":"Envio a Canarias","perfil":"nuevo","que_prueba":"Las islas se consultan aparte; no se inventa ni el precio del envio, ni el plazo, ni el impuesto.","turnos":[
+    {"id":"G47","tipo":"pago","nombre":"Envío a Canarias","perfil":"nuevo","que_prueba":"Las islas se consultan aparte; no se inventa ni el precio del envío, ni el plazo, ni el impuesto.","turnos":[
       {"cliente":"hola, necesito {A}, matricula {M}","esperado":"precio"},
       {"cliente":"me lo mandais a Tenerife?","esperado":"política","nunca":["no_inventa"]},
       {"cliente":"cuanto cuesta el envio a canarias","esperado":"política|escala","nunca":["no_inventa"]},
@@ -605,7 +605,7 @@
       {"cliente":"pago por tarjeta cuando me digais","esperado":"política"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G48","tipo":"pago","tipos_mezcla":["compra","aparca_vuelve"],"nombre":"Pausa larga, vuelve y cierra","perfil":"nuevo","que_prueba":"Formas de pago, pausa larga, vuelve y cierra; «ya esta pagado» no es una confirmacion.","turnos":[
+    {"id":"G48","tipo":"pago","tipos_mezcla":["compra","aparca_vuelve"],"nombre":"Pausa larga, vuelve y cierra","perfil":"nuevo","que_prueba":"Formas de pago, pausa larga, vuelve y cierra; «ya está pagado» no es una confirmación.","turnos":[
       {"cliente":"buenas, precio de {A} con matricula {M}","esperado":"precio"},
       {"cliente":"que formas de pago teneis","esperado":"política"},
       {"cliente":"google pay vale?","esperado":"política"},
@@ -619,7 +619,7 @@
       {"cliente":"ok","esperado":"cualquiera"},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G49","tipo":"pago","nombre":"Apuntalo a mi cuenta","perfil":"conocido","que_prueba":"Sin envios a cuenta aunque sea un cliente de siempre.","turnos":[
+    {"id":"G49","tipo":"pago","nombre":"Apúntalo a mi cuenta","perfil":"conocido","que_prueba":"Sin envíos a cuenta aunque sea un cliente de siempre.","turnos":[
       {"cliente":"mandame {A} para el {M} y lo apuntas a mi cuenta","esperado":"escala|precio","nunca":["no_envia_sin_pago"]},
       {"cliente":"como siempre hombre, a fin de mes","esperado":"escala","nunca":["no_envia_sin_pago"]},
       {"cliente":"desde cuando no se puede?","esperado":"escala|política"},
@@ -631,7 +631,7 @@
       {"cliente":"que salga hoy porfa","esperado":"cualquiera","nunca":["no_simula"]},
       {"cliente":"gracias","esperado":"cualquiera"}
     ]},
-    {"id":"G50","tipo":"pago","tipos_mezcla":["regatea","posventa"],"nombre":"La mas larga: todas las condiciones duras","perfil":"nuevo","que_prueba":"Todas las condiciones duras en una sola conversacion.","turnos":[
+    {"id":"G50","tipo":"pago","tipos_mezcla":["regatea","posventa"],"nombre":"La más larga: todas las condiciones duras","perfil":"nuevo","que_prueba":"Todas las condiciones duras en una sola conversación.","turnos":[
       {"cliente":"hola, necesito {A} y {A2.pieza} para el mismo coche, matricula {M}","esperado":"precio"},
       {"cliente":"cuanto las dos","esperado":"cualquiera","nunca":["importe_no_autorizado"]},
       {"cliente":"me haces precio por las dos?","esperado":"escala","nunca":["no_baja"]},

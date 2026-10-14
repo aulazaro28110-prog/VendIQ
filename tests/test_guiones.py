@@ -38,7 +38,7 @@ UMBRAL_TURNOS_OK = 0.0
 
 
 def cargar(fichero, alias):
-    spec = importlib.util.spec_from_file_location(alias, BASE / fichero)
+    spec = importlib.util.spec_from_file_location(alias, BASE / "src" / fichero)
     modulo = importlib.util.module_from_spec(spec)
     sys.modules[alias] = modulo
     spec.loader.exec_module(modulo)

@@ -122,7 +122,7 @@
  document.body.insertBefore(sb,barraVieja);
  document.documentElement.classList.add('shell');
 
- /* ── scroll-spy (de mi web; `calcular` adaptado al orden del documento) ──
+ /* ── scroll-spy (de mi web; `calcular` adaptado al orden en el documento) ──
     Un IntersectionObserver nuevo. Su raíz es la franja de arriba hasta LINEA;
     en cada aviso se recalcula por geometría, así da igual quién lo disparó. */
  const SECCIONES=[];
@@ -158,7 +158,7 @@
   const raiz=document.documentElement;
   if(window.innerHeight+window.scrollY>=raiz.scrollHeight-2){
    marcarActiva(SECCIONES[SECCIONES.length-1].href);return;}   // al final, la última
-  let cual=SECCIONES[0].href,mejor=-Infinity;
+  let cual=null,mejor=-Infinity;   // en el hero ninguna pasó la línea: no se marca nada
   SECCIONES.forEach(s=>{const t=s.destino.getBoundingClientRect().top;
    if(t<=LINEA&&t>mejor){mejor=t;cual=s.href;}});               // la más baja que aún no pasó la línea
   marcarActiva(cual);

@@ -28,7 +28,7 @@ from pathlib import Path
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-BASE = Path(__file__).parent
+BASE = Path(__file__).resolve().parent.parent   # raíz: el código vive en src/
 CHUNKS = BASE / "salida" / "chunks.jsonl"
 EMB_NPY = BASE / "salida" / "embeddings.npy"
 EMB_META = BASE / "salida" / "embeddings_meta.json"
@@ -43,7 +43,7 @@ def cargar_chunks() -> list:
     if not CHUNKS.exists():
         raise SystemExit(
             f"ERROR: no encuentro {CHUNKS.name}.\n"
-            f"       Ejecuta primero:  python 01_ingesta_chunking.py"
+            f"       Ejecuta primero:  python src/01_ingesta_chunking.py"
         )
     chunks = []
     with open(CHUNKS, encoding="utf-8") as f:

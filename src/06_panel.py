@@ -3,7 +3,7 @@
 ===========
 CENTRO DE CONTROL de VendIQ. Levanta un panel web en local.
 
-    python 06_panel.py          -> abre http://localhost:8420 en el navegador
+    python src/06_panel.py          -> abre http://localhost:8420 en el navegador
 
 Por qué un servidor y no un HTML suelto: el panel no enseña una foto de datos, sino
 que **opera la herramienta de verdad**. Cuando escribes una consulta de cliente, se
@@ -30,7 +30,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
-BASE = Path(__file__).parent
+BASE = Path(__file__).resolve().parent.parent   # raíz: el código vive en src/
 WEB = BASE / "panel"
 PANEL_JSON = BASE / "salida" / "panel.json"
 ACTIVIDAD_JSON = BASE / "salida" / "actividad.json"
@@ -60,7 +60,7 @@ def cargar(fichero, alias):
     a su módulo fallan con un KeyError que no dice nada.
     """
     import sys
-    spec = importlib.util.spec_from_file_location(alias, BASE / fichero)
+    spec = importlib.util.spec_from_file_location(alias, Path(__file__).resolve().parent / fichero)
     modulo = importlib.util.module_from_spec(spec)
     sys.modules[alias] = modulo
     spec.loader.exec_module(modulo)
@@ -1456,7 +1456,7 @@ class Handler(BaseHTTPRequestHandler):
             # Se sirve tal cual lo escribió 10_simular.py, sin recalcular nada.
             # Si el panel tocara estos números dejarían de ser lo que se midió.
             if not ACTIVIDAD_JSON.exists():
-                return self._json({"error": "ejecuta antes: python 10_simular.py"}, 404)
+                return self._json({"error": "ejecuta antes: python src/10_simular.py"}, 404)
             return self._json(json.loads(
                 ACTIVIDAD_JSON.read_text(encoding="utf-8-sig")))
         if ruta == "/api/mesa":
@@ -1598,7 +1598,7 @@ def main():
         raise SystemExit(f"ERROR: falta {WEB / 'index.html'}")
     if not PANEL_JSON.exists():
         raise SystemExit("ERROR: falta salida/panel.json.\n"
-                         "       Ejecuta antes:  python 05_panel_datos.py")
+                         "       Ejecuta antes:  python src/05_panel_datos.py")
 
     # En Windows, dos procesos pueden quedarse escuchando el MISMO puerto sin
     # que el segundo bind falle: SO_REUSEADDR lo permite. El efecto es que

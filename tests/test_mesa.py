@@ -18,7 +18,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 BASE = pathlib.Path('.').resolve()
 
-spec = importlib.util.spec_from_file_location("aprender", BASE / "09_aprender.py")
+spec = importlib.util.spec_from_file_location("aprender", BASE / "src" / "09_aprender.py")
 ap = importlib.util.module_from_spec(spec)
 sys.modules["aprender"] = ap
 spec.loader.exec_module(ap)
