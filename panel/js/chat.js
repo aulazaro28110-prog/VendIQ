@@ -6,7 +6,7 @@
    navegador, recargar la página cambiaría lo que responde el bot, y entonces
    esto sería una maqueta y no una prueba.
 
-   El «por qué» se pinta a partir de `datos.traza` (Fase 4), que viene del
+   El «por qué» se pinta a partir de `datos.traza`, que viene del
    servidor paso a paso. Si una respuesta no la trae (servidor viejo), se cae al
    «por qué» de siempre sin romperse. La evaluación ✓/✗ de los guiones también la
    hace el servidor (misma definición que el banco): aquí solo se pinta. */
@@ -15,7 +15,7 @@ const SESION = `panel-${Date.now()}`;
 // La sesión del chat escrito a mano es `panel-…` y SÍ escribe reservas a
 // propósito (es el cliente de prueba de Álvaro). Los guiones, en cambio, corren
 // en una sesión `guion-<id>-<marca de tiempo>` que `es_prueba` excluye, para que
-// reproducirlos no deje rastro en los datos del negocio (C6, §6.2).
+// reproducirlos no deje rastro en los datos del negocio.
 let SESION_ACTIVA = SESION;
 let PERFIL = 'nuevo';
 let OCUPADO = false;
@@ -32,7 +32,7 @@ let OK_GUION = 0, TURNOS_GUION = 0, INV_GUION = 0;
 const hora = () => new Date().toLocaleTimeString('es-ES',
   {hour: '2-digit', minute: '2-digit'});
 
-// Las pausas de animación se encogen en modo «Rápida», no se quitan (§9.1).
+// Las pausas de animación se encogen en modo «Rápida», no se quitan.
 const pausa = (ms) => new Promise((r) => setTimeout(r, ms * (VEL === 'rapida' ? 0.4 : 1)));
 
 /* ------------------------------------------------------------- burbujas */
@@ -116,7 +116,7 @@ function cabecera(datos) {
 
 // El precio, siempre con su motivo. Si alguna vez se publicara uno que el
 // buscador no autorizó, sale en rojo: es el fallo que no puede pasar. Es el
-// guardarraíl, así que va arriba del todo y no escondido en un paso (§9.3).
+// guardarraíl, así que va arriba del todo y no escondido en un paso.
 function selloPrecio(datos) {
   const {bot, busqueda} = datos;
   const piezas = (busqueda.resultados || []).filter((r) => r.tipo === 'inventario');
@@ -132,7 +132,7 @@ function selloPrecio(datos) {
 
 // Una fila-paso plegable: resumen (icono de estado + número + título + una
 // línea) y, al abrir, los datos. Los pasos sin contenido se pintan en gris con
-// «—», no se esconden: así se ve que el paso se evaluó (§9.3).
+// «—», no se esconden: así se ve que el paso se evaluó.
 function filaPaso(n, estado, titulo, linea, cuerpo) {
   const d = crear('details', 'paso');
   const s = crear('summary', 'paso-sum');
@@ -203,7 +203,7 @@ function pintarTraza(datos) {
     v.textContent = `${ev.ok ? '✓' : '✗'} esperado: ${ev.esperado} · obtenido: ${ev.obtenido}`;
     caja.append(v);
   }
-  // El resumen, en grande: es lo primero que se lee (§9.3).
+  // El resumen, en grande: es lo primero que se lee.
   if (traza.resumen) caja.append(crear('p', 'resumen-grande', traza.resumen));
 
   const sp = selloPrecio(datos);
@@ -312,7 +312,7 @@ function pintarTraza(datos) {
 
   caja.append(pasos);
 
-  // Descartadas: plegadas, solo las del mismo tipo que la decisión (§9.3).
+  // Descartadas: plegadas, solo las del mismo tipo que la decisión.
   const decTipo = mejor ? mejor.tipo : null;
   const descart = (datos.busqueda.descartados || [])
     .filter((r) => !decTipo || r.tipo === decTipo);
@@ -525,7 +525,7 @@ async function arrancarGuion(modo) {
   if (g.cliente) $('#nombre-cliente').value = g.cliente;
   limpiarHilo();
   // Sesión propia del guion: `es_prueba` la excluye, así reproducirlo no deja
-  // rastro en reservas.json ni en la cola de no resueltas (C6).
+  // rastro en reservas.json ni en la cola de no resueltas.
   SESION_ACTIVA = `guion-${g.id}-${Date.now()}`;
   Object.assign(REPRO, {activo: true, parar: false, guion: g, i: 0, modo});
   modoReproduciendo(true);
@@ -551,7 +551,7 @@ async function pasoSiguiente() {
   if (REPRO.i >= g.mensajes.length) terminarGuion();
 }
 
-// Parar corta al terminar el turno en curso, sin dejar el chat bloqueado (§9.1).
+// Parar corta al terminar el turno en curso, sin dejar el chat bloqueado.
 function pararGuion() {
   if (!REPRO.activo) return;
   REPRO.parar = true;

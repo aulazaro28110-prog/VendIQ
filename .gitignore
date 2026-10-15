@@ -13,7 +13,7 @@ salida/ofertas.json
 salida/conversaciones.json
 salida/precios_fijados.json
 
-# CLAVES. Nunca al repositorio. Ver docs/CONFIGURAR_GROQ.md
+# CLAVES. Nunca al repositorio.
 .env
 .env.*
 !.env.ejemplo

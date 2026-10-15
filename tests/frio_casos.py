@@ -118,7 +118,7 @@ def trozos(P):
     "corrige_coche": (["perdona, no es un A4, es un A3", "sí, me he liado antes"],
         # Nombrar el A4 en el turno de la correccion es CORRECTO: «Vale, Audi A3
         # entonces, no Audi A4» lo dice justo para descartarlo, y reconocerlo en
-        # voz alta es lo que pide §18. Medirlo con un no_dice suspendia al bot
+        # voz alta es lo que toca. Medirlo con un no_dice suspendia al bot
         # por acertar. Lo que se mide aqui es que haya COGIDO el coche nuevo; que
         # no lo recupere se mide en el turno siguiente, donde ya no hay ninguna
         # razon para volver a nombrarlo.

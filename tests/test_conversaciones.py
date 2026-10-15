@@ -627,7 +627,7 @@ def invariantes(respuesta, historial, matricula_dada, decision, busqueda=None):
     if roto:
         rotos.append(f"estilo: {roto}")
 
-    # Regla §8.1: nunca vuelvas a pedir un dato que el cliente YA TE DIO. Ojo a la
+    # Regla: nunca vuelvas a pedir un dato que el cliente YA TE DIO. Ojo a la
     # diferencia — insistir en un dato que aún no ha dado es legítimo; pedirle otra
     # vez el que acaba de darte es lo que hace que se vaya.
     if matricula_dada and PIDE_MATRICULA.search(respuesta["mensaje"]):

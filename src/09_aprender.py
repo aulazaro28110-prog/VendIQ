@@ -1,7 +1,7 @@
 """
 09_aprender.py
 ==============
-LO QUE EL BOT NO SUPO, Y CÓMO APRENDE. Idea 5 de la especificación.
+LO QUE EL BOT NO SUPO, Y CÓMO APRENDE.
 
 El ciclo, entero:
 

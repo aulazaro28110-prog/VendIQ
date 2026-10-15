@@ -19,12 +19,12 @@ regla o persona).
 
 Se añade a la respuesta de `/api/chat` sin quitar ni renombrar nada (solo suma la
 clave `traza`). El panel la enseña al hacer clic en una burbuja; el banco de
-guiones comprueba (C7) que coincide con lo que de verdad hizo el bot.
+guiones comprueba que coincide con lo que de verdad hizo el bot.
 """
 
 # El bloque de contexto no se pinta cuando no se completó nada con la memoria,
 # pero el paso SÍ viaja siempre con su `rama` ("ninguna" incluida): así el test de
-# coherencia (C7) siempre tiene una rama que contrastar con `busqueda.contexto`.
+# coherencia siempre tiene una rama que contrastar con `busqueda.contexto`.
 RAMAS = ("ninguna", "correccion_coche", "coche_de_memoria", "pieza_de_memoria",
          "pieza_referida", "matricula_desbloquea")
 

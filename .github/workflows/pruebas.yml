@@ -64,7 +64,7 @@ jobs:
         run: python tests/test_mesa.py
       - name: La llamada a Groq (sin clave y sin red)
         run: python tests/test_llm.py
-      - name: El prompt, seccion por seccion
+      - name: Las reglas de comunicacion, una a una
         run: python tests/test_prompt.py
       - name: El ciclo de aprendizaje
         run: python tests/test_ciclo.py

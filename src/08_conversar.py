@@ -1,7 +1,7 @@
 """
 08_conversar.py
 ===============
-EL BUCLE DE CONVERSACIÓN. Fase 1 de docs/VendIQ_Spec_Conversacion.md.
+EL BUCLE DE CONVERSACIÓN.
 
 En cada turno el asistente elige UNA de tres acciones:
 
@@ -176,8 +176,8 @@ def elegir_accion(busqueda, respuesta, opciones, aclaraciones=0):
                              f"con lo que ha dicho: se pregunta cuál en vez de "
                              f"adivinar")
 
-    # Nombrar la FUENTE concreta, no una frase de relleno (§8.2 del prompt: queda
-    # prohibido «contesta con las fichas del catálogo»; hay que decir qué ficha o
+    # Nombrar la FUENTE concreta, no una frase de relleno (queda prohibido
+    # «contesta con las fichas del catálogo»; hay que decir qué ficha o
     # qué política y por qué esa). El dato sale de lo que ya devolvió la búsqueda.
     res = busqueda.get("resultados") or []
     if "política de la empresa" in reglas:

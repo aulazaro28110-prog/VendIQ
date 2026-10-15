@@ -4,7 +4,7 @@
 Escribe el mensaje que le llega al cliente por WhatsApp.
 
 Hasta aquí el sistema recuperaba fichas. Esto es lo que las convierte en un mensaje
-con la voz de Desguaces Madrid Norte (el rol de docs/VendIQ_RAG.md §7 y §8).
+con la voz de Desguaces Madrid Norte (el ROL de 08_conversar.py).
 
 POR QUÉ NO ES UN LLM (todavía)
 ------------------------------
@@ -304,7 +304,7 @@ PALABRAS_INTENCION = {
                         "que precio", "mandame el precio", "pasame el precio",
                         "dime el precio", "cuanto seria", "cuanto me dices",
                         "en cuanto se queda", "cuanto me lo dejas",
-                        # §19 del prompt: el cliente impaciente escribe una
+                        # El cliente impaciente escribe una
                         # palabra. "precio" a secas contestaba "sin prisa, lo dejo
                         # apuntado por si acaso", que es no haberle leído. Van sin
                         # más contexto porque con una pieza encima de la mesa no
@@ -315,13 +315,13 @@ PALABRAS_INTENCION = {
                         # el envío?", y el bot contestaba el precio de la pieza a
                         # una pregunta de devolución y a otra de portes. En una
                         # conversación de veinte mensajes eso pasaba cuatro
-                        # veces. El caso impaciente de §19 —el que escribe una
+                        # veces. El caso impaciente —el que escribe una
                         # palabra sola— se atiende abajo, mirando que el mensaje
                         # ENTERO sea eso y nada más.
                         "precio", "cuanto es", "que vale",
                         "qué vale", "cuanto sale", "cuánto sale"),
 
-    # §24 — el enlace. La ficha del catálogo trae su URL y el bot nunca la daba.
+    # El enlace. La ficha del catálogo trae su URL y el bot nunca la daba.
     "enlace": ("pasame el link", "pásame el link", "mandame el link",
                "pasame el enlace", "pásame el enlace", "el enlace",
                "tienes link", "un link", "la url", "enlace de la pieza",
@@ -332,7 +332,7 @@ PALABRAS_INTENCION = {
     "alternativa": ("la otra", "tienes mas", "tienes otra", "alguna otra",
                     "otra opcion", "la que tengas", "da igual", "cual mas"),
     "agradecimiento": ("gracias", "genial", "perfecto", "estupendo", "vale ok"),
-    # §30 — recapitular. En una conversación larga el cliente pierde el hilo y
+    # Recapitular. En una conversación larga el cliente pierde el hilo y
     # pregunta "a ver, ¿qué teníamos?". Es una petición legítima y el bot tiene
     # todos los datos: decírselos ordenados vale más que cualquier otra respuesta.
     "recapitula": ("que teniamos", "qué teníamos", "en que quedamos",
@@ -595,7 +595,7 @@ REPREGUNTA_PIEZA = re.compile(
 
 
 def rompe_el_olvido_de_pieza(lineas, pieza_pedida):
-    """§8.1 · Nunca se vuelve a preguntar la pieza que el cliente YA dijo (D2).
+    """Nunca se vuelve a preguntar la pieza que el cliente YA dijo (D2).
 
     `pieza_pedida` es lo que la conversación recuerda que se pidió (lo rellena el
     panel). Si está puesto y el bot vuelve a preguntar «¿qué pieza?», es el olvido
@@ -653,8 +653,8 @@ def rompe_la_apertura(lineas_llm, borrador):
     Se vio en el banco en frío y de casualidad, que es lo que la hace valer: la
     misma conversación saludó en una tirada y en la siguiente contestó «¿Me
     puedes indicar la matrícula y la pieza que buscas?» a un cliente que acababa
-    de escribir por primera vez. Sin saludo y sin decir con quién habla — y §7
-    del rol dice que el bot se identifica como asistente en el primer mensaje,
+    de escribir por primera vez. Sin saludo y sin decir con quién habla — y el
+    rol dice que el bot se identifica como asistente en el primer mensaje,
     justamente para no fingir que es una persona.
 
     Solo se aplica al turno que abre, y se reconoce en que la PRIMERA línea del
@@ -918,7 +918,7 @@ DIRECCION = re.compile(
     r"|\b\d{5}\b", re.I)
 
 
-# §18 y §4 del prompt — EL CLIENTE CORRIGE UN DATO. Pasa constantemente y hasta
+# EL CLIENTE CORRIGE UN DATO. Pasa constantemente y hasta
 # ahora se ignoraba: «no, es gasolina» seguía buscando el diésel. Lo que hay que
 # detectar no es el dato nuevo, es la SEÑAL de que lo anterior estaba mal.
 # El «no» del principio marca corrección SALVO cuando es «no (lo) sé», «no tengo
@@ -934,7 +934,7 @@ CORRIGE = re.compile(
     r"|\bquer[ií]a decir\b|\ben realidad\b|\bmejor dicho\b"
     r"|\bes.{0,18}\bno\s+(el|la|un|una)\b", re.I)
 
-# §20 — EL CLIENTE NO SABE CÓMO SE LLAMA LA PIEZA. Describe lo que le pasa al
+# EL CLIENTE NO SABE CÓMO SE LLAMA LA PIEZA. Describe lo que le pasa al
 # coche. Es la conversación más frecuente de un desguace y el bot no la entendía:
 # «cuando freno hace un ruido metálico» acababa contestando la política de
 # garantía.
@@ -945,7 +945,7 @@ CORRIGE = re.compile(
 # vacías, y por el mismo motivo: no se puede aprender de los datos que hay.
 #
 # Cada entrada dice «suele», nunca «es». Diagnosticar con certeza sin ver el coche
-# es justo lo que §21 prohíbe, y con razón: quien decide es el taller.
+# es justo lo que no se debe hacer, y con razón: quien decide es el taller.
 # Cada entrada son GRUPOS de palabras que tienen que aparecer todos, no una frase
 # literal. La primera version buscaba "ruido metalico al frenar" y el cliente
 # escribio "cuando freno hace un ruido metalico": mismo sintoma, otro orden, y no
@@ -1067,7 +1067,7 @@ def detectar_intencion(mensaje: str) -> str:
         return "queja"
     hipotetico = any(h in t for h in HIPOTETICO)
 
-    # §19 — EL IMPACIENTE ESCRIBE UNA PALABRA. "precio", "cuánto", "y cuánto?".
+    # EL IMPACIENTE ESCRIBE UNA PALABRA. "precio", "cuánto", "y cuánto?".
     # Se mira que el mensaje ENTERO sea eso, no que lo contenga: es la diferencia
     # entre «¿cuánto?» y «¿cuánto cuesta el envío?», que no preguntan lo mismo.
     suelto = [p for p in t.replace("?", " ").replace("¿", " ").split()
@@ -1198,7 +1198,7 @@ ESTADO_EN_CLARO = {
 class Conversacion:
     """Lo que el cliente ya ha contado. Sirve para no volver a pedírselo.
 
-    Es la regla §8.1 del diseño: 'nunca vuelvas a pedir un dato que ya te dio'.
+    Es una regla del diseño: 'nunca vuelvas a pedir un dato que ya te dio'.
     Sin esto, un bot pregunta tres veces la matrícula y el cliente se va.
     """
 
@@ -1390,7 +1390,7 @@ def _apertura(conv, reglas):
         return SALUDOS_CONOCIDO[conv.turnos % len(SALUDOS_CONOCIDO)].format(
             nombre=conv.nombre)
     reglas.append(("cliente nuevo", "se identifica como asistente en el primer "
-                                    "mensaje, no finge ser una persona (rol §7)"))
+                                    "mensaje, no finge ser una persona (rol)"))
     return PRESENTACION
 
 
@@ -1904,7 +1904,7 @@ def _frase_equivalente(equivalentes, pedir_referencia=True):
 
     `pedir_referencia` se apaga cuando la línea siguiente ya va a pedir la
     matrícula: pedir los dos datos en el mismo mensaje rompe «un dato por
-    mensaje» (rol §8.3), y el que hace falta primero manda.
+    mensaje» (rol), y el que hace falta primero manda.
 
     Lo que NO dice es tan importante como lo que dice. No lleva motor ni año —los
     dos datos que distinguen una ficha de su hermana— ni precio, y no afirma que
@@ -1993,7 +1993,7 @@ def _sin_pieza(conv, reglas, equivalentes=()):
                   "referencia de la pieza vieja."]
         reglas.append(("identificar antes de decir que sí o que no",
                        "sin matrícula no se afirma disponibilidad: primero se "
-                       "identifica la pieza (rol §7)"))
+                       "identifica la pieza (rol)"))
         reglas.append(("no repite la misma frase",
                        "es la segunda vez que hace falta el mismo dato: se insiste "
                        "de otra forma y se ofrece una alternativa"))
@@ -2004,9 +2004,9 @@ def _sin_pieza(conv, reglas, equivalentes=()):
     conv.datos_pedidos.add("matricula")
     reglas.append(("identificar antes de decir que sí o que no",
                    "sin matrícula no se puede saber si la hay: se pide la matrícula "
-                   "primero (política CÓMO IDENTIFICAR LA PIEZA / rol §7)"))
+                   "primero (política CÓMO IDENTIFICAR LA PIEZA / rol)"))
     reglas.append(("un dato por mensaje",
-                   "se pide la matrícula y ningún otro dato (rol §8.3)"))
+                   "se pide la matrícula y ningún otro dato (rol)"))
     return cabecera + lineas
 
 
@@ -2070,11 +2070,11 @@ def _seguimiento(intencion, conv, reglas, salida):
                 "En cuanto lo tenga te digo algo."]
 
     if intencion == "compatibilidad":
-        # Regla del rol §7: el bot acerca la pieza, la compatibilidad la firma una
+        # Regla del rol: el bot acerca la pieza, la compatibilidad la firma una
         # persona. Aquí no se promete que encaje, se explica cómo asegurarlo.
         reglas.append(("no asegura la compatibilidad",
                        "el bot acerca la pieza; que encaje lo confirma una persona "
-                       "con la matrícula (rol §7)"))
+                       "con la matrícula (rol)"))
         if conv.matricula:
             return conv.variar("compat", [
                 [f"Con la matrícula que me diste ({conv.matricula}) lo miro y te lo "
@@ -2374,7 +2374,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                       "le paso ahora mismo tu mensaje.")
         lineas.append("Si tienes la factura a mano, mándamela y le ahorramos un paso.")
         reglas.append(("escalado a persona",
-                       "hay una queja: el bot no gestiona reclamaciones (rol §7)"))
+                       "hay una queja: el bot no gestiona reclamaciones (rol)"))
 
     # ------------------------------------------------------------ despedida
     # EL CLIENTE SE VA. Sin esta rama, «adiós» no encajaba en ninguna y caía
@@ -2442,7 +2442,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
             ])
             reglas.append(("despedida",
                            "el cliente se va: se cierra y no se le pide ningún "
-                           "dato más (rol §8.3)"))
+                           "dato más (rol)"))
 
     # --------------------------------------------------------------- cierre
     # ------------------------------------- ha dicho dónde quiere la pieza
@@ -2459,7 +2459,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                        "la venta está cerrada y el mensaje trae una dirección: es "
                        "dónde quiere la pieza, no una consulta"))
 
-    # ---------------------- §18 · corrige algo que no es el coche entero
+    # ---------------------------- corrige algo que no es el coche entero
     elif (CORRIGE.search(mensaje_cliente or "")
           and not getattr(conversacion, "corregido", None)
           # `corrige_sin_resolver` lo pone el panel cuando el cliente niega el
@@ -2482,7 +2482,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         # pasa a ser la buena con ese dato suelto, y adivinar aquí es exactamente
         # lo que la regla de la identificación prohíbe.
         #
-        # Lo que sí puede hacer, y es lo que pide §18, es NO seguir como si nada:
+        # Lo que sí puede hacer, y es lo que toca, es NO seguir como si nada:
         # reconocerlo y llevarlo al dato que lo resuelve del todo.
         conversacion.piezas = []
         conversacion.precio_de = {}
@@ -2493,7 +2493,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                        "cambia un dato del coche sin cambiar de coche: se reconoce "
                        "y se descarta lo ofrecido, que era para el dato anterior"))
 
-    # ------------------------------------------- §18 · corrige un dato
+    # ------------------------------------------------- corrige un dato
     elif getattr(conversacion, "corregido", None):
         # Reconocerlo en voz alta. Un cliente que corrige y ve que el bot sigue
         # con lo anterior deja de fiarse, y con razón: le acaba de decir que se
@@ -2510,7 +2510,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                        f"cambia {antes} por {ahora}: se reconoce y se rehace la "
                        f"búsqueda; lo que se había encontrado era de otro coche"))
 
-    # ---------------------------------- §20 · describe el sintoma, no la pieza
+    # ---------------------------------------- describe el sintoma, no la pieza
     elif (not hay_pieza and pieza_por_sintoma(mensaje_cliente or "")):
         # Lo que manda es que no se haya encontrado ninguna PIEZA. Antes se exigía
         # que no hubiera ningún resultado, y «ruido metálico al frenar» encuentra
@@ -2520,7 +2520,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
         # problema a una posible pieza es el trabajo, no un extra.
         #
         # Y se dice «suele», nunca «es»: diagnosticar con certeza sin ver el coche
-        # es lo que prohíbe §21 del prompt, y con razón — quien decide es el
+        # es lo que no se debe hacer, y con razón — quien decide es el
         # taller. Aquí solo se le da un punto de partida para poder buscar.
         # CON EL DIAGNOSTICO APAGADO la tabla sigue sirviendo, pero para otra
         # cosa: para SABER que esto es una averia y no una pregunta. No se
@@ -2566,7 +2566,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                                f"describe el problema y no la pieza: se le apunta a "
                                f"{lista}, sin asegurar el diagnóstico"))
 
-    # ------------------------------------------------ §24 · el enlace real
+    # ------------------------------------------------------ el enlace real
     elif intencion == "enlace":
         # La URL está en la ficha del catálogo y el bot nunca la daba. No se
         # inventa ninguna: si la ficha no la trae, se dice que no la hay.
@@ -2587,7 +2587,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
             reglas.append(("aún no hay pieza",
                            "no hay ficha sobre la mesa de la que dar enlace"))
 
-    # -------------------------------------------- §30 · recapitular el hilo
+    # -------------------------------------------------- recapitular el hilo
     elif intencion == "recapitula":
         # Todo lo que se dice aquí está en la memoria de la conversación. No hay
         # ni un dato nuevo: es lo mismo, ordenado, porque el cliente ha perdido
@@ -2720,7 +2720,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                            "pide que se le avise con una pieza ya ofrecida: se "
                            "anota como promesa en vez de preguntarle cuál"))
         elif conversacion.estado == OFRECIENDO and conversacion.ultima_pieza:
-            # §8.1 — NUNCA VUELVAS A PEDIR UN DATO QUE YA TE DIO. Con la pieza y
+            # NUNCA VUELVAS A PEDIR UN DATO QUE YA TE DIO. Con la pieza y
             # su precio encima de la mesa, «¿ya lo tienes?» habla de ESA pieza.
             # Antes no había promesa y se le preguntaba de qué pieza hablaba y
             # su matrícula, que había mandado un turno antes.
@@ -2745,7 +2745,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
                            f"de volver a pedir la pieza y la matrícula"))
         else:
             lineas.append("Dime de qué pieza me hablas y te digo cómo va.")
-            # La matrícula, solo si no la ha dado ya (§8.1).
+            # La matrícula, solo si no la ha dado ya.
             lineas.append("Con el número de pedido lo veo enseguida."
                           if conversacion.matricula else
                           "Con la matrícula o el número de pedido lo veo enseguida.")
@@ -3184,7 +3184,7 @@ def redactar(consulta: dict, conversacion: Conversacion) -> dict:
     # línea siempre lleva la información, las últimas son el empujón comercial.
     if len(lineas) > 3:
         lineas = lineas[:3]
-        reglas.append(("formato WhatsApp", "recortado a 3 líneas (rol §8.2)"))
+        reglas.append(("formato WhatsApp", "recortado a 3 líneas (rol)"))
 
     lineas = _sin_repetir(
         lineas, conversacion, reglas,

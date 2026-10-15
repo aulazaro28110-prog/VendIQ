@@ -33,7 +33,7 @@ BASE = Path(__file__).resolve().parent.parent
 # Umbral de turnos OK para el código de salida. EMPIEZA EN 0 a propósito: el bot
 # aún no implementa P1/P2/P3 ni los arreglos que salgan de este banco, así que la
 # primera ejecución no puede exigir 95 %. Se sube a 0.95 cuando el bot esté
-# arreglado (tras la parada de la Fase 3). Un invariante de precio roto SIEMPRE falla.
+# arreglado. Un invariante de precio roto SIEMPRE falla.
 UMBRAL_TURNOS_OK = 0.0
 
 
@@ -67,9 +67,9 @@ def _datos_turno(sistema, sesion, datos, historial):
 
 
 def coherencia_turno(datos):
-    """C7 · la traza coincide con lo que el bot hizo de verdad. Devuelve [] si OK.
+    """La traza coincide con lo que el bot hizo de verdad. Devuelve [] si OK.
 
-    Para cada turno comprueba lo que pide el prompt (§6, C7): la traza existe; su
+    Para cada turno comprueba: la traza existe; su
     paso de acción es igual a `bot.accion`; las reglas de la traza son iguales a
     `bot.reglas`; y la rama de contexto es coherente con si de verdad se buscó con
     contexto añadido (`busqueda.contexto`). De regalo, que el resumen no esté vacío.
@@ -120,7 +120,7 @@ def ejecutar(sistema, guiones_mod, guiones, ver=None):
                                     nombre=g.get("cliente", ""), reiniciar=(i == 0))
             dt = _datos_turno(sistema, sesion, datos, historial)
             ev = guiones_mod.evaluar_turno(esp, dt)
-            coh = coherencia_turno(datos)       # C7
+            coh = coherencia_turno(datos)
             bot = datos["bot"]
             reglas = [r["regla"] for r in bot["reglas"]]
             if bot.get("accion") == "PREGUNTAR":
@@ -235,7 +235,7 @@ def ver(resultados):
             for f in t["fallos"]:
                 print(f"   !!! {f}")
             for f in t.get("coherencia") or []:
-                print(f"   !!! C7: {f}")
+                print(f"   !!! traza: {f}")
         for f in r["fallos_guion"]:
             print(f"   !!! GUION: {f}")
 
@@ -311,25 +311,25 @@ def main():
     pct = ok_t / n_t if n_t else 0
     fugas = [r["id"] for r in resultados if r["fuga"]]
     pendientes = [r["id"] for r in resultados if r["turnos_ok"] < r["n_turnos"]]
-    c7_fallos = [(r["id"], t["n"], t["coherencia"])
+    fallos_traza = [(r["id"], t["n"], t["coherencia"])
                  for r in resultados for t in r["turnos"] if t.get("coherencia")]
     print("\n" + "=" * 78)
     print(f"Turnos OK: {ok_t}/{n_t} ({pct:.0%})  ·  umbral actual {UMBRAL_TURNOS_OK:.0%}")
     print(f"Aislamiento entre sesiones: {'OK' if aisl else 'ROTO'}")
-    if c7_fallos:
-        print(f"Coherencia del «por qué» (C7): ROTA en {len(c7_fallos)} de {n_t} turnos")
-        for gid, n, fs in c7_fallos[:8]:
+    if fallos_traza:
+        print(f"Coherencia del «por qué»: ROTA en {len(fallos_traza)} de {n_t} turnos")
+        for gid, n, fs in fallos_traza[:8]:
             print(f"   {gid} · turno {n}: {'; '.join(fs)}")
     else:
-        print(f"Coherencia del «por qué» (C7): OK · los {n_t} turnos coinciden con la traza")
+        print(f"Coherencia del «por qué»: OK · los {n_t} turnos coinciden con la traza")
     if fugas:
         print(f"FUGA DE PRECIO en: {', '.join(fugas)}")
     print(f"Guiones con algún turno a revisar: {len(pendientes)}")
     print(f"Tiempo total: {time.time() - t0:.0f}s")
     print("=" * 78)
 
-    falla = bool(fugas) or (pct < UMBRAL_TURNOS_OK) or not aisl or bool(c7_fallos)
-    print("RESULTADO:", "NO PASA" if falla else "PASA (sin fugas; C7 verde; % por debajo de 95 a la espera de arreglar el bot)")
+    falla = bool(fugas) or (pct < UMBRAL_TURNOS_OK) or not aisl or bool(fallos_traza)
+    print("RESULTADO:", "NO PASA" if falla else "PASA (sin fugas; «por qué» coherente; % por debajo de 95 a la espera de arreglar el bot)")
     return 1 if falla else 0
 
 

@@ -738,7 +738,7 @@ class Sistema:
             conv = self.redactor.Conversacion(perfil=perfil, nombre=nombre)
             self.chats[sesion] = conv
 
-        # Para la TRAZA (Fase 4): lo que el bot recordaba AL ENTRAR el turno, antes
+        # Para la TRAZA: lo que el bot recordaba AL ENTRAR el turno, antes
         # de tocar nada. El «después» se toma al final; la diferencia es lo que este
         # turno ha cambiado en la memoria. Se lee aquí porque `registrar()` ya apunta
         # la matrícula de este mensaje, y eso es parte de lo que el turno cambia.
@@ -776,7 +776,7 @@ class Sistema:
         if habla_de_pieza:
             conv.pieza_pedida = mensaje
 
-        # §18 y §4 del prompt — EL CLIENTE CORRIGE EL COCHE. "Perdona, no es un
+        # EL CLIENTE CORRIGE EL COCHE. "Perdona, no es un
         # A4, es un A3". Hasta ahora el coche nuevo se guardaba encima del viejo y
         # ya esta: las piezas que se habian encontrado para el A4 se quedaban en
         # el hilo, y sus precios tambien. El bot seguia hablando de un coche que
@@ -938,7 +938,7 @@ class Sistema:
                            f"{conv.pieza_pedida} para dar el precio que antes se retuvo.")
 
         # Traza: si al final no se completó nada con la memoria, la rama es
-        # "ninguna". Mantiene el invariante que comprueba C7: hay rama de contexto
+        # "ninguna". Mantiene el invariante de la traza: hay rama de contexto
         # (≠ "ninguna") exactamente cuando se buscó con contexto añadido.
         if not contexto:
             rama_contexto, rama_porque = "ninguna", None
@@ -1034,7 +1034,7 @@ class Sistema:
             respuesta["lineas"] = lineas_llm
             respuesta["mensaje"] = "\n".join(lineas_llm)
 
-        # §23 DEL PROMPT — NO SIMULAR ACCIONES. El bot decía «lo aparto a tu
+        # NO SIMULAR ACCIONES. El bot decía «lo aparto a tu
         # nombre» y no apartaba nada: no había ninguna reserva en ningún sitio.
         # Era la única frase del sistema que afirmaba un hecho falso.
         #
@@ -1118,7 +1118,7 @@ class Sistema:
                     or self.redactor.rompe_el_guion(
                         respuesta["lineas"], respuesta.get("borrador"), conv,
                         dicho_cliente, set(self.buscador.marcas_conocidas.values())))
-            # TRAZA (§8.2): para ENSEÑARLAS se evalúan TODAS las guardas, pero la
+            # TRAZA: para ENSEÑARLAS se evalúan TODAS las guardas, pero la
             # decisión de arriba —la primera que falla, en ese orden— no cambia.
             # Es solo para el panel; va en try porque corre únicamente con el LLM
             # encendido y no quiero que un fallo al pintar tumbe una respuesta.
@@ -1187,12 +1187,12 @@ class Sistema:
         if pieza.get("marca"):
             conv.vehiculo = f"{pieza['marca']} {pieza.get('modelo', '')}".strip()
 
-        # LA TRAZA DEL «POR QUÉ» (Fase 4). Se monta con lo que ya han decidido la
+        # LA TRAZA DEL «POR QUÉ». Se monta con lo que ya han decidido la
         # búsqueda, el redactor y la acción —no reinterpreta nada— más la memoria
         # antes/después de este turno. Es PURAMENTE ADITIVA: va como una clave más
         # de la respuesta, sin tocar `bot`, `busqueda` ni `memoria`. Envuelta en
         # try para que un error al construirla jamás tumbe una respuesta real
-        # (el guardarraíl C5 manda); si falla, el test de coherencia C7 lo caza.
+        # (el guardarraíl manda); si falla, el test de coherencia lo caza.
         _mem_despues = {
             "matricula": conv.matricula,
             "pieza_pedida": getattr(conv, "pieza_pedida", None),
@@ -1514,7 +1514,7 @@ class Handler(BaseHTTPRequestHandler):
                     perfil=cuerpo.get("perfil") or "nuevo",
                     nombre=cuerpo.get("nombre") or "",
                     reiniciar=bool(cuerpo.get("reiniciar")))
-                # ✓/✗ POR TURNO (Fase 5). Si el mensaje viene de un guion, el
+                # ✓/✗ POR TURNO. Si el mensaje viene de un guion, el
                 # SERVIDOR lo evalúa con la ÚNICA definición de la evaluación
                 # (12_guiones.evaluar_turno), la misma que usa el banco; el panel
                 # solo pinta. El chat escrito a mano no manda `guion` y no se

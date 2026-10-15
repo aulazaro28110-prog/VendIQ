@@ -4,8 +4,7 @@ Documento **de negocio**. Sin código. Para leerlo antes de una demo, o para
 entender en cinco minutos qué hace el sistema y qué hace con los datos de la
 gente.
 
-La parte técnica está en [`README.md`](../README.md). El detalle de protección de
-datos, en [`GDPR.md`](GDPR.md).
+La parte técnica está en [`README.md`](../README.md).
 
 ---
 
@@ -142,8 +141,6 @@ puede saber qué pieza monta su coche. Es exactamente la regla 1.
 | **Qué sale de la máquina** | **La matrícula NO.** Al modelo se le manda que el cliente ya la dio, no cuál es. |
 | **Cuánto se guarda** | El historial de cada conversación se corta a 12 turnos. Lo anterior se resume, y el resumen tampoco lleva la matrícula. |
 | **Se puede borrar** | Sí, con una orden: `py scripts/olvidar.py 4521 KBD --borrar` |
-
-El detalle, con el checklist punto por punto, está en [`GDPR.md`](GDPR.md).
 
 ## Dónde se ejecuta
 

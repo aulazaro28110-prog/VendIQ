@@ -42,7 +42,7 @@ n = [0]
 resultados = []
 
 
-def probar(seccion, titulo, guion, espera, comprueba):
+def probar(regla, titulo, guion, espera, comprueba):
     """espera: lo que deberia hacer. comprueba: fn(ultimo_mensaje, conv) -> bool"""
     n[0] += 1
     sid = f"aud{n[0]}"
@@ -50,7 +50,7 @@ def probar(seccion, titulo, guion, espera, comprueba):
         d = S.chatear(sid, m, perfil="nuevo", reiniciar=(i == 0))
     conv = S.chats[sid]
     ok = comprueba(d["bot"]["mensaje"], conv)
-    print(f"{'CUMPLE  ' if ok else 'NO CUMPLE'} §{seccion:<3} {titulo}")
+    print(f"{'CUMPLE  ' if ok else 'NO CUMPLE'} regla {regla:<3} {titulo}")
     if not ok:
         print(f"           cliente: {guion[-1]}")
         for l in d["bot"]["lineas"]:
@@ -61,7 +61,7 @@ def probar(seccion, titulo, guion, espera, comprueba):
 
 
 print("=" * 90)
-print("EL PROMPT DE COMUNICACION, SECCION A SECCION")
+print("LAS REGLAS DE COMUNICACION, UNA A UNA")
 print("=" * 90)
 
 probar("3", "no repregunta un dato ya dado",
@@ -144,10 +144,10 @@ print()
 print("=" * 90)
 
 fallan = [x for x in resultados if not x]
-print(f"{len(resultados) - len(fallan)}/{len(resultados)} secciones cumplidas")
+print(f"{len(resultados) - len(fallan)}/{len(resultados)} reglas cumplidas")
 print("=" * 90)
 
-# No dejar rastro (D4). §23 cierra una venta de verdad para comprobar que SÍ se
+# No dejar rastro (D4). La regla 23 cierra una venta de verdad para comprobar que SÍ se
 # escribe en salida/reservas.json: necesita una sesión real (no "sim-"/"banco-"),
 # y por eso usa "aud*". Hecha ya la comprobación, estas sesiones se borran para no
 # contaminar los datos de negocio. Se hace aquí, al final, cuando ningún `probar`

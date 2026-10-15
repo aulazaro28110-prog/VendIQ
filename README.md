@@ -24,13 +24,12 @@ días de tráfico simulado pasados por el sistema real.
 > RAG = *Retrieval Augmented Generation* = "mira la carpeta antes de hablar": primero recupera
 > información real de la empresa, y luego genera la respuesta sobre ella.
 
-## Los tres documentos
+## Los dos documentos
 
 | | |
 |---|---|
 | **Este fichero** | cómo está construido: la búsqueda, los umbrales, las medidas |
 | [`docs/NEGOCIO.md`](docs/NEGOCIO.md) | qué resuelve y qué datos toca, sin código |
-| [`docs/GDPR.md`](docs/GDPR.md) | protección de datos, punto por punto y ejecutable |
 
 ## Qué hace, en 3 pasos
 
@@ -321,7 +320,7 @@ datos/      catálogo sintético, políticas, FAQ aprendidas y corpus de canales
 salida/     lo que se genera: índice, medidas, ofertas y registro de dudas
 tests/      los diez bancos de pruebas
 scripts/    utilidades: generar los datos sintéticos, auditar la privacidad, probar Groq
-docs/       decisiones e informes, y guías de Groq y de protección de datos
+docs/       qué resuelve, sin código, y la captura del panel
 ```
 
 ## Cómo ejecutarlo
@@ -343,12 +342,12 @@ python tests/test_conversaciones.py      # 218 conversaciones enteras
 python tests/test_frio.py                # 50 conversaciones largas · 1.041 turnos
 python tests/test_canales.py             # 50 correos + 20 de Wallapop
 python tests/test_ciclo.py               # las 9 situaciones del ciclo, una a una
-python tests/test_prompt.py              # 12 secciones del rol, comprobadas
+python tests/test_prompt.py              # 12 reglas del rol, comprobadas
 python tests/test_mesa.py                # el enrutado de lo que el bot no supo
 python tests/test_ofertas.py
 python tests/test_precios.py
 python tests/test_llm.py                 # la llamada a Groq, sin clave y sin red
-python tests/test_guiones.py             # 50 conversaciones tipo, turno a turno (+ C7)
+python tests/test_guiones.py             # 50 conversaciones tipo, turno a turno, y su «por qué»
 python src/10_simular.py --dias 7        # 7 días de tráfico por el sistema real
 ```
 
@@ -522,7 +521,7 @@ Salida en `salida/actividad.json`, que es lo que pinta la sección *Actividad* d
   veces** antes de dar un resultado por bueno, y un banco en verde no
   garantiza la siguiente tirada: lo que sí garantiza es la guarda, que es determinista. Sin
   `GROQ_API_KEY` el sistema no se cae — redacta `07_redactor.py` y todo lo demás es idéntico.
-  Ver `docs/CONFIGURAR_GROQ.md`.
+  La clave va en un `.env` (plantilla en `.env.ejemplo`), que nunca se sube.
 - **Escala: no es el problema.** Medido, no estimado: con 5.010 fichas la mediana está
   **entre 50 y 60 ms** (la mayor parte, vectorizar la pregunta, que es coste fijo) y el índice
   ocupa **7,7 MB**. El rango en vez de una cifra exacta es a propósito: dos ejecuciones

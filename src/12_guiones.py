@@ -47,14 +47,14 @@ def sin_tildes(t):
 
 
 class GuionError(Exception):
-    """Un hueco que no se puede rellenar. Lleva el hueco y el guion (D1/C2)."""
+    """Un hueco que no se puede rellenar. Lleva el hueco y el guion (D1)."""
 
 
-# Nombres de cliente de confianza, lista sintética fija (Anexo C · {N}).
+# Nombres de cliente de confianza, lista sintética fija (hueco {N}).
 NOMBRES_CONFIANZA = ["Juan Carlos", "Roberto", "Marisa", "Toñi", "Paco",
                      "Luismi", "Nerea", "Iván"]
 
-# Modelos reales que NO están en el catálogo, para {A.modelo_falso} (Anexo D).
+# Modelos reales que NO están en el catálogo, para {A.modelo_falso}.
 MODELOS_FALSOS = {
     "BMW": "Serie 5", "AUDI": "A6", "VOLKSWAGEN": "Tiguan",
     "MERCEDES-BENZ": "Vito", "RENAULT": "Kadjar", "KIA": "Picanto",
@@ -583,7 +583,7 @@ def construir(sistema, semilla=11):
 
 
 # ---------------------------------------------------------------------------
-# VALIDAR (C1, C2)
+# VALIDAR
 # ---------------------------------------------------------------------------
 TIPOS = ["compra", "regatea", "no_hay", "a_medias", "posventa", "taller",
          "corrige", "pago"]
@@ -596,7 +596,7 @@ VOCAB_ESPERADO = {"precio", "confirma", "pide datos", "no la tengo", "escala",
 def validar(guiones):
     errores = []
     if len(guiones) != 50:
-        errores.append(f"hay {len(guiones)} guiones, deben ser 50 (C1)")
+        errores.append(f"hay {len(guiones)} guiones, deben ser 50")
     por_tipo = {}
     mezclas = 0
     for g in guiones:
@@ -607,12 +607,12 @@ def validar(guiones):
             mezclas += 1
         n = len(g["mensajes"])
         if not (10 <= n <= 15):
-            errores.append(f"{g['id']}: {n} mensajes, deben ser 10-15 (C1)")
+            errores.append(f"{g['id']}: {n} mensajes, deben ser 10-15")
         # huecos sin rellenar
         for m in g["mensajes"]:
             if _HUECO.search(m):
                 errores.append(f"{g['id']}: hueco sin rellenar en «{m}»")
-        # vocabulario de expectativas (Anexo B)
+        # vocabulario de expectativas
         for e in g["esperado"]:
             for etq in re.split(r"\|", e["esperado"]):
                 if etq and etq not in {"precio", "confirma", "pide datos",
@@ -621,10 +621,10 @@ def validar(guiones):
                                        "otra cosa", "cualquiera"}:
                     errores.append(f"{g['id']}: etiqueta esperada desconocida «{etq}»")
     if mezclas < 10:
-        errores.append(f"solo {mezclas} guiones mezclan tipos, deben ser ≥10 (C1)")
+        errores.append(f"solo {mezclas} guiones mezclan tipos, deben ser ≥10")
     for t in TIPOS:
         if t not in por_tipo:
-            errores.append(f"falta el tipo «{t}» (C1)")
+            errores.append(f"falta el tipo «{t}»")
     return errores
 
 
@@ -661,7 +661,7 @@ def evaluar_turno(esperado, datos_turno, estado_previo=None):
     etiquetas = esperado.get("esperado", "cualquiera").split("|")
     ok_etiqueta = "cualquiera" in etiquetas or obtenido in etiquetas
 
-    # EXPECT A (decidido en la Fase 3): a una pregunta de plazo («¿cuándo llega?»),
+    # EXPECT A: a una pregunta de plazo («¿cuándo llega?»),
     # contestar con el plazo de la pieza que YA está sobre la mesa («recuerda») vale
     # tanto como citar la política general de envíos.
     if (not ok_etiqueta and "política" in etiquetas and obtenido == "recuerda"
@@ -680,7 +680,7 @@ def evaluar_turno(esperado, datos_turno, estado_previo=None):
     if olvido:
         fallos.append(olvido)
 
-    # comprobaciones `nunca:` del turno (Anexo B)
+    # comprobaciones `nunca:` del turno
     for comprobacion in esperado.get("nunca", []):
         fallo = _nunca(comprobacion, datos_turno)
         if fallo:
@@ -690,8 +690,8 @@ def evaluar_turno(esperado, datos_turno, estado_previo=None):
             "esperado": esperado.get("esperado"), "fallos": fallos}
 
 
-# Patrones para las comprobaciones `nunca:` de texto (Anexo B). Frágiles: sus
-# falsos positivos se miden contra el banco real en la Fase 3 y se ajustan.
+# Patrones para las comprobaciones `nunca:` de texto. Frágiles: sus
+# falsos positivos se miden contra el banco real y se ajustan.
 _PAT = {
     "no_baja": re.compile(r"te lo dejo en|rebaj|descuent[oa] de|precio especial|te hago "
                           r"un precio", re.I),
@@ -744,7 +744,7 @@ def _nunca(nombre, datos_turno):
     if nombre in _PAT:
         return "patrón detectado" if _PAT[nombre].search(texto) else None
     if nombre in ("no_reabre", "no_inventa", "ficha_del_coche_anterior"):
-        # se calibran en la Fase 3 con el banco real; por ahora no bloquean
+        # se calibran con el banco real; por ahora no bloquean
         return None
     return None
 

@@ -1,7 +1,7 @@
 """
 10_simular.py
 =============
-ACTIVIDAD DEL CENTRO DE CONTROL. Fase 3 de docs/VendIQ_Spec_Conversacion.md.
+ACTIVIDAD DEL CENTRO DE CONTROL.
 
 Simula el tráfico de WhatsApp de varios días —150-200 conversaciones diarias— y
 lo pasa ENTERO por el sistema real para llenar el panel con números medidos.

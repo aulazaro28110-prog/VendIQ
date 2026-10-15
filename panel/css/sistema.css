@@ -911,7 +911,7 @@ main.envoltorio > #cliente{ padding-top:0; border-top:0 }
   .of-tarjeta:hover{ transform:none }
 }
 
-/* ============================================== esqueletos y chips (fase 5)
+/* ============================================== esqueletos y chips
    Cada esqueleto tiene la forma y la altura de lo que va a sustituirlo. Si
    mide otra cosa, al llegar los datos la página pega un salto y el esqueleto
    ha hecho más daño que bien. */
@@ -927,7 +927,7 @@ main.envoltorio > #cliente{ padding-top:0; border-top:0 }
 .conv-cab{ display:flex; align-items:center; gap:var(--e2); flex-wrap:wrap }
 .conv-cab .conv-hora{ margin-left:auto }
 
-/* ============================================ responsive y foco (fase 6) */
+/* ============================================ responsive y foco */
 /* Nada se desborda a lo ancho: lo que no cabe, se apila. Las únicas cajas con
    scroll horizontal permitido son las tablas, que ya lo traían. */
 @media (max-width:900px){

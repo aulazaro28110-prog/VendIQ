@@ -11,9 +11,8 @@ vale nada. Este script no supone: mira los ficheros de salida buscando
 matriculas, VIN, telefonos y correos, lee el codigo para ver que se manda fuera,
 y comprueba que el catalogo es de verdad sintetico.
 
-Los cinco apartados que saca son los que alimentan docs/GDPR.md. Si manana el
-sistema empieza a guardar algo nuevo, esto lo enseña y el documento se queda
-obsoleto en voz alta en vez de en silencio.
+Si manana el sistema empieza a guardar algo nuevo, esto lo enseña: lo que se
+cuenta de los datos se queda obsoleto en voz alta en vez de en silencio.
 """
 import io
 import re
