@@ -320,6 +320,17 @@ class Sistema:
         """True si la sesión es de una prueba y no debe tocar los datos de negocio."""
         return str(sesion).startswith(Sistema.PREFIJOS_PRUEBA)
 
+    # S21 · De dónde viene lo que SÍ se escribe. Una sola función, igual que
+    # es_prueba: la usan las reservas y las dudas. El chat del panel (`panel-`)
+    # escribe, pero no es un cliente: es Álvaro probando, así que va como "prueba".
+    # Los registros antiguos no se reescriben: se quedan sin este campo.
+    @staticmethod
+    def origen_de(sesion):
+        """'prueba' si la sesión es de prueba o del chat del panel; si no, 'cliente'."""
+        if Sistema.es_prueba(sesion) or str(sesion).startswith("panel-"):
+            return "prueba"
+        return "cliente"
+
     def anotar_reserva(self, sesion, conv):
         """Deja constancia de una venta cerrada. Lo que hace cierta la frase.
 
@@ -350,6 +361,7 @@ class Sistema:
             "id_pieza": pieza.get("id"),
             "precio_dicho": conv.precio_de.get(str(pieza.get("id") or "")),
             "estado": "pendiente de preparar",
+            "origen": self.origen_de(sesion),
         }
         try:
             texto = RESERVAS.read_text(encoding="utf-8-sig").strip() if RESERVAS.exists() else ""
@@ -1052,7 +1064,8 @@ class Sistema:
         if (("no se reconoce la consulta" in reglas or "no tiene una respuesta" in reglas
                 or "pieza fuera del catálogo" in reglas)
                 and not self.es_prueba(sesion)):
-            self.aprender.anotar(mensaje, porque_accion, sesion, busqueda["decision"])
+            self.aprender.anotar(mensaje, porque_accion, sesion, busqueda["decision"],
+                                 self.origen_de(sesion))
 
         # Comprobación en caliente del guardarraíl: el redactor solo puede publicar
         # un importe que el buscador haya marcado publicable. Si alguna vez no
@@ -1325,7 +1338,9 @@ class Sistema:
         return {"meta": item.get("meta") or {}, "precio": veredicto}
 
     def ofertar(self, id_pieza, importe, cliente):
-        oferta = self.ofertas_mod.registrar(self.inventario, id_pieza, importe, cliente)
+        # S21 · Las ofertas del panel son pruebas de Álvaro, no de un cliente.
+        oferta = self.ofertas_mod.registrar(self.inventario, id_pieza, importe, cliente,
+                                            "prueba")
         return oferta
 
     def resolver(self, n, decision, motivo):

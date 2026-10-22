@@ -208,7 +208,7 @@ def escribir_registro(ofertas):
     REGISTRO.write_text(json.dumps(ofertas, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def registrar(inventario, id_pieza, importe, cliente):
+def registrar(inventario, id_pieza, importe, cliente, origen):
     ofertas = leer_registro()
 
     # Un mismo cliente no negocia dos veces la misma pieza sin pasar por Álvaro:
@@ -227,6 +227,7 @@ def registrar(inventario, id_pieza, importe, cliente):
         "n": len(ofertas) + 1,
         "fecha": ahora(),
         "cliente": cliente,
+        "origen": origen,   # S21 · "cliente" desde la línea de comandos, "prueba" desde el panel
         "id_pieza": str(id_pieza),
         "descripcion": (f"{pieza['pieza']} {pieza['marca']} {pieza['modelo']} "
                         f"{pieza['motor']} {pieza['anio']}") if pieza else "(desconocida)",
@@ -303,7 +304,8 @@ def cmd_reglas(_):
 
 def cmd_oferta(args):
     inventario = cargar_inventario()
-    mostrar(registrar(inventario, args.id_pieza, args.importe, args.cliente))
+    # S21 · Por línea de comandos se apunta a mano la oferta de un cliente real.
+    mostrar(registrar(inventario, args.id_pieza, args.importe, args.cliente, "cliente"))
 
 
 def cmd_pendientes(_):

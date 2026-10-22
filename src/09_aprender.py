@@ -55,12 +55,16 @@ def leer_registro():
     return _leer(REGISTRO, [])
 
 
-def anotar(pregunta, motivo, sesion="", decision=""):
+def anotar(pregunta, motivo, sesion="", decision="", origen=None):
     """Guarda una pregunta que el bot no supo responder.
 
     Si ya está anotada, sube el contador en vez de duplicarla: lo que interesa no
     es cuántas veces falló, es qué preguntas repiten los clientes — eso ordena por
     dónde empezar a contestar.
+
+    S21 · `origen` separa las dudas por procedencia: la misma pregunta de un
+    cliente y de una prueba son dos entradas, para que las pruebas no inflen el
+    contador de los clientes. Sin `origen` se comporta como antes.
     """
     pregunta = (pregunta or "").strip()
     if not pregunta:
@@ -69,7 +73,7 @@ def anotar(pregunta, motivo, sesion="", decision=""):
     clave = pregunta.lower()
 
     for entrada in registro:
-        if entrada["pregunta"].lower() == clave:
+        if entrada["pregunta"].lower() == clave and entrada.get("origen") == origen:
             entrada["veces"] += 1
             entrada["ultima"] = time.strftime("%Y-%m-%d %H:%M")
             _escribir(REGISTRO, registro)
@@ -88,6 +92,8 @@ def anotar(pregunta, motivo, sesion="", decision=""):
         "respuesta": None,
         "respondida_por": None,
     }
+    if origen is not None:
+        entrada["origen"] = origen
     registro.append(entrada)
     _escribir(REGISTRO, registro)
     return entrada
